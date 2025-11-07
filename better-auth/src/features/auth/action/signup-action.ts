@@ -1,4 +1,3 @@
-// signup-action
 'use server';
 
 import type { ActionResponse } from '@/features/shared/types';

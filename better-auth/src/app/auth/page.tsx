@@ -11,7 +11,7 @@ export default function AuthPage() {
     <section className='space-y-8'>
       <h2 className='text-xl font-medium'>Authentication page</h2>
 
-      <Tabs defaultValue='signin'>
+      <Tabs defaultValue='signin' className='mx-auto max-w-xl'>
         <TabsList>
           <TabsTrigger value='signin'>Sign In</TabsTrigger>
           <TabsTrigger value='signup'>Sign Up</TabsTrigger>
