@@ -67,7 +67,6 @@ function InputField({
   orientation?: 'vertical' | 'horizontal' | 'responsive';
   addons: ReactNode;
 } & InputHTMLAttributes<HTMLInputElement>) {
-  console.log(error);
   return (
     <Field orientation={orientation}>
       <FieldLabel

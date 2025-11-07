@@ -35,21 +35,21 @@ export async function signinAction(
     };
   }
 
-  const signupCredentials = parsedResult.data;
+  const signinCredentials = parsedResult.data;
 
   try {
     await auth.api.signInEmail({
       headers: await headers(),
       body: {
-        email: signupCredentials.email,
-        password: signupCredentials.password,
+        email: signinCredentials.email,
+        password: signinCredentials.password,
       },
     });
   } catch (error) {
     return {
       type: 'error',
       payload: {
-        userEntered: signupCredentials,
+        userEntered: signinCredentials,
         errors: { unexpected: (error as Error)?.message },
       },
     };
