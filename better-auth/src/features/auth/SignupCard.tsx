@@ -48,7 +48,7 @@ function useSignupForm() {
   const renderFields = useCallback(
     (state: SignupResponse, isPending: boolean) => (
       <FieldSet>
-        <FieldLegend></FieldLegend>
+        <FieldLegend>Enter your details</FieldLegend>
         <FieldGroup>
           <FormRow
             kind='input'
@@ -65,6 +65,8 @@ function useSignupForm() {
               </>
             }
             autoComplete='name webauthn'
+            disabled={isPending}
+            defaultValue={state.payload.userEntered?.name}
           />
 
           <FormRow
@@ -82,6 +84,8 @@ function useSignupForm() {
               </>
             }
             autoComplete='email webauthn'
+            disabled={isPending}
+            defaultValue={state.payload.userEntered?.email}
           />
 
           <FormRow
@@ -100,13 +104,15 @@ function useSignupForm() {
               </>
             }
             autoComplete='new-password webauthn'
+            disabled={isPending}
+            defaultValue={state.payload.userEntered?.password}
           />
 
           <FormRow
             type='password'
             kind='input'
-            id='passwordConfirmation'
-            name='passwordConfirmation'
+            id='confirmedPassword'
+            name='confirmedPassword'
             labelText='Confirm your password'
             description='Re-enter your password'
             error={state.payload.errors?.confirmedPassword?.at(0)}
@@ -118,6 +124,8 @@ function useSignupForm() {
               </>
             }
             autoComplete='new-password webauthn'
+            disabled={isPending}
+            defaultValue={state.payload.userEntered?.confirmedPassword}
           />
         </FieldGroup>
       </FieldSet>
@@ -128,7 +136,9 @@ function useSignupForm() {
   const renderUnexpectedErrors = useCallback(
     (state: SignupResponse) =>
       state.payload.errors?.unexpected ? (
-        <>{state.payload.errors?.unexpected}</>
+        <p className='text-destructive text-center'>
+          {state.payload.errors?.unexpected}
+        </p>
       ) : null,
     []
   );

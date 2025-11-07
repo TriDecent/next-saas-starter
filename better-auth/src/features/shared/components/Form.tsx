@@ -3,6 +3,7 @@ import { useShakeError } from '@/features/shared/hooks';
 import type { ActionResponse } from '@/features/shared/types';
 import { cn } from '@/features/shared/utils';
 import type { ClassValue } from 'clsx';
+import { LoaderPinwheelIcon } from 'lucide-react';
 import NextForm from 'next/form';
 import { useActionState, useEffect, type ReactNode } from 'react';
 import { Button } from './ui/button';
@@ -59,9 +60,13 @@ export function Form<T extends FormResponse>({
           variant='secondary'
           type='submit'
           disabled={isPending}
-          className='order-1 md:order-2'
+          className='order-1 min-w-32 md:order-2'
         >
-          {submitNode}
+          {!isPending ? (
+            submitNode
+          ) : (
+            <LoaderPinwheelIcon className='animate-spin' />
+          )}
         </Button>
       </CardAction>
 
