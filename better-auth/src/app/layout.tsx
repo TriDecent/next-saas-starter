@@ -1,6 +1,10 @@
 'use cache';
 
-import { PageLayout, ThemeProvider } from '@/features/shared/components';
+import {
+  PageLayout,
+  ThemeProvider,
+  ThemeToggle,
+} from '@/features/shared/components';
 import { Toaster } from '@/features/shared/components/ui';
 import type { Metadata } from 'next';
 import { cacheLife } from 'next/cache';
@@ -45,6 +49,7 @@ export default async function RootLayout({
               <h1 className='text-2xl font-medium tracking-wider'>
                 Better Auth Demo
               </h1>
+              <ThemeToggle />
             </PageLayout.Header>
             <PageLayout.Main>{children}</PageLayout.Main>
             <PageLayout.Footer />
