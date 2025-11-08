@@ -1,12 +1,17 @@
 'use client';
-import { Form, FormRow } from '@/features/shared/components';
+
+import { ActionButton, Form, FormRow } from '@/features/shared/components';
 import {
+  ButtonGroup,
+  ButtonGroupSeparator,
   FieldGroup,
   FieldLegend,
   FieldSet,
   InputGroupAddon,
 } from '@/features/shared/components/ui';
-import { useCallback } from 'react';
+import { authClient } from '@/lib/auth-client';
+import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
+import { Fragment, useCallback } from 'react';
 import { FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
@@ -22,7 +27,9 @@ export function SigninCard() {
     <AuthCard
       title='Sign In'
       description='Enter your credentials to access your account.'
+      className='space-y-8'
     >
+      <SocialProviders />
       <Form<SigninResponse>
         action={signinAction}
         initialState={{
@@ -40,6 +47,31 @@ export function SigninCard() {
         }
       />
     </AuthCard>
+  );
+}
+
+function SocialProviders() {
+  return (
+    <ButtonGroup className='w-full shadow-md' orientation={'horizontal'}>
+      {SUPPORTED_OAUTH_PROVIDERS.map((provider, index) => (
+        <Fragment key={provider.name}>
+          <ActionButton
+            action={async () => {
+              await authClient.signIn.social({
+                provider: provider.name,
+                callbackURL: '/',
+              });
+            }}
+            className='flex-1'
+          >
+            <provider.icon />
+          </ActionButton>
+          {index !== SUPPORTED_OAUTH_PROVIDERS.length - 1 ? (
+            <ButtonGroupSeparator orientation='vertical' />
+          ) : null}
+        </Fragment>
+      ))}
+    </ButtonGroup>
   );
 }
 
