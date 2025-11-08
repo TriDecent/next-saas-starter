@@ -10,9 +10,11 @@ export default function RootError({
   reset: () => void;
 }) {
   return (
-    <ErrorBlock
-      message={error.message}
-      action={{ type: 'button', onClick: reset, text: 'Try again' }}
-    />
+    <section className='flex justify-center'>
+      <ErrorBlock
+        message={error.message}
+        action={{ type: 'button', onClick: reset, text: 'Try again' }}
+      />
+    </section>
   );
 }

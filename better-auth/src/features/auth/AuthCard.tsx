@@ -10,10 +10,12 @@ export function AuthCard({
   title,
   description,
   children,
+  className,
 }: {
   title: string;
   description: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <Card>
@@ -21,7 +23,7 @@ export function AuthCard({
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>{children}</CardContent>
+      <CardContent className={className}>{children}</CardContent>
     </Card>
   );
 }

@@ -69,10 +69,7 @@ function InputField({
 } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <Field orientation={orientation}>
-      <FieldLabel
-        htmlFor={id}
-        className={cn('max-w-36 md:max-w-40', labelClassname)}
-      >
+      <FieldLabel htmlFor={id} className={cn('max-w-40', labelClassname)}>
         {labelText}
       </FieldLabel>
       <FieldContent>
@@ -120,10 +117,7 @@ function TextareaField({
 } & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <Field orientation={orientation}>
-      <FieldLabel
-        htmlFor={id}
-        className={cn('max-w-36 md:max-w-40', labelClassname)}
-      >
+      <FieldLabel htmlFor={id} className={cn('max-w-40', labelClassname)}>
         {labelText}
       </FieldLabel>
       <FieldContent>
@@ -173,10 +167,7 @@ function SelectField({
 } & ComponentProps<typeof Select>) {
   return (
     <Field orientation={orientation}>
-      <FieldLabel
-        htmlFor={id}
-        className={cn('max-w-36 md:max-w-40', labelClassName)}
-      >
+      <FieldLabel htmlFor={id} className={cn('max-w-40', labelClassName)}>
         {labelText}
       </FieldLabel>
       <FieldContent>

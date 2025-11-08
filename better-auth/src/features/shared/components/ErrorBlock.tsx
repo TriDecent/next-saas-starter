@@ -48,7 +48,7 @@ export function ErrorBlock({
         <EmptyContent>
           {action.type === 'link' ? (
             <Button asChild className='w-full'>
-              <Link href={action.href}>
+              <Link href={action.href} replace>
                 <LinkIcon /> {action.text}
               </Link>
             </Button>

@@ -83,11 +83,7 @@ function handleDeniedServerAction(
   url.searchParams.set('callbackUrl', '/auth');
 
   const response = new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Content-Type': 'text/plain',
-      'x-action-redirect': url.href,
-    },
+    headers: { 'x-action-redirect': url.href },
   });
 
   return response;
