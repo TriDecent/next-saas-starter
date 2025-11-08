@@ -1,5 +1,6 @@
 'use client';
 
+import { ActionButton } from '@/features/shared/components';
 import { Button } from '@/features/shared/components/ui';
 import { authClient } from '@/lib/auth-client';
 import { LoaderPinwheelIcon } from 'lucide-react';
@@ -18,13 +19,15 @@ export default function HomePage() {
       ) : data?.session ? (
         <div className='flex flex-col items-center gap-y-4'>
           <p>You are signed in as {data.user.name}</p>
-          <Button
-            onClick={() => authClient.signOut()}
+          <ActionButton
+            action={async () => {
+              await authClient.signOut();
+            }}
             variant={'outline'}
             size={'lg'}
           >
             Sign Out
-          </Button>
+          </ActionButton>
         </div>
       ) : (
         <Button asChild variant={'outline'} size={'lg'}>

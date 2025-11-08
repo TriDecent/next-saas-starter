@@ -2,6 +2,7 @@ import { checkArcjet } from '@/lib';
 import type { ArcjetDecision, ArcjetEmailType } from '@arcjet/next';
 import type { NextRequest, ProxyConfig } from 'next/server';
 import { NextResponse } from 'next/server';
+import { auth } from './lib/auth';
 
 export const config: ProxyConfig = {
   matcher: ['/api/auth/:path*', '/auth'],
@@ -12,7 +13,7 @@ export function proxy(request: NextRequest) {
     return handleAuthApiPath(request);
 
   if (request.nextUrl.pathname.startsWith('/auth'))
-    return handleAuthServerAction(request);
+    return handleAuthPath(request);
 
   return NextResponse.next();
 }
@@ -27,12 +28,22 @@ export async function handleAuthApiPath(
   return handleDeniedApiRequest(decision);
 }
 
-export async function handleAuthServerAction(
+export async function handleAuthPath(
   request: NextRequest
 ): Promise<NextResponse> {
-  if (request.method !== 'POST' || !request.headers.get('next-action'))
-    return NextResponse.next();
+  if (request.method !== 'POST' || !request.headers.get('next-action')) {
+    const session = await auth.api.getSession({ headers: request.headers });
 
+    if (session?.session)
+      return NextResponse.redirect(new URL('/', request.nextUrl));
+
+    return NextResponse.next();
+  }
+
+  return handlePostRequestToAuthPath(request);
+}
+
+async function handlePostRequestToAuthPath(request: NextRequest) {
   const decision = await checkArcjet(request);
 
   if (!decision.isDenied()) return NextResponse.next();

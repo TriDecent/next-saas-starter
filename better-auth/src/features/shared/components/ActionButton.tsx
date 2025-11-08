@@ -11,7 +11,11 @@ export function ActionButton({
   const [isPending, startTransition] = useTransition();
 
   return (
-    <Button {...props} onClick={() => startTransition(() => action())}>
+    <Button
+      {...props}
+      disabled={isPending}
+      onClick={() => startTransition(() => action())}
+    >
       {isPending ? <LoaderPinwheel className='animate-spin' /> : props.children}
     </Button>
   );
