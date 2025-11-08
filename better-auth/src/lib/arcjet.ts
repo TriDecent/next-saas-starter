@@ -11,6 +11,7 @@ import arcjet, {
   type SlidingWindowRateLimitOptions,
 } from '@arcjet/next';
 import type { NextRequest } from 'next/server';
+import { auth } from './auth';
 
 const aj = arcjet({
   key: process.env.ARCJET_KEY!,
@@ -31,7 +32,7 @@ const restrictiveRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
 
 const laxRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
   mode: 'LIVE',
-  max: 2,
+  max: 60,
   interval: '1m',
 };
 
@@ -48,8 +49,9 @@ export async function checkArcjet(
     .json()
     .catch(() => ({}));
 
+  const session = await auth.api.getSession({ headers: request.headers });
   const ip = findIp(request);
-  const userIdOrIp = ip ? ip : '127.0.0.1';
+  const userIdOrIp = session?.user.id ?? (ip ? ip : '127.0.0.1');
 
   if (request.url.endsWith('/auth/sign-up')) {
     if (

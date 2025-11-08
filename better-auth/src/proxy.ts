@@ -24,7 +24,7 @@ export async function handleAuthApiPath(
 
   if (!decision.isDenied()) return NextResponse.next();
 
-  return handleDeniedDecision(decision);
+  return handleDeniedApiRequest(decision);
 }
 
 export async function handleAuthServerAction(
@@ -37,10 +37,10 @@ export async function handleAuthServerAction(
 
   if (!decision.isDenied()) return NextResponse.next();
 
-  return handleDeniedDecision(decision);
+  return handleDeniedServerAction(decision, request);
 }
 
-function handleDeniedDecision(decision: ArcjetDecision): NextResponse {
+function handleDeniedApiRequest(decision: ArcjetDecision): NextResponse {
   if (decision.reason.isRateLimit())
     return NextResponse.json(
       { error: 'Too many requests. Please try again later.' },
@@ -56,6 +56,41 @@ function handleDeniedDecision(decision: ArcjetDecision): NextResponse {
   }
 
   return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+}
+
+function handleDeniedServerAction(
+  decision: ArcjetDecision,
+  request: NextRequest
+): NextResponse {
+  const url = new URL('/error', request.nextUrl);
+
+  if (decision.reason.isRateLimit()) {
+    url.searchParams.set(
+      'message',
+      'Too many requests. Please try again later.'
+    );
+  } else if (decision.reason.isBot()) {
+    url.searchParams.set('message', 'Bot detected.');
+  } else if (decision.reason.isEmail()) {
+    url.searchParams.set(
+      'message',
+      getEmailErrorMessage(decision.reason.emailTypes)
+    );
+  } else {
+    url.searchParams.set('message', 'Forbidden');
+  }
+
+  url.searchParams.set('callbackUrl', '/auth');
+
+  const response = new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/plain',
+      'x-action-redirect': url.href,
+    },
+  });
+
+  return response;
 }
 
 function getEmailErrorMessage(emailTypes: ArcjetEmailType[]): string {
