@@ -9,6 +9,7 @@ import { Toaster } from '@/features/shared/components/ui';
 import type { Metadata } from 'next';
 import { cacheLife } from 'next/cache';
 import { Geist, Geist_Mono } from 'next/font/google';
+import Link from 'next/link';
 import './globals.css';
 
 const geistSans = Geist({
@@ -47,7 +48,7 @@ export default async function RootLayout({
           <PageLayout>
             <PageLayout.Header>
               <h1 className='text-2xl font-medium tracking-wider'>
-                Better Auth Demo
+                <Link href='/'>Better Auth Demo</Link>
               </h1>
               <ThemeToggle />
             </PageLayout.Header>

@@ -5,5 +5,7 @@ export * from './dropdown-menu';
 export * from './empty';
 export * from './field';
 export * from './input-group';
+export * from './item';
+export * from './separator';
 export * from './sonner';
 export * from './tabs';
