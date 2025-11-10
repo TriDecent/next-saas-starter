@@ -2,6 +2,7 @@
 
 import type { ActionResponse } from '@/features/shared/types';
 import { auth } from '@/lib/auth';
+import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { z } from 'zod';
 
@@ -21,7 +22,31 @@ type SignupInput = Partial<Signup>;
 type SignupError = Partial<Record<keyof SignupInput, string[]>> & {
   unexpected?: string;
 };
-export type SignupResponse = ActionResponse<SignupInput, SignupError>;
+export type SignupResponse =
+  ActionResponse<SignupInput, SignupError> extends infer U
+    ? U extends { type: 'success' }
+      ? U & {
+          payload: {
+            success: Awaited<ReturnType<typeof auth.api.signUpEmail>>;
+          };
+        }
+      : U extends { type: 'error' }
+        ? U & {
+            payload: {
+              errors: {
+                auth?: APIError;
+              };
+            };
+          }
+        : U
+    : never;
+
+export type SuccessSignupResponse = Extract<
+  SignupResponse,
+  { type: 'success' }
+>;
+
+export type ErrorSignupResponse = Extract<SignupResponse, { type: 'error' }>;
 
 export async function signupAction(
   state: SignupResponse,
@@ -44,7 +69,7 @@ export async function signupAction(
   const signupCredentials = parsedResult.data;
 
   try {
-    await auth.api.signUpEmail({
+    const signUpResult = await auth.api.signUpEmail({
       headers: await headers(),
       body: {
         name: signupCredentials.name,
@@ -52,21 +77,31 @@ export async function signupAction(
         password: signupCredentials.password,
       },
     });
+
+    return {
+      type: 'success',
+      payload: {
+        userEntered: null,
+        errors: null,
+        success: signUpResult,
+      },
+    };
   } catch (error) {
+    if (!(error instanceof APIError))
+      return {
+        type: 'error',
+        payload: {
+          userEntered: signupCredentials,
+          errors: { unexpected: (error as Error)?.message },
+        },
+      };
+
     return {
       type: 'error',
       payload: {
         userEntered: signupCredentials,
-        errors: { unexpected: (error as Error)?.message },
+        errors: { auth: error },
       },
     };
   }
-
-  return {
-    type: 'success',
-    payload: {
-      userEntered: null,
-      errors: null,
-    },
-  };
 }

@@ -9,19 +9,26 @@ import {
   FieldSet,
   InputGroupAddon,
 } from '@/features/shared/components/ui';
+import { useAppDispatch } from '@/features/shared/hooks';
 import { authClient } from '@/lib/auth-client';
 import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
+import { uiActions } from '@/store';
+import { useRouter } from 'next/navigation';
 import { Fragment, useCallback } from 'react';
 import { FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
 import { AuthCard } from './AuthCard';
-import { signinAction, type SigninResponse } from './action/signin-action';
+import {
+  signinAction,
+  type ErrorSigninResponse,
+  type SigninResponse,
+} from './action/signin-action';
 
 export function SigninCard() {
-  const { renderFields, renderUnexpectedErrors, onFormError, onFormSuccess } =
-    useSignupForm();
+  const { renderFields, renderUnexpectedErrors } = useSigninForm();
+  const { onFormError, onFormSuccess } = useFormStatus();
 
   return (
     <AuthCard
@@ -75,7 +82,42 @@ function SocialProviders() {
   );
 }
 
-function useSignupForm() {
+function useFormStatus() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const onFormSuccess = useCallback(() => {
+    toast.success('Sign in successfully!');
+    router.refresh();
+  }, [router]);
+
+  const onFormError = useCallback(
+    (state: ErrorSigninResponse) => {
+      const authError = state.payload.errors.auth;
+      if (!authError) {
+        toast.error('Sign up failed');
+        return;
+      }
+      toast.error(authError.message);
+
+      if (authError.status !== 'EMAIL_NOT_VERIFIED') return;
+      dispatch(
+        uiActions.toggleEmailVerification({
+          email: state.payload.userEntered.email!, // Email here must exist
+          name: 'User',
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  return {
+    onFormSuccess,
+    onFormError,
+  };
+}
+
+function useSigninForm() {
   const renderFields = useCallback(
     (state: SigninResponse, isPending: boolean) => (
       <FieldSet>
@@ -127,25 +169,17 @@ function useSignupForm() {
 
   const renderUnexpectedErrors = useCallback(
     (state: SigninResponse) =>
-      state.payload.errors?.unexpected ? (
+      state.payload.errors?.unexpected || state.payload.errors?.auth ? (
         <p className='text-destructive text-center'>
           {state.payload.errors?.unexpected}
+          {state.payload.errors?.auth?.message}
         </p>
       ) : null,
     []
   );
 
-  const onFormSuccess = useCallback(
-    () => toast.success('Sign up successfully!'),
-    []
-  );
-
-  const onFormError = useCallback(() => toast.error('Sign up failed'), []);
-
   return {
     renderFields,
     renderUnexpectedErrors,
-    onFormSuccess,
-    onFormError,
   };
 }
