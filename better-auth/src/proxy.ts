@@ -34,8 +34,7 @@ export async function handleAuthPath(
   if (request.method !== 'POST' || !request.headers.get('next-action')) {
     const session = await auth.api.getSession({ headers: request.headers });
 
-    if (session?.session)
-      return NextResponse.redirect(new URL('/', request.nextUrl));
+    if (session) return NextResponse.redirect(new URL('/', request.nextUrl));
 
     return NextResponse.next();
   }

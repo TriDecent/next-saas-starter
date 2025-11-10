@@ -6,6 +6,7 @@ import {
   ThemeToggle,
 } from '@/features/shared/components';
 import { Toaster } from '@/features/shared/components/ui';
+import { StoreProvider } from '@/features/shared/provider';
 import type { Metadata } from 'next';
 import { cacheLife } from 'next/cache';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -39,24 +40,26 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <PageLayout>
-            <PageLayout.Header>
-              <h1 className='text-2xl font-medium tracking-wider'>
-                <Link href='/'>Better Auth Demo</Link>
-              </h1>
-              <ThemeToggle />
-            </PageLayout.Header>
-            <PageLayout.Main>{children}</PageLayout.Main>
-            <PageLayout.Footer />
-          </PageLayout>
-          <Toaster position='top-right' richColors />
-        </ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <PageLayout>
+              <PageLayout.Header>
+                <h1 className='text-2xl font-medium tracking-wider'>
+                  <Link href='/'>Better Auth Demo</Link>
+                </h1>
+                <ThemeToggle />
+              </PageLayout.Header>
+              <PageLayout.Main>{children}</PageLayout.Main>
+              <PageLayout.Footer />
+            </PageLayout>
+            <Toaster position='top-right' richColors />
+          </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );

@@ -1,1 +1,2 @@
-export { useShakeError } from './useShakeError';
+export * from './store-hooks';
+export { useShakeError } from './use-shake-error';
