@@ -71,8 +71,7 @@ export async function signinAction(
       },
     };
   } catch (error) {
-    if (error instanceof APIError) {
-      console.log(error.statusCode);
+    if (error instanceof APIError)
       return {
         type: 'error',
         payload: {
@@ -82,7 +81,6 @@ export async function signinAction(
           },
         },
       };
-    }
 
     return {
       type: 'error',
