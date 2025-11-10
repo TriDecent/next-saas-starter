@@ -10,17 +10,22 @@ import { Button } from './ui/button';
 import { CardAction } from './ui/card';
 
 interface FormProps<T> {
-  readonly action: (state: Awaited<T>, formData: FormData) => Promise<T>;
+  readonly action: (state: T, formData: FormData) => Promise<T>;
   readonly initialState: Awaited<T>;
-  readonly renderFields: (state: Awaited<T>, isPending: boolean) => ReactNode;
-  readonly renderUnexpectedErrors: (state: Awaited<T>) => ReactNode;
-  readonly onFormSuccess: (state: Awaited<T>) => void;
-  readonly onFormError: () => void;
+  readonly renderFields: (state: T, isPending: boolean) => ReactNode;
+  readonly renderUnexpectedErrors: (state: T) => ReactNode;
+  readonly onFormSuccess: (
+    state: SuccessResponseFromGenericResponse<T>
+  ) => void;
+  readonly onFormError: (state: ErrorResponseFromGenericResponse<T>) => void;
   readonly onFormPending?: () => void;
 
   readonly submitNode: ReactNode;
   readonly className?: ClassValue;
 }
+
+type SuccessResponseFromGenericResponse<T> = Extract<T, { type: 'success' }>;
+type ErrorResponseFromGenericResponse<T> = Extract<T, { type: 'error' }>;
 
 type FormResponse = ActionResponse<unknown, unknown>;
 
@@ -76,20 +81,23 @@ export function Form<T extends FormResponse>({
 }
 
 const useForm = <T extends FormResponse>(
-  state: Awaited<T>,
+  state: T,
   isPending: boolean,
-  onFormSuccess: (state: Awaited<T>) => void,
-  onFormFail: (state: Awaited<T>) => void,
+  onFormSuccess: (state: SuccessResponseFromGenericResponse<T>) => void,
+  onFormFail: (state: ErrorResponseFromGenericResponse<T>) => void,
   onFormPending?: () => void
 ) => {
   useEffect(() => {
     if (state.type !== 'success') return;
-    onFormSuccess(state);
+    // TypeScript limitation: cannot narrow generic type T to Extract<T, { type: 'success' }>
+    // even after checking state.type === 'success', so we need to use a type assertion here.
+    onFormSuccess(state as SuccessResponseFromGenericResponse<T>);
   }, [onFormSuccess, state]);
 
   useEffect(() => {
     if (state.type !== 'error') return;
-    onFormFail(state);
+    // Same problem here
+    onFormFail(state as ErrorResponseFromGenericResponse<T>);
   }, [onFormFail, state]);
 
   useEffect(() => {

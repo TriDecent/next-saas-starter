@@ -1,22 +1,25 @@
-// Temporarily not needed
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 type UIState = Readonly<{
-  name: string | null;
-  email: string | null;
+  verificationInfo?: Readonly<{
+    name: string;
+    email: string;
+  }>;
 }>;
 
 const initialState: UIState = {
-  name: null,
-  email: null,
+  verificationInfo: undefined,
 };
 
 export const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    toggleEmailVerification: (state, action: PayloadAction<UIState>) => {
-      state = action.payload;
+    toggleEmailVerification: (
+      state,
+      action: PayloadAction<UIState['verificationInfo']>
+    ) => {
+      state.verificationInfo = action.payload;
     },
   },
 });
