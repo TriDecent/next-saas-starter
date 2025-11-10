@@ -1,3 +1,5 @@
+'use server';
+
 import { Resend, type CreateEmailOptions } from 'resend';
 import { EmailVerificationTemplate } from './EmailVerificationTemplate';
 import { PasswordResetTemplate } from './PasswordResetTemplate';
@@ -10,7 +12,7 @@ type EmailSendingOptions = Readonly<{
   expireIn: string;
 }>;
 
-export function sendPasswordResetEmail(
+export async function sendPasswordResetEmail(
   payload: EmailSendingOptions & { resetUrl: string }
 ) {
   return sendEmail(
@@ -20,7 +22,7 @@ export function sendPasswordResetEmail(
   );
 }
 
-export function sendEmailVerification(
+export async function sendEmailVerification(
   payload: EmailSendingOptions & { verificationUrl: string }
 ) {
   return sendEmail(
