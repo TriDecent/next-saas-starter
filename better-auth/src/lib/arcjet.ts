@@ -1,83 +1,129 @@
-import { findIp } from '@arcjet/ip';
-
-import arcjet, {
+import {
   detectBot,
   protectSignup,
-  shield,
   slidingWindow,
   type ArcjetDecision,
+  type ArcjetEmailType,
+} from '@arcjet/next';
+import { NextResponse } from 'next/server';
+
+import arcjet, {
+  shield,
   type BotOptions,
   type EmailOptions,
   type SlidingWindowRateLimitOptions,
 } from '@arcjet/next';
-import type { NextRequest } from 'next/server';
-import { auth } from './auth';
+import { redirect } from 'next/navigation';
 
-const aj = arcjet({
+// Authenticated users - track by userId only
+const ajForAuthenticatedUser = arcjet({
   key: process.env.ARCJET_KEY!,
-  characteristics: ['userIdOrIp'],
+  characteristics: ['userId'],
   rules: [shield({ mode: 'LIVE' })],
 });
 
-const botSettings: BotOptions = {
+// Anonymous users - track by IP only
+const ajForAnonymousUser = arcjet({
+  key: process.env.ARCJET_KEY!,
+  characteristics: ['ip.src'], // by default, not needed
+  rules: [shield({ mode: 'LIVE' })],
+});
+
+export const botSettings: BotOptions = {
   mode: 'LIVE',
   allow: [],
 };
 
-const restrictiveRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
+export const restrictiveRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
   mode: 'LIVE',
-  max: 10,
+  max: 5,
   interval: '10m',
 };
 
-const laxRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
+export const laxRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
   mode: 'LIVE',
-  max: 60,
+  max: 30,
   interval: '1m',
 };
 
-const emailSettings: EmailOptions = {
+export const emailSettings: EmailOptions = {
   mode: 'LIVE',
   deny: ['DISPOSABLE', 'INVALID', 'NO_MX_RECORDS'],
 };
 
-export async function checkArcjet(
-  request: NextRequest
-): Promise<ArcjetDecision> {
-  const body: unknown = await request
-    .clone()
-    .json()
-    .catch(() => ({}));
+export function getLaxAjForAuthenticatedUser() {
+  return ajForAuthenticatedUser
+    .withRule(detectBot(botSettings))
+    .withRule(slidingWindow(laxRateLimitSettings));
+}
 
-  const session = await auth.api.getSession({ headers: request.headers });
-  const ip = findIp(request);
-  const userIdOrIp = session?.user.id ?? (ip ? ip : '127.0.0.1');
+export function getRestrictiveAjForAuthenticatedUser() {
+  return ajForAuthenticatedUser
+    .withRule(detectBot(botSettings))
+    .withRule(slidingWindow(restrictiveRateLimitSettings));
+}
 
-  if (request.url.endsWith('/auth/sign-up')) {
-    if (
-      body &&
-      typeof body === 'object' &&
-      'email' in body &&
-      typeof body.email === 'string'
-    )
-      return aj
-        .withRule(
-          protectSignup({
-            email: emailSettings,
-            bots: botSettings,
-            rateLimit: restrictiveRateLimitSettings,
-          })
-        )
-        .protect(request, { email: body.email, userIdOrIp });
+export function getLaxAjForAnonymousUser() {
+  return ajForAnonymousUser
+    .withRule(detectBot(botSettings))
+    .withRule(slidingWindow(laxRateLimitSettings));
+}
 
-    return aj
-      .withRule(detectBot(botSettings))
-      .withRule(slidingWindow(restrictiveRateLimitSettings))
-      .protect(request, { userIdOrIp });
+export function getRestrictiveAjForAnonymousUser() {
+  return ajForAnonymousUser
+    .withRule(detectBot(botSettings))
+    .withRule(slidingWindow(restrictiveRateLimitSettings));
+}
+
+export function getRestrictiveAjForGuestUserToSignUp() {
+  return ajForAnonymousUser.withRule(
+    protectSignup({
+      email: emailSettings,
+      bots: botSettings,
+      rateLimit: restrictiveRateLimitSettings,
+    })
+  );
+}
+
+export function handleDeniedInServerAction(decision: ArcjetDecision) {
+  const searchParams = new URLSearchParams();
+
+  const message = decision.reason.isRateLimit()
+    ? 'Too many requests. Please try again later.'
+    : decision.reason.isBot()
+      ? 'Bot detected.'
+      : decision.reason.isEmail()
+        ? getEmailErrorMessage(decision.reason.emailTypes)
+        : 'Forbidden';
+
+  searchParams.set('message', message);
+  searchParams.set('callbackUrl', '/auth');
+
+  redirect(`error?${searchParams.toString()}`);
+}
+
+export function respondToDenial(decision: ArcjetDecision): NextResponse {
+  if (decision.reason.isRateLimit())
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429 }
+    );
+
+  if (decision.reason.isBot())
+    return NextResponse.json({ error: 'Bot detected.' }, { status: 403 });
+
+  if (decision.reason.isEmail()) {
+    const message = getEmailErrorMessage(decision.reason.emailTypes);
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  return aj
-    .withRule(detectBot(botSettings))
-    .withRule(slidingWindow(laxRateLimitSettings))
-    .protect(request, { userIdOrIp });
+  return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+}
+
+function getEmailErrorMessage(emailTypes: ArcjetEmailType[]): string {
+  if (emailTypes.includes('INVALID')) return 'Email address format is invalid';
+  if (emailTypes.includes('DISPOSABLE'))
+    return 'Disposable email addresses are not allowed';
+  if (emailTypes.includes('NO_MX_RECORDS')) return 'Email domain is not valid';
+  return 'Invalid email';
 }
