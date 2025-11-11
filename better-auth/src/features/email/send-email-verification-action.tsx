@@ -18,7 +18,7 @@ export async function sendEmailVerificationAction(email: string) {
     await getAjForEmailVerificationOrPasswordResetEmail().protect(
       await request(),
       {
-        email: `verify:${email}`,
+        emailId: `verify:${email}`,
         requested: 1,
       }
     );

@@ -8,6 +8,7 @@ import {
 } from '@arcjet/next';
 import { NextResponse } from 'next/server';
 
+import { ROUTES } from '@/features/shared/constants';
 import arcjet, {
   shield,
   type BotOptions,
@@ -87,18 +88,28 @@ export function getRestrictiveAjForGuestUserToSignUp() {
 }
 
 export function getAjForEmailVerificationOrPasswordResetEmail() {
-  return ajForAnonymousUser.withRule(detectBot(botSettings)).withRule(
+  return ajForAnonymousUser.withRule(
     tokenBucket({
       mode: 'LIVE',
-      capacity: 3,
+      capacity: 10,
       refillRate: 1,
       interval: '1h',
-      characteristics: ['email'],
+      // Why emailId?
+      // It keeps yelling 
+      /*
+       ✦Aj ERROR Failure running rule: RATE_LIMIT due to unable 
+       to generate fingerprint: error generating identifier - 
+       requested a user-defined `email` characteristic but the 
+       `email` value was empty */
+      characteristics: ['emailId'],
     })
   );
 }
 
-export function handleDeniedInServerAction(decision: ArcjetDecision) {
+export function handleDeniedInServerAction(
+  decision: ArcjetDecision,
+  callbackUrl?: string
+) {
   const searchParams = new URLSearchParams();
 
   const message = decision.reason.isRateLimit()
@@ -110,9 +121,12 @@ export function handleDeniedInServerAction(decision: ArcjetDecision) {
         : 'Forbidden';
 
   searchParams.set('message', message);
-  searchParams.set('callbackUrl', '/auth');
+  searchParams.set('callbackUrl', callbackUrl ?? '/auth');
 
-  redirect(`error?${searchParams.toString()}`, RedirectType.replace);
+  redirect(
+    `${ROUTES.error.href}?${searchParams.toString()}`,
+    RedirectType.replace
+  );
 }
 
 export function respondToDenial(decision: ArcjetDecision): NextResponse {
