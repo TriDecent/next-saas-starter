@@ -1,2 +1,1 @@
-export { SigninCard } from './SigninCard';
-export { SignupCard } from './SignupCard';
+export { AuthCardSelection } from './AuthCardSelection';

@@ -13,7 +13,7 @@ import arcjet, {
   type EmailOptions,
   type SlidingWindowRateLimitOptions,
 } from '@arcjet/next';
-import { redirect } from 'next/navigation';
+import { redirect, RedirectType } from 'next/navigation';
 
 // Authenticated users - track by userId only
 const ajForAuthenticatedUser = arcjet({
@@ -36,7 +36,7 @@ export const botSettings: BotOptions = {
 
 export const restrictiveRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
   mode: 'LIVE',
-  max: 5,
+  max: 10,
   interval: '10m',
 };
 
@@ -99,7 +99,7 @@ export function handleDeniedInServerAction(decision: ArcjetDecision) {
   searchParams.set('message', message);
   searchParams.set('callbackUrl', '/auth');
 
-  redirect(`error?${searchParams.toString()}`);
+  redirect(`error?${searchParams.toString()}`, RedirectType.replace);
 }
 
 export function respondToDenial(decision: ArcjetDecision): NextResponse {

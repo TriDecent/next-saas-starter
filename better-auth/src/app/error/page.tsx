@@ -1,5 +1,9 @@
 import { ErrorBlock } from '@/features/shared/components';
+import { ROUTES } from '@/features/shared/constants';
+import type { Metadata } from 'next';
 import z from 'zod';
+
+export const metadata: Metadata = ROUTES.error.metadata;
 
 export default async function ErrorPage({
   searchParams,
