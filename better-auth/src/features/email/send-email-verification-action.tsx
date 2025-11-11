@@ -1,16 +1,20 @@
 'use server';
 
-import {
-  getRestrictiveAjForAnonymousUser,
-  handleDeniedInServerAction,
-} from '@/lib';
+import { getAjForEmailVerification, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
-import { request, slidingWindow } from '@arcjet/next';
+import { request } from '@arcjet/next';
+import { headers } from 'next/headers';
 
 export async function sendEmailVerificationAction(email: string) {
-  const decision = await getRestrictiveAjForAnonymousUser()
-    .withRule(slidingWindow({ mode: 'LIVE', interval: '1h', max: 3 }))
-    .protect(await request());
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session)
+    throw new Error('Authenticated users cannot request email verification');
+
+  const decision = await getAjForEmailVerification().protect(await request(), {
+    email,
+    requested: 1,
+  });
 
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 

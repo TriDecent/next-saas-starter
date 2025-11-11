@@ -2,6 +2,7 @@ import {
   detectBot,
   protectSignup,
   slidingWindow,
+  tokenBucket,
   type ArcjetDecision,
   type ArcjetEmailType,
 } from '@arcjet/next';
@@ -81,6 +82,18 @@ export function getRestrictiveAjForGuestUserToSignUp() {
       email: emailSettings,
       bots: botSettings,
       rateLimit: restrictiveRateLimitSettings,
+    })
+  );
+}
+
+export function getAjForEmailVerification() {
+  return ajForAnonymousUser.withRule(detectBot(botSettings)).withRule(
+    tokenBucket({
+      mode: 'LIVE',
+      capacity: 3,
+      refillRate: 1,
+      interval: '1h',
+      characteristics: ['email'],
     })
   );
 }
