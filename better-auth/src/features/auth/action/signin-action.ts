@@ -7,11 +7,9 @@ import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { z } from 'zod';
+import { credentialsSchema } from './credentials-schema';
 
-const signinSchema = z.object({
-  email: z.email(),
-  password: z.string().min(6),
-});
+const signinSchema = credentialsSchema.pick({ email: true, password: true });
 
 type Signin = z.infer<typeof signinSchema>;
 type SigninInput = Partial<Signin>;

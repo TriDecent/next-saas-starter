@@ -86,7 +86,7 @@ export function getRestrictiveAjForGuestUserToSignUp() {
   );
 }
 
-export function getAjForEmailVerification() {
+export function getAjForEmailVerificationOrPasswordResetEmail() {
   return ajForAnonymousUser.withRule(detectBot(botSettings)).withRule(
     tokenBucket({
       mode: 'LIVE',

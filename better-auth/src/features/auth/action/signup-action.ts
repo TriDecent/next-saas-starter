@@ -11,16 +11,15 @@ import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { z } from 'zod';
+import { credentialsSchema } from './credentials-schema';
 
-const signupSchema = z
-  .object({
-    name: z.string().min(3),
-    email: z.email(),
-    password: z.string().min(6),
+const signupSchema = credentialsSchema
+  .extend({
     confirmedPassword: z.string(),
   })
   .refine(data => data.password === data.confirmedPassword, {
     path: ['confirmedPassword'],
+    error: 'Password does not match',
   });
 
 type Signup = z.infer<typeof signupSchema>;

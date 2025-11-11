@@ -1,6 +1,9 @@
 'use server';
 
-import { getAjForEmailVerification, handleDeniedInServerAction } from '@/lib';
+import {
+  getAjForEmailVerificationOrPasswordResetEmail,
+  handleDeniedInServerAction,
+} from '@/lib';
 import { auth } from '@/lib/auth';
 import { request } from '@arcjet/next';
 import { headers } from 'next/headers';
@@ -11,10 +14,14 @@ export async function sendEmailVerificationAction(email: string) {
   if (!session)
     throw new Error('Authenticated users cannot request email verification');
 
-  const decision = await getAjForEmailVerification().protect(await request(), {
-    email,
-    requested: 1,
-  });
+  const decision =
+    await getAjForEmailVerificationOrPasswordResetEmail().protect(
+      await request(),
+      {
+        email: `verify:${email}`,
+        requested: 1,
+      }
+    );
 
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
