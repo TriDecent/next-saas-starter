@@ -70,10 +70,12 @@ function useSignupStatus() {
   const onFormError = useCallback((state: ErrorSignupResponse) => {
     const authError = state.payload.errors.auth;
     if (!authError) {
-      toast.error('Sign up failed');
+      toast.error('Sign up failed', {
+        description: 'An unexpected error occurred. Please try again.',
+      });
       return;
     }
-    toast.error(authError.message);
+    toast.error('Sign in failed', { description: authError.message });
   }, []);
 
   return {

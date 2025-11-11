@@ -96,7 +96,9 @@ function useFormStatus() {
   const dispatch = useAppDispatch();
 
   const onFormSuccess = useCallback(() => {
-    toast.success('Sign in successfully!');
+    toast.success('Sign in successfully!', {
+      description: 'You have been signed in and will be redirected shortly.',
+    });
     router.refresh();
   }, [router]);
 
@@ -104,7 +106,9 @@ function useFormStatus() {
     (state: ErrorSigninResponse) => {
       const authError = state.payload.errors.auth;
       if (!authError) {
-        toast.error('Sign up failed');
+        toast.error('Sign up failed', {
+          description: 'An unexpected error occurred during sign in.',
+        });
         return;
       }
       toast.error(authError.message);
