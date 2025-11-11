@@ -2,6 +2,7 @@
 
 import { ActionButton, Form, FormRow } from '@/features/shared/components';
 import {
+  Button,
   ButtonGroup,
   ButtonGroupSeparator,
   FieldGroup,
@@ -13,12 +14,14 @@ import { useAppDispatch } from '@/features/shared/hooks';
 import { authClient } from '@/lib/auth-client';
 import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
 import { uiActions } from '@/store';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useCallback } from 'react';
 import { FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
+import { ROUTES } from '../shared/constants';
 import { AuthCard } from './AuthCard';
 import {
   signinAction,
@@ -53,6 +56,12 @@ export function SigninCard() {
           </>
         }
       />
+
+      <Button variant={'link'} asChild className='mx-auto w-full underline'>
+        <Link href={ROUTES.auth.nested['reset-password'].href}>
+          Forgot your password?
+        </Link>
+      </Button>
     </AuthCard>
   );
 }

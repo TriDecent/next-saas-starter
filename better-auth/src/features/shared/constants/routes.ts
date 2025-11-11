@@ -73,6 +73,15 @@ export const ROUTES = {
         follow: true,
       },
     },
+    nested: {
+      ['reset-password']: defineRoute({
+        href: '/auth/reset-password',
+        metadata: {
+          title: 'Reset my password',
+          description: 'Reset your password to regain access to your account.',
+        },
+      }),
+    },
   }),
   error: defineRoute({
     href: '/error',
@@ -83,6 +92,22 @@ export const ROUTES = {
         title: `Error | ${APP_NAME}`,
         description: 'Something went wrong',
         url: `${BASE_URL}/error`,
+      },
+      robots: {
+        index: false,
+        follow: false,
+      },
+    },
+  }),
+  ['not-found']: defineRoute({
+    href: '/not-found',
+    metadata: {
+      title: 'Page Not Found',
+      description:
+        'The page you are looking for does not exist or has been moved.',
+      openGraph: {
+        title: `404 - Page Not Found | ${APP_NAME}`,
+        description: 'The page you are looking for could not be found.',
       },
       robots: {
         index: false,
