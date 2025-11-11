@@ -10,7 +10,6 @@ import {
 } from '@/features/shared/components/ui';
 import { ROUTES } from '@/features/shared/constants';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
@@ -20,7 +19,6 @@ import {
   resetPasswordAction,
   type ErrorResetPasswordResponse,
   type ResetPasswordResponse,
-  type SuccessResetPasswordResponse,
 } from './reset-password-action';
 
 export function ResetPasswordCard() {
@@ -50,7 +48,7 @@ export function ResetPasswordCard() {
         }
       />
 
-      <div className='text-muted-foreground flex flex-col items-center gap-2 text-sm'>
+      <div className='text-muted-foreground flex flex-col items-center gap-2 text-sm md:flex-row md:justify-end'>
         <p>Remember your password?</p>
         <Button variant={'link'} asChild className='underline'>
           <Link href={ROUTES.auth.href}>Back to Sign In</Link>
@@ -61,20 +59,15 @@ export function ResetPasswordCard() {
 }
 
 function useFormStatus() {
-  const router = useRouter();
-
-  const onFormSuccess = useCallback((state: SuccessResetPasswordResponse) => {
+  const onFormSuccess = useCallback(() => {
     toast.success('Password reset link sent!', {
       description: 'Check your email for instructions to reset your password.',
     });
-
-    // Optionally redirect after success
-    // router.push(ROUTES.auth.href);
   }, []);
 
   const onFormError = useCallback((state: ErrorResetPasswordResponse) => {
     toast.error('Failed to send reset link', {
-      description: state.payload.errors?.unexpected || 'Please try again.',
+      description: state.payload?.errors?.unexpected || 'Please try again.',
     });
   }, []);
 

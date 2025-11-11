@@ -1,15 +1,26 @@
 'use server';
-import type { ActionResponse } from '@/features/shared/types';
 
-// TODO: Replace with actual action
-type ResetPasswordInput = {
-  email: string | null;
-};
+import { ROUTES } from '@/features/shared/constants';
+import type { ActionResponse } from '@/features/shared/types';
+import {
+  getAjForEmailVerificationOrPasswordResetEmail,
+  handleDeniedInServerAction,
+} from '@/lib';
+import { auth } from '@/lib/auth';
+import { request } from '@arcjet/next';
+import { APIError } from 'better-auth';
+import z from 'zod';
+import { credentialsSchema } from '../action/credentials-schema';
+
+const resetPasswordSchema = credentialsSchema.pick({ email: true });
+
+type ResetPasswordInput = Partial<z.infer<typeof resetPasswordSchema>>;
 
 type ResetPasswordError = Partial<
   Record<keyof ResetPasswordInput, string[]>
 > & {
   unexpected?: string;
+  auth?: string;
 };
 
 export type ResetPasswordResponse = ActionResponse<
@@ -17,9 +28,8 @@ export type ResetPasswordResponse = ActionResponse<
   ResetPasswordError
 >;
 
-export type ErrorResetPasswordResponse = Extract<
-  ResetPasswordResponse,
-  { type: 'error' }
+export type ErrorResetPasswordResponse = Partial<
+  Extract<ResetPasswordResponse, { type: 'error' }>
 >;
 
 export type SuccessResetPasswordResponse = Extract<
@@ -27,18 +37,57 @@ export type SuccessResetPasswordResponse = Extract<
   { type: 'success' }
 >;
 
-// TODO: Implement actual server action
 export async function resetPasswordAction(
   state: ResetPasswordResponse,
   formData: FormData
 ): Promise<ResetPasswordResponse> {
-  'use server';
+  const input = Object.fromEntries(formData.entries());
+  const parsedResult = resetPasswordSchema.safeParse(input);
 
-  // Placeholder - replace with your actual logic
-  const email = formData.get('email') as string;
+  if (!parsedResult.success)
+    return {
+      type: 'error',
+      payload: {
+        userEntered: input,
+        errors: z.flattenError(parsedResult.error).fieldErrors,
+      },
+    };
 
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  const emailForPasswordReset = parsedResult.data.email;
+
+  const decision =
+    await getAjForEmailVerificationOrPasswordResetEmail().protect(
+      await request(),
+      { emailId: `${emailForPasswordReset}`, requested: 1 }
+    );
+
+  if (decision.isDenied())
+    handleDeniedInServerAction(
+      decision,
+      ROUTES.auth.nested['reset-password'].href
+    );
+
+  try {
+    await auth.api.requestPasswordReset({
+      body: {
+        email: emailForPasswordReset,
+        redirectTo: ROUTES.auth.nested['reset-password'].href,
+      },
+    });
+  } catch (error) {
+    return {
+      type: 'error',
+      payload: {
+        userEntered: parsedResult.data,
+        errors: {
+          auth:
+            error instanceof APIError || error instanceof Error
+              ? error.message
+              : 'Unknown error',
+        },
+      },
+    };
+  }
 
   return {
     type: 'success',
