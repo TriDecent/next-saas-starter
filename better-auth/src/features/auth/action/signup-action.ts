@@ -1,7 +1,13 @@
 'use server';
 
 import type { ActionResponse } from '@/features/shared/types';
+import {
+  getLaxAjForAnonymousUser,
+  getRestrictiveAjForGuestUserToSignUp,
+  handleDeniedInServerAction,
+} from '@/lib';
 import { auth } from '@/lib/auth';
+import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { z } from 'zod';
@@ -52,6 +58,11 @@ export async function signupAction(
   state: SignupResponse,
   formData: FormData
 ): Promise<SignupResponse> {
+  const req = await request();
+  const decision = await getLaxAjForAnonymousUser().protect(req);
+
+  if (decision.isDenied()) handleDeniedInServerAction(decision);
+
   const input = Object.fromEntries(formData.entries());
 
   const parsedResult = signupSchema.safeParse(input);
@@ -67,6 +78,15 @@ export async function signupAction(
   }
 
   const signupCredentials = parsedResult.data;
+
+  const signupDecision = await getRestrictiveAjForGuestUserToSignUp().protect(
+    req,
+    {
+      email: signupCredentials.email,
+    }
+  );
+
+  if (signupDecision.isDenied()) handleDeniedInServerAction(signupDecision);
 
   try {
     const signUpResult = await auth.api.signUpEmail({
