@@ -24,7 +24,10 @@ export type SigninResponse =
       ? U & {
           payload: {
             errors: {
-              auth?: { status: 'EMAIL_NOT_VERIFIED'; message: string };
+              auth?: {
+                status: 'EMAIL_NOT_VERIFIED' | 'OTHERS';
+                message: string;
+              };
             };
           };
         }
@@ -77,13 +80,22 @@ export async function signinAction(
       },
     };
   } catch (error) {
-    if (error instanceof APIError)
+    if (!(error instanceof APIError))
+      return {
+        type: 'error',
+        payload: {
+          userEntered: signinCredentials,
+          errors: { unexpected: (error as Error)?.message },
+        },
+      };
+
+    if (error.status !== 'FORBIDDEN' && error.statusCode !== 403)
       return {
         type: 'error',
         payload: {
           userEntered: signinCredentials,
           errors: {
-            auth: { status: 'EMAIL_NOT_VERIFIED', message: error.message },
+            auth: { status: 'OTHERS', message: error.message },
           },
         },
       };
@@ -92,7 +104,9 @@ export async function signinAction(
       type: 'error',
       payload: {
         userEntered: signinCredentials,
-        errors: { unexpected: (error as Error)?.message },
+        errors: {
+          auth: { status: 'EMAIL_NOT_VERIFIED', message: error.message },
+        },
       },
     };
   }

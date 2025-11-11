@@ -15,7 +15,6 @@ import { FaUser, FaUserPlus } from 'react-icons/fa6';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
-import { EmailVerificationCard } from '../email';
 import { AuthCard } from './AuthCard';
 import {
   signupAction,
@@ -58,7 +57,12 @@ function useSignupStatus() {
 
   const onFormSuccess = useCallback(
     (state: SuccessSignupResponse) => {
-      dispatch(uiActions.toggleEmailVerification(state.payload.success.user));
+      dispatch(
+        uiActions.toggleEmailVerification({
+          name: state.payload.success.user.name,
+          email: state.payload.success.user.email,
+        })
+      );
     },
     [dispatch]
   );
