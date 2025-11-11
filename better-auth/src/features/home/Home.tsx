@@ -1,22 +1,20 @@
-'use client';
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
 
-import { authClient } from '@/lib/auth-client';
-import { LoaderPinwheelIcon } from 'lucide-react';
+import { ActionButton } from '@/features/shared/components';
+import { Button } from '@/features/shared/components/ui';
 import Link from 'next/link';
-import { ActionButton } from '../shared/components';
-import { Button } from '../shared/components/ui';
 
-export function Home() {
-  const { data, isPending } = authClient.useSession();
+export async function Home() {
+  const session = await auth.api.getSession({ headers: await headers() });
 
-  return isPending ? (
-    <LoaderPinwheelIcon className='w-24 animate-spin' />
-  ) : data?.session ? (
+  return session ? (
     <div className='flex flex-col items-center gap-y-4'>
-      <p>You are signed in as {data.user.name}</p>
+      <p>You are signed in as {session.user.name}</p>
       <ActionButton
         action={async () => {
-          await authClient.signOut();
+          'use server';
+          await auth.api.signOut({ headers: await headers() });
         }}
         variant={'outline'}
         size={'lg'}
