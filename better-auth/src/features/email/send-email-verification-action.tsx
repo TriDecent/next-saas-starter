@@ -11,7 +11,7 @@ import { headers } from 'next/headers';
 export async function sendEmailVerificationAction(email: string) {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  if (!session)
+  if (session)
     throw new Error('Authenticated users cannot request email verification');
 
   const decision =

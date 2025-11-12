@@ -14,13 +14,11 @@ import {
 interface PasswordResetTemplateProps {
   userName?: string;
   resetUrl: string;
-  expiresIn?: string;
 }
 
 export function PasswordResetTemplate({
   userName,
   resetUrl,
-  expiresIn,
 }: PasswordResetTemplateProps) {
   return (
     <Html>
@@ -60,8 +58,8 @@ export function PasswordResetTemplate({
                     Time Sensitive
                   </Text>
                   <Text className='m-0 text-red-900'>
-                    This password reset link will expire in {expiresIn}.
-                    You&apos;ll need to request a new one after that.
+                    This password reset link will expire soon. You&apos;ll need
+                    to request a new one after that.
                   </Text>
                 </div>
               </div>

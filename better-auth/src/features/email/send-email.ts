@@ -3,13 +3,13 @@
 import { Resend, type CreateEmailOptions } from 'resend';
 import { EmailVerificationTemplate } from './EmailVerificationTemplate';
 import { PasswordResetTemplate } from './PasswordResetTemplate';
+import { WelcomeTemplate } from './WelcomeTemplate';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 type EmailSendingOptions = Readonly<{
   to: string;
   userName: string;
-  expireIn: string;
 }>;
 
 export async function sendPasswordResetEmail(
@@ -29,6 +29,14 @@ export async function sendEmailVerification(
     [payload.to],
     'Email Verification',
     EmailVerificationTemplate(payload)
+  );
+}
+
+export async function sendWelcomeEmail(payload: EmailSendingOptions) {
+  return sendEmail(
+    [payload.to],
+    'Welcome to Auth Demo',
+    WelcomeTemplate(payload)
   );
 }
 

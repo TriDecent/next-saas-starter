@@ -14,13 +14,11 @@ import {
 interface EmailVerificationTemplateProps {
   userName?: string;
   verificationUrl: string;
-  expiresIn?: string;
 }
 
 export function EmailVerificationTemplate({
   userName,
   verificationUrl,
-  expiresIn,
 }: EmailVerificationTemplateProps) {
   return (
     <Html>
@@ -53,8 +51,8 @@ export function EmailVerificationTemplate({
                 <div>
                   <Text className='m-0 font-semibold'>Act quickly</Text>
                   <Text className='m-0 text-gray-700'>
-                    This verification link will expire in {expiresIn}. After
-                    that, you&apos;ll need to request a new one.
+                    This verification link will expire soon. After that,
+                    you&apos;ll need to request a new one.
                   </Text>
                 </div>
               </div>
