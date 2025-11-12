@@ -1,9 +1,9 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
-import { ActionButton } from '@/features/shared/components';
 import { Button } from '@/features/shared/components/ui';
 import Link from 'next/link';
+import { SignOutButton } from './SignOutButton';
 
 export async function Home() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -11,16 +11,19 @@ export async function Home() {
   return session ? (
     <div className='flex flex-col items-center gap-y-4'>
       <p>You are signed in as {session.user.name}</p>
-      <ActionButton
+      {/*  IdkW this doesn't work as expected */}
+      {/* <ActionButton
         action={async () => {
           'use server';
           await auth.api.signOut({ headers: await headers() });
+          refresh();
         }}
         variant={'outline'}
         size={'lg'}
       >
         Sign Out
-      </ActionButton>
+      </ActionButton> */}
+      <SignOutButton />
     </div>
   ) : (
     <Button asChild variant={'outline'} size={'lg'}>
