@@ -17,39 +17,41 @@ import arcjet, {
 } from '@arcjet/next';
 import { redirect, RedirectType } from 'next/navigation';
 
+const arcjetMode = process.env.NODE_ENV === 'development' ? 'DRY_RUN' : 'LIVE';
+
 // Authenticated users - track by userId only
 const ajForAuthenticatedUser = arcjet({
   key: process.env.ARCJET_KEY!,
-  characteristics: ['userId'],
-  rules: [shield({ mode: 'LIVE' })],
+  characteristics: ['userId', 'action'],
+  rules: [shield({ mode: arcjetMode })],
 });
 
 // Anonymous users - track by IP only
 const ajForAnonymousUser = arcjet({
   key: process.env.ARCJET_KEY!,
-  characteristics: ['ip.src'], // by default, not needed
-  rules: [shield({ mode: 'LIVE' })],
+  characteristics: ['ip.src', 'action'],
+  rules: [shield({ mode: arcjetMode })],
 });
 
 export const botSettings: BotOptions = {
-  mode: 'LIVE',
+  mode: arcjetMode,
   allow: [],
 };
 
 export const restrictiveRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
-  mode: 'LIVE',
+  mode: arcjetMode,
   max: 10,
   interval: '10m',
 };
 
 export const laxRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
-  mode: 'LIVE',
+  mode: arcjetMode,
   max: 30,
   interval: '1m',
 };
 
 export const emailSettings: EmailOptions = {
-  mode: 'LIVE',
+  mode: arcjetMode,
   deny: ['DISPOSABLE', 'INVALID', 'NO_MX_RECORDS'],
 };
 
@@ -88,14 +90,14 @@ export function getRestrictiveAjForGuestUserToSignUp() {
 }
 
 export function getAjForEmailVerificationOrPasswordResetEmail() {
-  return ajForAnonymousUser.withRule(
+  return ajForAnonymousUser.withRule(detectBot(botSettings)).withRule(
     tokenBucket({
       mode: 'LIVE',
-      capacity: 10,
+      capacity: 3,
       refillRate: 1,
       interval: '1h',
       // Why emailId?
-      // It keeps yelling 
+      // It keeps yelling
       /*
        ✦Aj ERROR Failure running rule: RATE_LIMIT due to unable 
        to generate fingerprint: error generating identifier - 

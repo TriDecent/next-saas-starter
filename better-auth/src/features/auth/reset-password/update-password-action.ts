@@ -2,6 +2,7 @@
 
 import type { ActionResponse } from '@/features/shared/types';
 import {
+  getLaxAjForAnonymousUser,
   getRestrictiveAjForAnonymousUser,
   handleDeniedInServerAction,
 } from '@/lib';
@@ -51,6 +52,13 @@ export async function updatePasswordAction(
   state: UpdatePasswordResponse,
   formData: FormData
 ): Promise<UpdatePasswordResponse> {
+  const req = await request();
+  const inputDecision = await getLaxAjForAnonymousUser().protect(req, {
+    action: 'sa-update-password-input-check',
+  });
+
+  if (inputDecision.isDenied()) handleDeniedInServerAction(inputDecision);
+
   const input = Object.fromEntries(formData.entries());
   const parsedResult = updatePasswordSchema.safeParse(input);
 
@@ -62,11 +70,11 @@ export async function updatePasswordAction(
         errors: z.flattenError(parsedResult.error).fieldErrors,
       },
     };
-  const decision = await getRestrictiveAjForAnonymousUser().protect(
-    await request()
-  );
+  const updatePasswordDecision = await getRestrictiveAjForAnonymousUser().protect(req, {
+    action: 'sa-update-password',
+  });
 
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (updatePasswordDecision.isDenied()) handleDeniedInServerAction(inputDecision);
 
   const { token, password } = parsedResult.data;
 

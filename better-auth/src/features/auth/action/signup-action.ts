@@ -58,7 +58,9 @@ export async function signupAction(
   formData: FormData
 ): Promise<SignupResponse> {
   const req = await request();
-  const decision = await getLaxAjForAnonymousUser().protect(req);
+  const decision = await getLaxAjForAnonymousUser().protect(req, {
+    action: 'sa-signup-input-check',
+  });
 
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
@@ -81,6 +83,7 @@ export async function signupAction(
   const signupDecision = await getRestrictiveAjForGuestUserToSignUp().protect(
     req,
     {
+      action: 'sa-signup',
       email: signupCredentials.email,
     }
   );

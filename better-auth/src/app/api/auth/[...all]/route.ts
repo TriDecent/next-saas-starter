@@ -27,13 +27,16 @@ export async function checkFromRequest(
 
   if (session)
     return getLaxAjForAuthenticatedUser().protect(request, {
+      action: 'api-authenticated-auth-interaction',
       userId: session.user.id,
     });
 
   if (request.url.endsWith('/auth/sign-up'))
     return checkSignupRouteForAnonymousUser(request);
 
-  return getLaxAjForAnonymousUser().protect(request);
+  return getLaxAjForAnonymousUser().protect(request, {
+    action: 'api-anonymous-auth-interaction',
+  });
 }
 
 async function checkSignupRouteForAnonymousUser(
@@ -51,8 +54,11 @@ async function checkSignupRouteForAnonymousUser(
     typeof body.email === 'string'
   )
     return getRestrictiveAjForGuestUserToSignUp().protect(request, {
+      action: 'api-signup',
       email: body.email,
     });
 
-  return getRestrictiveAjForAnonymousUser().protect(request);
+  return getRestrictiveAjForAnonymousUser().protect(request, {
+    action: 'api-signup-no-email-in-body',
+  });
 }

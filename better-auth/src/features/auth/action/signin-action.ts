@@ -41,7 +41,9 @@ export async function signinAction(
   state: SigninResponse,
   formData: FormData
 ): Promise<SigninResponse> {
-  const decision = await getLaxAjForAnonymousUser().protect(await request());
+  const decision = await getLaxAjForAnonymousUser().protect(await request(), {
+    action: 'sa-sign-in-input-check',
+  });
 
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 

@@ -4,6 +4,7 @@ import { ROUTES } from '@/features/shared/constants';
 import type { ActionResponse } from '@/features/shared/types';
 import {
   getAjForEmailVerificationOrPasswordResetEmail,
+  getLaxAjForAnonymousUser,
   handleDeniedInServerAction,
 } from '@/lib';
 import { auth } from '@/lib/auth';
@@ -41,6 +42,13 @@ export async function resetPasswordAction(
   state: ResetPasswordResponse,
   formData: FormData
 ): Promise<ResetPasswordResponse> {
+  const req = await request();
+  const inputDecision = await getLaxAjForAnonymousUser().protect(req, {
+    action: 'sa-reset-password-input-check',
+  });
+
+  if (inputDecision.isDenied()) handleDeniedInServerAction(inputDecision);
+
   const input = Object.fromEntries(formData.entries());
   const parsedResult = resetPasswordSchema.safeParse(input);
 
@@ -55,15 +63,16 @@ export async function resetPasswordAction(
 
   const emailForPasswordReset = parsedResult.data.email;
 
-  const decision =
-    await getAjForEmailVerificationOrPasswordResetEmail().protect(
-      await request(),
-      { emailId: `${emailForPasswordReset}`, requested: 1 }
-    );
+  const resetPasswordDecision =
+    await getAjForEmailVerificationOrPasswordResetEmail().protect(req, {
+      action: 'sa-reset-password',
+      emailId: `${emailForPasswordReset}`,
+      requested: 1,
+    });
 
-  if (decision.isDenied())
+  if (resetPasswordDecision.isDenied())
     handleDeniedInServerAction(
-      decision,
+      resetPasswordDecision,
       ROUTES.auth.nested['reset-password'].href
     );
 
