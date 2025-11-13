@@ -1,9 +1,12 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
-import { Button } from '@/features/shared/components/ui';
+import { Button, ButtonGroup } from '@/features/shared/components/ui';
+import { ROUTES } from '@/features/shared/constants';
 import Link from 'next/link';
 import { SignOutButton } from './SignOutButton';
+
+import { CgProfile } from 'react-icons/cg';
 
 export async function Home() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -23,7 +26,15 @@ export async function Home() {
       >
         Sign Out
       </ActionButton> */}
-      <SignOutButton />
+      <ButtonGroup>
+        <Button variant={'outline'} size={'lg'} asChild>
+          <Link href={ROUTES.profile.href}>
+            <CgProfile />
+            Profile
+          </Link>
+        </Button>
+        <SignOutButton />
+      </ButtonGroup>
     </div>
   ) : (
     <Button asChild variant={'outline'} size={'lg'}>
