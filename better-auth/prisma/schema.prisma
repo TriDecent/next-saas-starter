@@ -19,7 +19,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  welcomeSent Boolean @default(false) @map("welcome_sent")
+  welcomeSent Boolean @map("welcome_sent")
 
   @@unique([email])
   @@map("users")

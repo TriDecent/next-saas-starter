@@ -19,3 +19,6 @@ export const SUPPORTED_OAUTH_PROVIDERS: OAuthProvider[] = [
   { name: 'facebook', icon: FaFacebook },
   { name: 'apple', icon: FaApple },
 ] as const;
+
+export const SUPPORTED_OAUTH_PROVIDERS_MAPPING: Map<string, OAuthProvider> =
+  new Map(SUPPORTED_OAUTH_PROVIDERS.map(provider => [provider.name, provider]));

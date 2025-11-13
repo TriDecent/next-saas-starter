@@ -9,8 +9,8 @@ interface PageLayoutProps {
 }
 
 export const PageLayout = ({ children, className }: PageLayoutProps) => (
-  <div className={cn('bg-background flex min-h-screen flex-col', className)}>
-    <div className='absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] bg-size-[24px_24px]' />
+  <div className={cn('bg-background relative flex flex-col', className)}>
+    <div className='absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_180%)] bg-size-[24px_24px]' />
     <div className='relative flex min-h-screen flex-col'>{children}</div>
   </div>
 );

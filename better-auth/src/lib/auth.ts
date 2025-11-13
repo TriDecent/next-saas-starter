@@ -54,13 +54,7 @@ export const auth = betterAuth({
   },
   hooks: {
     after: createAuthMiddleware(async ctx => {
-      if (
-        !ctx.context.newSession ||
-        // This 'welcomeSent' check is unreliable due to the 5-min session cache
-        ctx.context.newSession.user.welcomeSent ||
-        ctx.path.endsWith('/verify-email')
-      )
-        return;
+      if (!ctx.context.newSession) return;
 
       try {
         const { email, name, id } = ctx.context.newSession.user;

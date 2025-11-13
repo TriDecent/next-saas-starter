@@ -83,6 +83,13 @@ export const ROUTES = {
       }),
     },
   }),
+  profile: defineRoute({
+    href: '/profile',
+    metadata: {
+      description:
+        'View and manage your user profile, update personal information, and review account settings.',
+    },
+  }),
   error: defineRoute({
     href: '/error',
     metadata: {
