@@ -13,19 +13,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Item,
-  ItemContent,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
   Separator,
 } from '@/features/shared/components/ui';
 import type { Account } from '@/generated/prisma/client';
-import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib';
 import type { User } from 'better-auth/types';
 import { format } from 'date-fns';
 import { MailCheck, ShieldAlert } from 'lucide-react';
-import { GoUnverified, GoVerified } from 'react-icons/go';
+import { ConnectedAccounts } from './ConnectedAccounts';
 
 type ProfileCardProps = {
   user: User;
@@ -57,7 +51,7 @@ export function ProfileCard({ user, accounts }: ProfileCardProps) {
 
       <Separator />
 
-      <CardFooter className='text-muted-foreground justify-center text-sm'>
+      <CardFooter className='text-muted-foreground justify-center text-xs'>
         Click on a provider above to connect your account to social platforms.
       </CardFooter>
     </Card>
@@ -115,55 +109,4 @@ function Details({
       </div>
     </div>
   );
-}
-
-function ConnectedAccounts({ accounts }: Pick<ProfileCardProps, 'accounts'>) {
-  return accounts && accounts.length > 0 ? (
-    <div className='space-y-2.5'>
-      <h3 className='mb-2 text-sm font-medium text-gray-500'>
-        Connected Accounts
-      </h3>
-      <ItemGroup className='space-y-4'>
-        {SUPPORTED_OAUTH_PROVIDERS.map(supportedProvider => {
-          const isConnected = accounts.some(
-            account => account.providerId === supportedProvider.name
-          );
-
-          return (
-            <Item
-              key={supportedProvider.name}
-              variant='outline'
-              size='sm'
-              asChild
-              className='transition-transform hover:scale-105 hover:cursor-pointer active:scale-105'
-            >
-              <button>
-                <ItemMedia variant='icon'>
-                  <supportedProvider.icon />
-                </ItemMedia>
-
-                <ItemContent>
-                  <ItemTitle className='capitalize'>
-                    {supportedProvider.name}
-                  </ItemTitle>
-                </ItemContent>
-
-                {isConnected ? (
-                  <Badge variant={'success'} className='w-30 text-sm'>
-                    <GoVerified />
-                    Connected
-                  </Badge>
-                ) : (
-                  <Badge variant='destructive' className='w-30 text-sm'>
-                    <GoUnverified size={'16'} />
-                    Unconnected
-                  </Badge>
-                )}
-              </button>
-            </Item>
-          );
-        })}
-      </ItemGroup>
-    </div>
-  ) : null;
 }

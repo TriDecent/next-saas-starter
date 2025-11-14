@@ -1,4 +1,3 @@
-import type { ComponentType } from 'react';
 import {
   FaApple,
   FaDiscord,
@@ -7,12 +6,7 @@ import {
   FaGoogle,
 } from 'react-icons/fa6';
 
-type OAuthProvider = Readonly<{
-  name: string;
-  icon: ComponentType;
-}>;
-
-export const SUPPORTED_OAUTH_PROVIDERS: OAuthProvider[] = [
+export const SUPPORTED_OAUTH_PROVIDERS = [
   { name: 'github', icon: FaGithub },
   { name: 'discord', icon: FaDiscord },
   { name: 'google', icon: FaGoogle },
@@ -20,5 +14,8 @@ export const SUPPORTED_OAUTH_PROVIDERS: OAuthProvider[] = [
   { name: 'apple', icon: FaApple },
 ] as const;
 
-export const SUPPORTED_OAUTH_PROVIDERS_MAPPING: Map<string, OAuthProvider> =
+export type OAuthProvider = (typeof SUPPORTED_OAUTH_PROVIDERS)[number];
+export type Provider = OAuthProvider['name'];
+
+export const SUPPORTED_OAUTH_PROVIDERS_MAPPING: Map<Provider, OAuthProvider> =
   new Map(SUPPORTED_OAUTH_PROVIDERS.map(provider => [provider.name, provider]));
