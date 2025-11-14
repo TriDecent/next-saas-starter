@@ -8,7 +8,7 @@ import {
 } from '@arcjet/next';
 import { NextResponse } from 'next/server';
 
-import { ROUTES } from '@/features/shared/constants';
+import { ROUTES } from '@/shared/constants';
 import arcjet, {
   shield,
   type BotOptions,

@@ -1,6 +1,6 @@
 import { Home } from '@/features/home';
-import { MiniLoader } from '@/features/shared/components';
-import { ROUTES } from '@/features/shared/constants';
+import { MiniLoader } from '@/shared/components';
+import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 

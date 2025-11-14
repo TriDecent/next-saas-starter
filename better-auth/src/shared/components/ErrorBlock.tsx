@@ -5,8 +5,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/features/shared/components/ui';
-import { Button } from '@/features/shared/components/ui/button';
+} from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/button';
 import { AlertCircle, LinkIcon } from 'lucide-react';
 import Link from 'next/link';
 

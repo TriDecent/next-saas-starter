@@ -1,5 +1,5 @@
 'use client';
-import { ActionButton } from '@/features/shared/components';
+import { ActionButton } from '@/shared/components';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { sendEmailVerificationAction } from './send-email-verification-action';

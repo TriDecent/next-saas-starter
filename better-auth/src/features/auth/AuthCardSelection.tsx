@@ -5,8 +5,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/features/shared/components/ui';
-import { useAppSelector } from '@/features/shared/hooks';
+} from '@/shared/components/ui';
+import { useAppSelector } from '@/shared/hooks';
 import { SigninCard } from './SigninCard';
 import { SignupCard } from './SignupCard';
 

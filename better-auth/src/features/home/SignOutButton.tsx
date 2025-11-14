@@ -1,7 +1,7 @@
 'use client';
 
-import { ActionButton } from '@/features/shared/components';
 import { authClient } from '@/lib/auth-client';
+import { ActionButton } from '@/shared/components';
 import { useRouter } from 'next/navigation';
 import { GoSignOut } from 'react-icons/go';
 

@@ -1,4 +1,4 @@
-import { cn } from '@/features/shared/utils';
+import { cn } from '@/shared/utils';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { FaFacebook, FaGithub, FaHeart } from 'react-icons/fa6';

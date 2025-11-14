@@ -1,12 +1,12 @@
 'use server';
 
-import type { ActionResponse } from '@/features/shared/types';
 import {
   ajLaxAnonymous,
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
 } from '@/lib';
 import { auth } from '@/lib/auth';
+import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';

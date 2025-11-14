@@ -6,8 +6,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/features/shared/components/ui';
-import { ROUTES } from '@/features/shared/constants';
+} from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FaLinkSlash } from 'react-icons/fa6';

@@ -1,6 +1,6 @@
 import { ResetPasswordCard } from '@/features/auth/reset-password';
 import { UpdatePasswordCard } from '@/features/auth/reset-password/UpdatePasswordCard';
-import { ROUTES } from '@/features/shared/constants';
+import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import z from 'zod';
 

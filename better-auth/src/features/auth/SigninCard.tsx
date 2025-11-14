@@ -1,6 +1,8 @@
 'use client';
 
-import { ActionButton, Form, FormRow } from '@/features/shared/components';
+import { authClient } from '@/lib/auth-client';
+import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
+import { ActionButton, Form, FormRow } from '@/shared/components';
 import {
   Button,
   ButtonGroup,
@@ -9,10 +11,8 @@ import {
   FieldLegend,
   FieldSet,
   InputGroupAddon,
-} from '@/features/shared/components/ui';
-import { useAppDispatch } from '@/features/shared/hooks';
-import { authClient } from '@/lib/auth-client';
-import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
+} from '@/shared/components/ui';
+import { useAppDispatch } from '@/shared/hooks';
 import { uiActions } from '@/store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -21,7 +21,7 @@ import { FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
-import { ROUTES } from '../shared/constants';
+import { ROUTES } from '../../shared/constants';
 import { AuthCard } from './AuthCard';
 import {
   signinAction,

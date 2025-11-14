@@ -1,5 +1,5 @@
-import { ErrorBlock } from '@/features/shared/components';
-import { ROUTES } from '@/features/shared/constants';
+import { ErrorBlock } from '@/shared/components';
+import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import z from 'zod';
 

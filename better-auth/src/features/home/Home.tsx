@@ -1,8 +1,8 @@
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
-import { Button, ButtonGroup } from '@/features/shared/components/ui';
-import { ROUTES } from '@/features/shared/constants';
+import { Button, ButtonGroup } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import { SignOutButton } from './SignOutButton';
 

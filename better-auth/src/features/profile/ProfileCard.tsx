@@ -1,4 +1,5 @@
 import { SignOutButton } from '@/features/home/SignOutButton';
+import type { Account } from '@/generated/prisma/client';
 import {
   Avatar,
   AvatarFallback,
@@ -14,8 +15,7 @@ import {
   CardHeader,
   CardTitle,
   Separator,
-} from '@/features/shared/components/ui';
-import type { Account } from '@/generated/prisma/client';
+} from '@/shared/components/ui';
 import type { User } from 'better-auth/types';
 import { format } from 'date-fns';
 import { MailCheck, ShieldAlert } from 'lucide-react';

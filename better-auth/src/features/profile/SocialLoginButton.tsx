@@ -1,8 +1,8 @@
 'use client';
 
-import { MiniLoader } from '@/features/shared/components';
 import type { Provider } from '@/lib';
 import { authClient } from '@/lib/auth-client';
+import { MiniLoader } from '@/shared/components';
 import { usePathname } from 'next/navigation';
 import { useTransition, type ComponentProps } from 'react';
 import { toast } from 'sonner';

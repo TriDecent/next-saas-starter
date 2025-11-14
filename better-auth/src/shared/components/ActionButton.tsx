@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/features/shared/components/ui';
+import { Button } from '@/shared/components/ui';
 import { useTransition, type ComponentProps } from 'react';
 import { MiniLoader } from './MiniLoading';
 

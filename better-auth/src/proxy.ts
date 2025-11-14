@@ -1,5 +1,5 @@
-import { ROUTES } from '@/features/shared/constants';
 import { auth } from '@/lib/auth';
+import { ROUTES } from '@/shared/constants';
 import type { NextRequest, ProxyConfig } from 'next/server';
 import { NextResponse } from 'next/server';
 

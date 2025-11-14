@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -11,7 +10,7 @@ import {
   ItemDescription,
   ItemMedia,
   ItemTitle,
-} from '@/features/shared/components/ui';
+} from '@/shared/components/ui';
 
 import { Clock, Mail, Shield } from 'lucide-react';
 import { SendVerificationEmail } from './SendVerificationEmail';
@@ -28,7 +27,7 @@ export function EmailVerificationCard({
   expiresIn,
 }: EmailVerificationTemplateProps) {
   return (
-    <Card className='max-w-2xl shadow-xl mx-auto'>
+    <Card className='mx-auto max-w-2xl shadow-xl'>
       <CardHeader className='space-y-4 pb-8 text-center'>
         <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-indigo-600'>
           <Mail className='h-8 w-8 text-white' />

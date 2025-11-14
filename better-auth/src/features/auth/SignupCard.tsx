@@ -1,14 +1,14 @@
 'use client';
 
-import { Form, FormRow } from '@/features/shared/components';
+import { Form, FormRow } from '@/shared/components';
 
 import {
   FieldGroup,
   FieldLegend,
   FieldSet,
   InputGroupAddon,
-} from '@/features/shared/components/ui';
-import { useAppDispatch } from '@/features/shared/hooks';
+} from '@/shared/components/ui';
+import { useAppDispatch } from '@/shared/hooks';
 import { uiActions } from '@/store';
 import { useCallback } from 'react';
 import { FaUser, FaUserPlus } from 'react-icons/fa6';

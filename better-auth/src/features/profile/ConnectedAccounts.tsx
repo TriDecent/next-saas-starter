@@ -1,4 +1,5 @@
 'use client';
+import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
 import {
   Badge,
   Item,
@@ -6,8 +7,7 @@ import {
   ItemGroup,
   ItemMedia,
   ItemTitle,
-} from '@/features/shared/components/ui';
-import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
+} from '@/shared/components/ui';
 import type { Account } from 'better-auth';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';

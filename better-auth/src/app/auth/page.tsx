@@ -1,5 +1,5 @@
 import { AuthCardSelection } from '@/features/auth';
-import { ROUTES } from '@/features/shared/constants';
+import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = ROUTES.auth.metadata;

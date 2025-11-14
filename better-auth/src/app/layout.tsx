@@ -1,13 +1,9 @@
 'use cache';
 
-import {
-  PageLayout,
-  ThemeProvider,
-  ThemeToggle,
-} from '@/features/shared/components';
-import { Toaster } from '@/features/shared/components/ui';
-import { ROUTES } from '@/features/shared/constants';
-import { StoreProvider } from '@/features/shared/provider';
+import { PageLayout, ThemeProvider, ThemeToggle } from '@/shared/components';
+import { Toaster } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
+import { StoreProvider } from '@/shared/provider';
 import type { Metadata } from 'next';
 import { cacheLife } from 'next/cache';
 import { Geist, Geist_Mono } from 'next/font/google';

@@ -1,6 +1,6 @@
 'use client';
 
-import { ErrorBlock } from '@/features/shared/components';
+import { ErrorBlock } from '@/shared/components';
 
 export default function RootError({
   error,

@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/features/shared/components/ui';
+} from '@/shared/components/ui';
 
 export function AuthCard({
   title,

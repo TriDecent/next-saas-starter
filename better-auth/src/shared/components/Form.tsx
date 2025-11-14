@@ -1,7 +1,7 @@
 'use client';
-import { useShakeError } from '@/features/shared/hooks';
-import type { ActionResponse } from '@/features/shared/types';
-import { cn } from '@/features/shared/utils';
+import { useShakeError } from '@/shared/hooks';
+import type { ActionResponse } from '@/shared/types';
+import { cn } from '@/shared/utils';
 import type { ClassValue } from 'clsx';
 import { LoaderPinwheelIcon } from 'lucide-react';
 import NextForm from 'next/form';

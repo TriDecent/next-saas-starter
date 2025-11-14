@@ -1,14 +1,14 @@
 'use client';
 
-import { Form, FormRow } from '@/features/shared/components';
+import { Form, FormRow } from '@/shared/components';
 import {
   Button,
   FieldGroup,
   FieldLegend,
   FieldSet,
   InputGroupAddon,
-} from '@/features/shared/components/ui';
-import { ROUTES } from '@/features/shared/constants';
+} from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import { useCallback } from 'react';
 import { MdEmail } from 'react-icons/md';
