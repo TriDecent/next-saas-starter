@@ -6,7 +6,6 @@ import {
 import { PrismaClient } from '@/generated/prisma/client';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { createAuthMiddleware } from 'better-auth/api';
 import { nextCookies } from 'better-auth/next-js';
 
 const prisma = new PrismaClient();
@@ -51,36 +50,46 @@ export const auth = betterAuth({
         verificationUrl: data.url,
       });
     },
-  },
-  hooks: {
-    after: createAuthMiddleware(async ctx => {
-      if (!ctx.context.newSession) return;
-
+    // Send welcome email for email logins:
+    afterEmailVerification: async user => {
       try {
-        const { email, name, id } = ctx.context.newSession.user;
-
-        // NOTE: The session is cached in cookies for 5 minutes (session.cookieCache).
-        // This means `ctx.context.newSession.user.welcomeSent` will be stale (false)
-        // on subsequent requests within that 5-minute window, even after the
-        // database is updated.
-        //
-        // The `where: { welcomeSent: false }` clause below acts as an atomic
-        // check. It ensures this update (and the subsequent email) only runs
-        // once by throwing an error if the flag is already `true`.
         await prisma.user.update({
-          where: { id, welcomeSent: false }, // this stop sending email
+          where: { id: user.id, welcomeSent: false }, // Prevents repeated emails on subsequent verifications
           data: { welcomeSent: true },
         });
 
-        await sendWelcomeEmail({ to: email, userName: name });
-      } catch {
+        await sendWelcomeEmail({ to: user.email, userName: user.name });
+      } catch (error) {
         // Non-fatal error, ignore.
         // This will catch errors from `prisma.user.update` if the user
         // record was not found (i.e., welcomeSent was already true).
+        // or from sendWelcomeEmail
+        console.log(error);
       }
-    }),
+    },
   },
   user: {
     additionalFields: { welcomeSent: { type: 'boolean', required: true } },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        // Send welcome email for social logins
+        after: async user => {
+          if (!user.emailVerified || user.welcomeSent) return;
+
+          try {
+            await prisma.user.update({
+              where: { id: user.id, welcomeSent: false }, // Prevents repeated emails on subsequent verifications
+              data: { welcomeSent: true },
+            });
+
+            await sendWelcomeEmail({ to: user.email, userName: user.name });
+          } catch (error) {
+            console.log(error);
+          }
+        },
+      },
+    },
   },
 });
