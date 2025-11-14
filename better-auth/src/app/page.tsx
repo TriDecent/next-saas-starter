@@ -1,6 +1,6 @@
 import { Home } from '@/features/home';
+import { MiniLoader } from '@/features/shared/components';
 import { ROUTES } from '@/features/shared/constants';
-import { LoaderPinwheelIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 
@@ -12,7 +12,7 @@ export default async function HomePage() {
       <h2 className='text-xl font-medium tracking-wider'>
         Welcome to Better Auth Demo
       </h2>
-      <Suspense fallback={<LoaderPinwheelIcon className='w-24 animate-spin' />}>
+      <Suspense fallback={<MiniLoader />}>
         <Home />
       </Suspense>
     </section>

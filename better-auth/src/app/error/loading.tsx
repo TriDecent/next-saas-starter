@@ -1,5 +1,5 @@
-import { LoaderPinwheel } from 'lucide-react';
+import { Loader } from '@/features/shared/components';
 
 export default function ErrorLoading() {
-  return <LoaderPinwheel className='anime-spin h-16' />;
+  return <Loader />;
 }

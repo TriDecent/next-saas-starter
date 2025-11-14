@@ -1,9 +1,5 @@
-import { LoaderPinwheel } from 'lucide-react';
+import { Loader } from '@/features/shared/components';
 
 export default function AuthLoading() {
-  return (
-    <div className='flex justify-center'>
-      <LoaderPinwheel className='animate-spin text-center h-8 w-8' />
-    </div>
-  );
+  return <Loader />;
 }

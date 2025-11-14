@@ -1,8 +1,8 @@
 'use client';
 
 import { Button } from '@/features/shared/components/ui';
-import { LoaderPinwheel } from 'lucide-react';
 import { useTransition, type ComponentProps } from 'react';
+import { MiniLoader } from './MiniLoading';
 
 type ActionButtonProps = {
   action: () => Promise<void>;
@@ -33,7 +33,7 @@ export function ActionButton({
         })
       }
     >
-      {isPending ? <LoaderPinwheel className='animate-spin' /> : props.children}
+      {isPending ? <MiniLoader /> : props.children}
     </Button>
   );
 }

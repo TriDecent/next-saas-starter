@@ -1,9 +1,5 @@
-import { LoaderPinwheel } from 'lucide-react';
+import { Loader } from '@/features/shared/components';
 
 export default function ProfileLoading() {
-  return (
-    <div className='flex justify-center'>
-      <LoaderPinwheel className='h-8 w-8 animate-spin text-center' />
-    </div>
-  );
+  return <Loader />;
 }

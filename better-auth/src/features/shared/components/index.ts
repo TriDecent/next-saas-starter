@@ -2,6 +2,8 @@ export { ActionButton } from './ActionButton';
 export { ErrorBlock } from './ErrorBlock';
 export { Form } from './Form';
 export { FormRow } from './FormRow';
+export { Loader } from './Loading';
+export { MiniLoader } from './MiniLoading';
 export { PageLayout } from './PageLayout';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';

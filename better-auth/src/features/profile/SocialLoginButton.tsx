@@ -1,8 +1,8 @@
 'use client';
 
+import { MiniLoader } from '@/features/shared/components';
 import type { Provider } from '@/lib';
 import { authClient } from '@/lib/auth-client';
-import { LoaderPinwheel } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useTransition, type ComponentProps } from 'react';
 import { toast } from 'sonner';
@@ -39,11 +39,7 @@ export function SocialLoginButton({
       disabled={isPending ?? props.disabled}
       {...props}
     >
-      {!isPending ? (
-        props.children
-      ) : (
-        <LoaderPinwheel className='mx-auto animate-spin' />
-      )}
+      {!isPending ? props.children : <MiniLoader />}
     </button>
   );
 }
