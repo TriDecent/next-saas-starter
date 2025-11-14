@@ -1,7 +1,7 @@
 'use server';
 
 import type { ActionResponse } from '@/features/shared/types';
-import { getLaxAjForAnonymousUser, handleDeniedInServerAction } from '@/lib';
+import { ajLaxAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
@@ -41,7 +41,7 @@ export async function signinAction(
   state: SigninResponse,
   formData: FormData
 ): Promise<SigninResponse> {
-  const decision = await getLaxAjForAnonymousUser().protect(await request(), {
+  const decision = await ajLaxAnonymous.protect(await request(), {
     action: 'sa-sign-in-input-check',
   });
 

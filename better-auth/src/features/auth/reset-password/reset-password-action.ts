@@ -2,11 +2,7 @@
 
 import { ROUTES } from '@/features/shared/constants';
 import type { ActionResponse } from '@/features/shared/types';
-import {
-  getAjForEmailVerificationOrPasswordResetEmail,
-  getLaxAjForAnonymousUser,
-  handleDeniedInServerAction,
-} from '@/lib';
+import { ajEmailSend, ajLaxAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
@@ -43,7 +39,7 @@ export async function resetPasswordAction(
   formData: FormData
 ): Promise<ResetPasswordResponse> {
   const req = await request();
-  const inputDecision = await getLaxAjForAnonymousUser().protect(req, {
+  const inputDecision = await ajLaxAnonymous.protect(req, {
     action: 'sa-reset-password-input-check',
   });
 
@@ -63,12 +59,11 @@ export async function resetPasswordAction(
 
   const emailForPasswordReset = parsedResult.data.email;
 
-  const resetPasswordDecision =
-    await getAjForEmailVerificationOrPasswordResetEmail().protect(req, {
-      action: 'sa-reset-password',
-      emailId: `${emailForPasswordReset}`,
-      requested: 1,
-    });
+  const resetPasswordDecision = await ajEmailSend.protect(req, {
+    action: 'sa-reset-password',
+    emailId: `${emailForPasswordReset}`,
+    requested: 1,
+  });
 
   if (resetPasswordDecision.isDenied())
     handleDeniedInServerAction(

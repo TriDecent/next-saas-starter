@@ -1,8 +1,8 @@
 import {
-  getLaxAjForAnonymousUser,
-  getLaxAjForAuthenticatedUser,
-  getRestrictiveAjForAnonymousUser,
-  getRestrictiveAjForGuestUserToSignUp,
+  ajLaxAnonymous,
+  ajLaxAuthenticated,
+  ajRestrictiveAnonymous,
+  ajSignup,
   respondToDenial,
 } from '@/lib';
 import { auth } from '@/lib/auth';
@@ -26,7 +26,7 @@ export async function checkFromRequest(
   const session = await auth.api.getSession({ headers: request.headers });
 
   if (session)
-    return getLaxAjForAuthenticatedUser().protect(request, {
+    return ajLaxAuthenticated.protect(request, {
       action: 'api-authenticated-auth-interaction',
       userId: session.user.id,
     });
@@ -34,7 +34,7 @@ export async function checkFromRequest(
   if (request.url.endsWith('/auth/sign-up'))
     return checkSignupRouteForAnonymousUser(request);
 
-  return getLaxAjForAnonymousUser().protect(request, {
+  return ajLaxAnonymous.protect(request, {
     action: 'api-anonymous-auth-interaction',
   });
 }
@@ -53,12 +53,12 @@ async function checkSignupRouteForAnonymousUser(
     'email' in body &&
     typeof body.email === 'string'
   )
-    return getRestrictiveAjForGuestUserToSignUp().protect(request, {
+    return ajSignup.protect(request, {
       action: 'api-signup',
       email: body.email,
     });
 
-  return getRestrictiveAjForAnonymousUser().protect(request, {
+  return ajRestrictiveAnonymous.protect(request, {
     action: 'api-signup-no-email-in-body',
   });
 }

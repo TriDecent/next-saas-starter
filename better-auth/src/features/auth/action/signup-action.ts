@@ -1,11 +1,7 @@
 'use server';
 
 import type { ActionResponse } from '@/features/shared/types';
-import {
-  getLaxAjForAnonymousUser,
-  getRestrictiveAjForGuestUserToSignUp,
-  handleDeniedInServerAction,
-} from '@/lib';
+import { ajLaxAnonymous, ajSignup, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
@@ -58,7 +54,7 @@ export async function signupAction(
   formData: FormData
 ): Promise<SignupResponse> {
   const req = await request();
-  const decision = await getLaxAjForAnonymousUser().protect(req, {
+  const decision = await ajLaxAnonymous.protect(req, {
     action: 'sa-signup-input-check',
   });
 
@@ -80,13 +76,10 @@ export async function signupAction(
 
   const signupCredentials = parsedResult.data;
 
-  const signupDecision = await getRestrictiveAjForGuestUserToSignUp().protect(
-    req,
-    {
-      action: 'sa-signup',
-      email: signupCredentials.email,
-    }
-  );
+  const signupDecision = await ajSignup.protect(req, {
+    action: 'sa-signup',
+    email: signupCredentials.email,
+  });
 
   if (signupDecision.isDenied()) handleDeniedInServerAction(signupDecision);
 

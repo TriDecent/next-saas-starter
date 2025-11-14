@@ -20,14 +20,14 @@ import { redirect, RedirectType } from 'next/navigation';
 const arcjetMode = process.env.NODE_ENV === 'development' ? 'DRY_RUN' : 'LIVE';
 
 // Authenticated users - track by userId only
-const ajForAuthenticatedUser = arcjet({
+const ajAuthenticated = arcjet({
   key: process.env.ARCJET_KEY!,
   characteristics: ['userId', 'action'],
   rules: [shield({ mode: arcjetMode })],
 });
 
 // Anonymous users - track by IP only
-const ajForAnonymousUser = arcjet({
+const ajAnonymous = arcjet({
   key: process.env.ARCJET_KEY!,
   characteristics: ['ip.src', 'action'],
   rules: [shield({ mode: arcjetMode })],
@@ -55,42 +55,33 @@ export const emailSettings: EmailOptions = {
   deny: ['DISPOSABLE', 'INVALID', 'NO_MX_RECORDS'],
 };
 
-export function getLaxAjForAuthenticatedUser() {
-  return ajForAuthenticatedUser
-    .withRule(detectBot(botSettings))
-    .withRule(slidingWindow(laxRateLimitSettings));
-}
+export const ajLaxAuthenticated = ajAuthenticated
+  .withRule(detectBot(botSettings))
+  .withRule(slidingWindow(laxRateLimitSettings));
 
-export function getRestrictiveAjForAuthenticatedUser() {
-  return ajForAuthenticatedUser
-    .withRule(detectBot(botSettings))
-    .withRule(slidingWindow(restrictiveRateLimitSettings));
-}
+export const ajRestrictiveAuthenticated = ajAuthenticated
+  .withRule(detectBot(botSettings))
+  .withRule(slidingWindow(restrictiveRateLimitSettings));
 
-export function getLaxAjForAnonymousUser() {
-  return ajForAnonymousUser
-    .withRule(detectBot(botSettings))
-    .withRule(slidingWindow(laxRateLimitSettings));
-}
+export const ajLaxAnonymous = ajAnonymous
+  .withRule(detectBot(botSettings))
+  .withRule(slidingWindow(laxRateLimitSettings));
 
-export function getRestrictiveAjForAnonymousUser() {
-  return ajForAnonymousUser
-    .withRule(detectBot(botSettings))
-    .withRule(slidingWindow(restrictiveRateLimitSettings));
-}
+export const ajRestrictiveAnonymous = ajAnonymous
+  .withRule(detectBot(botSettings))
+  .withRule(slidingWindow(restrictiveRateLimitSettings));
 
-export function getRestrictiveAjForGuestUserToSignUp() {
-  return ajForAnonymousUser.withRule(
-    protectSignup({
-      email: emailSettings,
-      bots: botSettings,
-      rateLimit: restrictiveRateLimitSettings,
-    })
-  );
-}
+export const ajSignup = ajAnonymous.withRule(
+  protectSignup({
+    email: emailSettings,
+    bots: botSettings,
+    rateLimit: restrictiveRateLimitSettings,
+  })
+);
 
-export function getAjForEmailVerificationOrPasswordResetEmail() {
-  return ajForAnonymousUser.withRule(detectBot(botSettings)).withRule(
+export const ajEmailSend = ajAnonymous
+  .withRule(detectBot(botSettings))
+  .withRule(
     tokenBucket({
       mode: 'LIVE',
       capacity: 3,
@@ -106,7 +97,6 @@ export function getAjForEmailVerificationOrPasswordResetEmail() {
       characteristics: ['emailId'],
     })
   );
-}
 
 export function handleDeniedInServerAction(
   decision: ArcjetDecision,
