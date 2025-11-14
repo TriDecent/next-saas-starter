@@ -73,10 +73,19 @@ function SocialProviders() {
         <Fragment key={provider.name}>
           <ActionButton
             action={async () => {
-              await authClient.signIn.social({
-                provider: provider.name,
-                callbackURL: '/',
-              });
+              await authClient.signIn.social(
+                {
+                  provider: provider.name,
+                  callbackURL: '/',
+                },
+                {
+                  onError: error => {
+                    toast.error(`Sign in failed!`, {
+                      description: `${error.error.message}`,
+                    });
+                  },
+                }
+              );
             }}
             className='flex-1'
           >

@@ -20,7 +20,7 @@ export function SocialLoginButton({
     <button
       onClick={() =>
         startTransition(async () => {
-          const { data } = await authClient.linkSocial(
+          await authClient.linkSocial(
             {
               provider,
               callbackURL: pathname,
@@ -34,7 +34,6 @@ export function SocialLoginButton({
               },
             }
           );
-          console.log(data);
         })
       }
       disabled={isPending ?? props.disabled}
