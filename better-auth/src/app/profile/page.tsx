@@ -1,13 +1,16 @@
 import { ProfileCard } from '@/features/profile';
-import { ROUTES } from '@/features/shared/constants';
 import { prisma } from '@/lib';
 import { auth } from '@/lib/auth';
-import { LoaderPinwheel } from 'lucide-react';
+import { MiniLoader } from '@/shared/components';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { CgProfile } from 'react-icons/cg';
+import { FaLink } from 'react-icons/fa6';
+import { IoKey, IoPerson, IoShield, IoTrashBin } from 'react-icons/io5';
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = await getSessionAndAccounts(await headers());
@@ -19,19 +22,44 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ProfilePage() {
-  const session = await getSessionAndAccounts(await headers());
-
   return (
     <section className='space-y-8'>
       <h2 className='flex items-center gap-2 text-2xl font-semibold tracking-wider'>
         <CgProfile className='text-primary text-3xl' />
         <span>My Profile</span>
       </h2>
-      <Suspense fallback={<LoaderPinwheel className='animate-spin' />}>
-        <ProfileCard {...session} />
-      </Suspense>
+
+      <Tabs defaultValue='profile' className='items-center gap-y-4'>
+        <TabsList className='w-full max-w-xl'>
+          <TabsTrigger value='profile'>
+            <IoPerson />
+          </TabsTrigger>
+          <TabsTrigger value='security'>
+            <IoShield />
+          </TabsTrigger>
+          <TabsTrigger value='sessions'>
+            <IoKey />
+          </TabsTrigger>
+          <TabsTrigger value='accounts'>
+            <FaLink />
+          </TabsTrigger>
+          <TabsTrigger value='danger'>
+            <IoTrashBin />
+          </TabsTrigger>
+        </TabsList>
+
+        <Suspense fallback={<MiniLoader />}>
+          <Wrapper />
+        </Suspense>
+      </Tabs>
     </section>
   );
+}
+
+async function Wrapper() {
+  const session = await getSessionAndAccounts(await headers());
+
+  return <ProfileCard {...session} />;
 }
 
 async function getSessionAndAccounts(headers: Headers) {

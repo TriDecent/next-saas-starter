@@ -1,11 +1,11 @@
 import { SignOutButton } from '@/features/home/SignOutButton';
 import type { Account } from '@/generated/prisma/client';
+import type { AuthSession } from '@/lib/auth';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Badge,
-  Button,
   ButtonGroup,
   Card,
   CardAction,
@@ -16,13 +16,13 @@ import {
   CardTitle,
   Separator,
 } from '@/shared/components/ui';
-import type { User } from 'better-auth/types';
 import { format } from 'date-fns';
 import { MailCheck, ShieldAlert } from 'lucide-react';
 import { ConnectedAccounts } from './ConnectedAccounts';
+import { EditProfileDialog } from './EditProfileDialog';
 
 type ProfileCardProps = {
-  user: User;
+  user: AuthSession['user'];
   accounts: Account[];
 };
 
@@ -33,7 +33,7 @@ export function ProfileCard({ user, accounts }: ProfileCardProps) {
         <Summary {...user} />
         <CardAction>
           <ButtonGroup orientation={'vertical'}>
-            <Button variant='outline'>Edit Profile</Button>
+            <EditProfileDialog user={user} />
             <SignOutButton />
           </ButtonGroup>
         </CardAction>
@@ -83,7 +83,11 @@ function Summary({
 function Details({
   emailVerified,
   createdAt,
-}: Pick<ProfileCardProps['user'], 'emailVerified' | 'createdAt'>) {
+  favoriteNumber,
+}: Pick<
+  ProfileCardProps['user'],
+  'emailVerified' | 'createdAt' | 'favoriteNumber'
+>) {
   return (
     <div className='space-y-2.5'>
       <h3 className='text-sm font-medium text-gray-500'>Account Details</h3>
@@ -102,9 +106,15 @@ function Details({
             </Badge>
           )}
         </div>
+
         <div className='flex items-center justify-between'>
           <span className='text-muted-foreground'>Member Since</span>
           <span className='font-medium'>{format(createdAt, 'PPP')}</span>
+        </div>
+
+        <div className='flex items-center justify-between'>
+          <span className='text-muted-foreground'>Favorite Number</span>
+          <span className='font-medium'>{favoriteNumber}</span>
         </div>
       </div>
     </div>
