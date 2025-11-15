@@ -21,12 +21,12 @@ export const auth = betterAuth({
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      mapProfileToUser: () => ({ welcomeSent: false }),
+      mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
     },
     discord: {
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-      mapProfileToUser: () => ({ welcomeSent: false }),
+      mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
     },
   },
   emailAndPassword: {
@@ -69,7 +69,10 @@ export const auth = betterAuth({
     },
   },
   user: {
-    additionalFields: { welcomeSent: { type: 'boolean', required: true } },
+    additionalFields: {
+      welcomeSent: { type: 'boolean', required: true },
+      favoriteNumber: { type: 'number', required: true },
+    },
   },
   databaseHooks: {
     user: {
@@ -93,3 +96,7 @@ export const auth = betterAuth({
     },
   },
 });
+
+export type AuthSession = NonNullable<
+  Awaited<ReturnType<typeof auth.api.getSession>>
+>;

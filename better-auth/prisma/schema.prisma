@@ -19,7 +19,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  welcomeSent Boolean @map("welcome_sent")
+  welcomeSent    Boolean @map("welcome_sent")
+  favoriteNumber Int     @map("favorite_number")
 
   @@unique([email])
   @@map("users")

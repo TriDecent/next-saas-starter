@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 import { FaUser, FaUserPlus } from 'react-icons/fa6';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
+import { TbNumber123 } from 'react-icons/tb';
 import { toast } from 'sonner';
 import { AuthCard } from './AuthCard';
 import {
@@ -166,6 +167,24 @@ function useSignupRenders() {
             autoComplete='new-password webauthn'
             disabled={isPending}
             defaultValue={state.payload.userEntered?.confirmedPassword}
+          />
+
+          <FormRow
+            kind='input'
+            id='favoriteNumber'
+            name='favoriteNumber'
+            labelText='Your favorite number'
+            description='Enter any positive number you like (max 1000)'
+            error={state.payload.errors?.favoriteNumber?.at(0)}
+            addons={
+              <>
+                <InputGroupAddon>
+                  <TbNumber123 />
+                </InputGroupAddon>
+              </>
+            }
+            disabled={isPending}
+            defaultValue={state.payload.userEntered?.favoriteNumber}
           />
         </FieldGroup>
       </FieldSet>

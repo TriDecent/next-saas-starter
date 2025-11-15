@@ -90,6 +90,7 @@ export async function signupAction(
         name: signupCredentials.name,
         email: signupCredentials.email,
         password: signupCredentials.password,
+        favoriteNumber: signupCredentials.favoriteNumber,
         welcomeSent: false,
       },
     });
