@@ -1,3 +1,4 @@
+import { SendVerificationEmailButton } from '@/features/email';
 import { SignOutButton } from '@/features/home/SignOutButton';
 import type { Account } from '@/generated/prisma/client';
 import type { AuthSession } from '@/lib/auth';
@@ -24,7 +25,6 @@ import {
 import { ROUTES } from '@/shared/constants';
 import { format } from 'date-fns';
 import { MailCheck, ShieldAlert } from 'lucide-react';
-import { SendVerificationEmail } from '../../email';
 import { ConnectedAccounts } from './ConnectedAccounts';
 import { EditProfileDialog } from './EditProfileDialog';
 
@@ -151,13 +151,15 @@ function NotVerifiedEmailWarning({ email }: { email: string }) {
           </ItemDescription>
         </ItemContent>
       </Item>
-      <div className='mx-auto sm:w-fit'>
-        <SendVerificationEmail
-          email={email}
-          isEmailSent={false}
-          callbackURL={ROUTES.profile.href}
-        />
-      </div>
+
+      <SendVerificationEmailButton
+        email={email}
+        alreadySent={false}
+        callbackURL={ROUTES.profile.href}
+        variant={'outline'}
+        size={'lg'}
+        className='w-full'
+      />
     </>
   );
 }

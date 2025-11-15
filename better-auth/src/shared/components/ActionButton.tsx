@@ -28,6 +28,15 @@ export function ActionButton({
             await action();
             startTransition(() => onSuccess?.());
           } catch (error) {
+            if (
+              error &&
+              typeof error === 'object' &&
+              'digest' in error &&
+              typeof error.digest === 'string' &&
+              error.digest.startsWith('NEXT_REDIRECT')
+            )
+              throw error;
+
             startTransition(() => onError?.(error));
           }
         })

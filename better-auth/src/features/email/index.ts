@@ -1,3 +1,3 @@
 export { EmailVerificationCard } from './EmailVerificationCard';
 export * from './send-email';
-export { SendVerificationEmail } from './SendVerificationEmail';
+export { SendVerificationEmailButton as SendVerificationEmail } from './SendVerificationEmailButton';

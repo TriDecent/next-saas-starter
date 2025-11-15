@@ -11,7 +11,7 @@ export async function sendEmailVerificationAction(
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  if (session?.user.email !== email)
+  if (session && session.user.email !== email)
     throw new Error('You can only send verification emails to your own email.');
 
   const decision = await ajEmailSend.protect(await request(), {

@@ -5,5 +5,6 @@ export { FormRow } from './FormRow';
 export { Loader } from './Loading';
 export { MiniLoader } from './MiniLoading';
 export { PageLayout } from './PageLayout';
+export { SendEmailButton } from './SendEmailButton';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';

@@ -13,7 +13,7 @@ import {
 } from '@/shared/components/ui';
 
 import { Clock, Mail, Shield } from 'lucide-react';
-import { SendVerificationEmail } from './SendVerificationEmail';
+import { SendVerificationEmailButton } from './SendVerificationEmailButton';
 
 interface EmailVerificationTemplateProps {
   name: string;
@@ -80,10 +80,11 @@ export function EmailVerificationCard({
         </div>
 
         <div className='text-center'>
-          <SendVerificationEmail
+          <SendVerificationEmailButton
             email={email}
             callbackURL={callbackURL}
-            isEmailSent={isEmailSent}
+            alreadySent={isEmailSent}
+            className='w-full bg-linear-to-r from-blue-500 to-indigo-600 px-8 hover:from-blue-600 hover:to-indigo-700 sm:w-auto'
           />
         </div>
       </CardContent>
