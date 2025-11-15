@@ -130,7 +130,7 @@ function useUpdateProfileForm({ user }: { user: AuthSession['user'] }) {
           name='email'
           type='email'
           labelText='Email'
-          description='Change email requires email verification'
+          description='Change email will require re-verification'
           defaultValue={state.payload.userEntered?.email ?? user.email}
           disabled={isPending}
           addons={

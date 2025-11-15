@@ -14,7 +14,6 @@ import { headers } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
 import { z } from 'zod';
 import { credentialsSchema } from '../auth/action';
-import { refresh } from 'next/cache';
 
 const updateProfileSchema = credentialsSchema.omit({ password: true });
 
@@ -78,13 +77,27 @@ export async function updateProfileAction(
     handleDeniedInServerAction(updateProfileDecision);
 
   try {
-    await auth.api.updateUser({
-      body: {
-        name: profileData.name,
-        favoriteNumber: profileData.favoriteNumber,
-      },
-      headers: headersList,
-    });
+    const promises = [
+      auth.api.updateUser({
+        body: {
+          name: profileData.name,
+          favoriteNumber: profileData.favoriteNumber,
+        },
+        headers: headersList,
+      }),
+    ];
+    if (profileData.email !== session.user.email) {
+      promises.push(
+        auth.api.changeEmail({
+          body: {
+            newEmail: profileData.email,
+            callbackURL: ROUTES.profile.href,
+          },
+          headers: headersList,
+        })
+      );
+    }
+    await Promise.all(promises);
   } catch (error) {
     return {
       type: 'error',
@@ -101,8 +114,6 @@ export async function updateProfileAction(
       },
     };
   }
-
-  refresh();
 
   return {
     type: 'success',

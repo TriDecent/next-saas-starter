@@ -1,4 +1,5 @@
 import {
+  sendChangeEmailVerification,
   sendEmailVerification,
   sendPasswordResetEmail,
   sendWelcomeEmail,
@@ -72,6 +73,16 @@ export const auth = betterAuth({
     additionalFields: {
       welcomeSent: { type: 'boolean', required: true },
       favoriteNumber: { type: 'number', required: true },
+    },
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification: async data => {
+        await sendChangeEmailVerification({
+          to: data.user.email,
+          userName: data.user.name,
+          verificationUrl: data.url,
+        });
+      },
     },
   },
   databaseHooks: {
