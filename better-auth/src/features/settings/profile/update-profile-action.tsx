@@ -13,7 +13,7 @@ import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
 import { z } from 'zod';
-import { credentialsSchema } from '../auth/action';
+import { credentialsSchema } from '../../auth/action';
 
 const updateProfileSchema = credentialsSchema.omit({ password: true });
 

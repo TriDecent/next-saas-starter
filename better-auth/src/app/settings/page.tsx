@@ -1,4 +1,4 @@
-import { ProfileCard } from '@/features/profile';
+import { ProfileCard } from '@/features/settings';
 import { prisma } from '@/lib';
 import { auth } from '@/lib/auth';
 import { MiniLoader } from '@/shared/components';
@@ -22,16 +22,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     ...ROUTES.profile.metadata,
-    title: `${session.user.name}'s Profile`,
+    title: `${session.user.name}'s Settings`,
   };
 }
 
-export default async function ProfilePage() {
+export default async function SettingsPage() {
   return (
     <section className='space-y-8'>
       <h2 className='flex items-center gap-2 text-2xl font-semibold tracking-wider'>
         <CgProfile className='text-primary text-3xl' />
-        <span>My Profile</span>
+        <span>My settings</span>
       </h2>
 
       <Tabs defaultValue='profile' className='items-center gap-y-4'>
@@ -55,7 +55,7 @@ export default async function ProfilePage() {
 
         <TabsContent value='profile' className='mx-auto w-full max-w-xl'>
           <Suspense fallback={<MiniLoader />}>
-            <Wrapper />
+            <ProfileWrapper />
           </Suspense>
         </TabsContent>
       </Tabs>
@@ -63,7 +63,7 @@ export default async function ProfilePage() {
   );
 }
 
-async function Wrapper() {
+async function ProfileWrapper() {
   const session = await getSessionAndAccounts(await headers());
 
   return <ProfileCard {...session} />;

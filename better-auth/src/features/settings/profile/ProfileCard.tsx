@@ -1,4 +1,3 @@
-import { SendVerificationEmail } from '@/features/email';
 import { SignOutButton } from '@/features/home/SignOutButton';
 import type { Account } from '@/generated/prisma/client';
 import type { AuthSession } from '@/lib/auth';
@@ -25,6 +24,7 @@ import {
 import { ROUTES } from '@/shared/constants';
 import { format } from 'date-fns';
 import { MailCheck, ShieldAlert } from 'lucide-react';
+import { SendVerificationEmail } from '../../email';
 import { ConnectedAccounts } from './ConnectedAccounts';
 import { EditProfileDialog } from './EditProfileDialog';
 
@@ -53,6 +53,11 @@ export function ProfileCard({ user, accounts }: ProfileCardProps) {
 
         <Separator />
 
+        {!user.emailVerified ? (
+          <NotVerifiedEmailWarning email={user.email} />
+        ) : null}
+
+        <Separator />
         <ConnectedAccounts accounts={accounts} />
       </CardContent>
 
@@ -91,10 +96,9 @@ function Details({
   emailVerified,
   createdAt,
   favoriteNumber,
-  email,
 }: Pick<
   ProfileCardProps['user'],
-  'emailVerified' | 'createdAt' | 'favoriteNumber' | 'email'
+  'emailVerified' | 'createdAt' | 'favoriteNumber'
 >) {
   return (
     <div className='space-y-2.5'>
@@ -124,33 +128,36 @@ function Details({
           <span className='text-muted-foreground'>Favorite Number</span>
           <span className='font-medium'>{favoriteNumber}</span>
         </div>
-
-        {!emailVerified ? (
-          <>
-            <Item
-              variant='muted'
-              size='sm'
-              className='border-destructive bg-destructive/10 text-destructive'
-            >
-              <ItemMedia>
-                <ShieldAlert className='text-destructive h-5 w-5' />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>Email not verified</ItemTitle>
-                <ItemDescription>
-                  You will be required to verify it next time in order to log
-                  in.
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-            <SendVerificationEmail
-              email={email}
-              isEmailSent={false}
-              callbackURL={ROUTES.profile.href}
-            />
-          </>
-        ) : null}
       </div>
     </div>
+  );
+}
+
+function NotVerifiedEmailWarning({ email }: { email: string }) {
+  return (
+    <>
+      <Item
+        variant='muted'
+        size='sm'
+        className='border-destructive bg-destructive/10 text-destructive'
+      >
+        <ItemMedia>
+          <ShieldAlert className='text-destructive h-5 w-5' />
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>Email not verified</ItemTitle>
+          <ItemDescription>
+            You will be required to verify it next time in order to log in.
+          </ItemDescription>
+        </ItemContent>
+      </Item>
+      <div className='mx-auto sm:w-fit'>
+        <SendVerificationEmail
+          email={email}
+          isEmailSent={false}
+          callbackURL={ROUTES.profile.href}
+        />
+      </div>
+    </>
   );
 }

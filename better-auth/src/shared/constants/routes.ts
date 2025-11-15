@@ -84,7 +84,7 @@ export const ROUTES = {
     },
   }),
   profile: defineRoute({
-    href: '/profile',
+    href: '/settings',
     metadata: {
       description:
         'View and manage your user profile, update personal information, and review account settings.',
