@@ -40,6 +40,16 @@ export async function sendWelcomeEmail(payload: EmailSendingOptions) {
   );
 }
 
+export async function sendChangeEmailVerification(
+  payload: EmailSendingOptions & { verificationUrl: string }
+) {
+  return sendEmail(
+    [payload.to],
+    'Change Email Verification',
+    EmailVerificationTemplate(payload)
+  );
+}
+
 function sendEmail(
   to: string[],
   subject: string,

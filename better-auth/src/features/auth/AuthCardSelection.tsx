@@ -6,6 +6,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import { useAppSelector } from '@/shared/hooks';
 import { SigninCard } from './SigninCard';
 import { SignupCard } from './SignupCard';
@@ -29,6 +30,10 @@ export function AuthCardSelection() {
       </TabsContent>
     </Tabs>
   ) : (
-    <EmailVerificationCard {...verificationInfo} expiresIn='1h' />
+    <EmailVerificationCard
+      callbackURL={ROUTES.home.href}
+      isEmailSent={true}
+      {...verificationInfo}
+    />
   );
 }

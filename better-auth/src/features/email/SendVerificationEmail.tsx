@@ -6,10 +6,18 @@ import { sendEmailVerificationAction } from './send-email-verification-action';
 
 const RESEND_INTERVAL = 30;
 
-export function SendVerificationEmail({ email }: { email: string }) {
+export function SendVerificationEmail({
+  email,
+  isEmailSent,
+  callbackURL,
+}: {
+  email: string;
+  isEmailSent: boolean;
+  callbackURL: string;
+}) {
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
   const [countDown, setCountDown] = useState<number>(0);
-  const [hasSent, setHasSent] = useState(false);
+  const [hasSent, setHasSent] = useState(isEmailSent);
 
   useEffect(() => {
     if (countDown === 0) return;
@@ -29,7 +37,7 @@ export function SendVerificationEmail({ email }: { email: string }) {
   return (
     <ActionButton
       action={async () => {
-        await sendEmailVerificationAction(email);
+        await sendEmailVerificationAction(email, callbackURL);
       }}
       onSuccess={() => {
         toast.success('Verification email resent! Please check your inbox.');
@@ -48,7 +56,7 @@ export function SendVerificationEmail({ email }: { email: string }) {
       className='w-full bg-linear-to-r from-blue-500 to-indigo-600 px-8 hover:from-blue-600 hover:to-indigo-700 sm:w-auto'
     >
       {!hasSent
-        ? 'Resend Verification Email'
+        ? 'Send Verification Email'
         : countDown > 0
           ? `Resend in ${countDown}s`
           : 'Resend Again'}

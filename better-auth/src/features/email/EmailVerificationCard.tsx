@@ -18,13 +18,15 @@ import { SendVerificationEmail } from './SendVerificationEmail';
 interface EmailVerificationTemplateProps {
   name: string;
   email: string;
-  expiresIn: string;
+  callbackURL: string;
+  isEmailSent: boolean;
 }
 
 export function EmailVerificationCard({
   name,
   email,
-  expiresIn,
+  callbackURL,
+  isEmailSent,
 }: EmailVerificationTemplateProps) {
   return (
     <Card className='mx-auto max-w-2xl shadow-xl'>
@@ -70,15 +72,19 @@ export function EmailVerificationCard({
               <ItemTitle>Act quickly</ItemTitle>
 
               <ItemDescription className='line-clamp-none text-pretty'>
-                This verification link will expire in {expiresIn}. After that,
-                you&apos;ll need to request a new one.
+                This verification link will expire soon. After that, you&apos;ll
+                need to request a new one.
               </ItemDescription>
             </ItemContent>
           </Item>
         </div>
 
         <div className='text-center'>
-          <SendVerificationEmail email={email} />
+          <SendVerificationEmail
+            email={email}
+            callbackURL={callbackURL}
+            isEmailSent={isEmailSent}
+          />
         </div>
       </CardContent>
 

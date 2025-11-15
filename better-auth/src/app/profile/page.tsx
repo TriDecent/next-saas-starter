@@ -2,7 +2,12 @@ import { ProfileCard } from '@/features/profile';
 import { prisma } from '@/lib';
 import { auth } from '@/lib/auth';
 import { MiniLoader } from '@/shared/components';
-import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -48,9 +53,11 @@ export default async function ProfilePage() {
           </TabsTrigger>
         </TabsList>
 
-        <Suspense fallback={<MiniLoader />}>
-          <Wrapper />
-        </Suspense>
+        <TabsContent value='profile' className='mx-auto w-full max-w-xl'>
+          <Suspense fallback={<MiniLoader />}>
+            <Wrapper />
+          </Suspense>
+        </TabsContent>
       </Tabs>
     </section>
   );
