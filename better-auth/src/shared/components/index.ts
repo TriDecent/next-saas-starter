@@ -6,5 +6,6 @@ export { Loader } from './Loading';
 export { MiniLoader } from './MiniLoading';
 export { PageLayout } from './PageLayout';
 export { SendEmailButton } from './SendEmailButton';
+export { SendResetPasswordButton } from './SendResetPasswordButton';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
