@@ -1,1 +1,1 @@
-export { ProfileCard } from './profile/ProfileCard';
+export { SettingsTabsLayout } from './SettingsTabsLayout';
