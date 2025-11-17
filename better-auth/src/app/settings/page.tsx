@@ -1,4 +1,8 @@
 import { ProfileCard } from '@/features/settings';
+import {
+  ChangePasswordCard,
+  RequestPasswordResetCard,
+} from '@/features/settings/security';
 import { prisma } from '@/lib';
 import { auth } from '@/lib/auth';
 import { MiniLoader } from '@/shared/components';
@@ -58,6 +62,12 @@ export default async function SettingsPage() {
             <ProfileWrapper />
           </Suspense>
         </TabsContent>
+
+        <TabsContent value='security' className='mx-auto w-full max-w-xl'>
+          <Suspense fallback={<MiniLoader />}>
+            <SecurityWrapper />
+          </Suspense>
+        </TabsContent>
       </Tabs>
     </section>
   );
@@ -67,6 +77,19 @@ async function ProfileWrapper() {
   const session = await getSessionAndAccounts(await headers());
 
   return <ProfileCard {...session} />;
+}
+
+async function SecurityWrapper() {
+  const { accounts, user } = await getSessionAndAccounts(await headers());
+  const hasCredentialAccount = accounts.some(
+    account => account.providerId === 'credential'
+  );
+
+  return !hasCredentialAccount ? (
+    <RequestPasswordResetCard email={user.email} />
+  ) : (
+    <ChangePasswordCard />
+  );
 }
 
 async function getSessionAndAccounts(headers: Headers) {
