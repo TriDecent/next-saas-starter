@@ -3,6 +3,7 @@ import {
   ChangePasswordCard,
   RequestPasswordResetCard,
 } from '@/features/settings/security';
+import { SessionsCard } from '@/features/settings/session';
 import { prisma } from '@/lib';
 import { auth } from '@/lib/auth';
 import { MiniLoader } from '@/shared/components';
@@ -68,8 +69,34 @@ export default async function SettingsPage() {
             <SecurityWrapper />
           </Suspense>
         </TabsContent>
+
+        <TabsContent value='sessions' className='mx-auto w-full max-w-xl'>
+          <Suspense fallback={<MiniLoader />}>
+            <SessionWrapper />
+          </Suspense>
+        </TabsContent>
       </Tabs>
     </section>
+  );
+}
+
+async function SessionWrapper() {
+  const headersList = await headers();
+
+  const [currentSession, sessions] = await Promise.all([
+    auth.api.getSession({ headers: headersList }),
+    auth.api.listSessions({ headers: headersList }),
+  ]);
+
+  if (!currentSession) redirect(ROUTES.auth.href);
+
+  return (
+    <SessionsCard
+      currentSession={currentSession.session}
+      otherSessions={sessions.filter(
+        session => session.id !== currentSession.session.id
+      )}
+    />
   );
 }
 
