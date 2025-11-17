@@ -51,10 +51,11 @@ export function ProfileCard({ user, accounts }: ProfileCardProps) {
       <CardContent className='space-y-8'>
         <Details {...user} />
 
-        <Separator />
-
         {!user.emailVerified ? (
-          <NotVerifiedEmailWarning email={user.email} />
+          <>
+            <Separator />
+            <NotVerifiedEmailWarning email={user.email} />
+          </>
         ) : null}
 
         <Separator />
