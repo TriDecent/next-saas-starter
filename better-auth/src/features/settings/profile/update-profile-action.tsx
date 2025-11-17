@@ -3,6 +3,7 @@
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
+  ensureSession,
   handleDeniedInServerAction,
 } from '@/lib';
 import { auth } from '@/lib/auth';
@@ -11,7 +12,6 @@ import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import { redirect, RedirectType } from 'next/navigation';
 import { z } from 'zod';
 import { credentialsSchema } from '../../auth/action';
 
@@ -42,9 +42,10 @@ export async function updateProfileAction(
   formData: FormData
 ): Promise<UpdateProfileResponse> {
   const headersList = await headers();
-  const session = await auth.api.getSession({ headers: headersList });
-
-  if (!session) redirect(ROUTES.auth.href, RedirectType.replace);
+  const session = await ensureSession(
+    headersList,
+    ROUTES.settings.nested.profile.href
+  );
 
   const req = await request();
   const inputDecision = await ajLaxAnonymous.protect(req, {

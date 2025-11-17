@@ -1,17 +1,18 @@
 import { SessionsCard } from '@/features/settings/session';
-import { auth } from '@/lib/auth';
+import { auth, ensureSession } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session) redirect(ROUTES.auth.href);
+  const session = await ensureSession(
+    await headers(),
+    ROUTES.settings.nested.sessions.href
+  );
 
   return {
-    ...ROUTES.settings.metadata,
+    ...ROUTES.settings.nested.sessions.metadata,
     title: `${session.user.name}'s Sessions`,
   };
 }
@@ -20,7 +21,7 @@ export default async function SessionsPage() {
   const headersList = await headers();
 
   const [currentSession, sessions] = await Promise.all([
-    auth.api.getSession({ headers: headersList }),
+    ensureSession(headersList, ROUTES.settings.nested.sessions.href),
     auth.api.listSessions({ headers: headersList }),
   ]);
 

@@ -15,7 +15,7 @@ import {
 import { useAppDispatch } from '@/shared/hooks';
 import { uiActions } from '@/store';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment, useCallback } from 'react';
 import { FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
@@ -102,14 +102,15 @@ function SocialProviders() {
 
 function useFormStatus() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
 
   const onFormSuccess = useCallback(() => {
     toast.success('Sign in successfully!', {
       description: 'You have been signed in and will be redirected shortly.',
     });
-    router.refresh();
-  }, [router]);
+    router.replace(searchParams.get('callbackUrl') ?? ROUTES.home.href);
+  }, [router, searchParams]);
 
   const onFormError = useCallback(
     (state: ErrorSigninResponse) => {
@@ -151,6 +152,7 @@ function useSigninForm() {
             name='email'
             labelText='Email'
             description='Enter your email address'
+            placeholder='example@domain.com'
             error={state.payload.errors?.email?.at(0)}
             addons={
               <>
@@ -170,7 +172,8 @@ function useSigninForm() {
             id='password'
             name='password'
             labelText='Password'
-            description='Choose a strong password'
+            description='Enter your password'
+            placeholder='********'
             error={state.payload.errors?.password?.at(0)}
             addons={
               <>

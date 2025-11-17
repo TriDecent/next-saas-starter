@@ -5,9 +5,11 @@ import {
   sendWelcomeEmail,
 } from '@/features/email';
 import { PrismaClient } from '@/generated/prisma/client';
+import { ROUTES } from '@/shared/constants';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
+import { redirect } from 'next/navigation';
 
 const prisma = new PrismaClient();
 
@@ -111,3 +113,13 @@ export const auth = betterAuth({
 export type AuthSession = NonNullable<
   Awaited<ReturnType<typeof auth.api.getSession>>
 >;
+
+export async function ensureSession(headers: Headers, callbackUrl: string) {
+  const session = await auth.api.getSession({ headers });
+
+  if (session) return session;
+
+  const searchParams = new URLSearchParams({ callbackUrl });
+
+  redirect(`${ROUTES.auth.href}?${searchParams.toString()}`);
+}

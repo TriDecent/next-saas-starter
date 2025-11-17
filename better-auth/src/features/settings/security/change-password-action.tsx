@@ -3,6 +3,7 @@
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
+  ensureSession,
   handleDeniedInServerAction,
 } from '@/lib';
 import { auth } from '@/lib/auth';
@@ -11,7 +12,6 @@ import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import z from 'zod';
 
 const changePasswordSchema = z
@@ -55,9 +55,10 @@ export async function changePasswordAction(
   formData: FormData
 ): Promise<ChangePasswordResponse> {
   const headersList = await headers();
-  const session = await auth.api.getSession({ headers: headersList });
-
-  if (!session) redirect(ROUTES.auth.href);
+  const session = await ensureSession(
+    headersList,
+    ROUTES.settings.nested.security.href
+  );
 
   const req = await request();
   const inputDecision = await ajLaxAnonymous.protect(req, {
