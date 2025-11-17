@@ -1,22 +1,29 @@
 'use client';
 
 import { Button } from '@/shared/components/ui';
-import { useTransition, type ComponentProps } from 'react';
+import { useEffect, useTransition, type ComponentProps } from 'react';
 import { MiniLoader } from './MiniLoading';
 
 type ActionButtonProps = {
   action: () => Promise<void>;
   onSuccess?: () => void;
   onError?: (error: Error | unknown) => void;
+  onPending?: () => void;
 };
 
 export function ActionButton({
   action,
   onSuccess,
   onError,
+  onPending,
   ...props
 }: ActionButtonProps & ComponentProps<typeof Button>) {
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (!isPending) return;
+    onPending?.();
+  }, [isPending, onPending]);
 
   return (
     <Button
