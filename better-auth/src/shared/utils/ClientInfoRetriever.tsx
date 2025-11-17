@@ -1,9 +1,10 @@
 import type { JSX } from 'react';
 import {
-  IoDesktop,
+  IoDesktopOutline,
   IoPhonePortraitOutline,
-  IoTabletPortrait,
+  IoTabletPortraitOutline,
 } from 'react-icons/io5';
+
 import { RiComputerLine } from 'react-icons/ri';
 
 interface IClientInfoRetriever {
@@ -21,9 +22,9 @@ class ClientInfoRetriever implements IClientInfoRetriever {
     const device = this.getDeviceType(ua);
 
     if (device === 'Mobile') return <IoPhonePortraitOutline />;
-    if (device === 'Tablet') return <IoTabletPortrait />;
+    if (device === 'Tablet') return <IoTabletPortraitOutline />;
 
-    return <IoDesktop />;
+    return <IoDesktopOutline />;
   }
 
   getBrowserInfo(userAgent?: string | null) {

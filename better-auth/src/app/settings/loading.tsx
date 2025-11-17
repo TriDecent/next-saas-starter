@@ -1,5 +1,5 @@
-import { Loader } from '@/shared/components';
+import { Loading } from '@/shared/components';
 
 export default function ProfileLoading() {
-  return <Loader />;
+  return <Loading />;
 }

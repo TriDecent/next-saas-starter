@@ -28,7 +28,7 @@ export async function Home() {
       </ActionButton> */}
       <ButtonGroup>
         <Button variant={'outline'} size={'lg'} asChild>
-          <Link href={ROUTES.profile.href}>
+          <Link href={ROUTES.settings.href}>
             <CgProfile />
             Profile
           </Link>

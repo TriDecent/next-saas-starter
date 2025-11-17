@@ -91,7 +91,7 @@ export async function updateProfileAction(
         auth.api.changeEmail({
           body: {
             newEmail: profileData.email,
-            callbackURL: ROUTES.profile.href,
+            callbackURL: ROUTES.settings.href,
           },
           headers: headersList,
         })

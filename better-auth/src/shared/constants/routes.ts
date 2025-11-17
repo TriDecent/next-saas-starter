@@ -49,10 +49,11 @@ export const ROUTES = {
     metadata: {
       title: 'Home',
       description:
-        'Welcome to Better Auth Demo. Sign in to your account or create a new one with email verification and social login support.',
+        'Experience seamless authentication with Better Auth Demo. Sign in or register easily using email, password, or social login.',
       openGraph: {
         title: `Home | ${APP_NAME}`,
-        description: 'Welcome to Better Auth Demo',
+        description:
+          'Experience seamless authentication with Better Auth Demo.',
         url: BASE_URL,
       },
     },
@@ -62,10 +63,10 @@ export const ROUTES = {
     metadata: {
       title: 'Authentication',
       description:
-        'Sign in to your account or create a new one. Supports email/password authentication with verification, password reset, and social login with GitHub and Discord.',
+        'Access your account or sign up with secure email/password authentication, email verification, password reset, and social login options.',
       openGraph: {
         title: `Authentication | ${APP_NAME}`,
-        description: 'Sign in or create your account',
+        description: 'Access your account or sign up securely.',
         url: `${BASE_URL}/auth`,
       },
       robots: {
@@ -78,26 +79,64 @@ export const ROUTES = {
         href: '/auth/reset-password',
         metadata: {
           title: 'Reset my password',
-          description: 'Reset your password to regain access to your account.',
+          description: 'Easily reset your password to restore account access.',
         },
       }),
     },
   }),
-  profile: defineRoute({
+  settings: defineRoute({
     href: '/settings',
     metadata: {
       description:
-        'View and manage your user profile, update personal information, and review account settings.',
+        'Manage your profile, update personal details, and configure account preferences in one place.',
+    },
+    nested: {
+      profile: defineRoute({
+        href: '/settings/profile',
+        metadata: {
+          description:
+            'Edit your user profile and keep your personal information up to date.',
+        },
+      }),
+      security: defineRoute({
+        href: '/settings/security',
+        metadata: {
+          description:
+            'Enhance your account security by managing passwords and authentication methods.',
+        },
+      }),
+      sessions: defineRoute({
+        href: '/settings/sessions',
+        metadata: {
+          description:
+            'Review and manage your active sessions and device logins.',
+        },
+      }),
+      accounts: defineRoute({
+        href: '/settings/accounts',
+        metadata: {
+          description:
+            'Connect and manage linked accounts for seamless authentication.',
+        },
+      }),
+      danger: defineRoute({
+        href: '/settings/danger',
+        metadata: {
+          description:
+            'Access advanced account actions, including account deletion and recovery options.',
+        },
+      }),
     },
   }),
   error: defineRoute({
     href: '/error',
     metadata: {
       title: 'Error',
-      description: 'An error occurred. Please try again or contact support.',
+      description:
+        'An unexpected error occurred. Please try again or contact support if the issue persists.',
       openGraph: {
         title: `Error | ${APP_NAME}`,
-        description: 'Something went wrong',
+        description: 'An unexpected error occurred.',
         url: `${BASE_URL}/error`,
       },
       robots: {
@@ -111,10 +150,10 @@ export const ROUTES = {
     metadata: {
       title: 'Page Not Found',
       description:
-        'The page you are looking for does not exist or has been moved.',
+        'Sorry, the page you requested could not be found or may have been moved.',
       openGraph: {
         title: `404 - Page Not Found | ${APP_NAME}`,
-        description: 'The page you are looking for could not be found.',
+        description: 'Sorry, the page you requested could not be found.',
       },
       robots: {
         index: false,

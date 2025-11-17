@@ -156,7 +156,7 @@ function NotVerifiedEmailWarning({ email }: { email: string }) {
       <SendVerificationEmailButton
         email={email}
         alreadySent={false}
-        callbackURL={ROUTES.profile.href}
+        callbackURL={ROUTES.settings.href}
         variant={'outline'}
         size={'lg'}
         className='w-full'

@@ -1,2 +1,2 @@
-export { clientInfoRetriever } from './ClientInfo';
+export { clientInfoRetriever } from './ClientInfoRetriever';
 export { cn } from './utils';
