@@ -5,7 +5,7 @@ import { cn } from '@/shared/utils';
 import type { ClassValue } from 'clsx';
 import { LoaderPinwheelIcon } from 'lucide-react';
 import NextForm from 'next/form';
-import { useActionState, useEffect, type ReactNode } from 'react';
+import { useActionState, useEffect, useRef, type ReactNode } from 'react';
 import { Button } from './ui/button';
 import { CardAction } from './ui/card';
 
@@ -87,21 +87,27 @@ const useForm = <T extends FormResponse>(
   onFormFail: (state: ErrorResponseFromGenericResponse<T>) => void,
   onFormPending?: () => void
 ) => {
-  useEffect(() => {
-    if (state.type !== 'success') return;
-    // TypeScript limitation: cannot narrow generic type T to Extract<T, { type: 'success' }>
-    // even after checking state.type === 'success', so we need to use a type assertion here.
-    onFormSuccess(state as SuccessResponseFromGenericResponse<T>);
-  }, [onFormSuccess, state]);
+  const hadPendingRef = useRef(false);
 
   useEffect(() => {
-    if (state.type !== 'error') return;
-    // Same problem here
-    onFormFail(state as ErrorResponseFromGenericResponse<T>);
-  }, [onFormFail, state]);
+    if (isPending) {
+      hadPendingRef.current = true;
+      onFormPending?.();
+      return;
+    }
 
-  useEffect(() => {
-    if (!isPending) return;
-    onFormPending?.();
-  }, [isPending, onFormPending]);
+    if (!hadPendingRef.current) return;
+
+    if (state.type === 'success') {
+      // TypeScript limitation: cannot narrow generic type T to Extract<T, { type: 'success' }>
+      // even after checking state.type === 'success', so we need to use a type assertion here.
+      onFormSuccess(state as SuccessResponseFromGenericResponse<T>);
+    }
+
+    if (state.type === 'error') {
+      onFormFail(state as ErrorResponseFromGenericResponse<T>);
+    }
+
+    hadPendingRef.current = false;
+  }, [isPending, state, onFormFail, onFormPending, onFormSuccess]);
 };
