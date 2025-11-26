@@ -1,29 +1,49 @@
 'use client';
+
 import { ActionButton } from '@/shared/components';
 import type { Session } from 'better-auth';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { revokeSessionAction } from './revoke-session-action';
 
-export function RevokeSessionButton({ token }: { token: Session['token'] }) {
+export function RevokeSessionButton({
+  token,
+  onRevoke,
+}: {
+  token: Session['token'];
+  onRevoke?: () => void;
+}) {
   return (
     <ActionButton
       variant={'destructive'}
       size={'icon-sm'}
-      action={() => revokeSessionAction(token)}
-      onSuccess={() =>
+      action={async () => {
+        onRevoke?.();
+        toast.loading('Revoking session...', {
+          id: `revoke-${token}`,
+          description: 'Please wait while the session is being revoked.',
+        });
+        await revokeSessionAction(token);
+      }}
+      confirm={{
+        message: 'Are you sure you want to revoke this session?',
+        description: 'This action cannot be undone.',
+      }}
+      onSuccess={() => {
         toast.success('Session revoked', {
-          description: 'The session was successfully revoked.',
-        })
-      }
-      onError={error =>
+          id: `revoke-${token}`,
+          description: 'The session has been successfully revoked.',
+        });
+      }}
+      onError={error => {
         toast.error('Failed to revoke session', {
+          id: `revoke-${token}`,
           description:
             error instanceof Error
               ? error.message
               : 'An error occurred while revoking the session.',
-        })
-      }
+        });
+      }}
     >
       <Trash2 />
     </ActionButton>
