@@ -1,6 +1,5 @@
 import { SendVerificationEmailButton } from '@/features/email';
 import { SignOutButton } from '@/features/home/SignOutButton';
-import type { Account } from '@/generated/prisma/client';
 import type { AuthSession } from '@/lib/auth';
 import {
   Avatar,
@@ -12,7 +11,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
   Item,
@@ -25,15 +23,13 @@ import {
 import { ROUTES } from '@/shared/constants';
 import { format } from 'date-fns';
 import { MailCheck, ShieldAlert } from 'lucide-react';
-import { ConnectedAccounts } from './ConnectedAccounts';
 import { EditProfileDialog } from './EditProfileDialog';
 
 type ProfileCardProps = {
   user: AuthSession['user'];
-  accounts: Account[];
 };
 
-export function ProfileCard({ user, accounts }: ProfileCardProps) {
+export function ProfileCard({ user }: ProfileCardProps) {
   return (
     <Card className='w-full'>
       <CardHeader>
@@ -57,16 +53,9 @@ export function ProfileCard({ user, accounts }: ProfileCardProps) {
             <NotVerifiedEmailWarning email={user.email} />
           </>
         ) : null}
-
-        <Separator />
-        <ConnectedAccounts accounts={accounts} />
       </CardContent>
 
       <Separator />
-
-      <CardFooter className='text-muted-foreground justify-center text-xs'>
-        Click on a provider above to connect your account to social platforms.
-      </CardFooter>
     </Card>
   );
 }

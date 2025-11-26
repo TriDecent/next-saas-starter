@@ -1,5 +1,5 @@
 import { ProfileCard } from '@/features/settings/profile';
-import { ensureSession, prisma } from '@/lib';
+import { ensureSession } from '@/lib';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -22,9 +22,5 @@ export default async function ProfilePage() {
     ROUTES.settings.nested.profile.href
   );
 
-  const accounts = await prisma.account.findMany({
-    where: { userId: session.user.id },
-  });
-
-  return <ProfileCard user={session.user} accounts={accounts} />;
+  return <ProfileCard user={session.user} />;
 }

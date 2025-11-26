@@ -1,4 +1,5 @@
 'use client';
+import type { auth } from '@/lib';
 import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
 import {
   Badge,
@@ -8,14 +9,17 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/shared/components/ui';
-import type { Account } from 'better-auth';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { GoUnverified, GoVerified } from 'react-icons/go';
 import { toast } from 'sonner';
 import { SocialLoginButton } from './SocialLoginButton';
 
-export function ConnectedAccounts({ accounts }: { accounts: Account[] }) {
+export function ConnectedAccounts({
+  accounts,
+}: {
+  accounts: Awaited<ReturnType<typeof auth.api.listUserAccounts>>;
+}) {
   useSocialLinkErrorToast();
 
   return accounts && accounts.length > 0 ? (

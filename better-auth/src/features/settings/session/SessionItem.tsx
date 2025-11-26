@@ -34,7 +34,7 @@ export function SessionItem({
   onRevoke?: () => void;
 }) {
   return (
-    <Item variant='muted'>
+    <Item variant='muted' className='border-border border'>
       <ItemMedia variant='icon'>
         {clientInfoRetriever.getDeviceIcon(userAgent)}
       </ItemMedia>
