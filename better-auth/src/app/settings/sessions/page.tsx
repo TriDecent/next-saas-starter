@@ -1,9 +1,16 @@
-import { SessionsCard } from '@/features/settings/session';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui';
+
+import { SessionsList } from '@/features/settings/session';
 import { auth, ensureSession } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = await ensureSession(
@@ -25,14 +32,22 @@ export default async function SessionsPage() {
     auth.api.listSessions({ headers: headersList }),
   ]);
 
-  if (!currentSession) redirect(ROUTES.auth.href);
-
   return (
-    <SessionsCard
-      currentSession={currentSession.session}
-      otherSessions={sessions.filter(
-        session => session.id !== currentSession.session.id
-      )}
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>Active Sessions</CardTitle>
+        <CardDescription>
+          Manage your active sessions across different devices
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <SessionsList
+          currentSession={currentSession.session}
+          otherSessions={sessions.filter(
+            session => session.id !== currentSession.session.id
+          )}
+        />
+      </CardContent>
+    </Card>
   );
 }

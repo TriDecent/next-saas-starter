@@ -1,19 +1,14 @@
+'use client';
+
 import {
   Badge,
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Item,
   ItemActions,
   ItemContent,
   ItemDescription,
-  ItemGroup,
   ItemMedia,
   ItemTitle,
-  Separator,
 } from '@/shared/components/ui';
 import { clientInfoRetriever } from '@/shared/utils';
 import type { Session } from 'better-auth';
@@ -21,68 +16,14 @@ import { format } from 'date-fns';
 import { MdLocationOn } from 'react-icons/md';
 import { RevokeSessionButton } from './RevokeSessionButton';
 
-export function SessionsCard({
-  currentSession,
-  otherSessions,
-}: {
-  currentSession: Session;
-  otherSessions: Session[];
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Active Sessions</CardTitle>
-        <CardDescription>
-          Manage your active sessions across different devices
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ItemGroup className='flex flex-col gap-y-4'>
-          <SessionItem
-            userAgent={currentSession.userAgent}
-            ipAddress={currentSession.ipAddress}
-            updatedAt={currentSession.updatedAt}
-            createdAt={currentSession.createdAt}
-            isActive={true}
-            token={currentSession.token}
-          />
-
-          <Separator />
-
-          {otherSessions.length > 0 ? (
-            otherSessions.map(session => (
-              <SessionItem
-                key={session.id}
-                userAgent={session.userAgent}
-                ipAddress={session.ipAddress}
-                updatedAt={session.updatedAt}
-                createdAt={session.createdAt}
-                isActive={false}
-                token={session.token}
-              />
-            ))
-          ) : (
-            <Item variant='default'>
-              <ItemContent className='text-center'>
-                <ItemDescription>
-                  No other active sessions found
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          )}
-        </ItemGroup>
-      </CardContent>
-    </Card>
-  );
-}
-
-function SessionItem({
+export function SessionItem({
   userAgent,
   ipAddress,
   updatedAt,
   createdAt,
   isActive,
   token,
+  onRevoke,
 }: {
   userAgent: Session['userAgent'];
   ipAddress: Session['ipAddress'];
@@ -90,6 +31,7 @@ function SessionItem({
   createdAt: Session['createdAt'];
   isActive: boolean;
   token: Session['token'];
+  onRevoke?: () => void;
 }) {
   return (
     <Item variant='muted'>
@@ -107,7 +49,7 @@ function SessionItem({
         <ItemDescription className='line-clamp-none flex flex-col gap-y-2'>
           <span className='flex items-center gap-1.5'>
             <MdLocationOn />
-            {ipAddress || 'Unknown location'}
+            {ipAddress ?? 'Unknown location'}
           </span>
           <span className='text-xs'>
             <strong>Last updated:</strong> {formatDate(updatedAt)}
@@ -123,7 +65,7 @@ function SessionItem({
             Active
           </Button>
         ) : (
-          <RevokeSessionButton token={token} />
+          <RevokeSessionButton token={token} onRevoke={onRevoke} />
         )}
       </ItemActions>
     </Item>

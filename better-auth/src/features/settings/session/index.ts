@@ -1,1 +1,1 @@
-export { SessionsCard } from './SessionsCard';
+export { SessionsList } from './SessionsList';
