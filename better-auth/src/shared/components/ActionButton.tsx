@@ -1,14 +1,28 @@
 'use client';
 
 import { Button } from '@/shared/components/ui';
-import { useEffect, useTransition, type ComponentProps } from 'react';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import {
+  useEffect,
+  useTransition,
+  type ComponentProps,
+  type ReactNode,
+} from 'react';
+import { toast } from 'sonner';
 import { MiniLoader } from './MiniLoading';
+
+type ConfirmDialog = {
+  message?: string;
+  description?: string;
+  actionLabel?: ReactNode;
+};
 
 type ActionButtonProps = {
   action: () => Promise<void>;
   onSuccess?: () => void;
   onError?: (error: Error | unknown) => void;
   onPending?: () => void;
+  confirm?: ConfirmDialog;
 };
 
 export function ActionButton({
@@ -16,6 +30,7 @@ export function ActionButton({
   onSuccess,
   onError,
   onPending,
+  confirm,
   ...props
 }: ActionButtonProps & ComponentProps<typeof Button>) {
   const [isPending, startTransition] = useTransition();
@@ -25,29 +40,41 @@ export function ActionButton({
     onPending?.();
   }, [isPending, onPending]);
 
+  const handleAction = () => {
+    startTransition(async () => {
+      try {
+        await action();
+        onSuccess?.();
+      } catch (error) {
+        if (isRedirectError(error)) {
+          onError?.(error);
+          throw error;
+        }
+        onError?.(error);
+      }
+    });
+  };
+
+  const handleClick = () => {
+    if (!confirm) {
+      handleAction();
+      return;
+    }
+
+    toast.warning(confirm.message ?? 'Are you sure?', {
+      description: confirm.description,
+      action: {
+        label: confirm.actionLabel ?? 'Yes',
+        onClick: handleAction,
+      },
+    });
+  };
+
   return (
     <Button
       {...props}
       disabled={isPending ? isPending : props.disabled}
-      onClick={() =>
-        startTransition(async () => {
-          try {
-            await action();
-            startTransition(() => onSuccess?.());
-          } catch (error) {
-            if (
-              error &&
-              typeof error === 'object' &&
-              'digest' in error &&
-              typeof error.digest === 'string' &&
-              error.digest.startsWith('NEXT_REDIRECT')
-            )
-              throw error;
-
-            startTransition(() => onError?.(error));
-          }
-        })
-      }
+      onClick={handleClick}
     >
       {isPending ? <MiniLoader /> : props.children}
     </Button>
