@@ -11,6 +11,7 @@ import {
   CardAction,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
   Item,
@@ -56,6 +57,9 @@ export function ProfileCard({ user }: ProfileCardProps) {
       </CardContent>
 
       <Separator />
+      <CardFooter className='text-muted-foreground justify-end text-xs'>
+        User ID: {user.id}
+      </CardFooter>
     </Card>
   );
 }

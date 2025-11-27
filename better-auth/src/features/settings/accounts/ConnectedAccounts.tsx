@@ -13,7 +13,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { GoUnverified, GoVerified } from 'react-icons/go';
 import { toast } from 'sonner';
-import { SocialLoginButton } from './SocialLoginButton';
+import { SocialActionButton } from './SocialActionButton';
 
 export function ConnectedAccounts({
   accounts,
@@ -41,9 +41,9 @@ export function ConnectedAccounts({
               asChild
               className='transition-transform hover:scale-105 hover:cursor-pointer active:scale-105'
             >
-              <SocialLoginButton
+              <SocialActionButton
                 provider={supportedProvider.name}
-                disabled={isConnected}
+                action={isConnected ? 'unlink' : 'link'}
               >
                 <ItemMedia variant='icon'>
                   <supportedProvider.icon />
@@ -66,7 +66,7 @@ export function ConnectedAccounts({
                     Unconnected
                   </Badge>
                 )}
-              </SocialLoginButton>
+              </SocialActionButton>
             </Item>
           );
         })}
@@ -81,6 +81,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   already_linked:
     'This social account has already been linked to another account.',
   oauth_failed: 'Could not link social account. Please try again.',
+  account_already_linked_to_different_user:
+    'This social account is already linked to a different user.',
 };
 
 function normalizeErrorCode(code: string) {
