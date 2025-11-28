@@ -1,5 +1,6 @@
 import {
   sendChangeEmailVerification,
+  sendDeleteAccountVerification,
   sendEmailVerification,
   sendPasswordResetEmail,
   sendWelcomeEmail,
@@ -32,10 +33,12 @@ export const auth = betterAuth({
       mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
     },
   },
+  account: { accountLinking: { allowDifferentEmails: true } },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async data => {
+      console.log(data.url);
       await sendPasswordResetEmail({
         to: data.user.email,
         userName: data.user.name,
@@ -47,6 +50,7 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendOnSignUp: true,
     sendVerificationEmail: async data => {
+      console.log(data.url);
       await sendEmailVerification({
         to: data.user.email,
         userName: data.user.name,
@@ -79,10 +83,25 @@ export const auth = betterAuth({
     changeEmail: {
       enabled: true,
       sendChangeEmailVerification: async data => {
+        console.log(data.url);
         await sendChangeEmailVerification({
           to: data.user.email,
           userName: data.user.name,
           verificationUrl: data.url,
+        });
+      },
+    },
+    deleteUser: {
+      enabled: true,
+      sendDeleteAccountVerification: async data => {
+        const safeUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.settings.nested.danger.href}?token=${data.token}`;
+
+        console.log(safeUrl);
+
+        await sendDeleteAccountVerification({
+          to: data.user.email,
+          userName: data.user.name,
+          verificationUrl: safeUrl,
         });
       },
     },

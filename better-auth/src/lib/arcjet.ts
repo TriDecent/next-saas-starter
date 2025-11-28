@@ -44,6 +44,14 @@ export const restrictiveRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
   interval: '10m',
 };
 
+export const extremeRestrictiveRateLimitSettings: SlidingWindowRateLimitOptions<
+  []
+> = {
+  mode: arcjetMode,
+  max: 3,
+  interval: '1h',
+};
+
 export const laxRateLimitSettings: SlidingWindowRateLimitOptions<[]> = {
   mode: arcjetMode,
   max: 30,
@@ -62,6 +70,10 @@ export const ajLaxAuthenticated = ajAuthenticated
 export const ajRestrictiveAuthenticated = ajAuthenticated
   .withRule(detectBot(botSettings))
   .withRule(slidingWindow(restrictiveRateLimitSettings));
+
+export const ajExtremeRestrictiveAuthenticated = ajAuthenticated
+  .withRule(detectBot(botSettings))
+  .withRule(slidingWindow(extremeRestrictiveRateLimitSettings));
 
 export const ajLaxAnonymous = ajAnonymous
   .withRule(detectBot(botSettings))
