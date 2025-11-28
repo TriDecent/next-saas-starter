@@ -7,12 +7,19 @@ import {
 } from '@/features/email';
 import { PrismaClient } from '@/generated/prisma/client';
 import { ROUTES } from '@/shared/constants';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { redirect } from 'next/navigation';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const prisma = new PrismaClient({
+  adapter,
+});
 
 export const auth = betterAuth({
   advanced: { cookiePrefix: 'tri-decent' },
