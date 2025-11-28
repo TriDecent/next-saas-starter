@@ -1,7 +1,8 @@
 import {
   ChangePasswordCard,
   RequestPasswordResetCard,
-} from '@/features/settings/security';
+} from '@/features/settings/security/password';
+import { TwoFactorsCard } from '@/features/settings/security/two-auth-factors';
 import { auth, ensureSession } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
@@ -34,6 +35,9 @@ export default async function SecurityPage() {
   return !hasCredentialAccount ? (
     <RequestPasswordResetCard email={session.user.email} />
   ) : (
-    <ChangePasswordCard />
+    <div className='space-y-8'>
+      <ChangePasswordCard />
+      <TwoFactorsCard />
+    </div>
   );
 }

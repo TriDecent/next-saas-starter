@@ -1,4 +1,3 @@
-import { SendResetPasswordButton } from '@/shared/components';
 import {
   Item,
   ItemActions,
@@ -8,6 +7,7 @@ import {
   ItemTitle,
 } from '@/shared/components/ui';
 import { IoWarningOutline } from 'react-icons/io5';
+import { SendResetPasswordButton } from './SendResetPasswordButton';
 
 export function RequestPasswordResetCard({ email }: { email: string }) {
   return (
