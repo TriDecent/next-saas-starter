@@ -27,9 +27,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AccountsPage() {
-  const accounts = await auth.api.listUserAccounts({
-    headers: await headers(),
-  });
+  const headersList = await headers();
+  await ensureSession(headersList, ROUTES.settings.nested.danger.href);
+
+  const accounts = await auth.api.listUserAccounts({ headers: headersList });
 
   return (
     <Card>

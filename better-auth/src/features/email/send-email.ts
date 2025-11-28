@@ -1,8 +1,9 @@
 'use server';
 
 import { Resend, type CreateEmailOptions } from 'resend';
-import { EmailVerificationTemplate } from './EmailVerificationTemplate';
-import { PasswordResetTemplate } from './PasswordResetTemplate';
+import { DeleteAccountTemplate } from './template/DeleteAccountTemplate';
+import { EmailVerificationTemplate } from './template/EmailVerificationTemplate';
+import { PasswordResetTemplate } from './template/PasswordResetTemplate';
 import { WelcomeTemplate } from './WelcomeTemplate';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -47,6 +48,16 @@ export async function sendChangeEmailVerification(
     [payload.to],
     'Change Email Verification',
     EmailVerificationTemplate(payload)
+  );
+}
+
+export async function sendDeleteAccountVerification(
+  payload: EmailSendingOptions & { verificationUrl: string }
+) {
+  return sendEmail(
+    [payload.to],
+    'Delete Account Verification',
+    DeleteAccountTemplate(payload)
   );
 }
 
