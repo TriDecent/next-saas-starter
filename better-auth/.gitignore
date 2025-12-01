@@ -42,3 +42,5 @@ next-env.d.ts
 global.d.ts
 
 /src/generated/prisma
+/src/app/api/test
+/src/app/react-hook-form

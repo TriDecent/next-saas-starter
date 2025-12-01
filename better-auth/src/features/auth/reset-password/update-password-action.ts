@@ -6,7 +6,7 @@ import {
   handleDeniedInServerAction,
 } from '@/lib';
 import { auth } from '@/lib/auth';
-import type { ActionResponse } from '@/shared/types';
+import type { OldActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
@@ -33,7 +33,7 @@ type UpdatePasswordError = Partial<
   auth?: string;
 };
 
-export type UpdatePasswordResponse = ActionResponse<
+export type UpdatePasswordResponse = OldActionResponse<
   UpdatePasswordInput,
   UpdatePasswordError
 >;

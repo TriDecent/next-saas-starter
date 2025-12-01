@@ -3,7 +3,7 @@
 import { ajEmailSend, ajLaxAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
-import type { ActionResponse } from '@/shared/types';
+import type { OldActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import z from 'zod';
@@ -20,7 +20,7 @@ type ResetPasswordError = Partial<
   auth?: string;
 };
 
-export type ResetPasswordResponse = ActionResponse<
+export type ResetPasswordResponse = OldActionResponse<
   ResetPasswordInput,
   ResetPasswordError
 >;

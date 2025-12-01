@@ -2,7 +2,7 @@
 
 import { ajLaxAnonymous, ajSignup, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
-import type { ActionResponse } from '@/shared/types';
+import type { OldActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
@@ -24,7 +24,7 @@ type SignupError = Partial<Record<keyof SignupInput, string[]>> & {
   unexpected?: string;
 };
 export type SignupResponse =
-  ActionResponse<SignupInput, SignupError> extends infer U
+  OldActionResponse<SignupInput, SignupError> extends infer U
     ? U extends { type: 'success' }
       ? U & {
           payload: {

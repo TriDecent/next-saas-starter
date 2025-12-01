@@ -1,4 +1,4 @@
-export type ActionResponse<TInput, TError> =
+export type OldActionResponse<TInput, TError> =
   | Result<
       { userEntered: null; errors: null },
       {

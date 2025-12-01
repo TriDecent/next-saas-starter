@@ -8,7 +8,7 @@ import {
 } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
-import type { ActionResponse } from '@/shared/types';
+import type { OldActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
@@ -35,7 +35,7 @@ type ChangePasswordError = Partial<
   auth?: { status: APIError['status']; message: string };
 };
 
-export type ChangePasswordResponse = ActionResponse<
+export type ChangePasswordResponse = OldActionResponse<
   ChangePasswordInput,
   ChangePasswordError
 >;

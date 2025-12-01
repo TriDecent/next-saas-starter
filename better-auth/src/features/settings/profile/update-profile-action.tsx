@@ -8,7 +8,7 @@ import {
 } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
-import type { ActionResponse } from '@/shared/types';
+import type { OldActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
@@ -24,7 +24,7 @@ type UpdateProfileError = Partial<
 > & {
   unexpected?: string;
 };
-export type UpdateProfileResponse = ActionResponse<
+export type UpdateProfileResponse = OldActionResponse<
   UpdateProfileInput,
   UpdateProfileError
 >;

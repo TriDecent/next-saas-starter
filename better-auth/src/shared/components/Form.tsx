@@ -1,6 +1,6 @@
 'use client';
 import { useShakeError } from '@/shared/hooks';
-import type { ActionResponse } from '@/shared/types';
+import type { OldActionResponse } from '@/shared/types';
 import { cn } from '@/shared/utils';
 import type { ClassValue } from 'clsx';
 import { LoaderPinwheelIcon } from 'lucide-react';
@@ -27,7 +27,7 @@ interface FormProps<T> {
 type SuccessResponseFromGenericResponse<T> = Extract<T, { type: 'success' }>;
 type ErrorResponseFromGenericResponse<T> = Extract<T, { type: 'error' }>;
 
-type FormResponse = ActionResponse<unknown, unknown>;
+type FormResponse = OldActionResponse<unknown, unknown>;
 
 export function Form<T extends FormResponse>({
   action,
