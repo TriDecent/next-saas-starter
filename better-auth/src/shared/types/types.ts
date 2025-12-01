@@ -15,9 +15,11 @@ export type OldActionResponse<TInput, TError> =
     }>;
 
 export type Result<TSuccess, TError> = Readonly<
-  | {
-      type: 'success';
-      payload: TSuccess;
-    }
+  { type: 'success'; payload: TSuccess } | { type: 'error'; payload: TError }
+>;
+
+export type ActionResponse<TSuccess, TError> = Readonly<
+  | { type: 'success'; payload: TSuccess }
   | { type: 'error'; payload: TError }
+  | { type: 'initial' }
 >;
