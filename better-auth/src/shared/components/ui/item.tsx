@@ -38,6 +38,10 @@ const itemVariants = cva(
         default: 'bg-transparent',
         outline: 'border-border',
         muted: 'bg-muted/50',
+        warning:
+          'bg-yellow-50/30 backdrop-blur-sm border-yellow-200/40 text-yellow-900/90 ' +
+          '[a]:hover:bg-yellow-50/50 focus-visible:border-yellow-300/40 focus-visible:ring-yellow-300/20 ' +
+          'dark:bg-yellow-900/12 dark:border-yellow-800/30 dark:text-yellow-100/90 shadow shadow-black',
       },
       size: {
         default: 'p-4 gap-4 ',

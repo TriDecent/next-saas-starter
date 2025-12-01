@@ -11,6 +11,7 @@ export * from './empty';
 export * from './field';
 export * from './input';
 export * from './input-group';
+export * from './input-otp';
 export * from './item';
 export * from './label';
 export * from './scroll-area';

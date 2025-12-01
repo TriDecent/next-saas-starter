@@ -5,26 +5,19 @@ import {
   sendPasswordResetEmail,
   sendWelcomeEmail,
 } from '@/features/email';
-import { PrismaClient } from '@/generated/prisma/client';
 import { ROUTES } from '@/shared/constants';
-import { PrismaPg } from '@prisma/adapter-pg';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
+import { twoFactor } from 'better-auth/plugins/two-factor';
 import { redirect } from 'next/navigation';
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const prisma = new PrismaClient({
-  adapter,
-});
+import { prisma } from './prisma';
 
 export const auth = betterAuth({
+  appName: 'Trí Decent Auth',
   advanced: { cookiePrefix: 'tri-decent' },
   session: { cookieCache: { enabled: true, maxAge: 60 * 5 } },
-  plugins: [nextCookies()],
+  plugins: [nextCookies(), twoFactor()],
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
