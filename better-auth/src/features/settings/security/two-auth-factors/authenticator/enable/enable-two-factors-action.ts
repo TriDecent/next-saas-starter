@@ -1,6 +1,5 @@
 'use server';
 
-import { credentialsSchema } from '@/features/auth/action';
 import {
   ajLaxAuthenticated,
   auth,
@@ -12,8 +11,7 @@ import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-
-const schema = credentialsSchema.pick({ password: true });
+import { basicAuthSchema } from '../../_shared/schema';
 
 type Response = ActionResponse<
   { totpURI: string; backupCodes: string[] },
@@ -25,7 +23,7 @@ export async function enableTwoFactorsAction(
   input: unknown
 ): Promise<Response> {
   console.log(input);
-  const parsedInput = schema.safeParse(input);
+  const parsedInput = basicAuthSchema.safeParse(input);
   if (!parsedInput.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 
@@ -53,7 +51,6 @@ export async function enableTwoFactorsAction(
       payload: data,
     };
   } catch (error) {
-    console.log(error);
     return {
       type: 'error',
       payload: {
