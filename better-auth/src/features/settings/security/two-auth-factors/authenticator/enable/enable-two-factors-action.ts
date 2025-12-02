@@ -2,6 +2,7 @@
 
 import {
   ajLaxAuthenticated,
+  ajRestrictiveAuthenticated,
   auth,
   ensureSession,
   handleDeniedInServerAction,
@@ -34,7 +35,7 @@ export async function enableTwoFactorsAction(
     ROUTES.settings.nested.security.href
   );
 
-  const decision = await ajLaxAuthenticated.protect(req, {
+  const decision = await ajRestrictiveAuthenticated.protect(req, {
     action: 'enable-2fa',
     userId: session.user.id,
   });
