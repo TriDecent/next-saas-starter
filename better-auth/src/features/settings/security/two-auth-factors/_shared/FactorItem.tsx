@@ -30,7 +30,9 @@ export function FactorItem({
           {description}
         </ItemDescription>
       </ItemContent>
-      <ItemActions className='ml-auto'>{children}</ItemActions>
+      <ItemActions className='ml-auto flex flex-col items-center gap-x-3 gap-y-3 sm:w-fit sm:flex-row'>
+        {children}
+      </ItemActions>
     </Item>
   );
 }

@@ -11,10 +11,10 @@ export function SmsFactor() {
         'Receive codes via SMS. Less secure than authenticator apps.'
       }
     >
-      <Button size='sm' disabled>
+      <Button size='sm' disabled className='w-full sm:w-fit'>
         Enable
       </Button>
-      <Button variant='outline' size='sm' disabled>
+      <Button variant='outline' size='sm' disabled className='w-full sm:w-fit'>
         Manage
       </Button>
     </FactorItem>

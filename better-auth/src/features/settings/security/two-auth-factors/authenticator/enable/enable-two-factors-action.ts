@@ -35,7 +35,7 @@ export async function enableTwoFactorsAction(
   );
 
   const decision = await ajLaxAuthenticated.protect(req, {
-    action: 'get-totp-uri',
+    action: 'enable-2fa',
     userId: session.user.id,
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);

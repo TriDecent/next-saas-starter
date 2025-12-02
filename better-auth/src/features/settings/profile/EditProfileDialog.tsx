@@ -16,6 +16,7 @@ import {
   DialogTrigger,
   InputGroupAddon,
   ScrollArea,
+  ScrollBar,
   Separator,
 } from '@/shared/components/ui';
 import { useRouter } from 'next/navigation';
@@ -65,6 +66,7 @@ export function EditProfileDialog({ user }: { user: AuthSession['user'] }) {
         <Separator />
 
         <ScrollArea className='h-48'>
+          <ScrollBar />
           <Form
             action={updateProfileAction}
             initialState={initialState}

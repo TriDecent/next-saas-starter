@@ -22,11 +22,13 @@ export function AuthenticatorFactor({ isEnabled }: { isEnabled: boolean }) {
             : 'Disabling two-factor authentication will reduce the security of your account.'
         }`}
         trigger={
-          <span>
-            <Button variant={isEnabled ? 'destructive' : 'default'} size={'sm'}>
-              {isEnabled ? 'Disable' : 'Enable'}
-            </Button>
-          </span>
+          <Button
+            variant={isEnabled ? 'destructive' : 'default'}
+            size={'sm'}
+            className='w-full sm:w-fit'
+          >
+            {isEnabled ? 'Disable' : 'Enable'}
+          </Button>
         }
       >
         {!isEnabled ? <EnableTwoFactors /> : <DisableTwoFactors />}

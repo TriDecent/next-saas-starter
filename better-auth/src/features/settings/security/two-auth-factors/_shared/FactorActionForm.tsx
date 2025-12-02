@@ -89,7 +89,7 @@ export function FactorActionForm<
   return (
     <FormProvider {...methods}>
       <form ref={animationScope} onSubmit={methods.handleSubmit(onValid)}>
-        <FieldGroup className='mx-auto max-w-sm space-y-6 px-4 pb-8'>
+        <FieldGroup className='mx-auto max-w-xl px-4 pb-8'>
           <FormField
             kind='input'
             id='password'
@@ -107,8 +107,8 @@ export function FactorActionForm<
               name='code'
               control={methods.control}
               render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel>TOTP</FieldLabel>
+                <Field orientation={'responsive'}>
+                  <FieldLabel className='max-w-40'>TOTP</FieldLabel>
                   <FieldContent>
                     <InputOTP
                       {...field}
