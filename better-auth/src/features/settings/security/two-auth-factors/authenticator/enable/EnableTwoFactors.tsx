@@ -1,30 +1,11 @@
 'use client';
 
-import {
-  Button,
-  ButtonGroup,
-  ButtonGroupSeparator,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupText,
-  InputGroupTextarea,
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-  ScrollArea,
-} from '@/shared/components/ui';
-import { AlertCircle } from 'lucide-react';
+import { BackupCodes } from '@/features/settings/security/two-auth-factors/backup-code';
+import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
 import { useRouter } from 'next/navigation';
-import { EOL } from 'os';
 import { useState } from 'react';
-import { FiCopy } from 'react-icons/fi';
-import { IoCloudDownloadOutline } from 'react-icons/io5';
 import { VscDebugContinue } from 'react-icons/vsc';
 import QRCode from 'react-qr-code';
-import { toast } from 'sonner';
 import { FactorActionForm } from '../../_shared/FactorActionForm';
 import { VerifyTotp } from './VerifyTotp';
 import { enableTwoFactorsAction } from './enable-two-factors-action';
@@ -42,6 +23,7 @@ export function EnableTwoFactors() {
     >
       {data => (
         <ScrollArea className='h-80'>
+          <ScrollBar />
           <div
             className={`mx-auto flex max-w-xl flex-col gap-y-8 px-4 pt-2 pb-12 ${shouldContinue && !isVerifiedTotp ? 'h-80' : ''}`}
           >
@@ -94,83 +76,5 @@ function TotpUriQR({ uri }: { uri: string }) {
         <QRCode value={uri} className='size-36' />
       </div>
     </div>
-  );
-}
-
-function BackupCodes({ codes }: { codes: readonly string[] }) {
-  const handleCopyCodes = async () => {
-    await navigator.clipboard.writeText(codes.join(EOL));
-    toast.success('Backup codes copied to clipboard');
-  };
-
-  const handleDownloadCodes = () => {
-    const blobParts = codes.flatMap(code => [code, EOL]);
-    const blob = new Blob(blobParts);
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = 'backup-codes.txt';
-    a.click();
-    toast.success('Backup codes downloaded');
-
-    URL.revokeObjectURL(blobUrl);
-  };
-
-  return (
-    <InputGroup>
-      <InputGroupAddon align={'block-start'}>
-        <InputGroupText>
-          <h4 className='font-medium'>Backup codes</h4>
-        </InputGroupText>
-        <ButtonGroup className='ml-auto'>
-          <InputGroupButton
-            variant={'secondary'}
-            onClick={handleCopyCodes}
-            size={'sm'}
-          >
-            <FiCopy />
-            Copy
-          </InputGroupButton>
-
-          <ButtonGroupSeparator />
-
-          <InputGroupButton
-            onClick={handleDownloadCodes}
-            variant={'secondary'}
-            size={'sm'}
-          >
-            <IoCloudDownloadOutline />
-            Download
-          </InputGroupButton>
-        </ButtonGroup>
-      </InputGroupAddon>
-      <InputGroupTextarea
-        readOnly
-        value={codes.join(EOL)}
-        className='text-xs'
-      />
-
-      <InputGroupAddon align={'block-end'}>
-        <BackupCodesWarning />
-      </InputGroupAddon>
-    </InputGroup>
-  );
-}
-
-function BackupCodesWarning() {
-  return (
-    <Item size={'sm'} variant={'warning'} className=''>
-      <ItemMedia>
-        <AlertCircle />
-      </ItemMedia>
-      <ItemContent>
-        <ItemTitle>Backup codes are shown only once</ItemTitle>
-        <ItemDescription>
-          Please copy or download your backup codes now and store them in a safe
-          place. You will need them if you lose your device or cannot access
-          your authenticator app.
-        </ItemDescription>
-      </ItemContent>
-    </Item>
   );
 }
