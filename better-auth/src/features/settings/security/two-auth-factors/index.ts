@@ -1,0 +1,1 @@
+export { TwoFactorsCard } from './TwoFactorsCard';

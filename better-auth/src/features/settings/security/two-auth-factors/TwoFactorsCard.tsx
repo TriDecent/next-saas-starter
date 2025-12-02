@@ -10,10 +10,10 @@ import {
   Separator,
 } from '@/shared/components/ui';
 import { ShieldCheck } from 'lucide-react';
+import { GoShieldCheck, GoShieldSlash } from 'react-icons/go';
 import { AuthenticatorFactor } from './authenticator/AuthenticatorFactor';
 import { BackupCodeFactor } from './backup-code/BackupCodeFactor';
 import { SmsFactor } from './sms/SmsFactor';
-import { Toggle2FA } from './toggle-2fa/Toggle2FA';
 
 export function TwoFactorsCard({ isEnabled }: { isEnabled: boolean }) {
   return (
@@ -28,13 +28,17 @@ export function TwoFactorsCard({ isEnabled }: { isEnabled: boolean }) {
           <div className='flex items-center gap-4'>
             <Badge
               variant={isEnabled ? 'success' : 'destructive'}
-              className='flex items-center gap-3 rounded-full px-3 py-1'
+              className='px-4 py-1 text-sm'
             >
-              <span className='text-xs'>
-                {isEnabled ? 'Enabled' : 'Disabled'}
-              </span>
-
-              <Toggle2FA isEnabled={isEnabled} />
+              {isEnabled ? (
+                <>
+                  <GoShieldCheck /> Enabled
+                </>
+              ) : (
+                <>
+                  <GoShieldSlash /> Disabled
+                </>
+              )}
             </Badge>
           </div>
         </CardTitle>
@@ -48,7 +52,7 @@ export function TwoFactorsCard({ isEnabled }: { isEnabled: boolean }) {
 
       <CardContent>
         <ItemGroup className='space-y-4'>
-          <AuthenticatorFactor />
+          <AuthenticatorFactor isEnabled={isEnabled} />
 
           <SmsFactor />
 

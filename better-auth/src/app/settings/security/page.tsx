@@ -37,7 +37,7 @@ export default async function SecurityPage() {
   ) : (
     <div className='space-y-8'>
       <ChangePasswordCard />
-      <TwoFactorsCard />
+      <TwoFactorsCard isEnabled={!!session.user.twoFactorEnabled} />
     </div>
   );
 }
