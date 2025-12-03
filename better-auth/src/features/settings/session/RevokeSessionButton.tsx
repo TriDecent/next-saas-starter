@@ -35,13 +35,10 @@ export function RevokeSessionButton({
           description: 'The session has been successfully revoked.',
         });
       }}
-      onError={error => {
+      onError={() => {
         toast.error('Failed to revoke session', {
           id: `revoke-${token}`,
-          description:
-            error instanceof Error
-              ? error.message
-              : 'An error occurred while revoking the session.',
+          description: 'An error occurred while revoking the session.',
         });
       }}
     >

@@ -64,13 +64,14 @@ export function VerifyTotp({
           name='code'
           control={methods.control}
           render={({ field, fieldState }) => (
-            <Field>
+            <Field data-invalid={fieldState.invalid}>
               <FieldContent>
                 <InputOTP
                   {...field}
                   disabled={isPending}
                   maxLength={6}
                   pattern={REGEXP_ONLY_DIGITS}
+                  aria-invalid={fieldState.invalid}
                   containerClassName='justify-center'
                 >
                   <InputOTPGroup>

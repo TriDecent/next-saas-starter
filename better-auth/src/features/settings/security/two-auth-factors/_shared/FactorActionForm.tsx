@@ -107,14 +107,21 @@ export function FactorActionForm<
               name='code'
               control={methods.control}
               render={({ field, fieldState }) => (
-                <Field orientation={'responsive'}>
-                  <FieldLabel className='max-w-40'>TOTP</FieldLabel>
+                <Field
+                  orientation={'responsive'}
+                  data-invalid={fieldState.invalid}
+                >
+                  <FieldLabel className='max-w-40' htmlFor='code'>
+                    TOTP
+                  </FieldLabel>
                   <FieldContent>
                     <InputOTP
                       {...field}
+                      id='code'
                       disabled={isPending}
                       maxLength={6}
                       pattern={REGEXP_ONLY_DIGITS}
+                      aria-invalid={fieldState.invalid}
                       containerClassName='justify-center'
                     >
                       <InputOTPGroup>

@@ -52,7 +52,7 @@ export function Form<T extends FormResponse>({
     >
       {renderFields(state, isPending)}
 
-      <CardAction className='flex w-full flex-col gap-4 self-end md:w-fit md:flex-row'>
+      <CardAction className='flex w-full flex-col gap-4 md:ml-auto md:w-fit md:flex-row md:justify-end'>
         <Button
           variant='ghost'
           type='reset'
