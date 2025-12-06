@@ -17,7 +17,7 @@ export const auth = betterAuth({
   appName: 'Trí Decent Auth',
   advanced: { cookiePrefix: 'tri-decent' },
   session: { cookieCache: { enabled: true, maxAge: 60 * 5 } },
-  plugins: [nextCookies(), twoFactor()],
+  plugins: [twoFactor(), nextCookies()],
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),

@@ -82,6 +82,32 @@ export const ROUTES = {
           description: 'Easily reset your password to restore account access.',
         },
       }),
+      'verify-2fa': defineRoute({
+        href: '/auth/verify-2fa',
+        metadata: {
+          title: 'Two-Factor Authentication',
+          description:
+            'Secure your account with two-factor authentication options.',
+        },
+        nested: {
+          authenticator: defineRoute({
+            href: '/auth/verify-2fa/authenticator',
+            metadata: {
+              title: 'Authenticator Setup',
+              description:
+                'Set up an authenticator app for enhanced account security.',
+            },
+          }),
+          'backup-codes': defineRoute({
+            href: '/auth/verify-2fa/backup-codes',
+            metadata: {
+              title: 'Backup Codes',
+              description:
+                'Generate and manage backup codes for account recovery.',
+            },
+          }),
+        },
+      }),
     },
   }),
   settings: defineRoute({
