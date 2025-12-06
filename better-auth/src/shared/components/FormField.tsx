@@ -8,6 +8,15 @@ import {
 } from 'react-hook-form';
 import { cn } from '../utils/utils';
 import {
+  Checkbox,
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+  Label,
+} from './ui';
+import {
   Field,
   FieldContent,
   FieldDescription,
@@ -46,10 +55,14 @@ export type SelectFieldProps<TSelectProps = Record<string, unknown>> =
       children?: React.ReactNode;
     };
 
+type CheckboxFieldProps = BaseFieldProps &
+  React.ComponentPropsWithoutRef<typeof Checkbox>;
+
 export type FormFieldProps<TSelectProps = Record<string, unknown>> =
   | ({ kind: 'input' } & InputFieldProps)
   | ({ kind: 'textarea' } & TextareaFieldProps)
-  | ({ kind: 'select' } & SelectFieldProps<TSelectProps>);
+  | ({ kind: 'select' } & SelectFieldProps<TSelectProps>)
+  | ({ kind: 'checkbox' } & CheckboxFieldProps);
 
 export function FormField(props: FormFieldProps) {
   const { kind, ...rest } = props;
@@ -61,6 +74,8 @@ export function FormField(props: FormFieldProps) {
       return <ControlledTextareaField {...(rest as TextareaFieldProps)} />;
     case 'select':
       return <ControlledSelectField {...(rest as SelectFieldProps)} />;
+    case 'checkbox':
+      return <ControlledCheckboxField {...(rest as CheckboxFieldProps)} />;
     default:
       return null;
   }
@@ -158,8 +173,8 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
             <SelectTrigger
               id={props.id}
               name={props.name}
-              disabled={formState.isSubmitting}
-              aria-invalid={props.disabled || fieldState.invalid}
+              disabled={props.disabled || formState.isSubmitting}
+              aria-invalid={fieldState.invalid}
               className={cn(
                 'w-full',
                 fieldState.invalid ? 'error' : '',
@@ -171,6 +186,58 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
             <SelectContent>{props.children}</SelectContent>
           </Select>
         </FieldWrapper>
+      )}
+    />
+  );
+}
+
+function ControlledCheckboxField({
+  orientation = 'responsive',
+  ...props
+}: CheckboxFieldProps) {
+  const { control } = useFormContext();
+  const { labelText, ...rest } = props;
+
+  return (
+    <Controller
+      name={props.name}
+      control={control}
+      render={({ field, fieldState, formState }) => (
+        <Field orientation={orientation} data-invalid={fieldState.invalid}>
+          <FieldContent>
+            <Item asChild>
+              <Label
+                htmlFor={props.id}
+                className={cn(
+                  'bg-muted/50 cursor-pointer items-start rounded-md transition-colors',
+                  fieldState.invalid ? 'error border-destructive border' : '',
+                  props.disabled || formState.isSubmitting ? 'opacity-70' : '',
+                  props.className
+                )}
+              >
+                <ItemActions>
+                  <Checkbox
+                    {...rest}
+                    id={props.id}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={props.disabled || formState.isSubmitting}
+                    aria-invalid={fieldState.invalid}
+                  />
+                </ItemActions>
+
+                <ItemContent>
+                  <ItemTitle className='leading-none'>{labelText}</ItemTitle>
+                  <ItemDescription>{props.description}</ItemDescription>
+
+                  {fieldState.error ? (
+                    <FieldError errors={[fieldState.error]} />
+                  ) : null}
+                </ItemContent>
+              </Label>
+            </Item>
+          </FieldContent>
+        </Field>
       )}
     />
   );
