@@ -17,19 +17,36 @@ import {
 import { useActionForm } from '@/shared/hooks';
 import type { ActionResponse } from '@/shared/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';
 import { startTransition, useCallback, type ReactNode } from 'react';
-import { Controller, FormProvider, type SubmitHandler } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  FormProvider,
+  type FieldValues,
+  type SubmitHandler,
+} from 'react-hook-form';
 import { toast } from 'sonner';
-import { basicAuthSchema, twoFAAuthSchema } from './schema';
+import type { ZodType } from 'zod';
+import {
+  backupCodeAuthSchema,
+  basicAuthSchema,
+  twoFAAuthSchema,
+} from './schema';
 
-type FactorIntent = 'enable' | 'disable' | 'generate-backup';
+type FactorIntent =
+  | 'enable'
+  | 'disable'
+  | 'generate-backup'
+  | 'verify-backup-codes';
+
+type FactorPayload = { password?: string; code?: string };
 
 type FactorActionFormProps<TResponse extends ActionResponse<unknown, unknown>> =
   {
     action: (
       state: Awaited<TResponse>,
-      payload: { password: string; code?: string }
+      payload: FactorPayload
     ) => Promise<TResponse>;
     initialState: Awaited<TResponse>;
     intent: FactorIntent;
@@ -41,22 +58,23 @@ type FactorActionFormProps<TResponse extends ActionResponse<unknown, unknown>> =
 export function FactorActionForm<
   TResponse extends ActionResponse<unknown, { message: string }>,
 >(props: FactorActionFormProps<TResponse>) {
-  const msgs = MESSAGES[props.intent];
-  const toastId = `factor-${props.intent}`;
+  const { intent, action, initialState, children } = props;
+
+  const config = INTENT_CONFIG[intent];
+  const msgs = MESSAGES[intent];
+  const toastId = `factor-${intent}`;
 
   const { animationScope, methods, isPending, state, dispatch } = useActionForm<
     TResponse,
-    { password: string; code?: string }
+    FactorPayload
   >({
     formConfiguration: {
-      resolver: zodResolver(
-        props.intent === 'enable' ? basicAuthSchema : twoFAAuthSchema
-      ),
+      resolver: zodResolver(config.schema),
       mode: 'onTouched',
-      defaultValues: { password: '' },
+      defaultValues: { password: '', code: '' },
     },
-    action: props.action,
-    initialState: props.initialState,
+    action: action,
+    initialState: initialState,
     onFormPending: () => {
       toast.loading(msgs.pending.title, {
         description: msgs.pending.description,
@@ -77,95 +95,186 @@ export function FactorActionForm<
     },
   });
 
-  const onValid: SubmitHandler<{ password: string }> = useCallback(
+  const onValid: SubmitHandler<FactorPayload> = useCallback(
     data => {
       startTransition(() => dispatch(data));
     },
     [dispatch]
   );
 
-  if (state.type === 'success') return <>{props.children?.(state.payload)}</>;
+  if (state.type === 'success') return <>{children?.(state.payload)}</>;
 
   return (
     <FormProvider {...methods}>
       <form ref={animationScope} onSubmit={methods.handleSubmit(onValid)}>
         <FieldGroup className='mx-auto max-w-xl px-4 pb-8'>
-          <FormField
-            kind='input'
-            id='password'
-            name='password'
-            labelText='Password'
-            description='Enter your account password to confirm this action.'
-            placeholder='******'
-            type='password'
-            disabled={isPending}
-            autoComplete='current-password webauthn'
-          />
+          {config.showPassword ? <PasswordField isPending={isPending} /> : null}
 
-          {props.intent !== 'enable' ? (
-            <Controller
-              name='code'
-              control={methods.control}
-              render={({ field, fieldState }) => (
-                <Field
-                  orientation={'responsive'}
-                  data-invalid={fieldState.invalid}
-                >
-                  <FieldLabel className='max-w-40' htmlFor='code'>
-                    TOTP
-                  </FieldLabel>
-                  <FieldContent>
-                    <InputOTP
-                      {...field}
-                      id='code'
-                      disabled={isPending}
-                      maxLength={6}
-                      pattern={REGEXP_ONLY_DIGITS}
-                      aria-invalid={fieldState.invalid}
-                      containerClassName='justify-center'
-                    >
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                      </InputOTPGroup>
-
-                      <InputOTPSeparator />
-
-                      <InputOTPGroup>
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                      </InputOTPGroup>
-                    </InputOTP>
-
-                    <FieldDescription>
-                      Enter the 6-digit code from your authenticator app.
-                    </FieldDescription>
-
-                    <FieldError errors={[fieldState.error]} />
-                  </FieldContent>
-                </Field>
-              )}
-            />
+          {config.showTotp ? (
+            <TotpField control={methods.control} isPending={isPending} />
           ) : null}
 
-          <Field>
-            <Button disabled={isPending} className='w-full'>
-              Confirm
-            </Button>
-          </Field>
+          {config.showBackup ? (
+            <BackupCodeField control={methods.control} isPending={isPending} />
+          ) : null}
 
-          {state.type === 'error' ? (
+          <Button disabled={isPending} className='mx-auto w-full sm:w-fit'>
+            Confirm
+          </Button>
+
+          {state.type === 'error' && (
             <p className='text-destructive text-center text-sm'>
               {state.payload.message}
             </p>
-          ) : null}
+          )}
         </FieldGroup>
       </form>
     </FormProvider>
   );
 }
+
+export const PasswordField = ({ isPending }: { isPending: boolean }) => (
+  <FormField
+    kind='input'
+    id='password'
+    name='password'
+    labelText='Password'
+    description='Enter your account password to confirm this action.'
+    placeholder='******'
+    type='password'
+    disabled={isPending}
+    autoComplete='current-password webauthn'
+  />
+);
+
+export const TotpField = ({
+  control,
+  isPending,
+}: {
+  control: Control<{ code?: string }>;
+  isPending: boolean;
+}) => (
+  <Controller
+    name='code'
+    control={control}
+    render={({ field, fieldState }) => (
+      <Field orientation='responsive' data-invalid={fieldState.invalid}>
+        <FieldLabel className='max-w-40' htmlFor='code'>
+          TOTP
+        </FieldLabel>
+        <FieldContent>
+          <InputOTP
+            {...field}
+            id='code'
+            disabled={isPending}
+            maxLength={6}
+            pattern={REGEXP_ONLY_DIGITS}
+            aria-invalid={fieldState.invalid}
+            containerClassName='justify-center'
+          >
+            <InputOTPGroup>
+              {[0, 1, 2].map(idx => (
+                <InputOTPSlot key={idx} index={idx} />
+              ))}
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              {[3, 4, 5].map(idx => (
+                <InputOTPSlot key={idx} index={idx} />
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
+          <FieldDescription>
+            Enter the 6-digit code from your authenticator app.
+          </FieldDescription>
+          <FieldError errors={[fieldState.error]} />
+        </FieldContent>
+      </Field>
+    )}
+  />
+);
+
+export const BackupCodeField = ({
+  control,
+  isPending,
+}: {
+  control: Control<{ code?: string }>;
+  isPending: boolean;
+}) => (
+  <Controller
+    name='code'
+    control={control}
+    render={({ field, fieldState }) => (
+      <Field orientation='responsive' data-invalid={fieldState.invalid}>
+        <FieldLabel className='max-w-40' htmlFor='code'>
+          Backup Codes
+        </FieldLabel>
+        <FieldContent>
+          <InputOTP
+            {...field}
+            id='code'
+            disabled={isPending}
+            maxLength={10}
+            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+            aria-invalid={fieldState.invalid}
+            containerClassName='justify-center flex-col sm:flex-row'
+          >
+            <InputOTPGroup>
+              {[0, 1, 2, 3, 4].map(idx => (
+                <InputOTPSlot key={idx} index={idx} />
+              ))}
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              {[5, 6, 7, 8, 9].map(idx => (
+                <InputOTPSlot key={idx} index={idx} />
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
+          <FieldDescription>
+            Enter the 10-character backup code.
+          </FieldDescription>
+          <FieldError errors={[fieldState.error]} />
+        </FieldContent>
+      </Field>
+    )}
+  />
+);
+
+const INTENT_CONFIG: Record<
+  FactorIntent,
+  {
+    schema: ZodType<FieldValues, FieldValues>;
+    showPassword: boolean;
+    showTotp: boolean;
+    showBackup: boolean;
+  }
+> = {
+  enable: {
+    schema: basicAuthSchema,
+    showPassword: true,
+    showTotp: false,
+    showBackup: false,
+  },
+  disable: {
+    schema: twoFAAuthSchema,
+    showPassword: true,
+    showTotp: true,
+    showBackup: false,
+  },
+  'generate-backup': {
+    schema: twoFAAuthSchema,
+    showPassword: true,
+    showTotp: true,
+    showBackup: false,
+  },
+  'verify-backup-codes': {
+    schema: backupCodeAuthSchema,
+    showPassword: false,
+    showTotp: false,
+    showBackup: true,
+  },
+};
 
 const MESSAGES: Record<
   FactorIntent,
@@ -222,6 +331,20 @@ const MESSAGES: Record<
       title: 'Failed to enable authenticator',
       description:
         'Verification failed or an internal error occurred. Check your password and try again.',
+    },
+  },
+  'verify-backup-codes': {
+    pending: {
+      title: 'Verifying backup code…',
+      description: 'Checking the backup code you entered.',
+    },
+    success: {
+      title: 'Backup code verified',
+      description: 'Your backup code was accepted. You are now authenticated.',
+    },
+    error: {
+      title: 'Invalid backup code',
+      description: 'The code you entered is incorrect or expired. Try again.',
     },
   },
 };
