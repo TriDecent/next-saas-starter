@@ -1,11 +1,14 @@
 'use server';
 
-import { ajLaxAnonymous, handleDeniedInServerAction } from '@/lib';
+import { ajRestrictiveAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
+import { ROUTES } from '@/shared/constants';
 import type { OldActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { credentialsSchema } from './credentials-schema';
 
@@ -41,12 +44,6 @@ export async function signinAction(
   state: SigninResponse,
   formData: FormData
 ): Promise<SigninResponse> {
-  const decision = await ajLaxAnonymous.protect(await request(), {
-    action: 'sa-sign-in-input-check',
-  });
-
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
-
   const input = Object.fromEntries(formData.entries());
 
   const parsedResult = signinSchema.safeParse(input);
@@ -61,16 +58,35 @@ export async function signinAction(
     };
   }
 
+  const decision = await ajRestrictiveAnonymous.protect(await request(), {
+    action: 'sa-sign-in',
+  });
+
+  if (decision.isDenied()) handleDeniedInServerAction(decision);
+
   const signinCredentials = parsedResult.data;
 
   try {
-    await auth.api.signInEmail({
+    const response = await auth.api.signInEmail({
       headers: await headers(),
       body: {
         email: signinCredentials.email,
         password: signinCredentials.password,
       },
     });
+
+    const requestReferer = (await headers()).get('referer');
+    const requestUrl = requestReferer ? new URL(requestReferer) : undefined;
+
+    if ('twoFactorRedirect' in response) {
+      const hasCallbackUrl = requestUrl?.searchParams.has('callbackUrl');
+
+      redirect(
+        hasCallbackUrl
+          ? `${ROUTES.auth.nested['verify-2fa'].href}?${requestUrl!.searchParams.toString()}`
+          : ROUTES.auth.nested['verify-2fa'].href
+      );
+    }
 
     return {
       type: 'success',
@@ -80,6 +96,8 @@ export async function signinAction(
       },
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
+
     if (!(error instanceof APIError))
       return {
         type: 'error',

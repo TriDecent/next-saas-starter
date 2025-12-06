@@ -1,1 +1,1 @@
-export { BackupCodes } from '../../backup-code/BackupCodes';
+export { VerifyTotp } from './VerifyTotp';
