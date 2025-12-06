@@ -108,6 +108,7 @@ function useSignupRenders() {
             autoComplete='name webauthn'
             disabled={isPending}
             defaultValue={state.payload.userEntered?.name}
+            placeholder='Your name'
           />
 
           <FormRow
@@ -127,6 +128,7 @@ function useSignupRenders() {
             autoComplete='email webauthn'
             disabled={isPending}
             defaultValue={state.payload.userEntered?.email}
+            placeholder='you@example.com'
           />
 
           <FormRow
@@ -147,6 +149,7 @@ function useSignupRenders() {
             autoComplete='new-password webauthn'
             disabled={isPending}
             defaultValue={state.payload.userEntered?.password}
+            placeholder='********'
           />
 
           <FormRow
@@ -167,6 +170,7 @@ function useSignupRenders() {
             autoComplete='new-password webauthn'
             disabled={isPending}
             defaultValue={state.payload.userEntered?.confirmedPassword}
+            placeholder='********'
           />
 
           <FormRow
@@ -185,6 +189,7 @@ function useSignupRenders() {
             }
             disabled={isPending}
             defaultValue={state.payload.userEntered?.favoriteNumber}
+            placeholder='e.g. 42'
           />
         </FieldGroup>
       </FieldSet>

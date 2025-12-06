@@ -8,6 +8,7 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { useAppSelector } from '@/shared/hooks';
+import { FaPlus, FaSignInAlt } from 'react-icons/fa';
 import { SigninCard } from './SigninCard';
 import { SignupCard } from './SignupCard';
 
@@ -17,8 +18,14 @@ export function AuthCardSelection() {
   return !verificationInfo ? (
     <Tabs defaultValue='signin' className='mx-auto max-w-xl'>
       <TabsList>
-        <TabsTrigger value='signin'>Sign In</TabsTrigger>
-        <TabsTrigger value='signup'>Sign Up</TabsTrigger>
+        <TabsTrigger value='signin'>
+          <FaSignInAlt />
+          Sign In
+        </TabsTrigger>
+        <TabsTrigger value='signup'>
+          <FaPlus />
+          Sign Up
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value='signin'>
