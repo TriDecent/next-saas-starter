@@ -1,7 +1,6 @@
 'use server';
 
 import {
-  ajLaxAuthenticated,
   ajRestrictiveAuthenticated,
   auth,
   ensureSession,
@@ -23,7 +22,6 @@ export async function enableTwoFactorsAction(
   state: Response,
   input: unknown
 ): Promise<Response> {
-  console.log(input);
   const parsedInput = basicAuthSchema.safeParse(input);
   if (!parsedInput.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
