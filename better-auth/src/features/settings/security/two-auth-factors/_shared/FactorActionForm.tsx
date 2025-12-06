@@ -27,6 +27,7 @@ import {
   type SubmitHandler,
 } from 'react-hook-form';
 import { GiConfirmed } from 'react-icons/gi';
+import { VscWorkspaceTrusted } from 'react-icons/vsc';
 import { toast } from 'sonner';
 import type { ZodType } from 'zod';
 import {
@@ -43,7 +44,11 @@ type FactorIntent =
   | 'verify-backup-codes'
   | 'verify-totp';
 
-type FactorPayload = { password?: string; code?: string };
+type FactorPayload = {
+  password?: string;
+  code?: string;
+  trustDevice?: boolean;
+};
 
 type FactorActionFormProps<TResponse extends ActionResponse<unknown, unknown>> =
   {
@@ -74,7 +79,7 @@ export function FactorActionForm<
     formConfiguration: {
       resolver: zodResolver(config.schema),
       mode: 'onTouched',
-      defaultValues: { password: '', code: '' },
+      defaultValues: { password: '', code: '', trustDevice: false },
     },
     action: action,
     initialState: initialState,
@@ -123,6 +128,10 @@ export function FactorActionForm<
             <BackupCodeField control={methods.control} isPending={isPending} />
           ) : null}
 
+          {config.showTrustDevice ? (
+            <TrustDeviceField isPending={isPending} />
+          ) : null}
+
           <Button
             disabled={isPending}
             className='mx-auto w-full min-w-32 sm:w-fit'
@@ -141,113 +150,133 @@ export function FactorActionForm<
   );
 }
 
-export const PasswordField = ({ isPending }: { isPending: boolean }) => (
-  <FormField
-    kind='input'
-    id='password'
-    name='password'
-    labelText='Password'
-    description='Enter your account password to confirm this action.'
-    placeholder='******'
-    type='password'
-    disabled={isPending}
-    autoComplete='current-password webauthn'
-  />
-);
+function PasswordField({ isPending }: { isPending: boolean }) {
+  return (
+    <FormField
+      kind='input'
+      id='password'
+      name='password'
+      labelText='Password'
+      description='Enter your account password to confirm this action.'
+      placeholder='******'
+      type='password'
+      disabled={isPending}
+      autoComplete='current-password webauthn'
+    />
+  );
+}
 
-export const TotpField = ({
+function TotpField({
   control,
   isPending,
 }: {
   control: Control<{ code?: string }>;
   isPending: boolean;
-}) => (
-  <Controller
-    name='code'
-    control={control}
-    render={({ field, fieldState }) => (
-      <Field orientation='responsive' data-invalid={fieldState.invalid}>
-        <FieldLabel className='max-w-40' htmlFor='code'>
-          TOTP
-        </FieldLabel>
-        <FieldContent>
-          <InputOTP
-            {...field}
-            id='code'
-            disabled={isPending}
-            maxLength={6}
-            pattern={REGEXP_ONLY_DIGITS}
-            aria-invalid={fieldState.invalid}
-            containerClassName='justify-center'
-          >
-            <InputOTPGroup>
-              {[0, 1, 2].map(idx => (
-                <InputOTPSlot key={idx} index={idx} />
-              ))}
-            </InputOTPGroup>
-            <InputOTPSeparator />
-            <InputOTPGroup>
-              {[3, 4, 5].map(idx => (
-                <InputOTPSlot key={idx} index={idx} />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
-          <FieldDescription>
-            Enter the 6-digit code from your authenticator app.
-          </FieldDescription>
-          <FieldError errors={[fieldState.error]} />
-        </FieldContent>
-      </Field>
-    )}
-  />
-);
+}) {
+  return (
+    <Controller
+      name='code'
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field orientation='responsive' data-invalid={fieldState.invalid}>
+          <FieldLabel className='max-w-40' htmlFor='code'>
+            TOTP
+          </FieldLabel>
+          <FieldContent>
+            <InputOTP
+              {...field}
+              id='code'
+              disabled={isPending}
+              maxLength={6}
+              pattern={REGEXP_ONLY_DIGITS}
+              aria-invalid={fieldState.invalid}
+              containerClassName='justify-center'
+            >
+              <InputOTPGroup>
+                {[0, 1, 2].map(idx => (
+                  <InputOTPSlot key={idx} index={idx} />
+                ))}
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                {[3, 4, 5].map(idx => (
+                  <InputOTPSlot key={idx} index={idx} />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+            <FieldDescription>
+              Enter the 6-digit code from your authenticator app.
+            </FieldDescription>
+            <FieldError errors={[fieldState.error]} />
+          </FieldContent>
+        </Field>
+      )}
+    />
+  );
+}
 
-export const BackupCodeField = ({
+function BackupCodeField({
   control,
   isPending,
 }: {
   control: Control<{ code?: string }>;
   isPending: boolean;
-}) => (
-  <Controller
-    name='code'
-    control={control}
-    render={({ field, fieldState }) => (
-      <Field orientation='responsive' data-invalid={fieldState.invalid}>
-        <FieldLabel className='max-w-40' htmlFor='code'>
-          Backup Codes
-        </FieldLabel>
-        <FieldContent>
-          <InputOTP
-            {...field}
-            id='code'
-            disabled={isPending}
-            maxLength={10}
-            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
-            aria-invalid={fieldState.invalid}
-            containerClassName='justify-center flex-col sm:flex-row'
-          >
-            <InputOTPGroup>
-              {[0, 1, 2, 3, 4].map(idx => (
-                <InputOTPSlot key={idx} index={idx} />
-              ))}
-            </InputOTPGroup>
-            <InputOTPSeparator />
-            <InputOTPGroup>
-              {[5, 6, 7, 8, 9].map(idx => (
-                <InputOTPSlot key={idx} index={idx} />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
-          <FieldDescription>
-            Enter the 10-character backup code.
-          </FieldDescription>
-          <FieldError errors={[fieldState.error]} />
-        </FieldContent>
-      </Field>
-    )}
-  />
-);
+}) {
+  return (
+    <Controller
+      name='code'
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field orientation='responsive' data-invalid={fieldState.invalid}>
+          <FieldLabel className='max-w-40' htmlFor='code'>
+            Backup Codes
+          </FieldLabel>
+          <FieldContent>
+            <InputOTP
+              {...field}
+              id='code'
+              disabled={isPending}
+              maxLength={10}
+              pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+              aria-invalid={fieldState.invalid}
+              containerClassName='justify-center flex-col sm:flex-row'
+            >
+              <InputOTPGroup>
+                {[0, 1, 2, 3, 4].map(idx => (
+                  <InputOTPSlot key={idx} index={idx} />
+                ))}
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                {[5, 6, 7, 8, 9].map(idx => (
+                  <InputOTPSlot key={idx} index={idx} />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+            <FieldDescription>
+              Enter the 10-character backup code.
+            </FieldDescription>
+            <FieldError errors={[fieldState.error]} />
+          </FieldContent>
+        </Field>
+      )}
+    />
+  );
+}
+
+function TrustDeviceField({ isPending }: { isPending: boolean }) {
+  return (
+    <FormField
+      kind='checkbox'
+      id='trust-device'
+      name='trustDevice'
+      labelText='Trust this device'
+      description='You will not be prompted for two-factor authentication on this device for the next 30 days.'
+      addons={<VscWorkspaceTrusted />}
+      disabled={isPending}
+    />
+  );
+}
 
 const INTENT_CONFIG: Record<
   FactorIntent,
@@ -256,6 +285,7 @@ const INTENT_CONFIG: Record<
     showPassword: boolean;
     showTotp: boolean;
     showBackup: boolean;
+    showTrustDevice: boolean;
   }
 > = {
   enable: {
@@ -263,30 +293,35 @@ const INTENT_CONFIG: Record<
     showPassword: true,
     showTotp: false,
     showBackup: false,
+    showTrustDevice: false,
   },
   disable: {
     schema: twoFAAuthSchema,
     showPassword: true,
     showTotp: true,
     showBackup: false,
+    showTrustDevice: false,
   },
   'generate-backup': {
     schema: twoFAAuthSchema,
     showPassword: true,
     showTotp: true,
     showBackup: false,
+    showTrustDevice: false,
   },
   'verify-backup-codes': {
     schema: backupCodeSchema,
     showPassword: false,
     showTotp: false,
     showBackup: true,
+    showTrustDevice: true,
   },
   'verify-totp': {
     schema: totpAuthSchema,
     showPassword: false,
     showTotp: true,
     showBackup: false,
+    showTrustDevice: true,
   },
 };
 
