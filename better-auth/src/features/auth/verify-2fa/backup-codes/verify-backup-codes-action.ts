@@ -37,6 +37,7 @@ export async function verifyBackupCodes(
           parsedInput.data.code.slice(0, 5) +
           '-' +
           parsedInput.data.code.slice(5),
+        trustDevice: parsedInput.data.trustDevice,
       },
       headers: headersList,
     });

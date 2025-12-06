@@ -36,7 +36,10 @@ export async function verifyTotpAction(
 
   try {
     await auth.api.verifyTOTP({
-      body: { code: parsedInput.data.code },
+      body: {
+        code: parsedInput.data.code,
+        trustDevice: parsedInput.data.trustDevice,
+      },
       headers: headersList,
     });
 

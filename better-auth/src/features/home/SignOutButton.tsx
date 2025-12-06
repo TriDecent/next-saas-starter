@@ -16,8 +16,8 @@ export function SignOutButton() {
       variant={'outline'}
       size={'lg'}
     >
-      <GoSignOut />
       Sign Out
+      <GoSignOut />
     </ActionButton>
   );
 }

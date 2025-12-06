@@ -7,7 +7,7 @@ export function useShakeError(error: unknown) {
   useEffect(() => {
     if (!error) return;
     const elements = scope.current?.querySelectorAll(
-      'input.error, textarea.error, div.error'
+      'input.error, textarea.error, label.error, div.error'
     );
     if (!elements || elements.length === 0) return;
 
