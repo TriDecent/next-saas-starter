@@ -26,11 +26,13 @@ import {
   type FieldValues,
   type SubmitHandler,
 } from 'react-hook-form';
+import { GiConfirmed } from 'react-icons/gi';
 import { toast } from 'sonner';
 import type { ZodType } from 'zod';
 import {
-  backupCodeAuthSchema,
+  backupCodeSchema,
   basicAuthSchema,
+  totpAuthSchema,
   twoFAAuthSchema,
 } from './schema';
 
@@ -38,7 +40,8 @@ type FactorIntent =
   | 'enable'
   | 'disable'
   | 'generate-backup'
-  | 'verify-backup-codes';
+  | 'verify-backup-codes'
+  | 'verify-totp';
 
 type FactorPayload = { password?: string; code?: string };
 
@@ -82,6 +85,7 @@ export function FactorActionForm<
       });
     },
     onFormSuccess: () => {
+      methods.reset();
       toast.success(msgs.success.title, {
         description: msgs.success.description,
         id: toastId,
@@ -102,7 +106,8 @@ export function FactorActionForm<
     [dispatch]
   );
 
-  if (state.type === 'success') return <>{children?.(state.payload)}</>;
+  if (state.type === 'success')
+    return children ? <>{children(state.payload)}</> : null;
 
   return (
     <FormProvider {...methods}>
@@ -118,8 +123,11 @@ export function FactorActionForm<
             <BackupCodeField control={methods.control} isPending={isPending} />
           ) : null}
 
-          <Button disabled={isPending} className='mx-auto w-full sm:w-fit'>
-            Confirm
+          <Button
+            disabled={isPending}
+            className='mx-auto w-full min-w-32 sm:w-fit'
+          >
+            <GiConfirmed /> Confirm
           </Button>
 
           {state.type === 'error' && (
@@ -269,10 +277,16 @@ const INTENT_CONFIG: Record<
     showBackup: false,
   },
   'verify-backup-codes': {
-    schema: backupCodeAuthSchema,
+    schema: backupCodeSchema,
     showPassword: false,
     showTotp: false,
     showBackup: true,
+  },
+  'verify-totp': {
+    schema: totpAuthSchema,
+    showPassword: false,
+    showTotp: true,
+    showBackup: false,
   },
 };
 
@@ -344,6 +358,20 @@ const MESSAGES: Record<
     },
     error: {
       title: 'Invalid backup code',
+      description: 'The code you entered is incorrect or expired. Try again.',
+    },
+  },
+  'verify-totp': {
+    pending: {
+      title: 'Verifying TOTP code…',
+      description: 'Checking the code from your authenticator app.',
+    },
+    success: {
+      title: 'TOTP verified',
+      description: 'Your code was accepted. You are now authenticated.',
+    },
+    error: {
+      title: 'Invalid TOTP code',
       description: 'The code you entered is incorrect or expired. Try again.',
     },
   },

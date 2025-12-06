@@ -1,6 +1,6 @@
 'use server';
 
-import { backupCodeAuthSchema } from '@/features/settings/security/two-auth-factors';
+import { backupCodeSchema } from '@/features/settings/security/two-auth-factors';
 import {
   ajRestrictiveAnonymous,
   auth,
@@ -17,7 +17,7 @@ export async function verifyBackupCodes(
   state: Response,
   input: unknown
 ): Promise<Response> {
-  const parsedInput = backupCodeAuthSchema.safeParse(input);
+  const parsedInput = backupCodeSchema.safeParse(input);
   if (!parsedInput.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 

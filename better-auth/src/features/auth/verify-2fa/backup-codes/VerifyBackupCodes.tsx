@@ -4,7 +4,7 @@ import { FactorActionForm } from '@/features/settings/security/two-auth-factors'
 import { ROUTES } from '@/shared/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { verifyBackupCodes } from './verify-backup-codes';
+import { verifyBackupCodes } from './verify-backup-codes-action';
 
 export function VerifyBackupCodes() {
   return (
