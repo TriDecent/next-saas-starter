@@ -6,17 +6,12 @@ import { ROUTES } from '@/shared/constants';
 import { StoreProvider } from '@/shared/provider';
 import type { Metadata } from 'next';
 import { cacheLife } from 'next/cache';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
   subsets: ['latin'],
 });
 
@@ -31,16 +26,9 @@ export default async function RootLayout({
 
   return (
     <html lang='en' suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} antialiased`}>
         <StoreProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
             <PageLayout>
               <PageLayout.Header>
                 <h1 className='text-2xl font-medium tracking-wider'>

@@ -96,8 +96,8 @@ function Details({
 >) {
   return (
     <div className='space-y-2.5'>
-      <h3 className='text-sm font-medium text-gray-500'>Account Details</h3>
-      <div className='space-y-3'>
+      <h3 className='font-medium text-gray-500'>Account Details</h3>
+      <div className='space-y-3 text-sm'>
         <div className='flex items-center justify-between'>
           <span className='text-muted-foreground'>Email Status</span>
           {emailVerified ? (
