@@ -11,6 +11,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { twoFactor } from 'better-auth/plugins/two-factor';
 import { redirect } from 'next/navigation';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from './prisma';
 
 export const auth = betterAuth({
@@ -141,4 +142,18 @@ export async function ensureSession(headers: Headers, callbackUrl: string) {
   const searchParams = new URLSearchParams({ callbackUrl });
 
   redirect(`${ROUTES.auth.href}?${searchParams.toString()}`);
+}
+
+export async function ensureSessionFromRequest(
+  request: NextRequest
+): Promise<NextResponse> {
+  const session = await auth.api.getSession({ headers: request.headers });
+
+  if (session) return NextResponse.next();
+
+  const callbackUrl = `${request.nextUrl.pathname}?${request.nextUrl.searchParams.toString()}`;
+  const redirectTo = new URL(ROUTES.auth.href, request.nextUrl);
+  redirectTo.searchParams.set('callbackUrl', callbackUrl.toString());
+
+  return NextResponse.redirect(redirectTo);
 }
