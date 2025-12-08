@@ -6,6 +6,7 @@ import {
   sendWelcomeEmail,
 } from '@/features/email';
 import { ROUTES } from '@/shared/constants';
+import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
@@ -18,7 +19,7 @@ export const auth = betterAuth({
   appName: 'Trí Decent Auth',
   advanced: { cookiePrefix: 'tri-decent' },
   session: { cookieCache: { enabled: true, maxAge: 60 * 5 } },
-  plugins: [twoFactor(), nextCookies()],
+  plugins: [twoFactor(), passkey(), nextCookies()],
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),

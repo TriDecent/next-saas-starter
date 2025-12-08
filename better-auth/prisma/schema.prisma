@@ -25,6 +25,8 @@ model User {
   twoFactorEnabled Boolean?    @default(false) @map("two_factors_enabled")
   twoFactors       TwoFactor[]
 
+  passkeys Passkey[]
+
   @@unique([email])
   @@map("users")
 }
@@ -74,7 +76,7 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@index([identifier])
-  @@map("verification")
+  @@map("verifications")
 }
 
 model TwoFactor {
@@ -84,5 +86,26 @@ model TwoFactor {
   userId      String @map("user_id")
   user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("two_factor")
+  @@index([secret])
+  @@index([userId])
+  @@map("two_factors")
+}
+
+model Passkey {
+  id           String    @id
+  name         String?
+  publicKey    String    @map("public_key")
+  userId       String    @map("user_id")
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID String    @map("credential_id")
+  counter      Int
+  deviceType   String    @map("device_type")
+  backedUp     Boolean   @map("backed_up")
+  transports   String?
+  createdAt    DateTime? @map("created_at")
+  aaguid       String?
+
+  @@index([userId])
+  @@index([credentialID])
+  @@map("passkeys")
 }
