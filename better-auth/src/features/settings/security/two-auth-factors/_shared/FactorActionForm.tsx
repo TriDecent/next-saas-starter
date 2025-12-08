@@ -42,7 +42,9 @@ type FactorIntent =
   | 'disable'
   | 'generate-backup'
   | 'verify-backup-codes'
-  | 'verify-totp';
+  | 'verify-totp'
+  | 'authenticate-prior-action'
+  | 'authenticate-prior-action-without-2fa';
 
 type FactorPayload = {
   password?: string;
@@ -158,7 +160,7 @@ function PasswordField({ isPending }: { isPending: boolean }) {
       name='password'
       labelText='Password'
       description='Enter your account password to confirm this action.'
-      placeholder='******'
+      placeholder='********'
       type='password'
       disabled={isPending}
       autoComplete='current-password webauthn'
@@ -323,6 +325,20 @@ const INTENT_CONFIG: Record<
     showBackup: false,
     showTrustDevice: true,
   },
+  'authenticate-prior-action': {
+    schema: twoFAAuthSchema,
+    showPassword: true,
+    showTotp: true,
+    showBackup: false,
+    showTrustDevice: false,
+  },
+  'authenticate-prior-action-without-2fa': {
+    schema: basicAuthSchema,
+    showPassword: true,
+    showTotp: false,
+    showBackup: false,
+    showTrustDevice: false,
+  },
 };
 
 const MESSAGES: Record<
@@ -408,6 +424,36 @@ const MESSAGES: Record<
     error: {
       title: 'Invalid TOTP code',
       description: 'The code you entered is incorrect or expired. Try again.',
+    },
+  },
+  'authenticate-prior-action': {
+    pending: {
+      title: 'Authenticating…',
+      description: 'Verifying your identity before proceeding with the action.',
+    },
+    success: {
+      title: 'Authenticated',
+      description:
+        'You have been successfully authenticated to proceed with the action.',
+    },
+    error: {
+      title: 'Authentication failed',
+      description: 'Verification failed. Check your credentials and try again.',
+    },
+  },
+  'authenticate-prior-action-without-2fa': {
+    pending: {
+      title: 'Authenticating…',
+      description: 'Verifying your identity before proceeding with the action.',
+    },
+    success: {
+      title: 'Authenticated',
+      description:
+        'You have been successfully authenticated to proceed with the action.',
+    },
+    error: {
+      title: 'Authentication failed',
+      description: 'Verification failed. Check your credentials and try again.',
     },
   },
 };

@@ -1,7 +1,7 @@
 import { credentialsSchema } from '@/features/auth/action';
 import z from 'zod';
 
-const trustDeviceObj = { trustDevice: z.boolean() };
+const trustDeviceObj = { trustDevice: z.boolean().optional() };
 
 export const basicAuthSchema = credentialsSchema.pick({ password: true });
 
