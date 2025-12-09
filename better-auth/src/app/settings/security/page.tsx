@@ -1,4 +1,8 @@
 import {
+  AddPasskeyButton,
+  PasskeysList,
+} from '@/features/settings/security/passkey';
+import {
   ChangePasswordCard,
   RequestPasswordResetCard,
 } from '@/features/settings/security/password';
@@ -27,7 +31,10 @@ export default async function SecurityPage() {
     ROUTES.settings.nested.security.href
   );
 
-  const accounts = await auth.api.listUserAccounts({ headers: headersList });
+  const [accounts, passkeys] = await Promise.all([
+    auth.api.listUserAccounts({ headers: headersList }),
+    auth.api.listPasskeys({ headers: headersList }),
+  ]);
   const hasCredentialAccount = accounts.some(
     account => account.providerId === 'credential'
   );
@@ -38,6 +45,12 @@ export default async function SecurityPage() {
     <div className='space-y-8'>
       <ChangePasswordCard />
       <TwoFactorsCard isEnabled={!!session.user.twoFactorEnabled} />
+      <PasskeysList
+        passkeys={passkeys}
+        addPasskeyAction={
+          <AddPasskeyButton is2FAEnabled={!!session.user.twoFactorEnabled} />
+        }
+      />
     </div>
   );
 }
