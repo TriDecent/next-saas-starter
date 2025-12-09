@@ -1,6 +1,10 @@
 'use server';
 
 import {
+  basicAuthSchema,
+  twoFAAuthSchema,
+} from '@/features/settings/security/two-auth-factors';
+import {
   ajLaxAuthenticated,
   auth,
   ensureSession,
@@ -11,7 +15,6 @@ import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import { twoFAAuthSchema } from '../../features/settings/security/two-auth-factors';
 
 type Response = ActionResponse<undefined, { message: string }>;
 
@@ -19,16 +22,21 @@ export async function authenticatePriorAction(
   state: Response,
   input: unknown
 ): Promise<Response> {
-  const parsedInput = twoFAAuthSchema.safeParse(input);
-  if (!parsedInput.success)
-    return { type: 'error', payload: { message: 'Invalid input' } };
-
   const [headersList, req] = await Promise.all([headers(), request()]);
 
   const session = await ensureSession(
     headersList,
     ROUTES.settings.nested.security.href
   );
+
+  const schema = session.user.twoFactorEnabled
+    ? twoFAAuthSchema
+    : basicAuthSchema;
+
+  const parsedInput = schema.safeParse(input);
+
+  if (!parsedInput.success)
+    return { type: 'error', payload: { message: 'Invalid input' } };
 
   const decision = await ajLaxAuthenticated.protect(req, {
     action: 'authenticate-prior-action',
@@ -37,19 +45,22 @@ export async function authenticatePriorAction(
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
   try {
-    await Promise.all([
-      auth.api.signInEmail({
+    await auth.api.signInEmail({
+      body: {
+        email: session.user.email,
+        password: parsedInput.data.password,
+      },
+      headers: headersList,
+    });
+
+    if (session.user.twoFactorEnabled && 'code' in parsedInput.data)
+      await auth.api.verifyTOTP({
         body: {
-          email: session.user.email,
-          password: parsedInput.data.password,
+          code: parsedInput.data
+            .code as string /* validated with twoFAAuthSchema */,
         },
         headers: headersList,
-      }),
-      auth.api.verifyTOTP({
-        body: { code: parsedInput.data.code },
-        headers: headersList,
-      }),
-    ]);
+      });
 
     return {
       type: 'success',
