@@ -1,13 +1,9 @@
-import { AuthenticatePriorAction } from '@/shared/action';
+import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior';
 import { Button } from '@/shared/components/ui';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { AddPasskeyForm } from './AddPasskeyForm';
 
-export function AddPasskeyButton({
-  is2FAEnabled: should2FA,
-}: {
-  is2FAEnabled: boolean;
-}) {
+export function AddPasskeyButton() {
   return (
     <AuthenticatePriorAction
       title={'Add Passkey'}
@@ -17,7 +13,6 @@ export function AddPasskeyButton({
           <IoMdAddCircleOutline /> Add a Passkey
         </Button>
       }
-      should2FA={should2FA}
     >
       <AddPasskeyForm />
     </AuthenticatePriorAction>
