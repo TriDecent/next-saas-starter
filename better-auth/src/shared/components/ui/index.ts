@@ -1,3 +1,4 @@
+export * from './alert-dialog';
 export * from './avatar';
 export * from './badge';
 export * from './button';
@@ -14,10 +15,11 @@ export * from './input-group';
 export * from './input-otp';
 export * from './item';
 export * from './label';
+export * from './popover';
 export * from './scroll-area';
 export * from './separator';
 export * from './sonner';
 export * from './switch';
 export * from './tabs';
 export * from './textarea';
-
+export * from './tooltip';
