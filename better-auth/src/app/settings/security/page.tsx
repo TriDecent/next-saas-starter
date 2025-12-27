@@ -1,7 +1,8 @@
 import {
-  AddPasskeyButton,
-  PasskeysList,
-} from '@/features/settings/security/passkey';
+  AuthenticatePriorProvider,
+  SUDO_TOKEN_COOKIE,
+} from '@/features/auth/authenticate-prior';
+import { PasskeysList } from '@/features/settings/security/passkey';
 import {
   ChangePasswordCard,
   RequestPasswordResetCard,
@@ -10,7 +11,7 @@ import { TwoFactorsCard } from '@/features/settings/security/two-auth-factors';
 import { auth, ensureSession } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = await ensureSession(
@@ -31,9 +32,10 @@ export default async function SecurityPage() {
     ROUTES.settings.nested.security.href
   );
 
-  const [accounts, passkeys] = await Promise.all([
+  const [accounts, passkeys, cookiesList] = await Promise.all([
     auth.api.listUserAccounts({ headers: headersList }),
     auth.api.listPasskeys({ headers: headersList }),
+    cookies(),
   ]);
   const hasCredentialAccount = accounts.some(
     account => account.providerId === 'credential'
@@ -45,12 +47,14 @@ export default async function SecurityPage() {
     <div className='space-y-8'>
       <ChangePasswordCard />
       <TwoFactorsCard isEnabled={!!session.user.twoFactorEnabled} />
-      <PasskeysList
-        passkeys={passkeys}
-        addPasskeyAction={
-          <AddPasskeyButton is2FAEnabled={!!session.user.twoFactorEnabled} />
-        }
-      />
+      <AuthenticatePriorProvider
+        value={{
+          is2FAEnabled: !!session.user.twoFactorEnabled,
+          doesSudoTokenExist: cookiesList.has(SUDO_TOKEN_COOKIE.name),
+        }}
+      >
+        <PasskeysList passkeys={passkeys} />
+      </AuthenticatePriorProvider>
     </div>
   );
 }
