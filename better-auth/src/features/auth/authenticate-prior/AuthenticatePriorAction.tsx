@@ -2,13 +2,7 @@
 
 import { FactorActionForm } from '@/features/settings/security/two-auth-factors';
 import { DrawerOpener } from '@/shared/components';
-import {
-  use,
-  useEffect,
-  useEffectEvent,
-  useState,
-  type ReactNode,
-} from 'react';
+import { use, useEffect, useEffectEvent, type ReactNode } from 'react';
 import { authenticatePriorAction } from './authenticate-prior-action';
 import { AuthenticatePriorContext } from './authenticate-prior-context';
 
@@ -17,11 +11,13 @@ export function AuthenticatePriorAction({
   description,
   children,
   trigger,
+  onAuthenticated,
 }: {
   title: string;
   description: string;
   trigger: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
+  onAuthenticated?: () => void;
 }) {
   const context = use(AuthenticatePriorContext);
   if (!context)
@@ -29,23 +25,17 @@ export function AuthenticatePriorAction({
       'AuthenticatePriorAction must be used within AuthenticatePriorProvider'
     );
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   return (
     <DrawerOpener
-      title={isAuthenticated ? title : 'Authentication Required'}
+      title={context.doesSudoTokenExist ? title : 'Authentication Required'}
       description={
-        isAuthenticated
+        context.doesSudoTokenExist
           ? description
           : 'Please verify your identity before continuing with this action.'
       }
       trigger={trigger}
     >
-      {context.doesSudoTokenExist ? (
-        <RenderOnAuthenticated onAuthenticated={() => setIsAuthenticated(true)}>
-          {children}
-        </RenderOnAuthenticated>
-      ) : (
+      <div className={context.doesSudoTokenExist ? 'hidden' : 'block'}>
         <FactorActionForm
           action={authenticatePriorAction}
           initialState={{ type: 'initial' }}
@@ -54,16 +44,14 @@ export function AuthenticatePriorAction({
               ? 'authenticate-prior-action'
               : 'authenticate-prior-action-without-2fa'
           }
-        >
-          {() => (
-            <RenderOnAuthenticated
-              onAuthenticated={() => setIsAuthenticated(true)}
-            >
-              {children}
-            </RenderOnAuthenticated>
-          )}
-        </FactorActionForm>
-      )}
+        />
+      </div>
+
+      {context.doesSudoTokenExist ? (
+        <RenderOnAuthenticated onAuthenticated={onAuthenticated}>
+          {children}
+        </RenderOnAuthenticated>
+      ) : null}
     </DrawerOpener>
   );
 }
@@ -72,10 +60,10 @@ function RenderOnAuthenticated({
   onAuthenticated,
   children,
 }: {
-  onAuthenticated: () => void;
-  children: ReactNode;
+  onAuthenticated?: () => void;
+  children?: ReactNode;
 }) {
-  const handleAuthenticated = useEffectEvent(onAuthenticated);
+  const handleAuthenticated = useEffectEvent(onAuthenticated ?? (() => {}));
 
   useEffect(() => {
     handleAuthenticated();
