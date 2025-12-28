@@ -1,5 +1,6 @@
 'use server';
 
+import { credentialsSchema } from '@/features/_shared';
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
@@ -13,7 +14,6 @@ import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { z } from 'zod';
-import { credentialsSchema } from '../../auth/action';
 
 const updateProfileSchema = credentialsSchema.omit({ password: true });
 

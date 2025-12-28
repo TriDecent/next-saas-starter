@@ -1,5 +1,6 @@
 'use server';
 
+import { credentialsSchema } from '@/features/_shared';
 import { ajEmailSend, ajLaxAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
@@ -7,7 +8,6 @@ import type { OldActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import z from 'zod';
-import { credentialsSchema } from '../action/credentials-schema';
 
 const resetPasswordSchema = credentialsSchema.pick({ email: true });
 

@@ -1,5 +1,6 @@
 'use server';
 
+import { credentialsSchema } from '@/features/_shared';
 import { ajLaxAnonymous, ajSignup, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import type { OldActionResponse } from '@/shared/types';
@@ -7,7 +8,6 @@ import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import { z } from 'zod';
-import { credentialsSchema } from './credentials-schema';
 
 const signupSchema = credentialsSchema
   .extend({

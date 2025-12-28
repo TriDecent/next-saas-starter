@@ -1,5 +1,6 @@
 'use server';
 
+import { credentialsSchema } from '@/features/_shared';
 import {
   ajLaxAnonymous,
   ajRestrictiveAnonymous,
@@ -11,7 +12,6 @@ import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 import z from 'zod';
-import { credentialsSchema } from '../action/credentials-schema';
 
 const updatePasswordSchema = credentialsSchema
   .pick({ password: true })

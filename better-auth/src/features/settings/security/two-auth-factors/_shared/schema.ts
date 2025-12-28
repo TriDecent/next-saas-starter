@@ -1,4 +1,4 @@
-import { credentialsSchema } from '@/features/auth/action';
+import { credentialsSchema } from '@/features/_shared';
 import z from 'zod';
 
 const trustDeviceObj = { trustDevice: z.boolean().optional() };
