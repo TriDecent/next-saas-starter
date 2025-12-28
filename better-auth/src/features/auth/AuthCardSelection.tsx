@@ -1,4 +1,5 @@
 'use client';
+
 import { EmailVerificationCard } from '@/features/email';
 import {
   Tabs,
@@ -10,7 +11,7 @@ import { ROUTES } from '@/shared/constants';
 import { useAppSelector } from '@/shared/hooks';
 import { FaPlus, FaSignInAlt } from 'react-icons/fa';
 import { SignInCard } from './sign-in';
-import { SignupCard } from './SignupCard';
+import { SignUpCard } from './sign-up';
 
 export function AuthCardSelection() {
   const verificationInfo = useAppSelector(state => state.ui.verificationInfo);
@@ -33,7 +34,7 @@ export function AuthCardSelection() {
       </TabsContent>
 
       <TabsContent value='signup'>
-        <SignupCard />
+        <SignUpCard />
       </TabsContent>
     </Tabs>
   ) : (

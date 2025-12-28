@@ -44,22 +44,20 @@ export function SignInForm() {
       mode: 'onTouched',
     },
     onFormSuccess: () => {
+      methods.reset();
       toast.success('Sign in successfully!', {
         description: 'You have been signed in and will be redirected shortly.',
       });
       router.replace(searchParams.get('callbackUrl') ?? ROUTES.home.href);
     },
     onFormError: state => {
-      const authError = state.payload;
-      if (!authError) {
-        toast.error('Sign up failed', {
-          description: 'An unexpected error occurred during sign in.',
-        });
-        return;
-      }
-      toast.error(authError.message);
+      toast.error('Sign up failed', {
+        description: state.payload.message,
+        id: 'sign-in-form',
+      });
 
-      if (authError.status !== 'EMAIL_NOT_VERIFIED') return;
+      if (state.payload.status !== 'EMAIL_NOT_VERIFIED') return;
+
       reduxDispatch(
         uiActions.toggleEmailVerification({
           email: targetEmail!, // Email here must exist
@@ -67,7 +65,12 @@ export function SignInForm() {
         })
       );
     },
-    onFormPending: () => {},
+    onFormPending: () => {
+      toast.loading('Submitting sign in form...', {
+        description: undefined,
+        id: 'sign-in-form',
+      });
+    },
   });
 
   const handleOnValidSubmit: SubmitHandler<SignInInput> = useCallback(
@@ -149,7 +152,7 @@ export function SignInForm() {
 
           {state.type === 'error' ? (
             <Field>
-              <p className='text-red-500 first-letter:uppercase'>
+              <p className='text-center text-red-500 first-letter:uppercase'>
                 {state.payload.message}
               </p>
             </Field>
