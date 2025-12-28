@@ -34,13 +34,13 @@ export async function verifySudoToken(
   expectedUserId: User['id']
 ) {
   try {
-    await jwtVerify(token, PUBLIC_KEY, {
+    const payload = await jwtVerify(token, PUBLIC_KEY, {
       issuer: ISSUER,
       subject: expectedUserId,
     });
 
-    return true;
+    return payload;
   } catch {
-    return false;
+    return null;
   }
 }

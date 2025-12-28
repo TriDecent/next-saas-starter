@@ -1,6 +1,7 @@
 import {
   AuthenticatePriorProvider,
   SUDO_TOKEN_COOKIE,
+  verifySudoToken,
 } from '@/features/auth/authenticate-prior';
 import { PasskeysList } from '@/features/settings/security/passkey';
 import {
@@ -41,6 +42,14 @@ export default async function SecurityPage() {
     account => account.providerId === 'credential'
   );
 
+  const unverifiedToken = cookiesList.get(SUDO_TOKEN_COOKIE.name)?.value;
+  const verifiedToken = unverifiedToken
+    ? await verifySudoToken(unverifiedToken, session.user.id)
+    : null;
+  const sudoTokenExpiresAt = verifiedToken?.payload.exp
+    ? verifiedToken.payload.exp * 1000 // converts to milliseconds
+    : null;
+
   return !hasCredentialAccount ? (
     <RequestPasswordResetCard email={session.user.email} />
   ) : (
@@ -50,7 +59,8 @@ export default async function SecurityPage() {
       <AuthenticatePriorProvider
         value={{
           is2FAEnabled: !!session.user.twoFactorEnabled,
-          doesSudoTokenExist: cookiesList.has(SUDO_TOKEN_COOKIE.name),
+          doesSudoTokenExist: !!verifiedToken,
+          sudoTokenExpiresAt: sudoTokenExpiresAt,
         }}
       >
         <PasskeysList passkeys={passkeys} />
