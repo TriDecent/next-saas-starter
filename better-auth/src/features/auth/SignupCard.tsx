@@ -16,7 +16,7 @@ import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { TbNumber123 } from 'react-icons/tb';
 import { toast } from 'sonner';
-import { AuthCard } from './AuthCard';
+import { AuthCard } from './_shared';
 import {
   signupAction,
   type ErrorSignupResponse,

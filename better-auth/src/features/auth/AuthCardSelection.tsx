@@ -9,7 +9,7 @@ import {
 import { ROUTES } from '@/shared/constants';
 import { useAppSelector } from '@/shared/hooks';
 import { FaPlus, FaSignInAlt } from 'react-icons/fa';
-import { SigninCard } from './SigninCard';
+import { SignInCard } from './sign-in';
 import { SignupCard } from './SignupCard';
 
 export function AuthCardSelection() {
@@ -29,7 +29,7 @@ export function AuthCardSelection() {
       </TabsList>
 
       <TabsContent value='signin'>
-        <SigninCard />
+        <SignInCard />
       </TabsContent>
 
       <TabsContent value='signup'>

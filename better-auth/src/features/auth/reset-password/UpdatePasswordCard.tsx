@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
-import { AuthCard } from '../AuthCard';
+import { AuthCard } from '../_shared';
 import {
   updatePasswordAction,
   type ErrorUpdatePasswordResponse,
