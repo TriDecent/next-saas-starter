@@ -1,65 +1,27 @@
 'use server';
 
-import { credentialsSchema } from '@/features/_shared';
-import { ajEmailSend, ajLaxAnonymous, handleDeniedInServerAction } from '@/lib';
+import { resetPasswordSchema } from '@/features/_shared';
+import { ajEmailSend, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
-import type { OldActionResponse } from '@/shared/types';
+import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
-import z from 'zod';
 
-const resetPasswordSchema = credentialsSchema.pick({ email: true });
-
-type ResetPasswordInput = Partial<z.infer<typeof resetPasswordSchema>>;
-
-type ResetPasswordError = Partial<
-  Record<keyof ResetPasswordInput, string[]>
-> & {
-  unexpected?: string;
-  auth?: string;
-};
-
-export type ResetPasswordResponse = OldActionResponse<
-  ResetPasswordInput,
-  ResetPasswordError
->;
-
-export type ErrorResetPasswordResponse = Partial<
-  Extract<ResetPasswordResponse, { type: 'error' }>
->;
-
-export type SuccessResetPasswordResponse = Extract<
-  ResetPasswordResponse,
-  { type: 'success' }
->;
+type ResetPasswordResponse = ActionResponse<undefined, { message: string }>;
 
 export async function resetPasswordAction(
   state: ResetPasswordResponse,
-  formData: FormData
+  input: unknown
 ): Promise<ResetPasswordResponse> {
-  const req = await request();
-  const inputDecision = await ajLaxAnonymous.protect(req, {
-    action: 'sa-reset-password-input-check',
-  });
-
-  if (inputDecision.isDenied()) handleDeniedInServerAction(inputDecision);
-
-  const input = Object.fromEntries(formData.entries());
   const parsedResult = resetPasswordSchema.safeParse(input);
 
   if (!parsedResult.success)
-    return {
-      type: 'error',
-      payload: {
-        userEntered: input,
-        errors: z.flattenError(parsedResult.error).fieldErrors,
-      },
-    };
+    return { type: 'error', payload: { message: 'Invalid input data' } };
 
   const emailForPasswordReset = parsedResult.data.email;
 
-  const resetPasswordDecision = await ajEmailSend.protect(req, {
+  const resetPasswordDecision = await ajEmailSend.protect(await request(), {
     action: 'sa-reset-password',
     emailId: `${emailForPasswordReset}`,
     requested: 1,
@@ -78,26 +40,17 @@ export async function resetPasswordAction(
         redirectTo: ROUTES.auth.nested['reset-password'].href,
       },
     });
+
+    return { type: 'success', payload: undefined };
   } catch (error) {
     return {
       type: 'error',
       payload: {
-        userEntered: parsedResult.data,
-        errors: {
-          auth:
-            error instanceof APIError || error instanceof Error
-              ? error.message
-              : 'Unknown error',
-        },
+        message:
+          error instanceof Error || error instanceof APIError
+            ? error.message
+            : 'Unknown error',
       },
     };
   }
-
-  return {
-    type: 'success',
-    payload: {
-      userEntered: null,
-      errors: null,
-    },
-  };
 }

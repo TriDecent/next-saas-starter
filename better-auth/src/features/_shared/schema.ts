@@ -22,3 +22,18 @@ export const signUpSchema = credentialsSchema
     error: 'Password does not match',
   });
 export type SignUpInput = z.infer<typeof signUpSchema>;
+
+export const updatePasswordSchema = credentialsSchema
+  .pick({ password: true })
+  .extend({
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    token: z.string().min(1, 'Invalid reset token'),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+export type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>;
+
+export const resetPasswordSchema = credentialsSchema.pick({ email: true });
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;

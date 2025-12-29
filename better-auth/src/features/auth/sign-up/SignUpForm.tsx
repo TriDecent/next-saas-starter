@@ -66,7 +66,10 @@ export function SignUpForm() {
       });
     },
     onFormPending: () => {
-      toast.loading('Submitting sign up form...', { id: 'sign-up-form' });
+      toast.loading('Submitting sign up form...', {
+        description: undefined,
+        id: 'sign-up-form',
+      });
     },
   });
 
@@ -182,7 +185,7 @@ export function SignUpForm() {
             >
               Cancel
             </Button>
-            <Button disabled={isPending}>
+            <Button disabled={isPending} className='order-1 md:order-2'>
               {isPending ? (
                 <MiniLoader />
               ) : (

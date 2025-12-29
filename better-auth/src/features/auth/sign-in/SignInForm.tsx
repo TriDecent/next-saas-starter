@@ -47,6 +47,7 @@ export function SignInForm() {
       methods.reset();
       toast.success('Sign in successfully!', {
         description: 'You have been signed in and will be redirected shortly.',
+        id: 'sign-in-form',
       });
       router.replace(searchParams.get('callbackUrl') ?? ROUTES.home.href);
     },
@@ -139,7 +140,7 @@ export function SignInForm() {
             >
               Cancel
             </Button>
-            <Button disabled={isPending}>
+            <Button disabled={isPending} className='order-1 md:order-2'>
               {isPending ? (
                 <MiniLoader />
               ) : (
