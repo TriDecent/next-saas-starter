@@ -35,6 +35,7 @@ export function ResetPasswordForm() {
       mode: 'onTouched',
     },
     onFormSuccess: () => {
+      methods.reset();
       toast.success('Password reset link sent!', {
         id: 'reset-password-form',
         description:

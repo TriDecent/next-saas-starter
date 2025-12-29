@@ -1,6 +1,6 @@
 'use server';
 
-import { credentialsSchema } from '@/features/_shared';
+import { updateProfileSchema } from '@/features/_shared';
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
@@ -9,37 +9,19 @@ import {
 } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
-import type { OldActionResponse } from '@/shared/types';
+import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import { z } from 'zod';
 
-const updateProfileSchema = credentialsSchema.omit({ password: true });
-
-type UpdateProfile = z.infer<typeof updateProfileSchema>;
-type UpdateProfileInput = Partial<UpdateProfile>;
-type UpdateProfileError = Partial<
-  Record<keyof UpdateProfileInput, string[]>
-> & {
-  unexpected?: string;
-};
-export type UpdateProfileResponse = OldActionResponse<
-  UpdateProfileInput,
-  UpdateProfileError
->;
-export type ErrorUpdateProfileResponse = Extract<
-  UpdateProfileResponse,
-  { type: 'error' }
->;
-export type SuccessUpdateProfileResponse = Extract<
-  UpdateProfileResponse,
-  { type: 'success' }
+export type UpdateProfileResponse = ActionResponse<
+  undefined,
+  { message: string }
 >;
 
 export async function updateProfileAction(
   state: UpdateProfileResponse,
-  formData: FormData
+  input: unknown
 ): Promise<UpdateProfileResponse> {
   const headersList = await headers();
   const session = await ensureSession(
@@ -47,25 +29,17 @@ export async function updateProfileAction(
     ROUTES.settings.nested.profile.href
   );
 
+  const parsedResult = updateProfileSchema.safeParse(input);
+
+  if (!parsedResult.success)
+    return { type: 'error', payload: { message: 'Invalid input' } };
+
   const req = await request();
   const inputDecision = await ajLaxAnonymous.protect(req, {
     action: 'sa-update-profile-input-check',
   });
 
   if (inputDecision.isDenied()) handleDeniedInServerAction(inputDecision);
-
-  const input = Object.fromEntries(formData.entries());
-
-  const parsedResult = updateProfileSchema.safeParse(input);
-
-  if (!parsedResult.success)
-    return {
-      type: 'error',
-      payload: {
-        userEntered: input,
-        errors: z.flattenError(parsedResult.error).fieldErrors,
-      },
-    };
 
   const profileData = parsedResult.data;
 
@@ -99,28 +73,17 @@ export async function updateProfileAction(
       );
     }
     await Promise.all(promises);
+
+    return { type: 'success', payload: undefined };
   } catch (error) {
     return {
       type: 'error',
       payload: {
-        userEntered: profileData,
-        errors: {
-          unexpected:
-            error instanceof APIError
-              ? error.body?.message || error.status.toString() || 'API error'
-              : error instanceof Error
-                ? error.message
-                : 'Unknown error',
-        },
+        message:
+          error instanceof Error || error instanceof APIError
+            ? error.message
+            : 'Unknown error',
       },
     };
   }
-
-  return {
-    type: 'success',
-    payload: {
-      userEntered: null,
-      errors: null,
-    },
-  };
 }

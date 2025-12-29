@@ -37,3 +37,6 @@ export type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>;
 
 export const resetPasswordSchema = credentialsSchema.pick({ email: true });
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+export const updateProfileSchema = credentialsSchema.omit({ password: true });
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

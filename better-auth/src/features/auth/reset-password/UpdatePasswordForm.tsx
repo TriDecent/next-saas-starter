@@ -41,6 +41,7 @@ export function UpdatePasswordForm({ token }: { token: string }) {
       mode: 'onTouched',
     },
     onFormSuccess: () => {
+      methods.reset();
       toast.success('Password updated successfully!', {
         id: 'update-password-form',
         description: 'You can now sign in with your new password.',
