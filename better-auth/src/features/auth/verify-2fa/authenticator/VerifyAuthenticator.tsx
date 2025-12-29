@@ -1,6 +1,6 @@
 'use client';
 
-import { VerifyTotp } from '@/features/settings/security/two-auth-factors/authenticator/enable';
+import { VerifyTotp } from '@/features/settings/security/two-auth-factors/authenticator/verify-totp';
 import { ROUTES } from '@/shared/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
 
