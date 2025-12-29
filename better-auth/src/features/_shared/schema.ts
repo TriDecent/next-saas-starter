@@ -40,3 +40,17 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 export const updateProfileSchema = credentialsSchema.omit({ password: true });
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+
+export const changePasswordSchema = z
+  .object({
+    newPassword: z.string().min(6),
+    currentPassword: z.string(),
+    confirmPassword: z.string(),
+    revokeOtherSessions: z.coerce.boolean().optional(),
+  })
+  .refine(data => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

@@ -1,58 +1,23 @@
 'use server';
 
+import { changePasswordSchema } from '@/features/_shared';
 import {
-  ajLaxAnonymous,
   ajRestrictiveAuthenticated,
   ensureSession,
   handleDeniedInServerAction,
 } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
-import type { OldActionResponse } from '@/shared/types';
+import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import z from 'zod';
 
-const changePasswordSchema = z
-  .object({
-    newPassword: z.string().min(6),
-    currentPassword: z.string(),
-    confirmPassword: z.string(),
-    revokeOtherSessions: z.coerce.boolean().optional(),
-  })
-  .refine(data => data.newPassword === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
-
-type ChangePasswordInput = Partial<z.infer<typeof changePasswordSchema>>;
-
-type ChangePasswordError = Partial<
-  Record<keyof ChangePasswordInput, string[]>
-> & {
-  unexpected?: string;
-  auth?: { status: APIError['status']; message: string };
-};
-
-export type ChangePasswordResponse = OldActionResponse<
-  ChangePasswordInput,
-  ChangePasswordError
->;
-
-export type ErrorChangePasswordResponse = Extract<
-  ChangePasswordResponse,
-  { type: 'error' }
->;
-
-export type SuccessChangePasswordResponse = Extract<
-  ChangePasswordResponse,
-  { type: 'success' }
->;
+type ChangePasswordResponse = ActionResponse<undefined, { message: string }>;
 
 export async function changePasswordAction(
   state: ChangePasswordResponse,
-  formData: FormData
+  input: unknown
 ): Promise<ChangePasswordResponse> {
   const headersList = await headers();
   const session = await ensureSession(
@@ -60,32 +25,23 @@ export async function changePasswordAction(
     ROUTES.settings.nested.security.href
   );
 
-  const req = await request();
-  const inputDecision = await ajLaxAnonymous.protect(req, {
-    action: 'sa-change-password-input-check',
-  });
-
-  if (inputDecision.isDenied()) handleDeniedInServerAction(inputDecision);
-
-  const input = Object.fromEntries(formData.entries());
   const parsedResult = changePasswordSchema.safeParse(input);
 
-  if (!parsedResult.success)
-    return {
-      type: 'error',
-      payload: {
-        userEntered: input,
-        errors: z.flattenError(parsedResult.error).fieldErrors,
-      },
-    };
+  console.log(parsedResult.data);
 
-  const changePasswordDecision = await ajRestrictiveAuthenticated.protect(req, {
-    action: 'sa-update-password',
-    userId: session.user.id,
-  });
+  if (!parsedResult.success)
+    return { type: 'error', payload: { message: 'Invalid input data' } };
+
+  const changePasswordDecision = await ajRestrictiveAuthenticated.protect(
+    await request(),
+    {
+      action: 'sa-update-password',
+      userId: session.user.id,
+    }
+  );
 
   if (changePasswordDecision.isDenied())
-    handleDeniedInServerAction(inputDecision);
+    handleDeniedInServerAction(changePasswordDecision);
 
   const { newPassword, currentPassword, revokeOtherSessions } =
     parsedResult.data;
@@ -95,26 +51,17 @@ export async function changePasswordAction(
       body: { currentPassword, newPassword, revokeOtherSessions },
       headers: headersList,
     });
+
+    return { type: 'success', payload: undefined };
   } catch (error) {
     return {
       type: 'error',
       payload: {
-        userEntered: parsedResult.data,
-        errors:
-          error instanceof APIError
-            ? { auth: { status: error.status, message: error.message } }
-            : error instanceof Error
-              ? { unexpected: error.message }
-              : { unexpected: 'Unknown error' },
+        message:
+          error instanceof Error || error instanceof APIError
+            ? error.message
+            : 'Unknown error',
       },
     };
   }
-
-  return {
-    type: 'success',
-    payload: {
-      userEntered: null,
-      errors: null,
-    },
-  };
 }
