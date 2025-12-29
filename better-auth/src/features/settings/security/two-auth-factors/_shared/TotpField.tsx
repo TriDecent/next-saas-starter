@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Field,
   FieldContent,
@@ -10,19 +12,15 @@ import {
   InputOTPSlot,
 } from '@/shared/components/ui';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { Controller, type Control } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 
-export function TotpField({
-  control,
-  isPending,
-}: {
-  control: Control<{ code?: string }>;
-  isPending: boolean;
-}) {
+export function TotpField({ isPending }: { isPending: boolean }) {
+  const methods = useFormContext();
+
   return (
     <Controller
       name='code'
-      control={control}
+      control={methods.control}
       render={({ field, fieldState }) => (
         <Field orientation='responsive' data-invalid={fieldState.invalid}>
           <FieldLabel className='max-w-40' htmlFor='code'>

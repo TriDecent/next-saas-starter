@@ -41,7 +41,9 @@ export function EnableTwoFactorsForm({
       onFormError: state => {
         toast.error('Failed to enable authenticator', {
           id: 'enable-2-fa',
-          description: state.payload.message,
+          description:
+            state.payload.message ||
+            'Verification failed or an internal error occurred. Check your password and try again.',
         });
       },
       onFormPending: () => {

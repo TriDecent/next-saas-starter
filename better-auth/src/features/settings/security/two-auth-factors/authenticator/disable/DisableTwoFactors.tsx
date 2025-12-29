@@ -1,25 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { FactorActionForm } from '../../_shared/FactorActionForm';
-import { disableTwoFactorsAction } from './disable-two-factors-action';
+import { useCallback } from 'react';
+import { DisableTwoFactorsForm } from './DisableTwoFactorsForm';
 
 export function DisableTwoFactors() {
-  return (
-    <FactorActionForm
-      action={disableTwoFactorsAction}
-      intent={'disable'}
-      initialState={{ type: 'initial' }}
-    >
-      {() => <RefreshComponent />}
-    </FactorActionForm>
-  );
-}
-
-function RefreshComponent() {
   const router = useRouter();
-  useEffect(() => router.refresh(), [router]);
+  const handleFormSuccess = useCallback(() => router.refresh(), [router]);
 
-  return null;
+  return <DisableTwoFactorsForm onFormSuccess={handleFormSuccess} />;
 }
