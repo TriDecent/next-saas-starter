@@ -1,3 +1,5 @@
+// deprecated: use useActionForm instead
+
 'use client';
 import { useShakeError } from '@/shared/hooks';
 import type { OldActionResponse } from '@/shared/types';

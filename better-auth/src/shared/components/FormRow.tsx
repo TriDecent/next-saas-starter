@@ -1,3 +1,5 @@
+// deprecated: use FormField instead
+
 import {
   type ComponentProps,
   type InputHTMLAttributes,
