@@ -1,11 +1,11 @@
 'use server';
 
-import { backupCodeSchema } from '@/features/settings/security/two-auth-factors';
 import {
   ajRestrictiveAnonymous,
   auth,
   handleDeniedInServerAction,
 } from '@/lib';
+import { backupCodeSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';

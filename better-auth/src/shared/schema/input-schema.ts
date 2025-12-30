@@ -1,3 +1,6 @@
+// TODO: move feature-specific schemas to their respective modules.
+// for now, nearly all schemas are kept here.
+
 import z from 'zod';
 
 export const credentialsSchema = z.object({

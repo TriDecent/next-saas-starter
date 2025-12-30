@@ -1,18 +1,17 @@
 'use client';
 
-import { backupCodeSchema } from '@/features/settings/security/two-auth-factors';
+import {
+  AuthFormLayout,
+  BackupCodeField,
+  TrustDeviceField,
+} from '@/shared/components';
 import { useActionForm } from '@/shared/hooks';
+import { backupCodeSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import type z from 'zod';
-
-import {
-  AuthFormLayout,
-  BackupCodeField,
-  TrustDeviceField,
-} from '@/features/settings/security/two-auth-factors/_shared';
 import { verifyBackupCodesAction } from './verify-backup-codes-action';
 
 export function VerifyBackupCodesForm({

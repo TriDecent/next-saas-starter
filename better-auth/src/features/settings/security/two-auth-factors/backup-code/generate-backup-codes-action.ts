@@ -7,11 +7,11 @@ import {
   handleDeniedInServerAction,
 } from '@/lib';
 import { ROUTES } from '@/shared/constants';
+import { twoFAAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import { twoFAAuthSchema } from '../_shared/schema';
 
 type Response = ActionResponse<{ backupCodes: string[] }, { message: string }>;
 

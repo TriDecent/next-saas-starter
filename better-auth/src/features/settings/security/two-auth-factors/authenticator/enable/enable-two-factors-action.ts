@@ -7,11 +7,11 @@ import {
   handleDeniedInServerAction,
 } from '@/lib';
 import { ROUTES } from '@/shared/constants';
+import { basicAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import { basicAuthSchema } from '../../_shared/schema';
 
 type Response = ActionResponse<
   { totpURI: string; backupCodes: string[] },

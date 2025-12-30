@@ -1,6 +1,5 @@
 'use server';
 
-import { changePasswordSchema } from '@/features/_shared';
 import {
   ajRestrictiveAuthenticated,
   ensureSession,
@@ -8,6 +7,7 @@ import {
 } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
+import { changePasswordSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';

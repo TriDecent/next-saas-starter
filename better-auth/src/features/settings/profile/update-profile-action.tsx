@@ -1,6 +1,5 @@
 'use server';
 
-import { updateProfileSchema } from '@/features/_shared';
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
@@ -9,6 +8,7 @@ import {
 } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
+import { updateProfileSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';

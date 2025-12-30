@@ -1,17 +1,17 @@
 'use client';
 
+import {
+  AuthFormLayout,
+  TotpField,
+  TrustDeviceField,
+} from '@/shared/components';
 import { useActionForm } from '@/shared/hooks';
+import { totpAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import type z from 'zod';
-import {
-  AuthFormLayout,
-  totpAuthSchema,
-  TotpField,
-  TrustDeviceField,
-} from '../../_shared';
 import { verifyTotpAction } from './verify-totp-action';
 
 export function VerifyTotpForm({

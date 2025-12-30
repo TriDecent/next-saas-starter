@@ -1,9 +1,9 @@
 'use server';
 
-import { signInSchema } from '@/features/_shared';
 import { ajRestrictiveAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
+import { signInSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';

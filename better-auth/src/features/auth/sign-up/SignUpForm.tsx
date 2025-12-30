@@ -1,6 +1,5 @@
 'use client';
 
-import { signUpSchema } from '@/features/_shared';
 import { FormField, MiniLoader } from '@/shared/components';
 import {
   Button,
@@ -11,6 +10,7 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useActionForm, useAppDispatch } from '@/shared/hooks';
+import { signUpSchema } from '@/shared/schema';
 import { uiActions } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';

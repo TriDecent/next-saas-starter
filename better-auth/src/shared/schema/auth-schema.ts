@@ -1,5 +1,8 @@
-import { credentialsSchema } from '@/features/_shared';
+// TODO: move feature-specific schemas to their respective modules.
+// for now, nearly all schemas are kept here.
+
 import z from 'zod';
+import { credentialsSchema } from './';
 
 const trustDeviceObj = { trustDevice: z.boolean().optional() };
 

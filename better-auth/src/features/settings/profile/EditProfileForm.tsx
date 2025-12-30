@@ -1,6 +1,5 @@
 'use client';
 
-import { updateProfileSchema } from '@/features/_shared';
 import type { AuthSession } from '@/lib';
 import { FormField, MiniLoader } from '@/shared/components';
 import {
@@ -12,6 +11,7 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useActionForm } from '@/shared/hooks';
+import { updateProfileSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';

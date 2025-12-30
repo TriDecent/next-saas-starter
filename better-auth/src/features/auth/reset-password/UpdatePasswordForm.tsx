@@ -1,9 +1,5 @@
 'use client';
 
-import {
-  updatePasswordSchema,
-  type UpdatePasswordInput,
-} from '@/features/_shared';
 import { FormField, MiniLoader } from '@/shared/components';
 import {
   Button,
@@ -15,6 +11,10 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { useActionForm } from '@/shared/hooks';
+import {
+  updatePasswordSchema,
+  type UpdatePasswordInput,
+} from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { startTransition, useCallback } from 'react';

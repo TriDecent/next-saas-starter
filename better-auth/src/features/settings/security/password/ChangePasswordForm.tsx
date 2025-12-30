@@ -1,6 +1,5 @@
 'use client';
 
-import { changePasswordSchema } from '@/features/_shared';
 import { FormField, MiniLoader } from '@/shared/components';
 import {
   Button,
@@ -11,6 +10,7 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useActionForm } from '@/shared/hooks';
+import { changePasswordSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
 import { FormProvider } from 'react-hook-form';

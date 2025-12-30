@@ -6,11 +6,11 @@ import {
   auth,
   handleDeniedInServerAction,
 } from '@/lib';
+import { totpAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
-import { totpAuthSchema } from '../../_shared/schema';
 
 type Response = ActionResponse<undefined, { message: string }>;
 

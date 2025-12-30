@@ -1,17 +1,13 @@
 'use client';
 
+import { AuthFormLayout, PasswordField, TotpField } from '@/shared/components';
 import { useActionForm } from '@/shared/hooks';
+import { twoFAAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import type z from 'zod';
-import {
-  AuthFormLayout,
-  PasswordField,
-  TotpField,
-  twoFAAuthSchema,
-} from '../_shared';
 import { generateBackupCodesAction } from './generate-backup-codes-action';
 
 export function GenerateBackupCodesForm({

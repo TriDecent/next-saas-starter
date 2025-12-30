@@ -1,12 +1,13 @@
 'use client';
 
+import { AuthFormLayout, PasswordField } from '@/shared/components';
 import { useActionForm } from '@/shared/hooks';
+import { basicAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import type z from 'zod';
-import { AuthFormLayout, basicAuthSchema, PasswordField } from '../../_shared';
 import { enableTwoFactorsAction } from './enable-two-factors-action';
 
 export function EnableTwoFactorsForm({

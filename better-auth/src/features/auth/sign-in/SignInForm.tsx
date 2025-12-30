@@ -1,6 +1,5 @@
 'use client';
 
-import { signInSchema, type SignInInput } from '@/features/_shared';
 import { FormField, MiniLoader } from '@/shared/components';
 import {
   Button,
@@ -12,6 +11,7 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { useActionForm, useAppDispatch } from '@/shared/hooks';
+import { signInSchema, type SignInInput } from '@/shared/schema';
 import { uiActions } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';

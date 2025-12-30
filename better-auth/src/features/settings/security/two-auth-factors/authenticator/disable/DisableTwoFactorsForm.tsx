@@ -6,12 +6,9 @@ import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import type z from 'zod';
-import {
-  AuthFormLayout,
-  PasswordField,
-  TotpField,
-  twoFAAuthSchema,
-} from '../../_shared';
+
+import { AuthFormLayout, PasswordField, TotpField } from '@/shared/components';
+import { twoFAAuthSchema } from '@/shared/schema';
 import { disableTwoFactorsAction } from './disable-two-factors-action';
 
 export function DisableTwoFactorsForm({

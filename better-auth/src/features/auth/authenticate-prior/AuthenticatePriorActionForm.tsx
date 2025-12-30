@@ -1,15 +1,8 @@
 'use client';
 
-import {
-  basicAuthSchema,
-  twoFAAuthSchema,
-} from '@/features/settings/security/two-auth-factors';
-import {
-  AuthFormLayout,
-  PasswordField,
-  TotpField,
-} from '@/features/settings/security/two-auth-factors/_shared';
+import { AuthFormLayout, PasswordField, TotpField } from '@/shared/components';
 import { useActionForm } from '@/shared/hooks';
+import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';

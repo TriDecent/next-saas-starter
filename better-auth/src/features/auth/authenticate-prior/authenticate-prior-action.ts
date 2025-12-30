@@ -1,16 +1,13 @@
 'use server';
 
 import {
-  basicAuthSchema,
-  twoFAAuthSchema,
-} from '@/features/settings/security/two-auth-factors';
-import {
   ajLaxAuthenticated,
   auth,
   ensureSession,
   handleDeniedInServerAction,
 } from '@/lib';
 import { ROUTES } from '@/shared/constants';
+import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';

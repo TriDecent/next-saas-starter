@@ -1,9 +1,9 @@
 'use server';
 
-import { resetPasswordSchema } from '@/features/_shared';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
+import { resetPasswordSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
