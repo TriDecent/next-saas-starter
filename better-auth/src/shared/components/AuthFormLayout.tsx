@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, FieldGroup } from '@/shared/components/ui';
 import type { ReactNode, RefObject } from 'react';
 import {

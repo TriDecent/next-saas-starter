@@ -9,13 +9,10 @@ import {
   FieldSet,
   InputGroupAddon,
 } from '@/shared/components/ui';
-import { ROUTES } from '@/shared/constants';
-import { useActionForm, useAppDispatch } from '@/shared/hooks';
+import { useActionForm } from '@/shared/hooks';
 import { signInSchema, type SignInInput } from '@/shared/schema';
-import { uiActions } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { startTransition, useCallback, useState } from 'react';
+import { startTransition, useCallback } from 'react';
 import { FormProvider, type SubmitHandler } from 'react-hook-form';
 import { FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
@@ -23,12 +20,22 @@ import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
 import { signInAction } from './sign-in-action';
 
-export function SignInForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const reduxDispatch = useAppDispatch();
-  const [targetEmail, setTargetEmail] = useState<string | null>(null);
+export type SignInSuccessData = Extract<
+  Awaited<ReturnType<typeof signInAction>>,
+  { type: 'success' }
+>['payload'];
+export type SignInErrorData = Extract<
+  Awaited<ReturnType<typeof signInAction>>,
+  { type: 'error' }
+>['payload'];
 
+export function SignInForm({
+  onSuccess,
+  onError,
+}: {
+  onSuccess: (data: SignInSuccessData) => void;
+  onError: (data: SignInErrorData) => void;
+}) {
   const {
     methods,
     animationScope,
@@ -43,28 +50,22 @@ export function SignInForm() {
       defaultValues: { email: '', password: '' },
       mode: 'onTouched',
     },
-    onFormSuccess: () => {
+    onFormSuccess: state => {
       methods.reset();
       toast.success('Sign in successfully!', {
-        description: 'You have been signed in and will be redirected shortly.',
+        description: 'You have been signed in.',
         id: 'sign-in-form',
       });
-      router.replace(searchParams.get('callbackUrl') ?? ROUTES.home.href);
+
+      onSuccess(state.payload);
     },
     onFormError: state => {
-      toast.error('Sign up failed', {
+      toast.error('Sign in failed!', {
         description: state.payload.message,
         id: 'sign-in-form',
       });
 
-      if (state.payload.status !== 'EMAIL_NOT_VERIFIED') return;
-
-      reduxDispatch(
-        uiActions.toggleEmailVerification({
-          email: targetEmail!, // Email here must exist
-          name: 'User',
-        })
-      );
+      onError(state.payload);
     },
     onFormPending: () => {
       toast.loading('Submitting sign in form...', {
@@ -76,10 +77,7 @@ export function SignInForm() {
 
   const handleOnValidSubmit: SubmitHandler<SignInInput> = useCallback(
     data => {
-      startTransition(() => {
-        setTargetEmail(data.email);
-        formDispatch(data);
-      });
+      startTransition(() => formDispatch(data));
     },
     [formDispatch]
   );
@@ -101,11 +99,9 @@ export function SignInForm() {
               description='Enter your email address'
               placeholder='example@domain.com'
               addons={
-                <>
-                  <InputGroupAddon>
-                    <MdEmail />
-                  </InputGroupAddon>
-                </>
+                <InputGroupAddon>
+                  <MdEmail />
+                </InputGroupAddon>
               }
               autoComplete='email webauthn'
               disabled={isPending}
@@ -120,13 +116,11 @@ export function SignInForm() {
               description='Enter your password'
               placeholder='********'
               addons={
-                <>
-                  <InputGroupAddon>
-                    <RiLockPasswordFill />
-                  </InputGroupAddon>
-                </>
+                <InputGroupAddon>
+                  <RiLockPasswordFill />
+                </InputGroupAddon>
               }
-              autoComplete='new-password webauthn'
+              autoComplete='current-password webauthn'
               disabled={isPending}
             />
           </FieldGroup>

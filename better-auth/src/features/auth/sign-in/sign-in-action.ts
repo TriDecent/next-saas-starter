@@ -9,11 +9,10 @@ import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 type SignInResponse = ActionResponse<
-  undefined,
-  { status?: 'EMAIL_NOT_VERIFIED'; message: string }
+  { redirect?: string },
+  { status?: 'EMAIL_NOT_VERIFIED'; email?: string; message: string }
 >;
 
 export async function signInAction(
@@ -34,43 +33,45 @@ export async function signInAction(
 
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  const signinCredentials = parsedResult.data;
+  const signInCredentials = parsedResult.data;
 
   try {
     const response = await auth.api.signInEmail({
       headers: await headers(),
       body: {
-        email: signinCredentials.email,
-        password: signinCredentials.password,
+        email: signInCredentials.email,
+        password: signInCredentials.password,
       },
     });
 
+    if (!('twoFactorRedirect' in response))
+      return { type: 'success', payload: {} };
+
     const requestReferer = (await headers()).get('referer');
     const requestUrl = requestReferer ? new URL(requestReferer) : undefined;
+    const hasCallbackUrl = requestUrl?.searchParams.has('callbackUrl');
 
-    if ('twoFactorRedirect' in response) {
-      const hasCallbackUrl = requestUrl?.searchParams.has('callbackUrl');
-
-      redirect(
-        hasCallbackUrl
+    return {
+      type: 'success',
+      payload: {
+        redirect: hasCallbackUrl
           ? `${ROUTES.auth.nested['verify-2fa'].href}?${requestUrl!.searchParams.toString()}`
-          : ROUTES.auth.nested['verify-2fa'].href
-      );
-    }
-
-    return { type: 'success', payload: undefined };
+          : ROUTES.auth.nested['verify-2fa'].href,
+      },
+    };
   } catch (error) {
     if (isRedirectError(error)) throw error;
+
+    const isEmailNotVerified =
+      error instanceof APIError &&
+      error.status === 'FORBIDDEN' &&
+      error.statusCode === 403;
 
     return {
       type: 'error',
       payload: {
-        status:
-          error instanceof APIError &&
-          error.status === 'FORBIDDEN' &&
-          error.statusCode === 403
-            ? 'EMAIL_NOT_VERIFIED'
-            : undefined,
+        status: isEmailNotVerified ? 'EMAIL_NOT_VERIFIED' : undefined,
+        email: isEmailNotVerified ? signInCredentials.email : undefined,
         message:
           error instanceof Error || error instanceof APIError
             ? error.message
