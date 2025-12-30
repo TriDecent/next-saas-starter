@@ -13,7 +13,7 @@ import { headers } from 'next/headers';
 
 type Response = ActionResponse<undefined, { message: string }>;
 
-export async function verifyBackupCodes(
+export async function verifyBackupCodesAction(
   state: Response,
   input: unknown
 ): Promise<Response> {
