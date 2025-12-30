@@ -10,10 +10,12 @@ export const credentialsSchema = z.object({
   favoriteNumber: z.coerce.number().positive().max(1000),
 });
 
-export const signInSchema = credentialsSchema.pick({
-  email: true,
-  password: true,
-});
+export const signInSchema = credentialsSchema
+  .pick({
+    email: true,
+    password: true,
+  })
+  .extend({ trustDevice: z.coerce.boolean().optional() });
 export type SignInInput = z.infer<typeof signInSchema>;
 
 export const signUpSchema = credentialsSchema

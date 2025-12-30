@@ -1,6 +1,6 @@
 'use client';
 
-import { FormField, MiniLoader } from '@/shared/components';
+import { FormField, MiniLoader, TrustDeviceField } from '@/shared/components';
 import {
   Button,
   Field,
@@ -10,10 +10,10 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useActionForm } from '@/shared/hooks';
-import { signInSchema, type SignInInput } from '@/shared/schema';
+import { signInSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { startTransition, useCallback } from 'react';
-import { FormProvider, type SubmitHandler } from 'react-hook-form';
+import { startTransition } from 'react';
+import { FormProvider } from 'react-hook-form';
 import { FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
@@ -47,7 +47,7 @@ export function SignInForm({
     initialState: { type: 'initial' },
     formConfiguration: {
       resolver: zodResolver(signInSchema),
-      defaultValues: { email: '', password: '' },
+      defaultValues: { email: '', password: '', trustDevice: false },
       mode: 'onTouched',
     },
     onFormSuccess: state => {
@@ -75,18 +75,13 @@ export function SignInForm({
     },
   });
 
-  const handleOnValidSubmit: SubmitHandler<SignInInput> = useCallback(
-    data => {
-      startTransition(() => formDispatch(data));
-    },
-    [formDispatch]
-  );
-
   return (
     <FormProvider {...methods}>
       <form
         ref={animationScope}
-        onSubmit={methods.handleSubmit(handleOnValidSubmit)}
+        onSubmit={methods.handleSubmit(data =>
+          startTransition(() => formDispatch(data))
+        )}
       >
         <FieldSet>
           <FieldLegend>Enter your details</FieldLegend>
@@ -123,6 +118,8 @@ export function SignInForm({
               autoComplete='current-password webauthn'
               disabled={isPending}
             />
+
+            <TrustDeviceField isPending={isPending} />
           </FieldGroup>
 
           <div className='flex w-full flex-col gap-4 md:ml-auto md:w-fit md:flex-row md:justify-end'>

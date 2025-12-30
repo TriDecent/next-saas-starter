@@ -41,6 +41,7 @@ export async function signInAction(
       body: {
         email: signInCredentials.email,
         password: signInCredentials.password,
+        rememberMe: signInCredentials.trustDevice,
       },
     });
 
