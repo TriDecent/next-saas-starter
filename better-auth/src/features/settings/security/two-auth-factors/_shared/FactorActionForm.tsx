@@ -1,3 +1,5 @@
+// deprecated, don't use
+
 'use client';
 
 import { FormField } from '@/shared/components';
@@ -38,9 +40,6 @@ import {
 } from './schema';
 
 type FactorIntent =
-  | 'enable'
-  | 'disable'
-  | 'generate-backup'
   | 'verify-backup-codes'
   | 'verify-totp'
   | 'authenticate-prior-action'
@@ -290,27 +289,6 @@ const INTENT_CONFIG: Record<
     showTrustDevice: boolean;
   }
 > = {
-  enable: {
-    schema: basicAuthSchema,
-    showPassword: true,
-    showTotp: false,
-    showBackup: false,
-    showTrustDevice: false,
-  },
-  disable: {
-    schema: twoFAAuthSchema,
-    showPassword: true,
-    showTotp: true,
-    showBackup: false,
-    showTrustDevice: false,
-  },
-  'generate-backup': {
-    schema: twoFAAuthSchema,
-    showPassword: true,
-    showTotp: true,
-    showBackup: false,
-    showTrustDevice: false,
-  },
   'verify-backup-codes': {
     schema: backupCodeSchema,
     showPassword: false,
@@ -349,55 +327,6 @@ const MESSAGES: Record<
     error: { title: string; description: string };
   }
 > = {
-  'generate-backup': {
-    pending: {
-      title: 'Generating backup codes…',
-      description:
-        'Creating new backup codes. Previous codes will be invalidated.',
-    },
-    success: {
-      title: 'Backup codes generated',
-      description:
-        'Download or copy the codes now. They will not be shown again.',
-    },
-    error: {
-      title: 'Unable to generate backup codes',
-      description: 'Verification failed. Try again or contact support.',
-    },
-  },
-  disable: {
-    pending: {
-      title: 'Disabling two-factor…',
-      description:
-        'Verifying identity and disabling two-factor authentication.',
-    },
-    success: {
-      title: '2FA disabled',
-      description:
-        'Two-factor authentication has been disabled for your account.',
-    },
-    error: {
-      title: 'Unable to disable 2FA',
-      description: 'Verification failed. Check your credentials and try again.',
-    },
-  },
-  enable: {
-    pending: {
-      title: 'Preparing TOTP…',
-      description:
-        'Verifying your password and generating a QR code. The secret will only be shown once — save it securely.',
-    },
-    success: {
-      title: 'TOTP is ready',
-      description:
-        'TOTP is active. Scan the QR with your authenticator app and securely store your backup codes.',
-    },
-    error: {
-      title: 'Failed to enable authenticator',
-      description:
-        'Verification failed or an internal error occurred. Check your password and try again.',
-    },
-  },
   'verify-backup-codes': {
     pending: {
       title: 'Verifying backup code…',

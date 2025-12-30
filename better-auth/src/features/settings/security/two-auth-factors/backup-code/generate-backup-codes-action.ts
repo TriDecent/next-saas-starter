@@ -15,7 +15,7 @@ import { twoFAAuthSchema } from '../_shared/schema';
 
 type Response = ActionResponse<{ backupCodes: string[] }, { message: string }>;
 
-export async function generateBackupCodes(
+export async function generateBackupCodesAction(
   state: Response,
   input: unknown
 ): Promise<Response> {
