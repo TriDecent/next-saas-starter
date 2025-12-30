@@ -1,10 +1,9 @@
 'use client';
 
-import { FactorActionForm } from '@/features/settings/security/two-auth-factors';
 import { DrawerOpener } from '@/shared/components';
 import { use, useEffect, useEffectEvent, type ReactNode } from 'react';
-import { authenticatePriorAction } from './authenticate-prior-action';
 import { AuthenticatePriorContext } from './authenticate-prior-context';
+import { AuthenticatePriorActionForm } from './AuthenticatePriorActionForm';
 
 export function AuthenticatePriorAction({
   title,
@@ -36,14 +35,8 @@ export function AuthenticatePriorAction({
       trigger={trigger}
     >
       <div className={context.doesSudoTokenExist ? 'hidden' : 'block'}>
-        <FactorActionForm
-          action={authenticatePriorAction}
-          initialState={{ type: 'initial' }}
-          intent={
-            context.is2FAEnabled
-              ? 'authenticate-prior-action'
-              : 'authenticate-prior-action-without-2fa'
-          }
+        <AuthenticatePriorActionForm
+          mode={context.doesSudoTokenExist ? 'with-2fa' : 'no-2fa'}
         />
       </div>
 
