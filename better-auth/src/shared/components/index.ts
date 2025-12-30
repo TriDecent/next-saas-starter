@@ -8,6 +8,7 @@ export { Loading } from './Loading';
 export { MiniLoader } from './MiniLoading';
 export { PageLayout } from './PageLayout';
 export { PasswordField } from './PasswordField';
+export { SectionHeader } from './SectionHeader';
 export { SendEmailButton } from './SendEmailButton';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';

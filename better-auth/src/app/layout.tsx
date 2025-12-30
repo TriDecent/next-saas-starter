@@ -32,7 +32,7 @@ export default async function RootLayout({
             <PageLayout>
               <PageLayout.Header>
                 <h1 className='text-2xl font-medium tracking-wider'>
-                  <Link href='/'>Better Auth Demo</Link>
+                  <Link href='/'>Auth Demo</Link>
                 </h1>
                 <ThemeToggle />
               </PageLayout.Header>

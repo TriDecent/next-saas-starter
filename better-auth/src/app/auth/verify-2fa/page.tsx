@@ -1,5 +1,6 @@
 import { VerifyAuthenticator } from '@/features/auth/verify-2fa/authenticator';
 import { VerifyBackupCodes } from '@/features/auth/verify-2fa/backup-codes';
+import { SectionHeader } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -13,6 +14,7 @@ import {
   TabsTrigger,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
+import { ShieldCheck } from 'lucide-react';
 import type { Metadata } from 'next';
 import { FiCodepen } from 'react-icons/fi';
 import { SiGoogleauthenticator } from 'react-icons/si';
@@ -21,12 +23,18 @@ export const metadata: Metadata = ROUTES.auth.nested['verify-2fa'].metadata;
 
 export default function Verify2FAPage() {
   return (
-    <section className='min-h-screen'>
+    <section className='min-h-screen space-y-8'>
+      <SectionHeader
+        icon={ShieldCheck}
+        title='Two-Factor Authentication'
+        description='Choose a verification method to complete your sign-in'
+      />
+
       <Tabs
         defaultValue={TWO_FACTORS_OPTIONS.at(0)?.factor}
         className='mx-auto max-w-xl'
       >
-        <TabsList>
+        <TabsList className='w-full'>
           {TWO_FACTORS_OPTIONS.map(option => (
             <TabsTrigger value={option.factor} key={option.factor}>
               {option.triggerUI}
@@ -56,7 +64,8 @@ const TWO_FACTORS_OPTIONS = [
     factor: 'authenticator',
     triggerUI: (
       <>
-        <SiGoogleauthenticator /> Authenticator
+        <SiGoogleauthenticator />
+        Authenticator
       </>
     ),
     content: <VerifyAuthenticator />,
