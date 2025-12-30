@@ -1,6 +1,8 @@
+'use cache';
+
 import { VerifyAuthenticator } from '@/features/auth/verify-2fa/authenticator';
 import { VerifyBackupCodes } from '@/features/auth/verify-2fa/backup-codes';
-import { SectionHeader } from '@/shared/components';
+import { MiniLoader, SectionHeader } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -16,12 +18,16 @@ import {
 import { ROUTES } from '@/shared/constants';
 import { ShieldCheck } from 'lucide-react';
 import type { Metadata } from 'next';
+import { cacheLife } from 'next/cache';
+import { Suspense } from 'react';
 import { FiCodepen } from 'react-icons/fi';
 import { SiGoogleauthenticator } from 'react-icons/si';
 
 export const metadata: Metadata = ROUTES.auth.nested['verify-2fa'].metadata;
 
-export default function Verify2FAPage() {
+export default async function Verify2FAPage() {
+  cacheLife('weeks');
+
   return (
     <section className='min-h-screen space-y-8'>
       <SectionHeader
@@ -49,7 +55,9 @@ export default function Verify2FAPage() {
                 <CardTitle>{option.cardTitle}</CardTitle>
                 <CardDescription>{option.cardDescription}</CardDescription>
               </CardHeader>
-              <CardContent>{option.content}</CardContent>
+              <CardContent>
+                <Suspense fallback={<MiniLoader />}>{option.content}</Suspense>
+              </CardContent>
               <CardFooter>{option.cardFooter}</CardFooter>
             </Card>
           </TabsContent>

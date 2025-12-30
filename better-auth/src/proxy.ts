@@ -18,8 +18,6 @@ export function proxy(request: NextRequest) {
 }
 
 async function handleAuthPaths(request: NextRequest): Promise<NextResponse> {
-  if (request.nextUrl.pathname !== ROUTES.auth.href) return NextResponse.next();
-
   const session = await auth.api.getSession({ headers: request.headers });
 
   if (session)

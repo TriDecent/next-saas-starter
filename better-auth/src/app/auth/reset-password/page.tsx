@@ -21,10 +21,7 @@ export default async function ResetPasswordPage({
 
   return (
     <section className='space-y-8'>
-      <SectionHeader
-        icon={KeyRound}
-        title='Reset Your Password'
-      />
+      <SectionHeader icon={KeyRound} title='Reset Your Password' />
 
       <div className='mx-auto max-w-xl'>
         {parsedSearchParamsResult.success ? (
