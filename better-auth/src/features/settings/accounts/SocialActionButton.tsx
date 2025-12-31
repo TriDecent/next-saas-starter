@@ -24,40 +24,36 @@ export function SocialActionButton({
   const handleClick = () =>
     startTransition(async () => {
       if (action === 'link') {
-        await authClient.linkSocial(
-          {
-            provider,
-            callbackURL: pathname,
-            errorCallbackURL: pathname,
-          },
-          {
-            onError: error => {
-              toast.error(`Link ${provider} failed`, {
-                description: `${error.error.message}`,
-              });
-            },
-          }
-        );
+        const { error } = await authClient.linkSocial({
+          provider,
+          callbackURL: pathname,
+          errorCallbackURL: pathname,
+        });
+
+        if (!error) return;
+
+        toast.error(`Link ${provider} failed`, {
+          description: `${error.message}`,
+        });
 
         return;
       }
 
-      await authClient.unlinkAccount(
-        { providerId: provider },
-        {
-          onError: error => {
-            toast.error(`Unlink account failed`, {
-              description: `${error.error.message}`,
-            });
-          },
-          onSuccess: () => {
-            toast.success(`Unlinked account successfully`, {
-              description: `The account has been unlinked.`,
-            });
-            router.refresh();
-          },
-        }
-      );
+      const { error } = await authClient.unlinkAccount({
+        providerId: provider,
+      });
+
+      if (error) {
+        toast.error(`Unlink account failed`, {
+          description: `${error.message}`,
+        });
+        return;
+      }
+
+      toast.success(`Unlinked account successfully`, {
+        description: `The account has been unlinked.`,
+      });
+      router.refresh();
     });
 
   return (

@@ -35,6 +35,7 @@ export function TotpField({ isPending }: { isPending: boolean }) {
               pattern={REGEXP_ONLY_DIGITS}
               aria-invalid={fieldState.invalid}
               containerClassName='justify-center'
+              autoComplete='false'
             >
               <InputOTPGroup>
                 {[0, 1, 2].map(idx => (

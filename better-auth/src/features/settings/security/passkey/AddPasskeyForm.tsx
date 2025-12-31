@@ -26,7 +26,7 @@ export function AddPasskeyForm() {
 
   const handleAddPasskey: SubmitHandler<z.infer<typeof schema>> = useCallback(
     async data => {
-      await authClient.passkey.addPasskey(
+      const { error } = await authClient.passkey.addPasskey(
         { name: data.passkeyName },
         {
           onSuccess: () => {
@@ -43,6 +43,11 @@ export function AddPasskeyForm() {
           },
         }
       );
+
+      if (!error) return;
+      toast.error(`Failed to add passkey ${data.passkeyName}`, {
+        description: error.message,
+      });
     },
     [reset, router]
   );

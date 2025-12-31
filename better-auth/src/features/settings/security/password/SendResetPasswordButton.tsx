@@ -10,19 +10,16 @@ export function SendResetPasswordButton({ email }: { email: string }) {
     <SendEmailButton
       alreadySent={false}
       action={async () => {
-        await authClient.requestPasswordReset(
-          {
-            email,
-            redirectTo: ROUTES.auth.nested['reset-password'].href,
-          },
-          {
-            onError: error => {
-              toast.error('Failed to send reset password email', {
-                description: error.error.message,
-              });
-            },
-          }
-        );
+        const { error } = await authClient.requestPasswordReset({
+          email,
+          redirectTo: ROUTES.auth.nested['reset-password'].href,
+        });
+
+        if (!error) return;
+
+        toast.error('Failed to send reset password email', {
+          description: error.message,
+        });
       }}
       onSuccess={() =>
         toast.success('Reset password email sent', {
