@@ -1,32 +1,27 @@
 'use client';
 
-import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { VscDebugContinue } from 'react-icons/vsc';
 import QRCode from 'react-qr-code';
 import { BackupCodes } from '../../backup-code';
 import { VerifyTotp } from '../verify-totp';
-import { EnableTwoFactorsForm } from './EnableTwoFactorsForm';
 import type { enableTwoFactorsAction } from './enable-two-factors-action';
+import { EnableTwoFactorsButton } from './EnableTwoFactorsButton';
 
 type TotpData = Extract<
   Awaited<ReturnType<typeof enableTwoFactorsAction>>,
   { type: 'success' }
 >['payload'];
 
-export function EnableTwoFactors() {
+export function EnableTwoFactors({ password }: { password: string }) {
   const [totpData, setTotpData] = useState<TotpData | null>(null);
 
   return totpData ? (
-    <ScrollArea className='h-80'>
-      <ScrollBar />
-      <div className={`mx-auto flex max-w-xl flex-col gap-y-8 px-4 pt-2 pb-12`}>
-        <TotpSetup totpData={totpData} />
-      </div>
-    </ScrollArea>
+    <TotpSetup totpData={totpData} />
   ) : (
-    <EnableTwoFactorsForm onFormSuccess={data => setTotpData(data)} />
+    <EnableTwoFactorsButton password={password} onSuccess={setTotpData} />
   );
 }
 

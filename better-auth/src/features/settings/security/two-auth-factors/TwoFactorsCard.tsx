@@ -52,7 +52,7 @@ export function TwoFactorsCard({ isEnabled }: { isEnabled: boolean }) {
 
       <CardContent>
         <ItemGroup className='space-y-4'>
-          <AuthenticatorFactor isEnabled={isEnabled} />
+          <AuthenticatorFactor />
 
           <SmsFactor />
 

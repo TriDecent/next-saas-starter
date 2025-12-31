@@ -1,12 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
-import { DisableTwoFactorsForm } from './DisableTwoFactorsForm';
+import { DisableTwoFactorsButton } from './DisableTwoFactorsButton';
 
-export function DisableTwoFactors() {
+export function DisableTwoFactors({ password }: { password: string }) {
   const router = useRouter();
-  const handleFormSuccess = useCallback(() => router.refresh(), [router]);
+  const handleFormSuccess = () => router.refresh();
 
-  return <DisableTwoFactorsForm onFormSuccess={handleFormSuccess} />;
+  return (
+    <DisableTwoFactorsButton
+      password={password}
+      onSuccess={handleFormSuccess}
+    />
+  );
 }

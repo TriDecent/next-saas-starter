@@ -54,7 +54,6 @@ export default async function SecurityPage() {
     <RequestPasswordResetCard email={session.user.email} />
   ) : (
     <div className='space-y-8'>
-      <TwoFactorsCard isEnabled={!!session.user.twoFactorEnabled} />
       <AuthenticatePriorProvider
         value={{
           is2FAEnabled: !!session.user.twoFactorEnabled,
@@ -62,6 +61,7 @@ export default async function SecurityPage() {
           sudoTokenExpiresAt: sudoTokenExpiresAt,
         }}
       >
+        <TwoFactorsCard isEnabled={!!session.user.twoFactorEnabled} />
         <ChangePasswordCard />
         <PasskeysList passkeys={passkeys} />
       </AuthenticatePriorProvider>

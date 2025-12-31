@@ -1,17 +1,20 @@
 'use server';
 
 import {
+  SUDO_TOKEN_COOKIE,
+  verifySudoToken,
+} from '@/features/auth/authenticate-prior';
+import {
   ajRestrictiveAuthenticated,
   auth,
   ensureSession,
   handleDeniedInServerAction,
 } from '@/lib';
 import { ROUTES } from '@/shared/constants';
-import { basicAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 type Response = ActionResponse<
   { totpURI: string; backupCodes: string[] },
@@ -19,19 +22,29 @@ type Response = ActionResponse<
 >;
 
 export async function enableTwoFactorsAction(
-  state: Response,
-  input: unknown
+  password: string
 ): Promise<Response> {
-  const parsedInput = basicAuthSchema.safeParse(input);
-  if (!parsedInput.success)
-    return { type: 'error', payload: { message: 'Invalid input' } };
+  const [headersList, req, cookiesList] = await Promise.all([
+    headers(),
+    request(),
+    cookies(),
+  ]);
 
-  const [headersList, req] = await Promise.all([headers(), request()]);
-
+  const sudoTokenCookie = cookiesList.get(SUDO_TOKEN_COOKIE.name);
+  if (!sudoTokenCookie)
+    return {
+      type: 'error',
+      payload: { message: 'You must re-authenticate to perform this action' },
+    };
   const session = await ensureSession(
     headersList,
     ROUTES.settings.nested.security.href
   );
+  if (!verifySudoToken(sudoTokenCookie.value, session.user.id))
+    return {
+      type: 'error',
+      payload: { message: 'You must re-authenticate to perform this action' },
+    };
 
   const decision = await ajRestrictiveAuthenticated.protect(req, {
     action: 'enable-2fa',
@@ -41,7 +54,7 @@ export async function enableTwoFactorsAction(
 
   try {
     const data = await auth.api.enableTwoFactor({
-      body: { password: parsedInput.data.password },
+      body: { password },
       headers: headersList,
     });
 
