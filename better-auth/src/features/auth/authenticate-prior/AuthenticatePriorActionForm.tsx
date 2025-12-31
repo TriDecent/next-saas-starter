@@ -14,8 +14,10 @@ type AuthenticateMode = 'with-2fa' | 'no-2fa';
 
 export function AuthenticatePriorActionForm({
   mode,
+  onAuthenticated,
 }: {
   mode: AuthenticateMode;
+  onAuthenticated?: (enteredPassword: string) => void;
 }) {
   const { methods, isPending, dispatch, animationScope, state } = useActionForm(
     {
@@ -32,6 +34,8 @@ export function AuthenticatePriorActionForm({
             : { password: '' },
       },
       onFormSuccess: () => {
+        onAuthenticated?.(methods.getValues('password'));
+
         methods.reset();
         toast.success('Authenticated', {
           id: 'authenticate-prior-action-form',

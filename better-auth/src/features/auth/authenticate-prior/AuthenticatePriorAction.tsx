@@ -1,7 +1,7 @@
 'use client';
 
 import { DrawerOpener } from '@/shared/components';
-import { use, useEffect, useEffectEvent, type ReactNode } from 'react';
+import { use, useState, type ReactNode } from 'react';
 import { AuthenticatePriorContext } from './authenticate-prior-context';
 import { AuthenticatePriorActionForm } from './AuthenticatePriorActionForm';
 
@@ -10,19 +10,18 @@ export function AuthenticatePriorAction({
   description,
   children,
   trigger,
-  onAuthenticated,
 }: {
   title: string;
   description: string;
   trigger: ReactNode;
-  children?: ReactNode;
-  onAuthenticated?: () => void;
+  children?: ReactNode | ((enteredPassword: string) => ReactNode);
 }) {
   const context = use(AuthenticatePriorContext);
   if (!context)
     throw new Error(
       'AuthenticatePriorAction must be used within AuthenticatePriorProvider'
     );
+  const [enteredPassword, setEnteredPassword] = useState<string | null>(null);
 
   return (
     <DrawerOpener
@@ -36,31 +35,18 @@ export function AuthenticatePriorAction({
     >
       <div className={context.doesSudoTokenExist ? 'hidden' : 'block'}>
         <AuthenticatePriorActionForm
-          mode={context.doesSudoTokenExist ? 'with-2fa' : 'no-2fa'}
+          onAuthenticated={setEnteredPassword}
+          mode={context.is2FAEnabled ? 'with-2fa' : 'no-2fa'}
         />
       </div>
 
-      {context.doesSudoTokenExist ? (
-        <RenderOnAuthenticated onAuthenticated={onAuthenticated}>
-          {children}
-        </RenderOnAuthenticated>
-      ) : null}
+      {context.doesSudoTokenExist
+        ? typeof children === 'function'
+          ? enteredPassword
+            ? children(enteredPassword)
+            : null
+          : children
+        : null}
     </DrawerOpener>
   );
-}
-
-function RenderOnAuthenticated({
-  onAuthenticated,
-  children,
-}: {
-  onAuthenticated?: () => void;
-  children?: ReactNode;
-}) {
-  const handleAuthenticated = useEffectEvent(onAuthenticated ?? (() => {}));
-
-  useEffect(() => {
-    handleAuthenticated();
-  }, []);
-
-  return children;
 }

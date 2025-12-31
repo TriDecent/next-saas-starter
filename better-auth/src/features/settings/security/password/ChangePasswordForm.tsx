@@ -19,7 +19,11 @@ import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
 import { changePasswordAction } from './change-password-action';
 
-export function ChangePasswordForm() {
+export function ChangePasswordForm({
+  currentPassword,
+}: {
+  currentPassword: string;
+}) {
   const {
     methods,
     animationScope,
@@ -33,7 +37,7 @@ export function ChangePasswordForm() {
       resolver: zodResolver(changePasswordSchema),
       defaultValues: {
         confirmPassword: '',
-        currentPassword: '',
+        currentPassword,
         newPassword: '',
         revokeOtherSessions: false,
       },
@@ -84,7 +88,7 @@ export function ChangePasswordForm() {
                 </InputGroupAddon>
               }
               autoComplete='current-password'
-              disabled={isPending}
+              readOnly
               placeholder='Enter your current password'
             />
 

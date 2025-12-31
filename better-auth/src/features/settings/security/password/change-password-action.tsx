@@ -1,6 +1,10 @@
 'use server';
 
 import {
+  SUDO_TOKEN_COOKIE,
+  verifySudoToken,
+} from '@/features/auth/authenticate-prior';
+import {
   ajRestrictiveAuthenticated,
   ensureSession,
   handleDeniedInServerAction,
@@ -11,7 +15,7 @@ import { changePasswordSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 type ChangePasswordResponse = ActionResponse<undefined, { message: string }>;
 
@@ -19,15 +23,26 @@ export async function changePasswordAction(
   state: ChangePasswordResponse,
   input: unknown
 ): Promise<ChangePasswordResponse> {
-  const headersList = await headers();
+  const [headersList, cookiesList] = await Promise.all([headers(), cookies()]);
   const session = await ensureSession(
     headersList,
     ROUTES.settings.nested.security.href
   );
 
-  const parsedResult = changePasswordSchema.safeParse(input);
+  const unverifiedSudoToken = cookiesList.get(SUDO_TOKEN_COOKIE.name)?.value;
+  if (!unverifiedSudoToken)
+    return {
+      type: 'error',
+      payload: { message: 'Please re-authenticate to change your password.' },
+    };
 
-  console.log(parsedResult.data);
+  if (!verifySudoToken(unverifiedSudoToken, session.user.id))
+    return {
+      type: 'error',
+      payload: { message: 'Please re-authenticate to change your password.' },
+    };
+
+  const parsedResult = changePasswordSchema.safeParse(input);
 
   if (!parsedResult.success)
     return { type: 'error', payload: { message: 'Invalid input data' } };
