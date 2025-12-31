@@ -21,6 +21,7 @@ import {
   type SignInErrorData,
   type SignInSuccessData,
 } from './SignInForm';
+import { SignInWithPasskey } from './SignInWithPasskey';
 
 export function SignInCard() {
   const reduxDispatch = useAppDispatch();
@@ -55,6 +56,8 @@ export function SignInCard() {
       className='space-y-8'
     >
       <SocialProviders />
+
+      <SignInWithPasskey />
 
       <SignInForm onSuccess={handleSignInSuccess} onError={handleSignInError} />
 
