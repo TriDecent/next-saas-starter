@@ -5,7 +5,7 @@ import { MiniLoader } from '@/shared/components';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
+import { useCallback, useEffect, useTransition } from 'react';
 import { GoPasskeyFill } from 'react-icons/go';
 import { toast } from 'sonner';
 
@@ -15,14 +15,15 @@ export function SignInWithPasskey() {
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
-  const handleSignInWithPasskey = () => {
-    startTransition(async () => {
-      const { error } = await authClient.signIn.passkey({});
+
+  const handleSignInWithPasskey = useCallback(
+    async (isAuto: boolean) => {
+      const { error } = await authClient.signIn.passkey({ autoFill: isAuto });
       if (error) {
         toast.error('Failed to sign in with passkey.', {
           description: error.message,
         });
-
+        console.log(error);
         return;
       }
 
@@ -31,14 +32,23 @@ export function SignInWithPasskey() {
       });
 
       router.replace(callbackUrl ?? ROUTES.home.href);
-    });
-  };
+    },
+    [callbackUrl, router]
+  );
+
+  const handleManualClick = () =>
+    startTransition(() => handleSignInWithPasskey(false));
+
+  useEffect(() => {
+    handleSignInWithPasskey(true);
+  }, [handleSignInWithPasskey]);
 
   return (
     <Button
       className='w-full'
       disabled={isPending}
-      onClick={handleSignInWithPasskey}
+      onClick={handleManualClick}
+      type='button'
     >
       {isPending ? (
         <MiniLoader />
