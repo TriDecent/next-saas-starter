@@ -10,9 +10,12 @@ import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
+import { admin } from 'better-auth/plugins';
 import { twoFactor } from 'better-auth/plugins/two-factor';
 import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
+import { cache } from 'react';
+import { adminPluginConfigs } from './permissions';
 import { prisma } from './prisma';
 
 export const auth = betterAuth({
@@ -24,6 +27,7 @@ export const auth = betterAuth({
     passkey({
       authenticatorSelection: { authenticatorAttachment: 'cross-platform' },
     }),
+    admin(adminPluginConfigs),
     nextCookies(),
   ],
   database: prismaAdapter(prisma, {
@@ -141,26 +145,28 @@ export type AuthSession = NonNullable<
   Awaited<ReturnType<typeof auth.api.getSession>>
 >;
 
-export async function ensureSession(headers: Headers, callbackUrl: string) {
-  const session = await auth.api.getSession({ headers });
+export const ensureSession = cache(
+  async (headers: Headers, callbackUrl: string) => {
+    const session = await auth.api.getSession({ headers });
 
-  if (session) return session;
+    if (session) return session;
 
-  const searchParams = new URLSearchParams({ callbackUrl });
+    const searchParams = new URLSearchParams({ callbackUrl });
 
-  redirect(`${ROUTES.auth.href}?${searchParams.toString()}`);
-}
+    redirect(`${ROUTES.auth.href}?${searchParams.toString()}`);
+  }
+);
 
-export async function ensureSessionFromRequest(
-  request: NextRequest
-): Promise<NextResponse> {
-  const session = await auth.api.getSession({ headers: request.headers });
+export const ensureSessionFromRequest = cache(
+  async (request: NextRequest): Promise<NextResponse> => {
+    const session = await auth.api.getSession({ headers: request.headers });
 
-  if (session) return NextResponse.next();
+    if (session) return NextResponse.next();
 
-  const callbackUrl = `${request.nextUrl.pathname}?${request.nextUrl.searchParams.toString()}`;
-  const redirectTo = new URL(ROUTES.auth.href, request.nextUrl);
-  redirectTo.searchParams.set('callbackUrl', callbackUrl.toString());
+    const callbackUrl = `${request.nextUrl.pathname}?${request.nextUrl.searchParams.toString()}`;
+    const redirectTo = new URL(ROUTES.auth.href, request.nextUrl);
+    redirectTo.searchParams.set('callbackUrl', callbackUrl.toString());
 
-  return NextResponse.redirect(redirectTo);
-}
+    return NextResponse.redirect(redirectTo);
+  }
+);

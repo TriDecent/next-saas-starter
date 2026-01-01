@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ba generate": "pnpm dlx @better-auth/cli generate",
+    "generate": "pnpm dlx prisma generate",
+    "migrate": "pnpm dlx prisma migrate dev"
   },
   "dependencies": {
     "@arcjet/ip": "1.0.0-beta.14",

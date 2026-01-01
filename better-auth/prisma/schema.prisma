@@ -27,6 +27,11 @@ model User {
 
   passkeys Passkey[]
 
+  role       String    @default("user")
+  banned     Boolean?  @default(false)
+  banReason  String?   @map("ban_reason")
+  banExpires DateTime? @map("ban_expires")
+
   @@unique([email])
   @@map("users")
 }
@@ -41,6 +46,8 @@ model Session {
   userAgent String?  @map("user_agent")
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String? @map("impersonated_by")
 
   @@unique([token])
   @@index([userId])
