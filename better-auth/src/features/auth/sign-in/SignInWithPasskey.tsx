@@ -17,8 +17,11 @@ export function SignInWithPasskey() {
   const [isPending, startTransition] = useTransition();
 
   const handleSignInWithPasskey = useCallback(
-    async (isAuto: boolean) => {
-      const { error } = await authClient.signIn.passkey({ autoFill: isAuto });
+    async (isAuto: boolean, signal?: AbortSignal) => {
+      const { error } = await authClient.signIn.passkey({
+        autoFill: isAuto,
+        fetchOptions: { signal },
+      });
       if (error) {
         toast.error('Failed to sign in with passkey.', {
           description: error.message,
@@ -40,7 +43,10 @@ export function SignInWithPasskey() {
     startTransition(() => handleSignInWithPasskey(false));
 
   useEffect(() => {
-    handleSignInWithPasskey(true);
+    const abortController = new AbortController();
+    handleSignInWithPasskey(true, abortController.signal);
+
+    return () => abortController.abort();
   }, [handleSignInWithPasskey]);
 
   return (
