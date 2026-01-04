@@ -4,12 +4,15 @@ import type { NextRequest, ProxyConfig } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export const config: ProxyConfig = {
-  matcher: ['/auth/:path*', '/settings/:path*'],
+  matcher: ['/auth/:path*', '/settings/:path*', '/admin:path*'],
 };
 
 export function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith(ROUTES.admin.href))
+    return handleAdminPaths(request);
+
   if (request.nextUrl.pathname.startsWith(ROUTES.auth.href))
-    return handleAuthPaths(request);
+    return handleAuthPath(request);
 
   if (request.nextUrl.pathname.startsWith(ROUTES.settings.href))
     return handleSettingsPaths(request);
@@ -17,7 +20,12 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-async function handleAuthPaths(request: NextRequest): Promise<NextResponse> {
+async function handleAdminPaths(request: NextRequest) {
+  return ensureSessionFromRequest(request);
+}
+
+// for the /auth route (login & register), do not use 's' here
+async function handleAuthPath(request: NextRequest): Promise<NextResponse> {
   const session = await auth.api.getSession({ headers: request.headers });
 
   if (session)
