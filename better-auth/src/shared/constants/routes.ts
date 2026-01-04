@@ -58,6 +58,24 @@ export const ROUTES = {
       },
     },
   }),
+  admin: defineRoute({
+    href: '/admin',
+    metadata: {
+      title: 'Admin Dashboard',
+      description:
+        'Access administrative controls and manage system settings, users, and configurations.',
+      openGraph: {
+        title: `Admin Dashboard | ${APP_NAME}`,
+        description:
+          'Access administrative controls and manage system settings.',
+        url: `${BASE_URL}/admin`,
+      },
+      robots: {
+        index: false,
+        follow: false,
+      },
+    },
+  }),
   auth: defineRoute({
     href: '/auth',
     metadata: {

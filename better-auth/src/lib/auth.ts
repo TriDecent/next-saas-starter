@@ -7,7 +7,7 @@ import {
 } from '@/features/email';
 import { ROUTES } from '@/shared/constants';
 import { passkey } from '@better-auth/passkey';
-import { betterAuth } from 'better-auth';
+import { betterAuth, type User } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { admin } from 'better-auth/plugins';
@@ -168,5 +168,22 @@ export const ensureSessionFromRequest = cache(
     redirectTo.searchParams.set('callbackUrl', callbackUrl.toString());
 
     return NextResponse.redirect(redirectTo);
+  }
+);
+
+export const hasPermission = cache(
+  async (
+    userId: User['id'],
+    permissions: NonNullable<
+      NonNullable<
+        Parameters<typeof auth.api.userHasPermission>[0]
+      >['body']['permissions']
+    >
+  ) => {
+    const hasPermission = await auth.api.userHasPermission({
+      body: { userId, permissions },
+    });
+
+    return hasPermission.success;
   }
 );
