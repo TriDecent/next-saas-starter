@@ -39,6 +39,10 @@ export function useClientDataTable<TData, TValue>(
     return isNaN(page) || page < 0 ? 0 : page;
   });
 
+  const [globalFilter, setGlobalFilter] = useState<string>(() => {
+    return searchParams.get(TABLE_SEARCH_PARAMS.search) ?? '';
+  });
+
   const table = useReactTable({
     data,
     columns,
@@ -47,17 +51,48 @@ export function useClientDataTable<TData, TValue>(
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
       pagination: { pageSize, pageIndex },
+      globalFilter,
     },
+
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+
+    onGlobalFilterChange: updaterOrValue => {
+      const nextValue =
+        typeof updaterOrValue === 'function'
+          ? updaterOrValue(globalFilter)
+          : updaterOrValue;
+
+      setGlobalFilter(nextValue);
+      setPageIndex(0);
+
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (nextValue) {
+        params.set(TABLE_SEARCH_PARAMS.search, String(nextValue));
+      } else {
+        params.delete(TABLE_SEARCH_PARAMS.search);
+      }
+
+      params.set(TABLE_SEARCH_PARAMS.pageIndex, '0');
+
+      const newUrl = `${pathname}?${params.toString()}`;
+      history.replaceState(
+        { ...history.state, as: newUrl, url: newUrl },
+        '',
+        newUrl
+      );
+    },
+
     onPaginationChange: updater => {
       const next =
         typeof updater === 'function'
