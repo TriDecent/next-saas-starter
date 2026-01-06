@@ -10,6 +10,8 @@ export type DataTableBaseProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   render?: (table: Table<TData>) => JSX.Element;
+
+  headerClassName?: string;
 };
 
 export type DataTableClientProps = {

@@ -22,15 +22,16 @@ function ClientDataTable<TData, TValue>(
   props: DataTableBaseProps<TData, TValue> & DataTableClientProps
 ) {
   const table = useClientDataTable(props);
+
   return (
-    <DataTableContent table={table}>
-      <div className='flex flex-col items-center justify-between gap-4 px-2 py-4 pb-4 sm:flex-row'>
+    <>
+      <DataTableContent table={table} headerClassName={props.headerClassName} />
+      <div className='mb-4 flex flex-col items-center justify-between gap-4 sm:flex-row'>
         <DataTablePagination table={table} />
         <DataTableViewOptions table={table} />
       </div>
-
       {props.render?.(table)}
-    </DataTableContent>
+    </>
   );
 }
 
@@ -38,13 +39,15 @@ function ServerDataTable<TData, TValue>(
   props: DataTableBaseProps<TData, TValue> & DataTableServerProps
 ) {
   const table = useServerDataTable(props);
+
   return (
-    <DataTableContent table={table}>
-      <div className='flex flex-col items-center justify-between gap-4 px-2 py-4 pb-4 sm:flex-row'>
+    <>
+      <DataTableContent table={table} headerClassName={props.headerClassName} />
+      <div className='mb-4 flex flex-col items-center justify-between gap-4 sm:flex-row'>
         <DataTablePagination table={table} />
         <DataTableViewOptions table={table} />
       </div>
       {props.render?.(table)}
-    </DataTableContent>
+    </>
   );
 }
