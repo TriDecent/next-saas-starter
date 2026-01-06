@@ -10,6 +10,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { TABLE_SEARCH_PARAMS } from './constants';
 import type { DataTableBaseProps, DataTableServerProps } from './types';
+import { createSortParam } from './utils';
 
 export function useServerDataTable<TData, TValue>(
   props: DataTableBaseProps<TData, TValue> & DataTableServerProps
@@ -56,12 +57,10 @@ export function useServerDataTable<TData, TValue>(
       const nextSorting =
         typeof updater === 'function' ? updater(sortingState) : updater;
 
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams);
 
       if (nextSorting.length > 0) {
-        const sortParam = nextSorting
-          .map(item => `${item.id}:${item.desc ? 'desc' : 'asc'}`)
-          .join(',');
+        const sortParam = createSortParam(nextSorting);
 
         params.set(TABLE_SEARCH_PARAMS.sort, sortParam);
       } else {
@@ -75,10 +74,10 @@ export function useServerDataTable<TData, TValue>(
       const nextFilter =
         typeof updater === 'function' ? updater(globalFilter) : updater;
 
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams);
 
       if (nextFilter) {
-        params.set(TABLE_SEARCH_PARAMS.search, String(nextFilter));
+        params.set(TABLE_SEARCH_PARAMS.search, nextFilter);
 
         params.set(TABLE_SEARCH_PARAMS.pageIndex, '0');
       } else {
@@ -91,7 +90,7 @@ export function useServerDataTable<TData, TValue>(
     onPaginationChange: updater => {
       const next =
         typeof updater === 'function' ? updater(paginationState) : updater;
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams);
 
       params.set(TABLE_SEARCH_PARAMS.pageIndex, next.pageIndex.toString());
       params.set(TABLE_SEARCH_PARAMS.pageSize, next.pageSize.toString());

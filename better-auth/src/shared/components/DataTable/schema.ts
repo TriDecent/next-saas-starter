@@ -1,5 +1,6 @@
 import z from 'zod';
 import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from './constants';
+import { createOrderByObjectArray } from './utils';
 
 export const tableSearchParamsSchema = z.object({
   tablePageIndex: z.coerce
@@ -16,15 +17,7 @@ export const tableSearchParamsSchema = z.object({
   tableSort: z
     .string()
     .optional()
-    .transform(val => {
-      if (!val) return undefined;
-
-      return val.split(',').map(part => {
-        const [field, direction] = part.split(':');
-
-        return { [field]: direction === 'desc' ? 'desc' : 'asc' } as const;
-      });
-    }),
+    .transform(val => (val ? createOrderByObjectArray(val) : undefined)),
   tableSearch: z.string().optional(),
 });
 
