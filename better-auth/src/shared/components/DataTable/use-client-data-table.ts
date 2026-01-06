@@ -15,6 +15,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { TABLE_SEARCH_PARAMS } from './constants';
 import type { DataTableBaseProps, DataTableClientProps } from './types';
+import { createSortingState, createSortParam } from './utils';
 
 export function useClientDataTable<TData, TValue>(
   props: DataTableBaseProps<TData, TValue> & DataTableClientProps
@@ -23,10 +24,16 @@ export function useClientDataTable<TData, TValue>(
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  const [sorting, setSorting] = useState<SortingState>(() => {
+    const sortParam = searchParams.get(TABLE_SEARCH_PARAMS.sort);
+    if (!sortParam) return [];
+
+    return createSortingState(sortParam);
+  });
 
   const [pageSize, setPageSize] = useState<number>(() => {
     return (
@@ -36,7 +43,8 @@ export function useClientDataTable<TData, TValue>(
 
   const [pageIndex, setPageIndex] = useState<number>(() => {
     const page = Number(searchParams.get(TABLE_SEARCH_PARAMS.pageIndex));
-    return isNaN(page) || page < 0 ? 0 : page;
+
+    return page || page < 0 ? 0 : page;
   });
 
   const [globalFilter, setGlobalFilter] = useState<string>(() => {
@@ -65,6 +73,17 @@ export function useClientDataTable<TData, TValue>(
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+
+    onSortingChange: updater => {
+      const nextSorting =
+        typeof updater === 'function' ? updater(sorting) : updater;
+
+      setSorting(nextSorting);
+
+      const sortParam = createSortParam(nextSorting);
+
+      updateUrl({ [TABLE_SEARCH_PARAMS.sort]: sortParam });
+    },
 
     onGlobalFilterChange: updaterOrValue => {
       const nextValue =
