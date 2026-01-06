@@ -12,7 +12,7 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { TABLE_SEARCH_PARAMS } from './constants';
 import type { DataTableBaseProps, DataTableClientProps } from './types';
 import { createSortingState, createSortParam } from './utils';
@@ -51,6 +51,29 @@ export function useClientDataTable<TData, TValue>(
     return searchParams.get(TABLE_SEARCH_PARAMS.search) ?? '';
   });
 
+  const updateUrl = useCallback(
+    (updates: Record<string, string>) => {
+      const currentParams = new URLSearchParams(window.location.search);
+
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value) {
+          currentParams.set(key, value);
+          return;
+        }
+
+        currentParams.delete(key);
+      });
+
+      const newUrl = `${pathname}?${currentParams.toString()}`;
+      window.history.replaceState(
+        { ...window.history.state, as: newUrl, url: newUrl },
+        '',
+        newUrl
+      );
+    },
+    [pathname]
+  );
+
   const table = useReactTable({
     data,
     columns,
@@ -69,7 +92,6 @@ export function useClientDataTable<TData, TValue>(
       globalFilter,
     },
 
-    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
@@ -94,22 +116,10 @@ export function useClientDataTable<TData, TValue>(
       setGlobalFilter(nextValue);
       setPageIndex(0);
 
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (nextValue) {
-        params.set(TABLE_SEARCH_PARAMS.search, String(nextValue));
-      } else {
-        params.delete(TABLE_SEARCH_PARAMS.search);
-      }
-
-      params.set(TABLE_SEARCH_PARAMS.pageIndex, '0');
-
-      const newUrl = `${pathname}?${params.toString()}`;
-      history.replaceState(
-        { ...history.state, as: newUrl, url: newUrl },
-        '',
-        newUrl
-      );
+      updateUrl({
+        [TABLE_SEARCH_PARAMS.search]: nextValue,
+        [TABLE_SEARCH_PARAMS.pageIndex]: '0',
+      });
     },
 
     onPaginationChange: updater => {
@@ -119,17 +129,12 @@ export function useClientDataTable<TData, TValue>(
           : updater;
 
       setPageSize(next.pageSize);
-      if (next.pageIndex !== pageIndex) setPageIndex(next.pageIndex);
+      setPageIndex(next.pageIndex);
 
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(TABLE_SEARCH_PARAMS.pageIndex, next.pageIndex.toString());
-      params.set(TABLE_SEARCH_PARAMS.pageSize, next.pageSize.toString());
-      const newUrl = `${pathname}?${params.toString()}`;
-      history.replaceState(
-        { ...history.state, as: newUrl, url: newUrl },
-        '',
-        newUrl
-      );
+      updateUrl({
+        [TABLE_SEARCH_PARAMS.pageSize]: next.pageSize.toString(),
+        [TABLE_SEARCH_PARAMS.pageIndex]: next.pageIndex.toString(),
+      });
     },
   });
 
