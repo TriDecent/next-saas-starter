@@ -6,7 +6,6 @@ import {
   createSortingState,
   tableSearchParamsSchema,
 } from '@/shared/components/DataTable';
-
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
@@ -22,8 +21,12 @@ export default async function AdminPage({
   searchParams: Promise<unknown>;
 }) {
   return (
-    <section className='min-h-screen'>
-      <SectionHeader icon={MdOutlineAdminPanelSettings} title={'Admin Panel'} />
+    <section className='min-h-screen space-y-8'>
+      <SectionHeader
+        icon={MdOutlineAdminPanelSettings}
+        title={'Admin Panel'}
+        description='Manage users and their preferences here'
+      />
       <Suspense fallback={<Loading />}>
         <AdminWrapper searchParams={searchParams} />
       </Suspense>
