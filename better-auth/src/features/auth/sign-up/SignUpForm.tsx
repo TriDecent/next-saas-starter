@@ -1,6 +1,7 @@
 'use client';
 
-import { FormField, MiniLoader } from '@/shared/components';
+import { MiniLoader } from '@/shared/components';
+import { FormField, useActionForm } from '@/shared/components/form';
 import {
   Button,
   Field,
@@ -9,7 +10,7 @@ import {
   FieldSet,
   InputGroupAddon,
 } from '@/shared/components/ui';
-import { useActionForm, useAppDispatch } from '@/shared/hooks';
+import { useAppDispatch } from '@/shared/hooks';
 import { signUpSchema } from '@/shared/schema';
 import { uiActions } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';

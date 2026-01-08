@@ -1,9 +1,9 @@
 'use client';
 
-import { useShakeError } from '@/shared/hooks';
 import type { ActionResponse } from '@/shared/types';
 import { useActionState, useEffect, useEffectEvent, useRef } from 'react';
 import { useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
+import { useShakeError } from './use-shake-error';
 
 export function useActionForm<
   TResponse extends ActionResponse<unknown, unknown>,

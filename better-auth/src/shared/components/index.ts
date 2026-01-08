@@ -3,7 +3,6 @@ export { AuthFormLayout } from './AuthFormLayout';
 export { BackupCodeField } from './BackupCodeField';
 export { DrawerOpener } from './DrawerOpener';
 export { ErrorBlock } from './ErrorBlock';
-export { FormField } from './FormField';
 export { Loading } from './Loading';
 export { MiniLoader } from './MiniLoading';
 export { PageLayout } from './PageLayout';

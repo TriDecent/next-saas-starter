@@ -1,16 +1,14 @@
 'use client';
 
 import { authClient } from '@/lib/auth';
-import { FormField } from '@/shared/components';
+import { FormField, useShakeError } from '@/shared/components/form';
 import { Button, Field, FieldGroup } from '@/shared/components/ui';
-import { useShakeError } from '@/shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-
 const schema = z.object({ passkeyName: z.string().min(3).max(64) });
 
 export function AddPasskeyForm() {

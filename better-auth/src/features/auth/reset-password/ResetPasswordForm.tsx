@@ -1,6 +1,7 @@
 'use client';
 
-import { FormField, MiniLoader } from '@/shared/components';
+import { MiniLoader } from '@/shared/components';
+import { FormField, useActionForm } from '@/shared/components/form';
 import {
   Button,
   Field,
@@ -9,7 +10,6 @@ import {
   FieldSet,
   InputGroupAddon,
 } from '@/shared/components/ui';
-import { useActionForm } from '@/shared/hooks';
 import { resetPasswordSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
@@ -18,6 +18,7 @@ import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { toast } from 'sonner';
 import { resetPasswordAction } from './reset-password-action';
+
 export function ResetPasswordForm() {
   const {
     methods,

@@ -5,7 +5,7 @@ import {
   BackupCodeField,
   TrustDeviceField,
 } from '@/shared/components';
-import { useActionForm } from '@/shared/hooks';
+import { useActionForm } from '@/shared/components/form';
 import { backupCodeSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';

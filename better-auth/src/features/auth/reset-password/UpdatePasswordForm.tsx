@@ -1,6 +1,7 @@
 'use client';
 
-import { FormField, MiniLoader } from '@/shared/components';
+import { MiniLoader } from '@/shared/components';
+import { FormField, useActionForm } from '@/shared/components/form';
 import {
   Button,
   Field,
@@ -10,7 +11,6 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
-import { useActionForm } from '@/shared/hooks';
 import {
   updatePasswordSchema,
   type UpdatePasswordInput,

@@ -1,4 +1,4 @@
-import { FormField } from '@/shared/components';
+import { FormField } from '@/shared/components/form';
 
 export function PasswordField({ isPending }: { isPending: boolean }) {
   return (

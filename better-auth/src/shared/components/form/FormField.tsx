@@ -6,29 +6,28 @@ import {
   type FieldError as FieldErrorType,
   useFormContext,
 } from 'react-hook-form';
-import { cn } from '../utils/utils';
+import { cn } from '../../utils';
 import {
   Checkbox,
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  InputGroup,
+  InputGroupInput,
+  InputGroupTextarea,
   Item,
   ItemActions,
   ItemContent,
   ItemDescription,
   ItemTitle,
   Label,
-} from './ui';
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from './ui/field';
-import {
-  InputGroup,
-  InputGroupInput,
-  InputGroupTextarea,
-} from './ui/input-group';
-import { Select, SelectContent, SelectTrigger, SelectValue } from './ui/select';
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from '../ui';
 
 type FieldOrientation = 'vertical' | 'horizontal' | 'responsive';
 

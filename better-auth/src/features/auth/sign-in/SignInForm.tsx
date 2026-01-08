@@ -1,6 +1,7 @@
 'use client';
 
-import { FormField, MiniLoader, TrustDeviceField } from '@/shared/components';
+import { MiniLoader, TrustDeviceField } from '@/shared/components';
+import { FormField, useActionForm } from '@/shared/components/form';
 import {
   Button,
   Field,
@@ -9,7 +10,6 @@ import {
   FieldSet,
   InputGroupAddon,
 } from '@/shared/components/ui';
-import { useActionForm } from '@/shared/hooks';
 import { signInSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';

@@ -1,7 +1,7 @@
 'use client';
 
 import { AuthFormLayout, PasswordField, TotpField } from '@/shared/components';
-import { useActionForm } from '@/shared/hooks';
+import { useActionForm } from '@/shared/components/form';
 import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
