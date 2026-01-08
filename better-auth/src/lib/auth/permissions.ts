@@ -10,14 +10,16 @@ const adminRole = ac.newRole({ ...adminAc.statements, admin: ['access'] });
 const moderatorRole = ac.newRole({ user: ['list', 'ban'], admin: ['access'] });
 // const userRole = ac.newRole({});
 
-const ROLES = {
-  admin: adminRole,
-  moderator: moderatorRole,
+export const ROLES = { admin: 'admin', moderator: 'moderator', user: 'user' };
+
+const ROLES_STATEMENTS = {
+  [ROLES.admin]: adminRole,
+  [ROLES.moderator]: moderatorRole,
   // user: userRole
 } as const;
 
 export const adminPluginConfigs = {
   ac,
-  roles: ROLES,
+  roles: ROLES_STATEMENTS,
   defaultRole: 'user',
 } satisfies Parameters<typeof admin>[0];

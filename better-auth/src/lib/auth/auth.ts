@@ -7,16 +7,13 @@ import {
 } from '@/features/email';
 import { ROUTES } from '@/shared/constants';
 import { passkey } from '@better-auth/passkey';
-import { betterAuth, type User } from 'better-auth';
+import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
 import { admin } from 'better-auth/plugins';
 import { twoFactor } from 'better-auth/plugins/two-factor';
-import { redirect } from 'next/navigation';
-import { NextRequest, NextResponse } from 'next/server';
-import { cache } from 'react';
-import { adminPluginConfigs } from './permissions';
 import { prisma } from '../prisma';
+import { adminPluginConfigs } from './permissions';
 
 export const auth = betterAuth({
   appName: 'Trí Decent Auth',
@@ -140,5 +137,3 @@ export const auth = betterAuth({
     },
   },
 });
-
-
