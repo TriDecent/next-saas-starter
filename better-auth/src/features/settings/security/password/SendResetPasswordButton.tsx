@@ -1,6 +1,6 @@
 'use client';
 
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth';
 import { SendEmailButton } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import { toast } from 'sonner';

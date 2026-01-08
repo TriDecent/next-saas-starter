@@ -1,5 +1,5 @@
 import { ProfileCard } from '@/features/settings/profile';
-import { ensureSession } from '@/lib';
+import { ensureSession } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';

@@ -1,7 +1,7 @@
 'use server';
 
-import { ajEmailSend, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
+import { ajEmailSend, handleDeniedInServerAction } from '@/lib/security';
 import { request } from '@arcjet/next';
 import { headers } from 'next/headers';
 

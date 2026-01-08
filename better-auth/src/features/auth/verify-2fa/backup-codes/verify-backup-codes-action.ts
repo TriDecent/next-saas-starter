@@ -1,10 +1,10 @@
 'use server';
 
+import { auth } from '@/lib/auth';
 import {
   ajRestrictiveAnonymous,
-  auth,
   handleDeniedInServerAction,
-} from '@/lib';
+} from '@/lib/security';
 import { backupCodeSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';

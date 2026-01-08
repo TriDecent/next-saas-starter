@@ -1,6 +1,6 @@
 'use client';
 
-import type { AuthSession } from '@/lib';
+import type { AuthSession } from '@/lib/auth';
 import { FormField, MiniLoader } from '@/shared/components';
 import {
   Button,

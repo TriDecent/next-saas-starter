@@ -1,4 +1,4 @@
-import { auth, hasPermission } from '@/lib';
+import { auth, hasPermission } from '@/lib/auth';
 import { Button, ButtonGroup } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { User } from 'better-auth';

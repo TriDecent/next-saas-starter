@@ -1,5 +1,5 @@
 import { DeleteAccountFlow } from '@/features/settings/danger';
-import { ensureSession } from '@/lib';
+import { ensureSession } from '@/lib/auth';
 import {
   Card,
   CardContent,

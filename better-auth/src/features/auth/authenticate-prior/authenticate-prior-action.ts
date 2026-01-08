@@ -1,11 +1,7 @@
 'use server';
 
-import {
-  ajLaxAuthenticated,
-  auth,
-  ensureSession,
-  handleDeniedInServerAction,
-} from '@/lib';
+import { auth, ensureSession } from '@/lib/auth';
+import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';

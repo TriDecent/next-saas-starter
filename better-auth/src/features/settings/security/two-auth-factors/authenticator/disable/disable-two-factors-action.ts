@@ -4,12 +4,11 @@ import {
   SUDO_TOKEN_COOKIE,
   verifySudoToken,
 } from '@/features/auth/authenticate-prior';
+import { auth, ensureSession } from '@/lib/auth';
 import {
   ajRestrictiveAuthenticated,
-  auth,
-  ensureSession,
   handleDeniedInServerAction,
-} from '@/lib';
+} from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';

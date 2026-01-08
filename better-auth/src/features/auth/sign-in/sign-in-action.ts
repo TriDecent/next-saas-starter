@@ -1,7 +1,10 @@
 'use server';
 
-import { ajRestrictiveAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
+import {
+  ajRestrictiveAnonymous,
+  handleDeniedInServerAction,
+} from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { signInSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';

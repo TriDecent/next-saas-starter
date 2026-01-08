@@ -1,7 +1,7 @@
 'use client';
 
-import { authClient } from '@/lib/auth-client';
-import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/o-auth-providers';
+import { authClient } from '@/lib/auth';
+import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/o-auth-providers';
 import { ActionButton } from '@/shared/components';
 import {
   Button,

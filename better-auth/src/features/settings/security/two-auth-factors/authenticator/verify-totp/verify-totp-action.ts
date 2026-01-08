@@ -1,11 +1,11 @@
 'use server';
 
+import { auth } from '@/lib/auth';
 import {
   ajRestrictiveAnonymous,
   ajRestrictiveAuthenticated,
-  auth,
   handleDeniedInServerAction,
-} from '@/lib';
+} from '@/lib/security';
 import { totpAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';

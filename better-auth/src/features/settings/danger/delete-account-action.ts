@@ -1,11 +1,10 @@
 'use server';
 
+import { auth, ensureSession } from '@/lib/auth';
 import {
   ajExtremeRestrictiveAuthenticated,
-  auth,
-  ensureSession,
   handleDeniedInServerAction,
-} from '@/lib';
+} from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';

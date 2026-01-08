@@ -1,7 +1,10 @@
 'use server';
 
-import { ajRestrictiveAnonymous, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
+import {
+  ajRestrictiveAnonymous,
+  handleDeniedInServerAction,
+} from '@/lib/security';
 import { updatePasswordSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';

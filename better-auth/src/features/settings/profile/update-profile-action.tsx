@@ -1,12 +1,11 @@
 'use server';
 
+import { auth, ensureSession } from '@/lib/auth';
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
-  ensureSession,
   handleDeniedInServerAction,
-} from '@/lib';
-import { auth } from '@/lib/auth';
+} from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { updateProfileSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';

@@ -1,6 +1,6 @@
 'use client';
 
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth';
 import { FormField } from '@/shared/components';
 import { Button, Field, FieldGroup } from '@/shared/components/ui';
 import { useShakeError } from '@/shared/hooks';

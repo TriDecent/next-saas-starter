@@ -1,7 +1,7 @@
 'use server';
 
-import { ajEmailSend, handleDeniedInServerAction } from '@/lib';
 import { auth } from '@/lib/auth';
+import { ajEmailSend, handleDeniedInServerAction } from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { resetPasswordSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
