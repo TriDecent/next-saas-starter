@@ -1,6 +1,7 @@
 import { UsersTable } from '@/features/admin';
 import type { Prisma } from '@/generated/prisma/client';
-import { ensureSession, hasPermission, prisma } from '@/lib';
+import { prisma } from '@/lib';
+import { ensureSession, hasPermission } from '@/lib/auth';
 import { Loading, SectionHeader } from '@/shared/components';
 import {
   createSortingState,

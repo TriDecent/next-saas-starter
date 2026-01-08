@@ -6,13 +6,17 @@ import {
   type DataTableServerProps,
 } from '@/shared/components/DataTable';
 import {
+  AlertDialog,
+  Button,
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
 } from '@/shared/components/ui';
 import type { Table } from '@tanstack/react-table';
+import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
+import { FiRefreshCcw } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
 import { columns } from './columns';
 
@@ -25,16 +29,37 @@ export function UsersTable(props: {
 }) {
   return (
     <div className='rounded-lg border p-2'>
-      <DataTable
-        mode='server'
-        headerClassName='shadow-sm'
-        columns={columns}
-        data={props.users}
-        rowCount={props.total}
-        {...props}
-        render={table => <SearchUsers table={table} />}
-      />
+      <AlertDialog>
+        <DataTable
+          mode='server'
+          headerClassName='shadow-sm'
+          columns={columns}
+          data={props.users}
+          rowCount={props.total}
+          {...props}
+          render={table => (
+            <div className='flex flex-row items-center justify-between gap-x-4'>
+              <SearchUsers table={table} />
+              <RefreshTable />
+            </div>
+          )}
+        />
+      </AlertDialog>
     </div>
+  );
+}
+
+function RefreshTable() {
+  const router = useRouter();
+
+  return (
+    <Button
+      size={'icon-sm'}
+      variant={'outline'}
+      onClick={() => router.refresh()}
+    >
+      <FiRefreshCcw />
+    </Button>
   );
 }
 

@@ -3,6 +3,13 @@
 import type { User } from '@/generated/prisma/client';
 import { DataTableColumnHeader } from '@/shared/components/DataTable';
 import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -11,7 +18,6 @@ import {
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -23,17 +29,19 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import {
   Ban,
-  Copy,
-  Eye,
   LockKeyhole,
   LockKeyholeOpen,
   MoreHorizontal,
-  Pencil,
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react';
-import { FaRegTrashAlt } from 'react-icons/fa';
-import { toast } from 'sonner';
+import {
+  BanUserAction,
+  CopyUserAction,
+  DeleteUserAction,
+  ImpersonateUserAction,
+  RevokeUserSessionsAction,
+} from './actions';
 
 const selectColumn: ColumnDef<User> = {
   id: 'select',
@@ -153,7 +161,11 @@ const roleColumn: ColumnDef<User> = {
   cell: ({ row }) => (
     <Badge
       variant={
-        row.original.role.includes('admin') ? 'destructive' : 'secondary'
+        row.original.role.includes('admin')
+          ? 'destructive'
+          : row.original.role.includes('moderator')
+            ? 'secondary'
+            : 'outline'
       }
       className='uppercase'
     >
@@ -232,10 +244,8 @@ const twoFactorColumn: ColumnDef<User> = {
 
 const actionsColumn: ColumnDef<User> = {
   id: 'actions',
-  cell: ({ row }) => {
-    const user = row.original;
-
-    return (
+  cell: ({ row }) => (
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='h-8 w-8 p-0'>
@@ -247,41 +257,58 @@ const actionsColumn: ColumnDef<User> = {
             Actions
           </DropdownMenuLabel>
 
-          <DropdownMenuItem
-            onClick={async () => {
-              await navigator.clipboard.writeText(user.id);
-              toast.success('User ID copied to clipboard');
-            }}
-          >
-            <Copy className='mr-2 h-4 w-4' />
-            Copy ID
-          </DropdownMenuItem>
+          <CopyUserAction user={row.original} />
 
           <DropdownMenuSeparator />
 
           <DropdownMenuLabel className='text-muted-foreground'>
-            Settings
+            Access & Security
           </DropdownMenuLabel>
-          <DropdownMenuItem>
-            <Eye /> View details
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Pencil /> Edit user
-          </DropdownMenuItem>
+
+          <ImpersonateUserAction />
+
+          <RevokeUserSessionsAction userId={row.original.id} />
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuLabel className='text-muted-foreground'>
+            Moderation
+          </DropdownMenuLabel>
+
+          <BanUserAction
+            userId={row.original.id}
+            shouldBan={!row.original.banned}
+          />
 
           <DropdownMenuSeparator />
 
           <DropdownMenuLabel className='text-muted-foreground'>
             Danger Zone
           </DropdownMenuLabel>
-          <DropdownMenuItem className='text-red-600'>
-            <FaRegTrashAlt className='text-red-600' />
-            Delete user
-          </DropdownMenuItem>
+
+          <DeleteUserAction />
         </DropdownMenuContent>
       </DropdownMenu>
-    );
-  },
+
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete User</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the
+            account and remove its data from the server.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction asChild>
+            <Button variant={'destructive'} className='text-foreground'>
+              Delete
+            </Button>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </>
+  ),
 };
 
 export const columns: ColumnDef<User>[] = [
