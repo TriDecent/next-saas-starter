@@ -1,7 +1,4 @@
-import {
-  AuthenticatePriorProvider,
-  verifySudoToken,
-} from '@/features/auth/authenticate-prior';
+import { AuthenticatePriorProvider } from '@/features/auth/authenticate-prior';
 import { PasskeysList } from '@/features/settings/security/passkey';
 import {
   ChangePasswordCard,
@@ -9,9 +6,9 @@ import {
 } from '@/features/settings/security/password';
 import { TwoFactorsCard } from '@/features/settings/security/two-auth-factors';
 import { auth, ensureSession } from '@/lib/auth';
-import { COOKIES, ROUTES } from '@/shared/constants';
+import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
-import { cookies, headers } from 'next/headers';
+import { headers } from 'next/headers';
 
 export async function generateMetadata(): Promise<Metadata> {
   const session = await ensureSession(
@@ -32,34 +29,19 @@ export default async function SecurityPage() {
     ROUTES.settings.nested.security.href
   );
 
-  const [accounts, passkeys, cookiesList] = await Promise.all([
+  const [accounts, passkeys] = await Promise.all([
     auth.api.listUserAccounts({ headers: headersList }),
     auth.api.listPasskeys({ headers: headersList }),
-    cookies(),
   ]);
   const hasCredentialAccount = accounts.some(
     account => account.providerId === 'credential'
   );
 
-  const unverifiedToken = cookiesList.get(COOKIES['sudo-token'].name)?.value;
-  const verifiedToken = unverifiedToken
-    ? await verifySudoToken(unverifiedToken, session.user.id)
-    : null;
-  const sudoTokenExpiresAt = verifiedToken?.payload.exp
-    ? verifiedToken.payload.exp * 1000 // converts to milliseconds
-    : null;
-
   return !hasCredentialAccount ? (
     <RequestPasswordResetCard email={session.user.email} />
   ) : (
     <div className='space-y-8'>
-      <AuthenticatePriorProvider
-        value={{
-          is2FAEnabled: !!session.user.twoFactorEnabled,
-          doesSudoTokenExist: !!verifiedToken,
-          sudoTokenExpiresAt: sudoTokenExpiresAt,
-        }}
-      >
+      <AuthenticatePriorProvider user={session.user}>
         <TwoFactorsCard isEnabled={!!session.user.twoFactorEnabled} />
         <ChangePasswordCard />
         <PasskeysList passkeys={passkeys} />

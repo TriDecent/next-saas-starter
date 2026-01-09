@@ -1,41 +1,38 @@
-'use client';
+'use server';
 
-import { useRouter } from 'next/navigation';
-import { useEffect, type ReactNode } from 'react';
-import {
-  AuthenticatePriorContext,
-  type AuthenticatePriorContextType,
-} from './authenticate-prior-context';
+import type { User } from '@/generated/prisma/client';
+import { COOKIES } from '@/shared/constants';
+import { cookies } from 'next/headers';
+import { type ReactNode } from 'react';
+import { AuthenticatePriorClientProvider } from './AuthenticatePriorClientProvider';
+import { verifySudoToken } from './sudo-mode';
 
-export function AuthenticatePriorProvider({
-  value,
+export async function AuthenticatePriorProvider({
+  user,
   children,
 }: {
-  value: AuthenticatePriorContextType;
+  user: Pick<User, 'id'> & { twoFactorEnabled?: boolean | null };
   children: ReactNode;
 }) {
-  const router = useRouter();
+  const cookiesList = await cookies();
+  const unverifiedToken = cookiesList.get(COOKIES['sudo-token'].name)?.value;
+  const verifiedToken = unverifiedToken
+    ? await verifySudoToken(unverifiedToken, user.id)
+    : null;
 
-  useEffect(() => {
-    if (!value.doesSudoTokenExist || !value.sudoTokenExpiresAt) return;
+  const sudoTokenExpiresAt = verifiedToken?.payload.exp
+    ? verifiedToken.payload.exp * 1000
+    : null;
 
-    const timeUntilExpiry = value.sudoTokenExpiresAt - Date.now();
-
-    if (timeUntilExpiry <= 0) {
-      router.refresh();
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      router.refresh();
-    }, timeUntilExpiry);
-
-    return () => clearTimeout(timeoutId);
-  }, [router, value.doesSudoTokenExist, value.sudoTokenExpiresAt]);
+  const value = {
+    is2FAEnabled: !!user.twoFactorEnabled,
+    doesSudoTokenExist: !!verifiedToken,
+    sudoTokenExpiresAt: sudoTokenExpiresAt,
+  };
 
   return (
-    <AuthenticatePriorContext value={value}>
+    <AuthenticatePriorClientProvider value={value}>
       {children}
-    </AuthenticatePriorContext>
+    </AuthenticatePriorClientProvider>
   );
 }
