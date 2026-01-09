@@ -1,15 +1,12 @@
 'use server';
 
-import {
-  SUDO_TOKEN_COOKIE,
-  verifySudoToken,
-} from '@/features/auth/authenticate-prior';
+import { verifySudoToken } from '@/features/auth/authenticate-prior';
 import { auth, ensureSession } from '@/lib/auth';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
-import { ROUTES } from '@/shared/constants';
+import { COOKIES, ROUTES } from '@/shared/constants';
 import { changePasswordSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
@@ -28,7 +25,9 @@ export async function changePasswordAction(
     ROUTES.settings.nested.security.href
   );
 
-  const unverifiedSudoToken = cookiesList.get(SUDO_TOKEN_COOKIE.name)?.value;
+  const unverifiedSudoToken = cookiesList.get(
+    COOKIES['sudo-token'].name
+  )?.value;
   if (!unverifiedSudoToken)
     return {
       type: 'error',

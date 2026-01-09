@@ -2,13 +2,12 @@
 
 import { auth, ensureSession } from '@/lib/auth';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/security';
-import { ROUTES } from '@/shared/constants';
+import { COOKIES, ROUTES } from '@/shared/constants';
 import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { APIError } from 'better-auth';
 import { cookies, headers } from 'next/headers';
-import { SUDO_TOKEN_COOKIE } from '.';
 import { createSudoToken } from './sudo-mode';
 
 type Response = ActionResponse<undefined, { message: string }>;
@@ -62,9 +61,9 @@ export async function authenticatePriorAction(
       });
 
     cookiesList.set(
-      SUDO_TOKEN_COOKIE.name,
+      COOKIES['sudo-token'].name,
       await createSudoToken(session.user.id),
-      SUDO_TOKEN_COOKIE.config
+      COOKIES['sudo-token'].config
     );
 
     return {

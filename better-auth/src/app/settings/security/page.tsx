@@ -1,6 +1,5 @@
 import {
   AuthenticatePriorProvider,
-  SUDO_TOKEN_COOKIE,
   verifySudoToken,
 } from '@/features/auth/authenticate-prior';
 import { PasskeysList } from '@/features/settings/security/passkey';
@@ -10,7 +9,7 @@ import {
 } from '@/features/settings/security/password';
 import { TwoFactorsCard } from '@/features/settings/security/two-auth-factors';
 import { auth, ensureSession } from '@/lib/auth';
-import { ROUTES } from '@/shared/constants';
+import { COOKIES, ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 
@@ -42,7 +41,7 @@ export default async function SecurityPage() {
     account => account.providerId === 'credential'
   );
 
-  const unverifiedToken = cookiesList.get(SUDO_TOKEN_COOKIE.name)?.value;
+  const unverifiedToken = cookiesList.get(COOKIES['sudo-token'].name)?.value;
   const verifiedToken = unverifiedToken
     ? await verifySudoToken(unverifiedToken, session.user.id)
     : null;
