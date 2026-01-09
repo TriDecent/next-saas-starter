@@ -44,7 +44,7 @@ export class UserService {
   async toggleBanStatus(
     userId: User['id'],
     shouldBan: boolean,
-    headersList?: ReadonlyHeaders
+    headers?: ReadonlyHeaders
   ): Promise<ServiceResponse<undefined, { message: string }>> {
     const banPermission = hasPermission(this._actor.id, { user: ['ban'] });
     if (!banPermission)
@@ -70,9 +70,9 @@ export class UserService {
 
     try {
       if (shouldBan) {
-        await auth.api.banUser({ body: { userId }, headers: headersList });
+        await auth.api.banUser({ body: { userId }, headers });
       } else {
-        await auth.api.unbanUser({ body: { userId }, headers: headersList });
+        await auth.api.unbanUser({ body: { userId }, headers });
       }
 
       return { type: 'success', payload: undefined };
@@ -91,7 +91,7 @@ export class UserService {
 
   async revokeUser(
     userId: User['id'],
-    headersList: ReadonlyHeaders
+    headers: ReadonlyHeaders
   ): Promise<ServiceResponse<undefined, { message: string }>> {
     const revokePermission = hasPermission(this._actor.id, {
       session: ['revoke'],
@@ -116,10 +116,7 @@ export class UserService {
       };
 
     try {
-      await auth.api.revokeUserSessions({
-        body: { userId },
-        headers: headersList,
-      });
+      await auth.api.revokeUserSessions({ body: { userId }, headers });
 
       return { type: 'success', payload: undefined };
     } catch (error) {
@@ -133,5 +130,95 @@ export class UserService {
         },
       };
     }
+  }
+
+  async deleteUser(
+    userId: User['id'],
+    headers: ReadonlyHeaders
+  ): Promise<ServiceResponse<undefined, { message: string }>> {
+    const deletePermission = hasPermission(this._actor.id, {
+      user: ['delete'],
+    });
+    if (!deletePermission)
+      return {
+        type: 'error',
+        payload: { message: 'You do not have permission to delete users.' },
+      };
+
+    const targetUser = await this._repo.findUnique({ where: { id: userId } });
+    if (!targetUser)
+      return { type: 'error', payload: { message: 'User not found.' } };
+
+    const ability = defineAbilityFor(this._actor);
+    if (ability.cannot('delete', { ...targetUser, kind: 'User' }))
+      return {
+        type: 'error',
+        payload: { message: 'You do not have permission to delete this user.' },
+      };
+
+    try {
+      await auth.api.removeUser({ body: { userId }, headers });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async impersonateUser(
+    userId: User['id'],
+    headers: ReadonlyHeaders
+  ): Promise<ServiceResponse<undefined, { message: string }>> {
+    const impersonatePermission = hasPermission(this._actor.id, {
+      user: ['impersonate'],
+    });
+    if (!impersonatePermission)
+      return {
+        type: 'error',
+        payload: {
+          message: 'You do not have permission to impersonate users.',
+        },
+      };
+
+    const targetUser = await this._repo.findUnique({ where: { id: userId } });
+    if (!targetUser)
+      return { type: 'error', payload: { message: 'User not found.' } };
+
+    const ability = defineAbilityFor(this._actor);
+    if (ability.cannot('impersonate-user', { ...targetUser, kind: 'User' }))
+      return {
+        type: 'error',
+        payload: {
+          message: 'You do not have permission to impersonate this user.',
+        },
+      };
+
+    try {
+      await auth.api.impersonateUser({ body: { userId }, headers });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async stopImpersonate(headers: ReadonlyHeaders) {
+    return auth.api.stopImpersonating({ headers });
   }
 }
