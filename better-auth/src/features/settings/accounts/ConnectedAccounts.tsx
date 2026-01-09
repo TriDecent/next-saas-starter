@@ -1,6 +1,7 @@
 'use client';
 
-import { SUPPORTED_OAUTH_PROVIDERS, type auth } from '@/lib/auth';
+import type { Account } from '@/generated/prisma/client';
+import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/o-auth-providers';
 import {
   Badge,
   Item,
@@ -15,11 +16,7 @@ import { GoUnverified, GoVerified } from 'react-icons/go';
 import { toast } from 'sonner';
 import { SocialActionButton } from './SocialActionButton';
 
-export function ConnectedAccounts({
-  accounts,
-}: {
-  accounts: Awaited<ReturnType<typeof auth.api.listUserAccounts>>;
-}) {
+export function ConnectedAccounts({ accounts }: { accounts: Account[] }) {
   useSocialLinkErrorToast();
 
   return accounts && accounts.length > 0 ? (

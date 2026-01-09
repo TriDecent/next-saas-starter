@@ -1,6 +1,6 @@
 'use client';
 
-import { authClient } from '@/lib/auth';
+import { authClient } from '@/lib/auth/auth-client';
 import { FormField, useShakeError } from '@/shared/components/form';
 import { Button, Field, FieldGroup } from '@/shared/components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';

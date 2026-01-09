@@ -1,6 +1,7 @@
 'use client';
 
-import { authClient, type Provider } from '@/lib/auth';
+import { authClient } from '@/lib/auth/auth-client';
+import type { Provider } from '@/lib/auth/o-auth-providers';
 import { MiniLoader } from '@/shared/components';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTransition, type ComponentProps } from 'react';
