@@ -9,7 +9,6 @@ export async function revokeSessionAction(token: Session['token']) {
   try {
     await auth.api.revokeSession({ body: { token }, headers: await headers() });
   } catch (error) {
-    console.log(error);
     throw new Error(
       error instanceof APIError ? error.message : 'Unknown error'
     );

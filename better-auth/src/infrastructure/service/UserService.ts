@@ -46,6 +46,15 @@ export class UserService {
     shouldBan: boolean,
     headersList?: ReadonlyHeaders
   ): Promise<ServiceResponse<undefined, { message: string }>> {
+    const banPermission = hasPermission(this._actor.id, { user: ['ban'] });
+    if (!banPermission)
+      return {
+        type: 'error',
+        payload: {
+          message: 'You do not have permission to ban/unban users.',
+        },
+      };
+
     const targetUser = await this._repo.findUnique({ where: { id: userId } });
     if (!targetUser)
       return { type: 'error', payload: { message: 'User not found.' } };
@@ -65,6 +74,52 @@ export class UserService {
       } else {
         await auth.api.unbanUser({ body: { userId }, headers: headersList });
       }
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async revokeUser(
+    userId: User['id'],
+    headersList: ReadonlyHeaders
+  ): Promise<ServiceResponse<undefined, { message: string }>> {
+    const revokePermission = hasPermission(this._actor.id, {
+      session: ['revoke'],
+    });
+    if (!revokePermission)
+      return {
+        type: 'error',
+        payload: {
+          message: 'You do not have permission to revoke sessions.',
+        },
+      };
+
+    const targetUser = await this._repo.findUnique({ where: { id: userId } });
+    if (!targetUser)
+      return { type: 'error', payload: { message: 'User not found.' } };
+
+    const ability = defineAbilityFor(this._actor);
+    if (ability.cannot('revoke-user', { ...targetUser, kind: 'User' }))
+      return {
+        type: 'error',
+        payload: { message: 'You do not have permission to revoke this user.' },
+      };
+
+    try {
+      await auth.api.revokeUserSessions({
+        body: { userId },
+        headers: headersList,
+      });
 
       return { type: 'success', payload: undefined };
     } catch (error) {

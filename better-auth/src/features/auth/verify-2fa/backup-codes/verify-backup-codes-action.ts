@@ -28,8 +28,6 @@ export async function verifyBackupCodesAction(
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  console.log(parsedInput.data);
-
   try {
     await auth.api.verifyBackupCode({
       body: {

@@ -2,6 +2,7 @@
 
 import type { User } from '@/generated/prisma/client';
 import { DropdownMenuItem } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import { useTransition } from 'react';
 import { FaArrowRotateLeft } from 'react-icons/fa6';
 import { toast } from 'sonner';
@@ -16,7 +17,10 @@ export function RevokeUserSessionsAction({ userId }: { userId: User['id'] }) {
         id: 'revoke-sessions-action',
         description: '',
       });
-      const response = await revokeUserSessionsAction(userId);
+      const response = await revokeUserSessionsAction(
+        userId,
+        ROUTES.admin.href
+      );
 
       if (response.type === 'success')
         toast.success(`Revoked ${userId}'s sessions successfully`, {

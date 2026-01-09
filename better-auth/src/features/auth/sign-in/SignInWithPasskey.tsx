@@ -26,7 +26,7 @@ export function SignInWithPasskey() {
         toast.error('Failed to sign in with passkey.', {
           description: error.message,
         });
-        console.log(error);
+
         return;
       }
 
