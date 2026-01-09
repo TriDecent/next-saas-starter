@@ -2,6 +2,7 @@
 
 import type { User } from '@/generated/prisma/client';
 import { DropdownMenuItem } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import { useTransition } from 'react';
 import { FaRegCircle } from 'react-icons/fa';
 import { FaBan } from 'react-icons/fa6';
@@ -28,7 +29,11 @@ export function BanUserAction({
         id: 'ban-user-action',
         description: '',
       });
-      const response = await banUserAction(userId, shouldBan);
+      const response = await banUserAction(
+        userId,
+        shouldBan,
+        ROUTES.admin.href
+      );
 
       if (response.type === 'success')
         toast.success(successMessage, {

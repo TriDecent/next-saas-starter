@@ -1,7 +1,5 @@
 import { UsersTable } from '@/features/admin';
-import type { Prisma } from '@/generated/prisma/client';
-import { prisma } from '@/lib';
-import { ensureSession, hasPermission } from '@/lib/auth';
+import { getUserService } from '@/infrastructure/service';
 import { Loading, SectionHeader } from '@/shared/components';
 import {
   createSortingState,
@@ -9,7 +7,6 @@ import {
 } from '@/shared/components/DataTable';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { MdOutlineAdminPanelSettings } from 'react-icons/md';
@@ -40,42 +37,24 @@ async function AdminWrapper({
 }: {
   searchParams: Promise<unknown>;
 }) {
-  const [headersList, unknownQueries] = await Promise.all([
-    headers(),
-    searchParams,
-  ]);
-
-  const session = await ensureSession(headersList, ROUTES.admin.href);
-  const canListUser = await hasPermission(session.user.id, { user: ['list'] });
-
-  if (!canListUser) notFound();
+  const unknownQueries = await searchParams;
 
   const { tablePageIndex, tablePageSize, tableSort, tableSearch } =
     tableSearchParamsSchema.parse(unknownQueries);
 
-  const whereClause: Prisma.UserWhereInput = tableSearch
-    ? {
-        OR: [
-          { id: tableSearch },
-          { email: { mode: 'insensitive', contains: tableSearch } },
-          { name: { mode: 'insensitive', contains: tableSearch } },
-        ],
-      }
-    : {};
-  const [users, total] = await prisma.$transaction([
-    prisma.user.findMany({
-      skip: tablePageIndex * tablePageSize,
-      take: tablePageSize,
-      where: whereClause,
-      orderBy: tableSort ?? [],
-    }),
-    prisma.user.count({ where: whereClause }),
-  ]);
+  const userService = await getUserService(ROUTES.admin.href);
+  const { type, payload } = await userService.getUsers(
+    tablePageIndex,
+    tablePageSize,
+    tableSort,
+    tableSearch
+  );
+  if (type === 'error') notFound();
 
   return (
     <UsersTable
-      users={users}
-      total={total}
+      users={payload.users}
+      total={payload.total}
       paginationState={{ pageIndex: tablePageIndex, pageSize: tablePageSize }}
       sortingState={tableSort ? createSortingState(tableSort) : []}
       globalFilter={tableSearch ?? ''}
