@@ -10,7 +10,9 @@ type UserWithType = AuthSession['user'] & { kind: 'User' };
 type UserSubject = InferSubjects<UserWithType>;
 type Subjects = 'all' | UserSubject;
 type Actions = 'manage';
-type AppAbility = MongoAbility<[Actions, Subjects] | ['ban-user', UserSubject]>;
+type AppAbility = MongoAbility<
+  [Actions, Subjects] | ['ban-user' | 'revoke-user', UserSubject]
+>;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
   const { can, cannot, build } = new AbilityBuilder<AppAbility>(
@@ -30,6 +32,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   function defineAbilityForAdmin() {
     can('manage', 'all');
     cannot('ban-user', 'User', { role: { $regex: ROLES.admin } });
+
+    can('revoke-user', 'User');
+    cannot('revoke-user', 'User', { role: { $regex: ROLES.admin } });
   }
 
   function defineAbilityForModerator() {
