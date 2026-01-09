@@ -3,13 +3,6 @@
 import type { User } from '@/generated/prisma/client';
 import { DataTableColumnHeader } from '@/shared/components/DataTable';
 import {
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -265,7 +258,7 @@ const actionsColumn: ColumnDef<User> = {
             Access & Security
           </DropdownMenuLabel>
 
-          <ImpersonateUserAction />
+          <ImpersonateUserAction userId={row.original.id} />
 
           <RevokeUserSessionsAction userId={row.original.id} />
 
@@ -286,27 +279,9 @@ const actionsColumn: ColumnDef<User> = {
             Danger Zone
           </DropdownMenuLabel>
 
-          <DeleteUserAction />
+          <DeleteUserAction userId={row.original.id} />
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete User</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            account and remove its data from the server.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <Button variant={'destructive'} className='text-foreground'>
-              Delete
-            </Button>
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
     </>
   ),
 };

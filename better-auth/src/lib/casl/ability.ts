@@ -9,9 +9,11 @@ import { ROLES, type AuthSession } from '../auth';
 type UserWithType = AuthSession['user'] & { kind: 'User' };
 type UserSubject = InferSubjects<UserWithType>;
 type Subjects = 'all' | UserSubject;
-type Actions = 'manage';
+type CRUD = 'create' | 'read' | 'update' | 'delete';
+type Actions = 'manage' | CRUD;
 type AppAbility = MongoAbility<
-  [Actions, Subjects] | ['ban-user' | 'revoke-user', UserSubject]
+  | [Actions, Subjects]
+  | ['ban-user' | 'revoke-user' | 'impersonate-user', UserSubject]
 >;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
@@ -35,6 +37,12 @@ export function defineAbilityFor(actor: AuthSession['user']) {
 
     can('revoke-user', 'User');
     cannot('revoke-user', 'User', { role: { $regex: ROLES.admin } });
+
+    can('delete', 'User', { id: { $ne: actor.id } });
+    cannot('delete', 'User', { role: { $regex: ROLES.admin } });
+
+    can('impersonate-user', 'User');
+    cannot('impersonate-user', 'User', { role: { $regex: ROLES.admin } });
   }
 
   function defineAbilityForModerator() {
