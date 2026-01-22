@@ -4,7 +4,7 @@ import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access';
 
 const statement = { ...defaultStatements, admin: ['access'] } as const;
 
-export const ac = createAccessControl(statement);
+const ac = createAccessControl(statement);
 
 const adminRole = ac.newRole({ ...adminAc.statements, admin: ['access'] });
 const moderatorRole = ac.newRole({ user: ['list', 'ban'], admin: ['access'] });

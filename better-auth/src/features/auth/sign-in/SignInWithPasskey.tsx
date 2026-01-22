@@ -1,6 +1,6 @@
 'use client';
 
-import { authClient } from '@/lib/auth';
+import { authClient } from '@/lib/auth/auth-client';
 import { MiniLoader } from '@/shared/components';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';

@@ -1,6 +1,6 @@
 import type { User } from '@/generated/prisma/client';
 import { auth, hasPermission } from '@/lib/auth';
-import { defineAbilityFor } from '@/lib/casl';
+import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
 import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { type IUserRepository } from '../repositories';
@@ -41,184 +41,100 @@ export class UserService {
     return { type: 'success', payload: { users: data, total } };
   }
 
-  async toggleBanStatus(
+  toggleBanStatus(
     userId: User['id'],
     shouldBan: boolean,
     headers?: ReadonlyHeaders
-  ): Promise<ServiceResponse<undefined, { message: string }>> {
-    const banPermission = hasPermission(this._actor.id, { user: ['ban'] });
-    if (!banPermission)
-      return {
-        type: 'error',
-        payload: {
-          message: 'You do not have permission to ban/unban users.',
-        },
-      };
-
-    const targetUser = await this._repo.findUnique({ where: { id: userId } });
-    if (!targetUser)
-      return { type: 'error', payload: { message: 'User not found.' } };
-
-    const ability = defineAbilityFor(this._actor);
-    if (ability.cannot('ban-user', { ...targetUser, kind: 'User' }))
-      return {
-        type: 'error',
-        payload: {
-          message: 'You do not have permission to ban/unban this user.',
-        },
-      };
-
-    try {
-      if (shouldBan) {
-        await auth.api.banUser({ body: { userId }, headers });
-      } else {
-        await auth.api.unbanUser({ body: { userId }, headers });
-      }
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
-  }
-
-  async revokeUser(
-    userId: User['id'],
-    headers: ReadonlyHeaders
-  ): Promise<ServiceResponse<undefined, { message: string }>> {
-    const revokePermission = hasPermission(this._actor.id, {
-      session: ['revoke'],
+  ) {
+    return this.executeProtectedAction({
+      targetUserId: userId,
+      requiredRbac: { user: ['ban'] },
+      abacAction: 'ban-user',
+      action: () =>
+        shouldBan
+          ? auth.api.banUser({ body: { userId }, headers })
+          : auth.api.unbanUser({ body: { userId }, headers }),
+      permissionError: 'You do not have permission to ban/unban users.',
     });
-    if (!revokePermission)
-      return {
-        type: 'error',
-        payload: {
-          message: 'You do not have permission to revoke sessions.',
-        },
-      };
-
-    const targetUser = await this._repo.findUnique({ where: { id: userId } });
-    if (!targetUser)
-      return { type: 'error', payload: { message: 'User not found.' } };
-
-    const ability = defineAbilityFor(this._actor);
-    if (ability.cannot('revoke-user', { ...targetUser, kind: 'User' }))
-      return {
-        type: 'error',
-        payload: { message: 'You do not have permission to revoke this user.' },
-      };
-
-    try {
-      await auth.api.revokeUserSessions({ body: { userId }, headers });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
   }
 
-  async deleteUser(
-    userId: User['id'],
-    headers: ReadonlyHeaders
-  ): Promise<ServiceResponse<undefined, { message: string }>> {
-    const deletePermission = hasPermission(this._actor.id, {
-      user: ['delete'],
+  revokeUser(userId: User['id'], headers: ReadonlyHeaders) {
+    return this.executeProtectedAction({
+      targetUserId: userId,
+      requiredRbac: { session: ['revoke'] },
+      abacAction: 'revoke-user',
+      action: () => auth.api.revokeUserSessions({ body: { userId }, headers }),
+      permissionError: 'You do not have permission to revoke sessions.',
     });
-    if (!deletePermission)
-      return {
-        type: 'error',
-        payload: { message: 'You do not have permission to delete users.' },
-      };
-
-    const targetUser = await this._repo.findUnique({ where: { id: userId } });
-    if (!targetUser)
-      return { type: 'error', payload: { message: 'User not found.' } };
-
-    const ability = defineAbilityFor(this._actor);
-    if (ability.cannot('delete', { ...targetUser, kind: 'User' }))
-      return {
-        type: 'error',
-        payload: { message: 'You do not have permission to delete this user.' },
-      };
-
-    try {
-      await auth.api.removeUser({ body: { userId }, headers });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
   }
 
-  async impersonateUser(
-    userId: User['id'],
-    headers: ReadonlyHeaders
-  ): Promise<ServiceResponse<undefined, { message: string }>> {
-    const impersonatePermission = hasPermission(this._actor.id, {
-      user: ['impersonate'],
+  deleteUser(userId: User['id'], headers: ReadonlyHeaders) {
+    return this.executeProtectedAction({
+      targetUserId: userId,
+      requiredRbac: { user: ['delete'] },
+      abacAction: 'delete',
+      action: () => auth.api.removeUser({ body: { userId }, headers }),
+      permissionError: 'You do not have permission to delete users.',
     });
-    if (!impersonatePermission)
-      return {
-        type: 'error',
-        payload: {
-          message: 'You do not have permission to impersonate users.',
-        },
-      };
-
-    const targetUser = await this._repo.findUnique({ where: { id: userId } });
-    if (!targetUser)
-      return { type: 'error', payload: { message: 'User not found.' } };
-
-    const ability = defineAbilityFor(this._actor);
-    if (ability.cannot('impersonate-user', { ...targetUser, kind: 'User' }))
-      return {
-        type: 'error',
-        payload: {
-          message: 'You do not have permission to impersonate this user.',
-        },
-      };
-
-    try {
-      await auth.api.impersonateUser({ body: { userId }, headers });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
   }
 
-  async stopImpersonate(headers: ReadonlyHeaders) {
+  impersonateUser(userId: User['id'], headers: ReadonlyHeaders) {
+    return this.executeProtectedAction({
+      targetUserId: userId,
+      requiredRbac: { user: ['impersonate'] },
+      abacAction: 'impersonate-user',
+      action: () => auth.api.impersonateUser({ body: { userId }, headers }),
+      permissionError: 'You do not have permission to impersonate users.',
+    });
+  }
+
+  stopImpersonate(headers: ReadonlyHeaders) {
     return auth.api.stopImpersonating({ headers });
+  }
+
+  private async executeProtectedAction(params: {
+    targetUserId: string;
+    requiredRbac: Parameters<typeof hasPermission>[1];
+    abacAction: UserActionTypes | CRUD;
+    permissionError: string;
+    action: () => Promise<unknown>;
+  }): Promise<ServiceResponse<undefined, { message: string }>> {
+    const { targetUserId, requiredRbac, abacAction, permissionError, action } =
+      params;
+
+    const hasRbac = await hasPermission(this._actor.id, requiredRbac);
+    if (!hasRbac)
+      return { type: 'error', payload: { message: permissionError } };
+
+    const targetUser = await this._repo.findUnique({
+      where: { id: targetUserId },
+    });
+    if (!targetUser) {
+      return { type: 'error', payload: { message: 'User not found.' } };
+    }
+
+    const ability = defineAbilityFor(this._actor);
+    if (ability.cannot(abacAction, { ...targetUser, kind: 'User' }))
+      return {
+        type: 'error',
+        payload: {
+          message: `You do not have permission to ${abacAction.replace('-', ' ')} this user.`,
+        },
+      };
+
+    try {
+      await action();
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message
+              : 'Unknown error',
+        },
+      };
+    }
   }
 }

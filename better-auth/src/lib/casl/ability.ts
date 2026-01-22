@@ -1,19 +1,16 @@
 import {
   AbilityBuilder,
   createMongoAbility,
-  type InferSubjects,
   type MongoAbility,
 } from '@casl/ability';
 import { ROLES, type AuthSession } from '../auth';
+import type { UserActionTypes, UserSubject } from './user-subject-types';
 
-type UserWithType = AuthSession['user'] & { kind: 'User' };
-type UserSubject = InferSubjects<UserWithType>;
 type Subjects = 'all' | UserSubject;
-type CRUD = 'create' | 'read' | 'update' | 'delete';
+export type CRUD = 'create' | 'read' | 'update' | 'delete';
 type Actions = 'manage' | CRUD;
 type AppAbility = MongoAbility<
-  | [Actions, Subjects]
-  | ['ban-user' | 'revoke-user' | 'impersonate-user', UserSubject]
+  [Actions, Subjects] | [UserActionTypes, UserSubject]
 >;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
@@ -21,7 +18,7 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     createMongoAbility
   );
 
-  const actorRoles = actor.role ? actor.role.split(',') : [];
+  const actorRoles = actor.role?.split(',') ?? [];
 
   if (actorRoles.includes(ROLES.admin)) {
     defineAbilityForAdmin();
