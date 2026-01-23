@@ -1,6 +1,5 @@
 'use client';
 
-import type { Account } from '@/generated/prisma/client';
 import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/o-auth-providers';
 import {
   Badge,
@@ -10,6 +9,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/shared/components/ui';
+import type { Account } from 'better-auth';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { GoUnverified, GoVerified } from 'react-icons/go';
