@@ -88,8 +88,24 @@ export class UserService {
     });
   }
 
-  stopImpersonate(headers: ReadonlyHeaders) {
-    return auth.api.stopImpersonating({ headers });
+  async stopImpersonate(
+    headers: ReadonlyHeaders
+  ): Promise<ServiceResponse<undefined, { message: string }>> {
+    try {
+      await auth.api.stopImpersonating({ headers });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message
+              : 'Unknown error',
+        },
+      };
+    }
   }
 
   private async executeProtectedAction(params: {
