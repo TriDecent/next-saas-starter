@@ -1,0 +1,1 @@
+export { RevokeUserSessionsAction } from './RevokeUserSessionsAction';

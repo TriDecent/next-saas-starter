@@ -6,7 +6,7 @@ import { ROUTES } from '@/shared/constants';
 import { useTransition } from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { toast } from 'sonner';
-import { deleteUserAction } from './delete-user-action';
+import { deleteUserAction } from '../delete-user/delete-user-action';
 
 export function DeleteUserAction({ userId }: { userId: User['id'] }) {
   const [isPending, startTransition] = useTransition();

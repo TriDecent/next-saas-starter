@@ -6,7 +6,7 @@ import { ROUTES } from '@/shared/constants';
 import { useTransition } from 'react';
 import { FaArrowRotateLeft } from 'react-icons/fa6';
 import { toast } from 'sonner';
-import { revokeUserSessionsAction } from './revoke-user-sessions-action';
+import { revokeUserSessionsAction } from '../revoke-sessions/revoke-user-sessions-action';
 
 export function RevokeUserSessionsAction({ userId }: { userId: User['id'] }) {
   const [isPending, startTransition] = useTransition();

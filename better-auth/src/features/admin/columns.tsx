@@ -28,13 +28,11 @@ import {
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react';
-import {
-  BanUserAction,
-  CopyUserAction,
-  DeleteUserAction,
-  ImpersonateUserAction,
-  RevokeUserSessionsAction,
-} from './actions';
+import { BanUserAction } from './ban-user';
+import { CopyUserAction } from './copy-user';
+import { DeleteUserAction } from './delete-user';
+import { ImpersonateUserAction } from './impersonation';
+import { RevokeUserSessionsAction } from './revoke-sessions';
 
 const selectColumn: ColumnDef<User> = {
   id: 'select',
