@@ -1,9 +1,10 @@
 import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
+const prefix = 'tri-decent';
 export const COOKIES = {
-  cookiePrefix: 'tri-decent',
+  cookiePrefix: prefix,
   ['sudo-token']: {
-    name: 'tri-decent.sudo-token',
+    name: `${prefix}.sudo-token`,
     config: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -12,4 +13,5 @@ export const COOKIES = {
       maxAge: 60,
     } satisfies Partial<ResponseCookie>,
   },
+  ['admin-session']: { name: `${prefix}.admin_session` },
 } as const;

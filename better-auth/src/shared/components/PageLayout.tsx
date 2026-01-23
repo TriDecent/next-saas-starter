@@ -1,6 +1,7 @@
 import { cn } from '@/shared/utils';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { connection } from 'next/server';
+import { Suspense, type ReactNode } from 'react';
 import { FaFacebook, FaGithub, FaHeart } from 'react-icons/fa6';
 
 interface PageLayoutProps {
@@ -39,35 +40,48 @@ const Main = ({ children, className }: PageLayoutProps) => (
   </main>
 );
 
-const Footer = ({ children, className }: PageLayoutProps) => (
-  <footer
-    className={cn(
-      'bg-background/40 w-full border-t backdrop-blur-xl',
-      className
-    )}
-  >
-    {children ?? (
-      <div className='container mx-auto px-4 py-12'>
-        <div className='grid gap-8 lg:grid-cols-3'>
-          <BrandSection />
-          <QuickLinks />
-          <ConnectionSection />
-        </div>
+function Footer({ children, className }: PageLayoutProps) {
+  return (
+    <footer
+      className={cn(
+        'bg-background/40 w-full border-t backdrop-blur-xl',
+        className
+      )}
+    >
+      {children ?? (
+        <div className='container mx-auto px-4 py-12'>
+          <div className='grid gap-8 lg:grid-cols-3'>
+            <BrandSection />
+            <QuickLinks />
+            <ConnectionSection />
+          </div>
 
-        <div className='mt-8 flex flex-col items-center gap-4 border-t pt-8 sm:flex-row sm:justify-between'>
-          <p className='text-muted-foreground flex items-center gap-2 text-sm'>
-            <span>© {new Date().getFullYear()} Trí Decent.</span>
-            <span className='hidden sm:inline'>All rights reserved.</span>
-          </p>
-          <p className='text-muted-foreground flex items-center gap-1.5 text-sm'>
-            <span>Made with</span>
-            <FaHeart className='h-3.5 w-3.5 animate-pulse text-red-500' />
-          </p>
+          <div className='mt-8 flex flex-col items-center gap-4 border-t pt-8 sm:flex-row sm:justify-between'>
+            <p className='text-muted-foreground flex items-center gap-2 text-sm'>
+              <span>
+                ©{' '}
+                <Suspense>
+                  <Year />
+                </Suspense>{' '}
+                Trí Decent.
+              </span>
+              <span className='hidden sm:inline'>All rights reserved.</span>
+            </p>
+            <p className='text-muted-foreground flex items-center gap-1.5 text-sm'>
+              <span>Made with</span>
+              <FaHeart className='h-3.5 w-3.5 animate-pulse text-red-500' />
+            </p>
+          </div>
         </div>
-      </div>
-    )}
-  </footer>
-);
+      )}
+    </footer>
+  );
+}
+
+async function Year() {
+  await connection();
+  return <>{new Date().getFullYear()}</>;
+}
 
 PageLayout.Header = Header;
 PageLayout.Main = Main;

@@ -109,9 +109,8 @@ export class UserService {
     const targetUser = await this._repo.findUnique({
       where: { id: targetUserId },
     });
-    if (!targetUser) {
+    if (!targetUser)
       return { type: 'error', payload: { message: 'User not found.' } };
-    }
 
     const ability = defineAbilityFor(this._actor);
     if (ability.cannot(abacAction, { ...targetUser, kind: 'User' }))
