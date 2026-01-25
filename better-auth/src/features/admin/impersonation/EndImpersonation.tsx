@@ -12,21 +12,35 @@ export function EndImpersonation() {
   const [isPending, startTransition] = useTransition();
   const handleStopImpersonating = () =>
     startTransition(async () => {
+      toast.loading('Stopping impersonation...', {
+        id: 'stop-impersonation',
+        description: 'Please wait while stopping impersonation.',
+      });
       const response = await stopImpersonateAction(ROUTES.home.href);
 
       if (response.type === 'error') {
         toast.error('Failed to stop impersonation!', {
+          id: 'stop-impersonation',
           description: response.payload.message,
         });
 
         return;
       }
 
+      toast.success('Impersonation stopped successfully!', {
+        id: 'stop-impersonation',
+        description: 'You will be returned to your admin account soon.',
+      });
+
       router.push(ROUTES.admin.href);
       router.refresh();
     });
   return (
-    <Button onClick={handleStopImpersonating} disabled={isPending}>
+    <Button
+      onClick={handleStopImpersonating}
+      disabled={isPending}
+      variant={'destructive'}
+    >
       Stop
     </Button>
   );

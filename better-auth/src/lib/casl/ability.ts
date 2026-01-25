@@ -24,6 +24,8 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     defineAbilityForAdmin();
   } else if (actorRoles.includes(ROLES.moderator)) {
     defineAbilityForModerator();
+  } else if (actorRoles.includes(ROLES.user)) {
+    defineAbilityForUser();
   }
 
   return build({ detectSubjectType: item => item.kind });
@@ -48,4 +50,6 @@ export function defineAbilityFor(actor: AuthSession['user']) {
       role: { $regex: `^(${ROLES.admin}|${ROLES.moderator})$` },
     });
   }
+
+  function defineAbilityForUser() {}
 }

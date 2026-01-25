@@ -1,6 +1,7 @@
 import type { User } from '@/generated/prisma/client';
 import { auth, hasPermission } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
+import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { type IUserRepository } from '../repositories';
@@ -108,6 +109,27 @@ export class UserService {
               : 'Unknown error',
         },
       };
+    }
+  }
+
+  // deleteAccount handles two cases:
+  // - No token: send confirmation email
+  // - With token: perform account deletion
+
+  // Note: Better Auth does not provide
+  //       a separate method for sending only
+  //       delete account verification
+  async deleteAccount(token?: string): Promise<void> {
+    try {
+      await auth.api.deleteUser({
+        headers: this._headers,
+        body: { token, callbackURL: ROUTES.auth.href },
+      });
+      if (token) await auth.api.signOut({ headers: this._headers }); // prevent client session cache
+    } catch (error) {
+      throw new Error(
+        error instanceof APIError ? error.message : 'Unknown error'
+      );
     }
   }
 
