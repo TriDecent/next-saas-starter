@@ -9,7 +9,8 @@ import type { ServiceResponse } from './types';
 export class UserService {
   constructor(
     private readonly _actor: User,
-    private readonly _repo: IUserRepository
+    private readonly _repo: IUserRepository,
+    private readonly _headers: ReadonlyHeaders
   ) {}
 
   async getUsers(
@@ -41,58 +42,60 @@ export class UserService {
     return { type: 'success', payload: { users: data, total } };
   }
 
-  toggleBanStatus(
-    userId: User['id'],
-    shouldBan: boolean,
-    headers?: ReadonlyHeaders
-  ) {
+  toggleBanStatus(userId: User['id'], shouldBan: boolean) {
     return this.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { user: ['ban'] },
       abacAction: 'ban-user',
       action: () =>
         shouldBan
-          ? auth.api.banUser({ body: { userId }, headers })
-          : auth.api.unbanUser({ body: { userId }, headers }),
+          ? auth.api.banUser({ body: { userId }, headers: this._headers })
+          : auth.api.unbanUser({ body: { userId }, headers: this._headers }),
       permissionError: 'You do not have permission to ban/unban users.',
     });
   }
 
-  revokeUser(userId: User['id'], headers: ReadonlyHeaders) {
+  revokeUser(userId: User['id']) {
     return this.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { session: ['revoke'] },
       abacAction: 'revoke-user',
-      action: () => auth.api.revokeUserSessions({ body: { userId }, headers }),
+      action: () =>
+        auth.api.revokeUserSessions({
+          body: { userId },
+          headers: this._headers,
+        }),
       permissionError: 'You do not have permission to revoke sessions.',
     });
   }
 
-  deleteUser(userId: User['id'], headers: ReadonlyHeaders) {
+  deleteUser(userId: User['id']) {
     return this.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { user: ['delete'] },
       abacAction: 'delete',
-      action: () => auth.api.removeUser({ body: { userId }, headers }),
+      action: () =>
+        auth.api.removeUser({ body: { userId }, headers: this._headers }),
       permissionError: 'You do not have permission to delete users.',
     });
   }
 
-  impersonateUser(userId: User['id'], headers: ReadonlyHeaders) {
+  impersonateUser(userId: User['id']) {
     return this.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { user: ['impersonate'] },
       abacAction: 'impersonate-user',
-      action: () => auth.api.impersonateUser({ body: { userId }, headers }),
+      action: () =>
+        auth.api.impersonateUser({ body: { userId }, headers: this._headers }),
       permissionError: 'You do not have permission to impersonate users.',
     });
   }
 
-  async stopImpersonate(
-    headers: ReadonlyHeaders
-  ): Promise<ServiceResponse<undefined, { message: string }>> {
+  async stopImpersonate(): Promise<
+    ServiceResponse<undefined, { message: string }>
+  > {
     try {
-      await auth.api.stopImpersonating({ headers });
+      await auth.api.stopImpersonating({ headers: this._headers });
 
       return { type: 'success', payload: undefined };
     } catch (error) {

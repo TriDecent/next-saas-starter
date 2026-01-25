@@ -3,7 +3,6 @@
 import type { User } from '@/generated/prisma/client';
 import { getUserService } from '@/infrastructure/service';
 import type { ActionResponse } from '@/shared/types';
-import { headers } from 'next/headers';
 
 type BanResponse = ActionResponse<undefined, { message: string }>;
 
@@ -13,5 +12,5 @@ export async function revokeUserSessionsAction(
 ): Promise<BanResponse> {
   const userService = await getUserService(callbackUrl);
 
-  return await userService.revokeUser(userId, await headers());
+  return await userService.revokeUser(userId);
 }
