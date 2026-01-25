@@ -9,7 +9,7 @@ import type { UserActionTypes, UserSubject } from './user-subject-types';
 type Subjects = 'all' | UserSubject;
 export type CRUD = 'create' | 'read' | 'update' | 'delete';
 type Actions = 'manage' | CRUD;
-type AppAbility = MongoAbility<
+export type AppAbility = MongoAbility<
   [Actions, Subjects] | [UserActionTypes, UserSubject]
 >;
 
