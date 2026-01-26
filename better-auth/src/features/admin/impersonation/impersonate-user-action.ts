@@ -3,7 +3,6 @@
 import type { User } from '@/generated/prisma/client';
 import { getUserService } from '@/infrastructure/service';
 import type { ActionResponse } from '@/shared/types';
-import { headers } from 'next/headers';
 
 type DeleteResponse = ActionResponse<undefined, { message: string }>;
 
@@ -13,7 +12,7 @@ export async function impersonateUserAction(
 ): Promise<DeleteResponse> {
   const userService = await getUserService(callbackUrl);
 
-  const response = await userService.impersonateUser(userId, await headers());
+  const response = await userService.impersonateUser(userId);
 
   return response;
 }

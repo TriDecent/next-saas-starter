@@ -6,10 +6,12 @@ import { ajSignup, handleDeniedInServerAction } from '@/lib/security';
 import { signUpSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 
+type SignUpState = SignUpResponse | { type: 'initial' };
+
 export async function signUpAction(
-  state: SignUpResponse,
+  state: SignUpState,
   input: unknown
-): Promise<SignUpResponse> {
+): Promise<SignUpState> {
   const parsedResult = signUpSchema.safeParse(input);
 
   if (!parsedResult.success)

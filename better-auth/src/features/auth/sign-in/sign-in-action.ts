@@ -9,10 +9,12 @@ import {
 import { signInSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 
+type SignInState = SignInResponse | { type: 'initial' };
+
 export async function signInAction(
-  state: SignInResponse,
+  state: SignInState,
   input: unknown
-): Promise<SignInResponse> {
+): Promise<SignInState> {
   const parsedResult = signInSchema.safeParse(input);
 
   if (!parsedResult.success)
