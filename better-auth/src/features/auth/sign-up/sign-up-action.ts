@@ -1,17 +1,9 @@
 'use server';
 
-import { auth } from '@/lib/auth';
+import { getAuthService, type SignUpResponse } from '@/infrastructure/service';
 import { ajSignup, handleDeniedInServerAction } from '@/lib/security';
 import { signUpSchema } from '@/shared/schema';
-import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
-import { APIError } from 'better-auth';
-import { headers } from 'next/headers';
-
-type SignUpResponse = ActionResponse<
-  { name: string; email: string },
-  { message: string }
->;
 
 export async function signUpAction(
   state: SignUpResponse,
@@ -25,40 +17,16 @@ export async function signUpAction(
       payload: { message: 'Invalid sign up data' },
     };
 
-  const signupCredentials = parsedResult.data;
+  const signUpCredentials = parsedResult.data;
 
-  const signupDecision = await ajSignup.protect(await request(), {
+  const signUpDecision = await ajSignup.protect(await request(), {
     action: 'sa-sign-up',
-    email: signupCredentials.email,
+    email: signUpCredentials.email,
   });
 
-  if (signupDecision.isDenied()) handleDeniedInServerAction(signupDecision);
+  if (signUpDecision.isDenied()) handleDeniedInServerAction(signUpDecision);
 
-  try {
-    const signUpResult = await auth.api.signUpEmail({
-      headers: await headers(),
-      body: {
-        name: signupCredentials.name,
-        email: signupCredentials.email,
-        password: signupCredentials.password,
-        favoriteNumber: signupCredentials.favoriteNumber,
-        welcomeSent: false,
-      },
-    });
+  const service = await getAuthService();
 
-    return {
-      type: 'success',
-      payload: { name: signUpResult.user.name, email: signUpResult.user.email },
-    };
-  } catch (error) {
-    return {
-      type: 'error',
-      payload: {
-        message:
-          error instanceof Error || error instanceof APIError
-            ? error.message
-            : 'Unknown error',
-      },
-    };
-  }
+  return service.signUp(signUpCredentials);
 }
