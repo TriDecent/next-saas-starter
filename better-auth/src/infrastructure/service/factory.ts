@@ -2,8 +2,8 @@ import type { User } from '@/generated/prisma/client';
 import { ensureSession } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { userRepo } from '../repositories';
-import { AuthService } from './AuthService';
-import { UserService } from './UserService';
+import { AuthService } from './auth/AuthService';
+import { UserService } from './user/UserService';
 
 export async function getUserService(callbackUrl: string) {
   const headersList = await headers();

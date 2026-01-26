@@ -5,8 +5,9 @@ import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import { type IUserRepository } from '../repositories';
-import type { ServiceResponse } from './types';
+import { type IUserRepository } from '../../repositories';
+import type { ServiceResponse } from '../types';
+import type { AuthenticatePriorResponse, GetUsersResponse } from './user-dtos';
 
 export class UserService {
   constructor(
@@ -20,9 +21,7 @@ export class UserService {
     pageSize: number,
     orderBy?: Record<string, 'asc' | 'desc'>[],
     keyword?: string
-  ): Promise<
-    ServiceResponse<{ users: User[]; total: number }, { message: string }>
-  > {
+  ): Promise<GetUsersResponse> {
     const canListUsers = await hasPermission(this._actor.id, {
       user: ['list'],
     });
@@ -137,7 +136,7 @@ export class UserService {
   async authenticatePrior(
     password: string,
     totp?: string
-  ): Promise<ServiceResponse<{ sudoToken: string }, { message: string }>> {
+  ): Promise<AuthenticatePriorResponse> {
     try {
       await auth.api.signInEmail({
         body: { email: this._actor.email, password },

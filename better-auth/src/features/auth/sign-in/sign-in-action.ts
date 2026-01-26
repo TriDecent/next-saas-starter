@@ -1,6 +1,7 @@
 'use server';
 
-import { getAuthService, type SignInResponse } from '@/infrastructure/service';
+import { getAuthService } from '@/infrastructure/service';
+import type { SignInResponse } from '@/infrastructure/service/auth';
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
