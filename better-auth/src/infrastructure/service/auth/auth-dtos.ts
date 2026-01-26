@@ -9,3 +9,8 @@ export type SignUpResponse = ServiceResponse<
   { name: string; email: string },
   { message: string }
 >;
+
+export type RequestResetPasswordResponse = ServiceResponse<
+  undefined,
+  { message: string }
+>;

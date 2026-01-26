@@ -3,7 +3,11 @@ import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import type { SignInResponse, SignUpResponse } from './auth-dtos';
+import type {
+  RequestResetPasswordResponse,
+  SignInResponse,
+  SignUpResponse,
+} from './auth-dtos';
 
 export class AuthService {
   constructor(private readonly _headers: ReadonlyHeaders) {}
@@ -84,6 +88,32 @@ export class AuthService {
           email: signUpResult.user.email,
         },
       };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof Error || error instanceof APIError
+              ? error.message
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async requestResetPassword({
+    email,
+    redirectTo,
+  }: {
+    email: string;
+    redirectTo: string;
+  }): Promise<RequestResetPasswordResponse> {
+    try {
+      await auth.api.requestPasswordReset({
+        body: { email, redirectTo },
+      });
+
+      return { type: 'success', payload: undefined };
     } catch (error) {
       return {
         type: 'error',

@@ -1,19 +1,18 @@
 'use server';
 
-import { auth } from '@/lib/auth';
+import { getAuthService } from '@/infrastructure/service';
+import type { RequestResetPasswordResponse } from '@/infrastructure/service/auth';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { resetPasswordSchema } from '@/shared/schema';
-import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
-import { APIError } from 'better-auth';
 
-type ResetPasswordResponse = ActionResponse<undefined, { message: string }>;
+type Response = RequestResetPasswordResponse | { type: 'initial' };
 
 export async function resetPasswordAction(
-  state: ResetPasswordResponse,
+  state: Response,
   input: unknown
-): Promise<ResetPasswordResponse> {
+): Promise<Response> {
   const parsedResult = resetPasswordSchema.safeParse(input);
 
   if (!parsedResult.success)
@@ -33,24 +32,10 @@ export async function resetPasswordAction(
       ROUTES.auth.nested['reset-password'].href
     );
 
-  try {
-    await auth.api.requestPasswordReset({
-      body: {
-        email: emailForPasswordReset,
-        redirectTo: ROUTES.auth.nested['reset-password'].href,
-      },
-    });
+  const service = await getAuthService();
 
-    return { type: 'success', payload: undefined };
-  } catch (error) {
-    return {
-      type: 'error',
-      payload: {
-        message:
-          error instanceof Error || error instanceof APIError
-            ? error.message
-            : 'Unknown error',
-      },
-    };
-  }
+  return service.requestResetPassword({
+    email: emailForPasswordReset,
+    redirectTo: ROUTES.auth.nested['reset-password'].href,
+  });
 }
