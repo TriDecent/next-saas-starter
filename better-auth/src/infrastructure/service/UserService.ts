@@ -1,3 +1,4 @@
+import { createSudoToken } from '@/features/auth/authenticate-prior/sudo-mode';
 import type { User } from '@/generated/prisma/client';
 import { auth, hasPermission } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
@@ -130,6 +131,38 @@ export class UserService {
       throw new Error(
         error instanceof APIError ? error.message : 'Unknown error'
       );
+    }
+  }
+
+  async authenticatePrior(
+    password: string,
+    totp?: string
+  ): Promise<ServiceResponse<{ sudoToken: string }, { message: string }>> {
+    try {
+      await auth.api.signInEmail({
+        body: { email: this._actor.email, password },
+        headers: this._headers,
+      });
+
+      if (this._actor.twoFactorEnabled && totp)
+        await auth.api.verifyTOTP({
+          body: { code: totp },
+          headers: this._headers,
+        });
+
+      const sudoToken = await createSudoToken(this._actor.id);
+
+      return { type: 'success', payload: { sudoToken } };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
     }
   }
 

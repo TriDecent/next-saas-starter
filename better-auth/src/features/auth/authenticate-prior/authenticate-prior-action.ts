@@ -1,14 +1,13 @@
 'use server';
 
-import { auth, ensureSession } from '@/lib/auth';
+import { getUserService } from '@/infrastructure/service';
+import { ensureSession } from '@/lib/auth';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/security';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
-import { APIError } from 'better-auth';
 import { cookies, headers } from 'next/headers';
-import { createSudoToken } from './sudo-mode';
 
 type Response = ActionResponse<undefined, { message: string }>;
 
@@ -42,43 +41,21 @@ export async function authenticatePriorAction(
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  try {
-    await auth.api.signInEmail({
-      body: {
-        email: session.user.email,
-        password: parsedInput.data.password,
-      },
-      headers: headersList,
-    });
+  const service = await getUserService(ROUTES.settings.nested.security.href);
 
-    if (session.user.twoFactorEnabled && 'code' in parsedInput.data)
-      await auth.api.verifyTOTP({
-        body: {
-          code: parsedInput.data
-            .code as string /* validated with twoFAAuthSchema */,
-        },
-        headers: headersList,
-      });
+  const result = await service.authenticatePrior(
+    parsedInput.data.password,
+    'code' in parsedInput.data
+      ? (parsedInput.data.code as string) /* validated with twoFAAuthSchema */
+      : undefined
+  );
 
+  if (result.type === 'success')
     cookiesList.set(
       COOKIES['sudo-token'].name,
-      await createSudoToken(session.user.id),
+      result.payload.sudoToken,
       COOKIES['sudo-token'].config
     );
 
-    return {
-      type: 'success',
-      payload: undefined,
-    };
-  } catch (error) {
-    return {
-      type: 'error',
-      payload: {
-        message:
-          error instanceof APIError || error instanceof Error
-            ? error.message || 'Unknown error'
-            : 'Unknown error',
-      },
-    };
-  }
+  return result.type === 'success' ? { ...result, payload: undefined } : result;
 }
