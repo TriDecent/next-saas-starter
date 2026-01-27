@@ -12,7 +12,6 @@ export function DeletePassKeyButton({ passkeyId }: { passkeyId: string }) {
   const handleDeletePasskey = useCallback(() => {
     startTransition(async () => {
       const result = await deletePasskeyAction(passkeyId);
-      if (result.type === 'initial') return;
       if (result.type === 'success') {
         toast.success('Passkey deleted successfully');
         return;

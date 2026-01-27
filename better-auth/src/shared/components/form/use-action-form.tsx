@@ -1,9 +1,14 @@
 'use client';
 
-import type { ActionResponse } from '@/shared/types';
 import { useActionState, useEffect, useEffectEvent, useRef } from 'react';
 import { useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useShakeError } from './use-shake-error';
+
+type ActionResponse<TSuccess, TError> = Readonly<
+  | { type: 'success'; payload: TSuccess }
+  | { type: 'error'; payload: TError }
+  | { type: 'initial' }
+>;
 
 export function useActionForm<
   TResponse extends ActionResponse<unknown, unknown>,
