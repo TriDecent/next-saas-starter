@@ -150,4 +150,31 @@ export class AuthService {
       };
     }
   }
+
+  async verifyBackupCode(
+    code: string,
+    trustDevice?: boolean
+  ): Promise<GeneralAuthResponse> {
+    try {
+      await auth.api.verifyBackupCode({
+        headers: this._headers,
+        body: {
+          code: code.slice(0, 5) + '-' + code.slice(5),
+          trustDevice,
+        },
+      });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
 }
