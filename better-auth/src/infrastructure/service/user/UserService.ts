@@ -14,6 +14,7 @@ import type {
   AuthenticatePriorResponse,
   Enable2FAResponse,
   GeneralUserResponse,
+  GenerateBackUpCodesResponse,
   GetUsersResponse,
 } from './user-dtos';
 
@@ -362,6 +363,40 @@ export class UserService {
       });
 
       return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async generateBackUpCodes({
+    totpCode,
+    password,
+    trustDevice,
+  }: {
+    totpCode: string;
+    password: string;
+    trustDevice?: boolean;
+  }): Promise<GenerateBackUpCodesResponse> {
+    try {
+      await auth.api.verifyTOTP({
+        body: { code: totpCode, trustDevice },
+        headers: this._headers,
+      });
+
+      const data = await auth.api.generateBackupCodes({
+        body: { password },
+        headers: this._headers,
+      });
+
+      return { type: 'success', payload: { backupCodes: data.backupCodes } };
     } catch (error) {
       return {
         type: 'error',

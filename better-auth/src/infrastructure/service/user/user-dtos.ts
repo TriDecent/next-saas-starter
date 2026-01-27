@@ -20,3 +20,7 @@ export type Enable2FAResponse = ServiceResponse<
   },
   { message: string }
 >;
+export type GenerateBackUpCodesResponse = ServiceResponse<
+  { backupCodes: string[] },
+  { message: string }
+>;
