@@ -12,6 +12,7 @@ import { type IUserRepository } from '../../repositories';
 import type { ServiceResponse } from '../types';
 import type {
   AuthenticatePriorResponse,
+  Enable2FAResponse,
   GeneralUserResponse,
   GetUsersResponse,
 } from './user-dtos';
@@ -302,6 +303,38 @@ export class UserService {
       });
 
       return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async enable2FA(
+    password: string,
+    sudoToken?: string
+  ): Promise<Enable2FAResponse> {
+    if (!sudoToken || !this.validateSudoToken(sudoToken))
+      return {
+        type: 'error',
+        payload: {
+          message: 'You must re-authenticate to enable 2FA authentication.',
+        },
+      };
+
+    try {
+      const data = await auth.api.enableTwoFactor({
+        body: { password },
+        headers: this._headers,
+      });
+
+      return { type: 'success', payload: data };
     } catch (error) {
       return {
         type: 'error',

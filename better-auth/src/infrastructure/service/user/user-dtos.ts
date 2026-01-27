@@ -13,3 +13,10 @@ export type GeneralUserResponse = ServiceResponse<
   undefined,
   { message: string }
 >;
+export type Enable2FAResponse = ServiceResponse<
+  {
+    totpURI: string;
+    backupCodes: string[];
+  },
+  { message: string }
+>;
