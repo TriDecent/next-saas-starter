@@ -283,6 +283,38 @@ export class UserService {
     }
   }
 
+  async disable2FA(
+    password: string,
+    sudoToken?: string
+  ): Promise<GeneralUserResponse> {
+    if (!sudoToken || !this.validateSudoToken(sudoToken))
+      return {
+        type: 'error',
+        payload: {
+          message: 'You must re-authenticate to disable 2FA authentication.',
+        },
+      };
+
+    try {
+      await auth.api.disableTwoFactor({
+        body: { password },
+        headers: this._headers,
+      });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
   private async validateSudoToken(token: string): Promise<boolean> {
     return !!(await verifySudoToken(token, this._actor.id));
   }
