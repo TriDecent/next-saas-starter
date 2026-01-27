@@ -1,13 +1,13 @@
 'use server';
 
 import { getAuthService } from '@/infrastructure/service';
-import type { RequestResetPasswordResponse } from '@/infrastructure/service/auth';
+import type { GeneralAuthResponse } from '@/infrastructure/service/auth';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { resetPasswordSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 
-type Response = RequestResetPasswordResponse | { type: 'initial' };
+type Response = GeneralAuthResponse | { type: 'initial' };
 
 export async function resetPasswordAction(
   state: Response,

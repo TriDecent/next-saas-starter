@@ -1,15 +1,15 @@
 'use server';
 
 import { getUserService } from '@/infrastructure/service';
+import type { GeneralAuthResponse } from '@/infrastructure/service/auth';
 import { ensureSession } from '@/lib/auth';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/security';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
-import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
 import { cookies, headers } from 'next/headers';
 
-type Response = ActionResponse<undefined, { message: string }>;
+type Response = GeneralAuthResponse | { type: 'initial' };
 
 export async function authenticatePriorAction(
   state: Response,

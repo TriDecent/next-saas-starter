@@ -10,7 +10,7 @@ export type SignUpResponse = ServiceResponse<
   { message: string }
 >;
 
-export type RequestResetPasswordResponse = ServiceResponse<
+export type GeneralAuthResponse = ServiceResponse<
   undefined,
   { message: string }
 >;

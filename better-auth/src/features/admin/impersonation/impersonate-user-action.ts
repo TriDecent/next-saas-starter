@@ -2,14 +2,12 @@
 
 import type { User } from '@/generated/prisma/client';
 import { getUserService } from '@/infrastructure/service';
-import type { ActionResponse } from '@/shared/types';
-
-type DeleteResponse = ActionResponse<undefined, { message: string }>;
+import type { GeneralUserResponse } from '@/infrastructure/service/user';
 
 export async function impersonateUserAction(
   userId: User['id'],
   callbackUrl: string
-): Promise<DeleteResponse> {
+): Promise<GeneralUserResponse> {
   const userService = await getUserService(callbackUrl);
 
   const response = await userService.impersonateUser(userId);

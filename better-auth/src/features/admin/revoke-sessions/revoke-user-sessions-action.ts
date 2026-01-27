@@ -2,14 +2,12 @@
 
 import type { User } from '@/generated/prisma/client';
 import { getUserService } from '@/infrastructure/service';
-import type { ActionResponse } from '@/shared/types';
-
-type BanResponse = ActionResponse<undefined, { message: string }>;
+import type { GeneralUserResponse } from '@/infrastructure/service/user';
 
 export async function revokeUserSessionsAction(
   userId: User['id'],
   callbackUrl: string
-): Promise<BanResponse> {
+): Promise<GeneralUserResponse> {
   const userService = await getUserService(callbackUrl);
 
   return await userService.revokeUser(userId);
