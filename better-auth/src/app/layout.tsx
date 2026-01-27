@@ -39,11 +39,15 @@ export default function RootLayout({
                 <h1 className='text-2xl font-medium tracking-wider'>
                   <Link href='/'>Auth Demo</Link>
                 </h1>
-                <ThemeToggle />
+                <Suspense>
+                  <ThemeToggle />
+                </Suspense>
               </PageLayout.Header>
               <PageLayout.Main>
                 <div className='mb-6'>
-                  <NavTrail />
+                  <Suspense>
+                    <NavTrail />
+                  </Suspense>
                 </div>
                 {children}
               </PageLayout.Main>
