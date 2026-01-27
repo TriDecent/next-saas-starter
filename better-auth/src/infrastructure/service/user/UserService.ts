@@ -245,6 +245,44 @@ export class UserService {
     }
   }
 
+  async changePassword(
+    {
+      currentPassword,
+      newPassword,
+      revokeOtherSessions,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+      revokeOtherSessions?: boolean;
+    },
+    sudoToken?: string | undefined
+  ): Promise<GeneralUserResponse> {
+    if (!sudoToken || !this.validateSudoToken(sudoToken))
+      return {
+        type: 'error',
+        payload: { message: 'Please re-authenticate to change your password.' },
+      };
+
+    try {
+      await auth.api.changePassword({
+        body: { currentPassword, newPassword, revokeOtherSessions },
+        headers: this._headers,
+      });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof Error || error instanceof APIError
+              ? error.message
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
   private async validateSudoToken(token: string): Promise<boolean> {
     return !!(await verifySudoToken(token, this._actor.id));
   }
