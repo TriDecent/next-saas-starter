@@ -1,5 +1,10 @@
 import { ImpersonationStatus } from '@/features/admin/impersonation';
-import { PageLayout, ThemeProvider, ThemeToggle } from '@/shared/components';
+import {
+  NavTrail,
+  PageLayout,
+  ThemeProvider,
+  ThemeToggle,
+} from '@/shared/components';
 import { Toaster } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { StoreProvider } from '@/shared/provider';
@@ -36,7 +41,12 @@ export default function RootLayout({
                 </h1>
                 <ThemeToggle />
               </PageLayout.Header>
-              <PageLayout.Main>{children}</PageLayout.Main>
+              <PageLayout.Main>
+                <div className='mb-6'>
+                  <NavTrail />
+                </div>
+                {children}
+              </PageLayout.Main>
               <Suspense>
                 <PageLayout.Footer />
               </Suspense>

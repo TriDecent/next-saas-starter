@@ -5,6 +5,7 @@ export { DrawerOpener } from './DrawerOpener';
 export { ErrorBlock } from './ErrorBlock';
 export { Loading } from './Loading';
 export { MiniLoader } from './MiniLoading';
+export { NavTrail } from './NavTrail';
 export { PageLayout } from './PageLayout';
 export { PasswordField } from './PasswordField';
 export { SectionHeader } from './SectionHeader';
