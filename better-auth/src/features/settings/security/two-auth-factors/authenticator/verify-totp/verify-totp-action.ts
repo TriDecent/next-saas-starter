@@ -1,18 +1,19 @@
 'use server';
 
+import { getUserService } from '@/infrastructure/service';
+import type { GeneralUserResponse } from '@/infrastructure/service/user';
 import { auth } from '@/lib/auth';
 import {
   ajRestrictiveAnonymous,
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
+import { ROUTES } from '@/shared/constants';
 import { totpAuthSchema } from '@/shared/schema';
-import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
-import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 
-type Response = ActionResponse<undefined, { message: string }>;
+type Response = GeneralUserResponse | { type: 'initial' };
 
 export async function verifyTotpAction(
   state: Response,
@@ -34,28 +35,7 @@ export async function verifyTotpAction(
     : await ajRestrictiveAnonymous.protect(req, { action: 'verify-totp' });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  try {
-    await auth.api.verifyTOTP({
-      body: {
-        code: parsedInput.data.code,
-        trustDevice: parsedInput.data.trustDevice,
-      },
-      headers: headersList,
-    });
+  const service = await getUserService(ROUTES.settings.nested.security.href);
 
-    return {
-      type: 'success',
-      payload: undefined,
-    };
-  } catch (error) {
-    return {
-      type: 'error',
-      payload: {
-        message:
-          error instanceof APIError || error instanceof Error
-            ? error.message || 'Unknown error'
-            : 'Unknown error',
-      },
-    };
-  }
+  return service.verifyTOTP(parsedInput.data);
 }

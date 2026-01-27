@@ -348,6 +348,33 @@ export class UserService {
     }
   }
 
+  async verifyTOTP({
+    code,
+    trustDevice,
+  }: {
+    code: string;
+    trustDevice?: boolean;
+  }): Promise<GeneralUserResponse> {
+    try {
+      await auth.api.verifyTOTP({
+        body: { code, trustDevice },
+        headers: this._headers,
+      });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
   private async validateSudoToken(token: string): Promise<boolean> {
     return !!(await verifySudoToken(token, this._actor.id));
   }
