@@ -7,7 +7,11 @@ import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { type IUserRepository } from '../../repositories';
 import type { ServiceResponse } from '../types';
-import type { AuthenticatePriorResponse, GetUsersResponse } from './user-dtos';
+import type {
+  AuthenticatePriorResponse,
+  GeneralUserResponse,
+  GetUsersResponse,
+} from './user-dtos';
 
 export class UserService {
   constructor(
@@ -159,6 +163,49 @@ export class UserService {
           message:
             error instanceof APIError || error instanceof Error
               ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async updateProfile(
+    {
+      email,
+      name,
+      favoriteNumber,
+    }: {
+      email: string;
+      name: string;
+      favoriteNumber: number;
+    },
+    callbackURL: string
+  ): Promise<GeneralUserResponse> {
+    try {
+      const promises = [
+        auth.api.updateUser({
+          body: { name, favoriteNumber },
+          headers: this._headers,
+        }),
+      ];
+      if (email !== this._actor.email) {
+        promises.push(
+          auth.api.changeEmail({
+            body: { newEmail: email, callbackURL },
+            headers: this._headers,
+          })
+        );
+      }
+      await Promise.all(promises);
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof Error || error instanceof APIError
+              ? error.message
               : 'Unknown error',
         },
       };

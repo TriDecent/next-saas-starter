@@ -1,6 +1,8 @@
 'use server';
 
-import { auth, ensureSession } from '@/lib/auth';
+import { getUserService } from '@/infrastructure/service';
+import type { GeneralUserResponse } from '@/infrastructure/service/user';
+import { ensureSession } from '@/lib/auth';
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
@@ -8,15 +10,10 @@ import {
 } from '@/lib/security';
 import { ROUTES } from '@/shared/constants';
 import { updateProfileSchema } from '@/shared/schema';
-import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
-import { APIError } from 'better-auth';
 import { headers } from 'next/headers';
 
-export type UpdateProfileResponse = ActionResponse<
-  undefined,
-  { message: string }
->;
+export type UpdateProfileResponse = GeneralUserResponse | { type: 'initial' };
 
 export async function updateProfileAction(
   state: UpdateProfileResponse,
@@ -50,39 +47,10 @@ export async function updateProfileAction(
   if (updateProfileDecision.isDenied())
     handleDeniedInServerAction(updateProfileDecision);
 
-  try {
-    const promises = [
-      auth.api.updateUser({
-        body: {
-          name: profileData.name,
-          favoriteNumber: profileData.favoriteNumber,
-        },
-        headers: headersList,
-      }),
-    ];
-    if (profileData.email !== session.user.email) {
-      promises.push(
-        auth.api.changeEmail({
-          body: {
-            newEmail: profileData.email,
-            callbackURL: ROUTES.settings.href,
-          },
-          headers: headersList,
-        })
-      );
-    }
-    await Promise.all(promises);
+  const service = await getUserService(ROUTES.settings.nested.profile.href);
 
-    return { type: 'success', payload: undefined };
-  } catch (error) {
-    return {
-      type: 'error',
-      payload: {
-        message:
-          error instanceof Error || error instanceof APIError
-            ? error.message
-            : 'Unknown error',
-      },
-    };
-  }
+  return service.updateProfile(
+    profileData,
+    ROUTES.settings.nested.profile.href
+  );
 }
