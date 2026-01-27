@@ -1,17 +1,15 @@
 'use server';
 
-import { auth } from '@/lib/auth';
+import { getAuthService } from '@/infrastructure/service';
+import type { GeneralAuthResponse } from '@/infrastructure/service/auth';
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
 } from '@/lib/security';
 import { updatePasswordSchema } from '@/shared/schema';
-import type { ActionResponse } from '@/shared/types';
 import { request } from '@arcjet/next';
-import { APIError } from 'better-auth';
-import { headers } from 'next/headers';
 
-type UpdatePasswordResponse = ActionResponse<undefined, { message: string }>;
+type UpdatePasswordResponse = GeneralAuthResponse | { type: 'initial' };
 
 export async function updatePasswordAction(
   state: UpdatePasswordResponse,
@@ -35,22 +33,7 @@ export async function updatePasswordAction(
 
   const { token, password } = parsedResult.data;
 
-  try {
-    await auth.api.resetPassword({
-      headers: await headers(),
-      body: { token, newPassword: password },
-    });
+  const service = await getAuthService();
 
-    return { type: 'success', payload: undefined };
-  } catch (error) {
-    return {
-      type: 'error',
-      payload: {
-        message:
-          error instanceof Error || error instanceof APIError
-            ? error.message
-            : 'Unknown error',
-      },
-    };
-  }
+  return service.resetPassword(token, password);
 }
