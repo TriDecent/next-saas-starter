@@ -1,4 +1,7 @@
-import { createSudoToken } from '@/features/auth/authenticate-prior/sudo-mode';
+import {
+  createSudoToken,
+  verifySudoToken,
+} from '@/features/auth/authenticate-prior/sudo-mode';
 import type { User } from '@/generated/prisma/client';
 import { auth, hasPermission } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
@@ -210,6 +213,40 @@ export class UserService {
         },
       };
     }
+  }
+
+  async deletePasskey(
+    passkeyId: string,
+    sudoToken?: string | undefined
+  ): Promise<GeneralUserResponse> {
+    if (!sudoToken || !this.validateSudoToken(sudoToken))
+      return {
+        type: 'error',
+        payload: { message: 'You must re-authenticate to perform this action' },
+      };
+
+    try {
+      await auth.api.deletePasskey({
+        body: { id: passkeyId },
+        headers: this._headers,
+      });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  private async validateSudoToken(token: string): Promise<boolean> {
+    return !!(await verifySudoToken(token, this._actor.id));
   }
 
   private async executeProtectedAction(params: {
