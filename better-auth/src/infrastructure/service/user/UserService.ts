@@ -2,7 +2,7 @@ import {
   createSudoToken,
   verifySudoToken,
 } from '@/features/auth/authenticate-prior/sudo-mode';
-import type { User } from '@/generated/prisma/client';
+import type { Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
@@ -21,9 +21,34 @@ import type {
 export class UserService {
   constructor(
     private readonly _actor: User,
+    private readonly _currentSession: Session,
     private readonly _repo: IUserRepository,
     private readonly _headers: ReadonlyHeaders
   ) {}
+
+  get self() {
+    return this._actor;
+  }
+
+  get currentSession() {
+    return this._currentSession;
+  }
+
+  get headers() {
+    return this._headers;
+  }
+
+  listMyAccounts() {
+    return auth.api.listUserAccounts({ headers: this._headers });
+  }
+
+  listMyPasskey() {
+    return auth.api.listPasskeys({ headers: this._headers });
+  }
+
+  listMySessions() {
+    return auth.api.listSessions({ headers: this._headers });
+  }
 
   async getUsers(
     pageIndex: number,
@@ -125,6 +150,14 @@ export class UserService {
       });
 
       if (token) await auth.api.signOut({ headers: this._headers }); // prevent client session cache
+    } catch (error) {
+      throw new Error(this.getErrorMessage(error));
+    }
+  }
+
+  async revokeSessionWithToken(token: string): Promise<void> {
+    try {
+      await auth.api.revokeSession({ body: { token }, headers: this._headers });
     } catch (error) {
       throw new Error(this.getErrorMessage(error));
     }
@@ -253,22 +286,6 @@ export class UserService {
           headers: this._headers,
         })
     );
-  }
-
-  async verifyTOTP({
-    code,
-    trustDevice,
-  }: {
-    code: string;
-    trustDevice?: boolean;
-  }): Promise<GeneralUserResponse> {
-    return this.runSafely(async () => {
-      await auth.api.verifyTOTP({
-        body: { code, trustDevice },
-        headers: this._headers,
-      });
-      return undefined;
-    });
   }
 
   async generateBackUpCodes({
