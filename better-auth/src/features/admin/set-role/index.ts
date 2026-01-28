@@ -1,0 +1,1 @@
+export { SetRoleAction } from './SetRoleAction';
