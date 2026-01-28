@@ -3,7 +3,7 @@ import {
   verifySudoToken,
 } from '@/features/auth/authenticate-prior/sudo-mode';
 import type { Session, User } from '@/generated/prisma/client';
-import { auth, hasPermission } from '@/lib/auth';
+import { auth, hasPermission, type AppRoles } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
@@ -126,9 +126,7 @@ export class UserService {
     });
   }
 
-  async stopImpersonate(): Promise<
-    ServiceResponse<undefined, { message: string }>
-  > {
+  stopImpersonate(): Promise<ServiceResponse<undefined, { message: string }>> {
     return this.runSafely(async () => {
       await auth.api.stopImpersonating({ headers: this._headers });
       return undefined;
@@ -163,7 +161,7 @@ export class UserService {
     }
   }
 
-  async authenticatePrior(
+  authenticatePrior(
     password: string,
     totp?: string
   ): Promise<AuthenticatePriorResponse> {
@@ -185,7 +183,7 @@ export class UserService {
     });
   }
 
-  async updateProfile(
+  updateProfile(
     {
       email,
       name,
@@ -218,7 +216,7 @@ export class UserService {
     });
   }
 
-  async deletePasskey(
+  deletePasskey(
     passkeyId: string,
     sudoToken?: string
   ): Promise<GeneralUserResponse> {
@@ -235,7 +233,7 @@ export class UserService {
     );
   }
 
-  async changePassword(
+  changePassword(
     params: {
       currentPassword: string;
       newPassword: string;
@@ -256,7 +254,7 @@ export class UserService {
     );
   }
 
-  async disable2FA(
+  disable2FA(
     password: string,
     sudoToken?: string
   ): Promise<GeneralUserResponse> {
@@ -273,14 +271,11 @@ export class UserService {
     );
   }
 
-  async enable2FA(
-    password: string,
-    sudoToken?: string
-  ): Promise<Enable2FAResponse> {
+  enable2FA(password: string, sudoToken?: string): Promise<Enable2FAResponse> {
     return this.runWithSudo(
       sudoToken,
       'You must re-authenticate to enable 2FA authentication.',
-      async () =>
+      () =>
         auth.api.enableTwoFactor({
           body: { password },
           headers: this._headers,
@@ -288,7 +283,7 @@ export class UserService {
     );
   }
 
-  async generateBackUpCodes({
+  generateBackUpCodes({
     totpCode,
     password,
     trustDevice,
@@ -309,6 +304,37 @@ export class UserService {
       });
 
       return { backupCodes: data.backupCodes };
+    });
+  }
+
+  async setRole({
+    userId,
+    roles,
+  }: {
+    userId: string;
+    roles: AppRoles[];
+  }): Promise<GeneralUserResponse> {
+    const ability = defineAbilityFor(this._actor);
+    for (const role of roles) {
+      if (ability.cannot('assign', { name: role, kind: 'Role' }))
+        return {
+          type: 'error',
+          payload: {
+            message: `You do not have permission to assign role ${role}`,
+          },
+        };
+    }
+
+    return this.executeProtectedAction({
+      targetUserId: userId,
+      requiredRbac: { user: ['set-role'] },
+      abacAction: 'set-role',
+      permissionError: 'You do not have permission to set user roles.',
+      action: () =>
+        auth.api.setRole({
+          body: { userId, role: roles },
+          headers: this._headers,
+        }),
     });
   }
 
