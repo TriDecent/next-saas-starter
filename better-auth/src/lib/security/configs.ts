@@ -4,7 +4,8 @@ import {
   type SlidingWindowRateLimitOptions,
 } from '@arcjet/next';
 
-const arcjetMode = process.env.NODE_ENV === 'development' ? 'DRY_RUN' : 'LIVE';
+export const arcjetMode =
+  process.env.NODE_ENV === 'development' ? 'DRY_RUN' : 'LIVE';
 
 export const botSettings: BotOptions = {
   mode: arcjetMode,

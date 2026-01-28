@@ -6,6 +6,7 @@ import arcjet, {
   tokenBucket,
 } from '@arcjet/next';
 import {
+  arcjetMode,
   botSettings,
   emailSettings,
   extremeRestrictiveRateLimitSettings,
@@ -13,18 +14,18 @@ import {
   restrictiveRateLimitSettings,
 } from './configs';
 
-const arcjetMode = process.env.NODE_ENV === 'development' ? 'DRY_RUN' : 'LIVE';
+const ARCJET_KEY = process.env.ARCJET_KEY!;
 
 // Authenticated users - track by userId only
 const ajAuthenticated = arcjet({
-  key: arcjetMode!,
+  key: ARCJET_KEY!,
   characteristics: ['userId', 'action'],
   rules: [shield({ mode: arcjetMode })],
 });
 
 // Anonymous users - track by IP only
 const ajAnonymous = arcjet({
-  key: arcjetMode,
+  key: ARCJET_KEY,
   characteristics: ['ip.src', 'action'],
   rules: [shield({ mode: arcjetMode })],
 });
@@ -61,7 +62,7 @@ export const ajEmailSend = ajAnonymous
   .withRule(detectBot(botSettings))
   .withRule(
     tokenBucket({
-      mode: 'LIVE',
+      mode: arcjetMode,
       capacity: 3,
       refillRate: 1,
       interval: '1h',

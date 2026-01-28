@@ -1,11 +1,12 @@
-import type { User } from '@/generated/prisma/client';
-import { ensureSession } from '@/lib/auth';
+import type { Session, User } from '@/generated/prisma/client';
+import { auth, ensureSession } from '@/lib/auth';
 import { headers } from 'next/headers';
+import { cache } from 'react';
 import { userRepo } from '../repositories';
 import { AuthService } from './auth/AuthService';
 import { UserService } from './user/UserService';
 
-export async function getUserService(callbackUrl: string) {
+export const getUserService = cache(async (callbackUrl: string) => {
   const headersList = await headers();
   const session = await ensureSession(headersList, callbackUrl);
 
@@ -13,12 +14,14 @@ export async function getUserService(callbackUrl: string) {
   // in fields such as `image` and `banReason`
   // usually does not affect the logic if we only check using `if (!user.image)`.
   const actor = session.user as User;
+  const currentSession = session.session as Session;
 
-  return new UserService(actor, userRepo, headersList);
-}
+  return new UserService(actor, currentSession, userRepo, headersList);
+});
 
-export async function getAuthService() {
+export const getAuthService = cache(async () => {
   const headersList = await headers();
+  const session = await auth.api.getSession({ headers: headersList });
 
-  return new AuthService(headersList);
-}
+  return new AuthService(headersList, session?.user as User | undefined);
+});
