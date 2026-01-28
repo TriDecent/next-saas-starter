@@ -1,3 +1,4 @@
+import type { User } from '@/generated/prisma/client';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
@@ -10,7 +11,14 @@ import type {
 } from './auth-dtos';
 
 export class AuthService {
-  constructor(private readonly _headers: ReadonlyHeaders) {}
+  constructor(
+    private readonly _headers: ReadonlyHeaders,
+    private readonly _actor?: User
+  ) {}
+
+  get self() {
+    return this._actor;
+  }
 
   async signIn({
     email,
@@ -162,6 +170,66 @@ export class AuthService {
           code: code.slice(0, 5) + '-' + code.slice(5),
           trustDevice,
         },
+      });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  // anonymous user can also request verification email
+  async sendVerificationEmail({
+    email,
+    callbackURL,
+  }: {
+    email: string;
+    callbackURL: string;
+  }): Promise<GeneralAuthResponse> {
+    if (this._actor && this._actor.email !== email)
+      return {
+        type: 'error',
+        payload: {
+          message: 'You can only send verification emails to your own email.',
+        },
+      };
+
+    try {
+      await auth.api.sendVerificationEmail({ body: { email, callbackURL } });
+
+      return { type: 'success', payload: undefined };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: {
+          message:
+            error instanceof APIError || error instanceof Error
+              ? error.message || 'Unknown error'
+              : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  async verifyTOTP({
+    code,
+    trustDevice,
+  }: {
+    code: string;
+    trustDevice?: boolean;
+  }): Promise<GeneralAuthResponse> {
+    try {
+      await auth.api.verifyTOTP({
+        body: { code, trustDevice },
+        headers: this._headers,
       });
 
       return { type: 'success', payload: undefined };
