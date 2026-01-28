@@ -34,6 +34,7 @@ export class UserService {
     const canListUsers = await hasPermission(this._actor.id, {
       user: ['list'],
     });
+
     if (!canListUsers)
       return {
         type: 'error',
@@ -41,7 +42,6 @@ export class UserService {
       };
 
     const skip = pageIndex * pageSize;
-
     const { data, total } = await this._repo.getUsers(
       skip,
       pageSize,
@@ -57,11 +57,11 @@ export class UserService {
       targetUserId: userId,
       requiredRbac: { user: ['ban'] },
       abacAction: 'ban-user',
+      permissionError: 'You do not have permission to ban/unban users.',
       action: () =>
         shouldBan
           ? auth.api.banUser({ body: { userId }, headers: this._headers })
           : auth.api.unbanUser({ body: { userId }, headers: this._headers }),
-      permissionError: 'You do not have permission to ban/unban users.',
     });
   }
 
@@ -70,12 +70,12 @@ export class UserService {
       targetUserId: userId,
       requiredRbac: { session: ['revoke'] },
       abacAction: 'revoke-user',
+      permissionError: 'You do not have permission to revoke sessions.',
       action: () =>
         auth.api.revokeUserSessions({
           body: { userId },
           headers: this._headers,
         }),
-      permissionError: 'You do not have permission to revoke sessions.',
     });
   }
 
@@ -84,9 +84,9 @@ export class UserService {
       targetUserId: userId,
       requiredRbac: { user: ['delete'] },
       abacAction: 'delete',
+      permissionError: 'You do not have permission to delete users.',
       action: () =>
         auth.api.removeUser({ body: { userId }, headers: this._headers }),
-      permissionError: 'You do not have permission to delete users.',
     });
   }
 
@@ -95,30 +95,19 @@ export class UserService {
       targetUserId: userId,
       requiredRbac: { user: ['impersonate'] },
       abacAction: 'impersonate-user',
+      permissionError: 'You do not have permission to impersonate users.',
       action: () =>
         auth.api.impersonateUser({ body: { userId }, headers: this._headers }),
-      permissionError: 'You do not have permission to impersonate users.',
     });
   }
 
   async stopImpersonate(): Promise<
     ServiceResponse<undefined, { message: string }>
   > {
-    try {
+    return this.runSafely(async () => {
       await auth.api.stopImpersonating({ headers: this._headers });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
+      return undefined;
+    });
   }
 
   // deleteAccount handles two cases:
@@ -134,11 +123,10 @@ export class UserService {
         headers: this._headers,
         body: { token, callbackURL: ROUTES.auth.href },
       });
+
       if (token) await auth.api.signOut({ headers: this._headers }); // prevent client session cache
     } catch (error) {
-      throw new Error(
-        error instanceof APIError ? error.message : 'Unknown error'
-      );
+      throw new Error(this.getErrorMessage(error));
     }
   }
 
@@ -146,32 +134,22 @@ export class UserService {
     password: string,
     totp?: string
   ): Promise<AuthenticatePriorResponse> {
-    try {
+    return this.runSafely(async () => {
       await auth.api.signInEmail({
         body: { email: this._actor.email, password },
         headers: this._headers,
       });
 
-      if (this._actor.twoFactorEnabled && totp)
+      if (this._actor.twoFactorEnabled && totp) {
         await auth.api.verifyTOTP({
           body: { code: totp },
           headers: this._headers,
         });
+      }
 
       const sudoToken = await createSudoToken(this._actor.id);
-
-      return { type: 'success', payload: { sudoToken } };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
-        },
-      };
-    }
+      return { sudoToken };
+    });
   }
 
   async updateProfile(
@@ -186,13 +164,14 @@ export class UserService {
     },
     callbackURL: string
   ): Promise<GeneralUserResponse> {
-    try {
+    return this.runSafely(async () => {
       const promises = [
         auth.api.updateUser({
           body: { name, favoriteNumber },
           headers: this._headers,
         }),
       ];
+
       if (email !== this._actor.email) {
         promises.push(
           auth.api.changeEmail({
@@ -202,151 +181,78 @@ export class UserService {
         );
       }
       await Promise.all(promises);
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof Error || error instanceof APIError
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
+      return undefined;
+    });
   }
 
   async deletePasskey(
     passkeyId: string,
-    sudoToken?: string | undefined
+    sudoToken?: string
   ): Promise<GeneralUserResponse> {
-    if (!sudoToken || !this.validateSudoToken(sudoToken))
-      return {
-        type: 'error',
-        payload: { message: 'You must re-authenticate to perform this action' },
-      };
-
-    try {
-      await auth.api.deletePasskey({
-        body: { id: passkeyId },
-        headers: this._headers,
-      });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
-        },
-      };
-    }
+    return this.runWithSudo(
+      sudoToken,
+      'You must re-authenticate to perform this action',
+      async () => {
+        await auth.api.deletePasskey({
+          body: { id: passkeyId },
+          headers: this._headers,
+        });
+        return undefined;
+      }
+    );
   }
 
   async changePassword(
-    {
-      currentPassword,
-      newPassword,
-      revokeOtherSessions,
-    }: {
+    params: {
       currentPassword: string;
       newPassword: string;
       revokeOtherSessions?: boolean;
     },
-    sudoToken?: string | undefined
+    sudoToken?: string
   ): Promise<GeneralUserResponse> {
-    if (!sudoToken || !this.validateSudoToken(sudoToken))
-      return {
-        type: 'error',
-        payload: { message: 'Please re-authenticate to change your password.' },
-      };
-
-    try {
-      await auth.api.changePassword({
-        body: { currentPassword, newPassword, revokeOtherSessions },
-        headers: this._headers,
-      });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof Error || error instanceof APIError
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
+    return this.runWithSudo(
+      sudoToken,
+      'Please re-authenticate to change your password.',
+      async () => {
+        await auth.api.changePassword({
+          body: params,
+          headers: this._headers,
+        });
+        return undefined;
+      }
+    );
   }
 
   async disable2FA(
     password: string,
     sudoToken?: string
   ): Promise<GeneralUserResponse> {
-    if (!sudoToken || !this.validateSudoToken(sudoToken))
-      return {
-        type: 'error',
-        payload: {
-          message: 'You must re-authenticate to disable 2FA authentication.',
-        },
-      };
-
-    try {
-      await auth.api.disableTwoFactor({
-        body: { password },
-        headers: this._headers,
-      });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
-        },
-      };
-    }
+    return this.runWithSudo(
+      sudoToken,
+      'You must re-authenticate to disable 2FA authentication.',
+      async () => {
+        await auth.api.disableTwoFactor({
+          body: { password },
+          headers: this._headers,
+        });
+        return undefined;
+      }
+    );
   }
 
   async enable2FA(
     password: string,
     sudoToken?: string
   ): Promise<Enable2FAResponse> {
-    if (!sudoToken || !this.validateSudoToken(sudoToken))
-      return {
-        type: 'error',
-        payload: {
-          message: 'You must re-authenticate to enable 2FA authentication.',
-        },
-      };
-
-    try {
-      const data = await auth.api.enableTwoFactor({
-        body: { password },
-        headers: this._headers,
-      });
-
-      return { type: 'success', payload: data };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
-        },
-      };
-    }
+    return this.runWithSudo(
+      sudoToken,
+      'You must re-authenticate to enable 2FA authentication.',
+      async () =>
+        auth.api.enableTwoFactor({
+          body: { password },
+          headers: this._headers,
+        })
+    );
   }
 
   async verifyTOTP({
@@ -356,24 +262,13 @@ export class UserService {
     code: string;
     trustDevice?: boolean;
   }): Promise<GeneralUserResponse> {
-    try {
+    return this.runSafely(async () => {
       await auth.api.verifyTOTP({
         body: { code, trustDevice },
         headers: this._headers,
       });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
-        },
-      };
-    }
+      return undefined;
+    });
   }
 
   async generateBackUpCodes({
@@ -385,7 +280,7 @@ export class UserService {
     password: string;
     trustDevice?: boolean;
   }): Promise<GenerateBackUpCodesResponse> {
-    try {
+    return this.runSafely(async () => {
       await auth.api.verifyTOTP({
         body: { code: totpCode, trustDevice },
         headers: this._headers,
@@ -396,22 +291,72 @@ export class UserService {
         headers: this._headers,
       });
 
-      return { type: 'success', payload: { backupCodes: data.backupCodes } };
+      return { backupCodes: data.backupCodes };
+    });
+  }
+
+  private async runSafely<TSuccess>(
+    operation: () => Promise<TSuccess>
+  ): Promise<ServiceResponse<TSuccess, { message: string }>> {
+    try {
+      const data = await operation();
+      return { type: 'success', payload: data };
+    } catch (error) {
+      return {
+        type: 'error',
+        payload: { message: this.getErrorMessage(error) },
+      };
+    }
+  }
+
+  private async runSafelyWithExtraErrorReturn<TSuccess, TError>(
+    operation: () => Promise<TSuccess>,
+    extraErrorDetails: TError
+  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
+    try {
+      const data = await operation();
+      return { type: 'success', payload: data };
     } catch (error) {
       return {
         type: 'error',
         payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
+          message: this.getErrorMessage(error),
+          more: extraErrorDetails,
         },
       };
     }
   }
 
-  private async validateSudoToken(token: string): Promise<boolean> {
-    return !!(await verifySudoToken(token, this._actor.id));
+  private async runWithSudo<T>(
+    token: string | undefined,
+    errorMessage: string,
+    operation: () => Promise<T>
+  ): Promise<ServiceResponse<T, { message: string }>> {
+    const isValid = token
+      ? await verifySudoToken(token, this._actor.id)
+      : false;
+
+    return isValid
+      ? this.runSafely(operation)
+      : { type: 'error', payload: { message: errorMessage } };
+  }
+
+  private async runWithSudoWithExtraErrorReturn<TSuccess, TError>(
+    token: string | undefined,
+    errorMessage: string,
+    operation: () => Promise<TSuccess>,
+    extraErrorDetails: TError
+  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
+    const isValid = token
+      ? await verifySudoToken(token, this._actor.id)
+      : false;
+
+    return isValid
+      ? this.runSafelyWithExtraErrorReturn(operation, extraErrorDetails)
+      : {
+          type: 'error',
+          payload: { message: errorMessage, more: extraErrorDetails },
+        };
   }
 
   private async executeProtectedAction(params: {
@@ -425,8 +370,9 @@ export class UserService {
       params;
 
     const hasRbac = await hasPermission(this._actor.id, requiredRbac);
-    if (!hasRbac)
+    if (!hasRbac) {
       return { type: 'error', payload: { message: permissionError } };
+    }
 
     const targetUser = await this._repo.findUnique({
       where: { id: targetUserId },
@@ -439,23 +385,22 @@ export class UserService {
       return {
         type: 'error',
         payload: {
-          message: `You do not have permission to ${abacAction.replace('-', ' ')} this user.`,
+          message: `You do not have permission to ${abacAction.replace(
+            '-',
+            ' '
+          )} this user.`,
         },
       };
 
-    try {
+    return this.runSafely(async () => {
       await action();
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
+      return undefined;
+    });
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof APIError || error instanceof Error
+      ? error.message
+      : 'Unknown error';
   }
 }
