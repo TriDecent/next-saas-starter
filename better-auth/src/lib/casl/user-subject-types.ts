@@ -7,4 +7,5 @@ export type UserActionTypes =
   | 'ban-user'
   | 'revoke-user'
   | 'impersonate-user'
-  | 'delete-account';
+  | 'delete-account'
+  | 'set-role';

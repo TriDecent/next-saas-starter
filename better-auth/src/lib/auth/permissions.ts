@@ -8,14 +8,20 @@ const ac = createAccessControl(statement);
 
 const adminRole = ac.newRole({ ...adminAc.statements, admin: ['access'] });
 const moderatorRole = ac.newRole({ user: ['list', 'ban'], admin: ['access'] });
-// const userRole = ac.newRole({});
+const userRole = ac.newRole({ user: [] }); // no permissions, TS keeps yelling without user: []
 
-export const ROLES = { admin: 'admin', moderator: 'moderator', user: 'user' };
+export const ROLES = {
+  ['super-admin']: 'super-admin',
+  admin: 'admin',
+  moderator: 'moderator',
+  user: 'user',
+} as const;
 
 const ROLES_STATEMENTS = {
+  [ROLES['super-admin']]: adminRole,
   [ROLES.admin]: adminRole,
   [ROLES.moderator]: moderatorRole,
-  // user: userRole
+  user: userRole,
 } as const;
 
 export const adminPluginConfigs = {

@@ -3,8 +3,8 @@ import { auth, ensureSession } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { cache } from 'react';
 import { userRepo } from '../repositories';
-import { AuthService } from './auth/AuthService';
-import { UserService } from './user/UserService';
+import { AuthService } from './auth';
+import { UserService } from './user';
 
 export const getUserService = cache(async (callbackUrl: string) => {
   const headersList = await headers();
