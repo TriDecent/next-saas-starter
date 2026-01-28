@@ -11,8 +11,13 @@ import {
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Popover,
   PopoverContent,
@@ -25,6 +30,7 @@ import {
   LockKeyhole,
   LockKeyholeOpen,
   MoreHorizontal,
+  Shield,
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react';
@@ -33,6 +39,7 @@ import { CopyUserAction } from './copy-user';
 import { DeleteUserAction } from './delete-user';
 import { ImpersonateUserAction } from './impersonation';
 import { RevokeUserSessionsAction } from './revoke-sessions';
+import { SetRoleAction } from './set-role';
 
 const selectColumn: ColumnDef<User> = {
   id: 'select',
@@ -183,7 +190,7 @@ const bannedColumn: ColumnDef<User> = {
               variant='destructive'
               className='hover:bg-destructive/80 mx-auto flex w-fit cursor-pointer items-center gap-1'
             >
-              <Ban className='h-3 w-3' /> Banned
+              <Ban className='size-3' /> Banned
             </Badge>
           </PopoverTrigger>
           <PopoverContent className='p-4' align='start'>
@@ -225,7 +232,7 @@ const twoFactorColumn: ColumnDef<User> = {
   cell: ({ row }) => (
     <div className='flex items-center justify-center'>
       {row.original.twoFactorEnabled ? (
-        <LockKeyhole className='h-4 w-4 text-green-500' />
+        <LockKeyhole className='size-4 text-green-500' />
       ) : (
         <LockKeyholeOpen className='text-muted-foreground h-4 w-4' />
       )}
@@ -235,53 +242,136 @@ const twoFactorColumn: ColumnDef<User> = {
 
 const actionsColumn: ColumnDef<User> = {
   id: 'actions',
-  cell: ({ row }) => (
-    <>
+  cell: ({ row }) => {
+    const user = row.original;
+
+    return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='h-8 w-8 p-0'>
-            <MoreHorizontal className='h-4 w-4' />
+          <Button variant='ghost' className='size-8 p-0'>
+            <MoreHorizontal className='size-4' />
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align='end'>
-          <DropdownMenuLabel className='text-muted-foreground'>
-            Actions
-          </DropdownMenuLabel>
+          <DropdownMenuLabel>
+            <div className='flex items-center gap-2'>
+              <Avatar className='size-7 border'>
+                <AvatarImage src={user.image ?? undefined} alt={user.name} />
+                <AvatarFallback>
+                  {user.name
+                    .split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .slice(0, 2)}
+                </AvatarFallback>
+              </Avatar>
 
-          <CopyUserAction user={row.original} />
+              <div>
+                <div className='truncate text-sm font-medium'>{user.name}</div>
+                <div className='text-muted-foreground truncate text-xs'>
+                  {user.email}
+                </div>
+              </div>
+
+              <Badge variant='outline' className='ml-auto uppercase'>
+                <span className='max-w-24 overflow-x-clip text-ellipsis'>
+                  {user.role}
+                </span>
+              </Badge>
+            </div>
+          </DropdownMenuLabel>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuLabel className='text-muted-foreground'>
-            Access & Security
-          </DropdownMenuLabel>
-
-          <ImpersonateUserAction userId={row.original.id} />
-
-          <RevokeUserSessionsAction userId={row.original.id} />
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuLabel className='text-muted-foreground'>
-            Moderation
-          </DropdownMenuLabel>
-
-          <BanUserAction
-            userId={row.original.id}
-            shouldBan={!row.original.banned}
-          />
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-muted-foreground'>
+              Quick actions
+            </DropdownMenuLabel>
+            <CopyUserAction user={user} />
+          </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuLabel className='text-muted-foreground'>
-            Danger Zone
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-muted-foreground'>
+              Access & Security
+            </DropdownMenuLabel>
+            <ImpersonateUserAction userId={user.id} />
+            <RevokeUserSessionsAction userId={user.id} />
+          </DropdownMenuGroup>
 
-          <DeleteUserAction userId={row.original.id} />
+          <DropdownMenuSeparator />
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Shield className='size-4' />
+              Role
+            </DropdownMenuSubTrigger>
+
+            <DropdownMenuSubContent>
+              <DropdownMenuLabel className='text-muted-foreground'>
+                Set role
+              </DropdownMenuLabel>
+
+              <DropdownMenuItem disabled className='opacity-70'>
+                Current
+                <span className='ml-auto max-w-24 overflow-x-clip text-ellipsis uppercase'>
+                  {user.role}
+                </span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <SetRoleAction
+                userId={user.id}
+                role={'super-admin'}
+                currentRoles={user.role}
+              />
+              <SetRoleAction
+                userId={user.id}
+                role={'admin'}
+                currentRoles={user.role}
+              />
+              <SetRoleAction
+                userId={user.id}
+                role={'moderator'}
+                currentRoles={user.role}
+              />
+              <SetRoleAction
+                userId={user.id}
+                role={'user'}
+                currentRoles={user.role}
+              />
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Ban className='size-4' />
+              Moderation
+            </DropdownMenuSubTrigger>
+
+            <DropdownMenuSubContent>
+              <BanUserAction userId={user.id} shouldBan={!user.banned} />
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-muted-foreground'>
+              Danger zone
+            </DropdownMenuLabel>
+            <DeleteUserAction userId={user.id} />
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-    </>
-  ),
+    );
+  },
 };
 
 export const columns: ColumnDef<User>[] = [
