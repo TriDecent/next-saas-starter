@@ -4,6 +4,7 @@ import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
+import type { ServiceResponse } from '../types';
 import type {
   GeneralAuthResponse,
   SignInResponse,
@@ -38,155 +39,93 @@ export class AuthService {
       if (!('twoFactorRedirect' in response))
         return { type: 'success', payload: {} };
 
-      const requestReferer = this._headers.get('referer');
-      const requestUrl = requestReferer ? new URL(requestReferer) : undefined;
-      const hasCallbackUrl = requestUrl?.searchParams.has('callbackUrl');
-
       return {
         type: 'success',
-        payload: {
-          redirect: hasCallbackUrl
-            ? `${ROUTES.auth.nested['verify-2fa'].href}?${requestUrl!.searchParams.toString()}`
-            : ROUTES.auth.nested['verify-2fa'].href,
-        },
+        payload: { redirect: this.get2FARedirectUrl() },
       };
     } catch (error) {
       if (isRedirectError(error)) throw error;
 
-      const isEmailNotVerified =
+      if (
         error instanceof APIError &&
         error.status === 'FORBIDDEN' &&
-        error.statusCode === 403;
+        error.statusCode === 403
+      ) {
+        return {
+          type: 'error',
+          payload: {
+            status: 'EMAIL_NOT_VERIFIED',
+            email: email,
+            message: error.message,
+          },
+        };
+      }
 
       return {
         type: 'error',
-        payload: {
-          status: isEmailNotVerified ? 'EMAIL_NOT_VERIFIED' : undefined,
-          email: isEmailNotVerified ? email : undefined,
-          message:
-            error instanceof Error || error instanceof APIError
-              ? error.message
-              : 'Unknown error',
-        },
+        payload: { message: this.getErrorMessage(error) },
       };
     }
   }
 
-  async signUp({
-    name,
-    email,
-    password,
-    favoriteNumber,
-  }: {
+  signUp(params: {
     name: string;
     email: string;
     password: string;
     favoriteNumber: number;
   }): Promise<SignUpResponse> {
-    try {
-      const signUpResult = await auth.api.signUpEmail({
+    return this.runSafely(async () => {
+      const { user } = await auth.api.signUpEmail({
         headers: this._headers,
-        body: { name, email, password, favoriteNumber, welcomeSent: false },
+        body: { ...params, welcomeSent: false },
       });
 
-      return {
-        type: 'success',
-        payload: {
-          name: signUpResult.user.name,
-          email: signUpResult.user.email,
-        },
-      };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof Error || error instanceof APIError
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
+      return { name: user.name, email: user.email };
+    });
   }
 
-  async requestResetPassword({
+  requestResetPassword({
     email,
     redirectTo,
   }: {
     email: string;
     redirectTo: string;
   }): Promise<GeneralAuthResponse> {
-    try {
-      await auth.api.requestPasswordReset({
-        body: { email, redirectTo },
-      });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof Error || error instanceof APIError
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
+    return this.runSafely(async () => {
+      await auth.api.requestPasswordReset({ body: { email, redirectTo } });
+      return undefined;
+    });
   }
 
-  async resetPassword(
+  resetPassword(
     token: string,
     newPassword: string
   ): Promise<GeneralAuthResponse> {
-    try {
+    return this.runSafely(async () => {
       await auth.api.resetPassword({
         headers: this._headers,
         body: { token, newPassword },
       });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof Error || error instanceof APIError
-              ? error.message
-              : 'Unknown error',
-        },
-      };
-    }
+      return undefined;
+    });
   }
 
-  async verifyBackupCode(
+  verifyBackupCode(
     code: string,
     trustDevice?: boolean
   ): Promise<GeneralAuthResponse> {
-    try {
+    return this.runSafely(async () => {
+      // Format code: XXXXX-XXXXX
+      const formattedCode = code.slice(0, 5) + '-' + code.slice(5);
+
       await auth.api.verifyBackupCode({
         headers: this._headers,
-        body: {
-          code: code.slice(0, 5) + '-' + code.slice(5),
-          trustDevice,
-        },
+        body: { code: formattedCode, trustDevice },
       });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
-        },
-      };
-    }
+      return undefined;
+    });
   }
 
-  // anonymous user can also request verification email
   async sendVerificationEmail({
     email,
     callbackURL,
@@ -194,55 +133,85 @@ export class AuthService {
     email: string;
     callbackURL: string;
   }): Promise<GeneralAuthResponse> {
-    if (this._actor && this._actor.email !== email)
+    if (this._actor && this._actor.email !== email) {
       return {
         type: 'error',
         payload: {
           message: 'You can only send verification emails to your own email.',
         },
       };
-
-    try {
-      await auth.api.sendVerificationEmail({ body: { email, callbackURL } });
-
-      return { type: 'success', payload: undefined };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
-        },
-      };
     }
+
+    return this.runSafely(async () => {
+      await auth.api.sendVerificationEmail({
+        body: { email, callbackURL },
+      });
+      return undefined;
+    });
   }
 
-  async verifyTOTP({
+  verifyTOTP({
     code,
     trustDevice,
   }: {
     code: string;
     trustDevice?: boolean;
   }): Promise<GeneralAuthResponse> {
-    try {
+    return this.runSafely(async () => {
       await auth.api.verifyTOTP({
         body: { code, trustDevice },
         headers: this._headers,
       });
+      return undefined;
+    });
+  }
 
-      return { type: 'success', payload: undefined };
+  private async runSafely<T>(
+    operation: () => Promise<T>
+  ): Promise<ServiceResponse<T, { message: string }>> {
+    try {
+      const data = await operation();
+      return { type: 'success', payload: data };
+    } catch (error) {
+      if (isRedirectError(error)) throw error;
+      return {
+        type: 'error',
+        payload: { message: this.getErrorMessage(error) },
+      };
+    }
+  }
+
+  private async runSafelyWithExtraErrorReturn<TSuccess, TError>(
+    operation: () => Promise<TSuccess>,
+    extraErrorDetails: TError
+  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
+    try {
+      const data = await operation();
+      return { type: 'success', payload: data };
     } catch (error) {
       return {
         type: 'error',
         payload: {
-          message:
-            error instanceof APIError || error instanceof Error
-              ? error.message || 'Unknown error'
-              : 'Unknown error',
+          message: this.getErrorMessage(error),
+          more: extraErrorDetails,
         },
       };
     }
+  }
+
+  private get2FARedirectUrl(): string {
+    const requestReferer = this._headers.get('referer');
+    const requestUrl = requestReferer ? new URL(requestReferer) : undefined;
+    const hasCallbackUrl = requestUrl?.searchParams.has('callbackUrl');
+
+    return hasCallbackUrl
+      ? `${ROUTES.auth.nested['verify-2fa'].href}?${requestUrl!.searchParams.toString()}`
+      : ROUTES.auth.nested['verify-2fa'].href;
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof APIError || error instanceof Error
+      ? error.message
+      : 'Unknown error';
   }
 }
