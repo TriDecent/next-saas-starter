@@ -5,44 +5,37 @@ import {
   RequestPasswordResetCard,
 } from '@/features/settings/security/password';
 import { TwoFactorsCard } from '@/features/settings/security/two-auth-factors';
-import { auth, ensureSession } from '@/lib/auth';
+import { getUserService } from '@/infrastructure/service';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const session = await ensureSession(
-    await headers(),
-    ROUTES.settings.nested.security.href
-  );
+  const user = (await getUserService(ROUTES.settings.nested.security.href))
+    .self;
 
   return {
     ...ROUTES.settings.nested.security.metadata,
-    title: `${session.user.name}'s Security`,
+    title: `${user.name}'s Security`,
   };
 }
 
 export default async function SecurityPage() {
-  const headersList = await headers();
-  const session = await ensureSession(
-    headersList,
-    ROUTES.settings.nested.security.href
-  );
+  const service = await getUserService(ROUTES.settings.nested.security.href);
 
   const [accounts, passkeys] = await Promise.all([
-    auth.api.listUserAccounts({ headers: headersList }),
-    auth.api.listPasskeys({ headers: headersList }),
+    service.listMyAccounts(),
+    service.listMyPasskey(),
   ]);
   const hasCredentialAccount = accounts.some(
     account => account.providerId === 'credential'
   );
 
   return !hasCredentialAccount ? (
-    <RequestPasswordResetCard email={session.user.email} />
+    <RequestPasswordResetCard email={service.self.email} />
   ) : (
     <div className='space-y-8'>
-      <AuthenticatePriorProvider user={session.user}>
-        <TwoFactorsCard isEnabled={!!session.user.twoFactorEnabled} />
+      <AuthenticatePriorProvider user={service.self}>
+        <TwoFactorsCard isEnabled={!!service.self.twoFactorEnabled} />
         <ChangePasswordCard />
         <PasskeysList passkeys={passkeys} />
       </AuthenticatePriorProvider>

@@ -2,12 +2,11 @@
 
 import { getUserService } from '@/infrastructure/service';
 import type { GeneralAuthResponse } from '@/infrastructure/service/auth';
-import { ensureSession } from '@/lib/auth';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/security';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 
 type Response = GeneralAuthResponse | { type: 'initial' };
 
@@ -15,18 +14,11 @@ export async function authenticatePriorAction(
   state: Response,
   input: unknown
 ): Promise<Response> {
-  const [headersList, req, cookiesList] = await Promise.all([
-    headers(),
-    request(),
-    cookies(),
-  ]);
+  const [req, cookiesList] = await Promise.all([request(), cookies()]);
 
-  const session = await ensureSession(
-    headersList,
-    ROUTES.settings.nested.security.href
-  );
+  const service = await getUserService(ROUTES.settings.nested.security.href);
 
-  const schema = session.user.twoFactorEnabled
+  const schema = service.self.twoFactorEnabled
     ? twoFAAuthSchema
     : basicAuthSchema;
 
@@ -37,11 +29,9 @@ export async function authenticatePriorAction(
 
   const decision = await ajLaxAuthenticated.protect(req, {
     action: 'authenticate-prior-action',
-    userId: session.user.id,
+    userId: service.self.id,
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
-
-  const service = await getUserService(ROUTES.settings.nested.security.href);
 
   const result = await service.authenticatePrior(
     parsedInput.data.password,

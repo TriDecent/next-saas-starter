@@ -7,30 +7,23 @@ import {
 } from '@/shared/components/ui';
 
 import { SessionsList } from '@/features/settings/session';
-import { auth, ensureSession } from '@/lib/auth';
+import { getUserService } from '@/infrastructure/service';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const session = await ensureSession(
-    await headers(),
-    ROUTES.settings.nested.sessions.href
-  );
+  const user = (await getUserService(ROUTES.settings.nested.sessions.href))
+    .self;
 
   return {
     ...ROUTES.settings.nested.sessions.metadata,
-    title: `${session.user.name}'s Sessions`,
+    title: `${user.name}'s Sessions`,
   };
 }
 
 export default async function SessionsPage() {
-  const headersList = await headers();
-
-  const [currentSession, sessions] = await Promise.all([
-    ensureSession(headersList, ROUTES.settings.nested.sessions.href),
-    auth.api.listSessions({ headers: headersList }),
-  ]);
+  const service = await getUserService(ROUTES.settings.nested.sessions.href);
+  const sessions = await service.listMySessions();
 
   return (
     <Card>
@@ -42,9 +35,9 @@ export default async function SessionsPage() {
       </CardHeader>
       <CardContent>
         <SessionsList
-          currentSession={currentSession.session}
+          currentSession={service.currentSession}
           otherSessions={sessions.filter(
-            session => session.id !== currentSession.session.id
+            session => session.id !== service.currentSession.id
           )}
         />
       </CardContent>

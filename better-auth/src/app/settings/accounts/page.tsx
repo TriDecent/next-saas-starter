@@ -9,28 +9,23 @@ import {
 } from '@/shared/components/ui';
 
 import { ConnectedAccounts } from '@/features/settings/accounts';
-import { auth, ensureSession } from '@/lib/auth';
+import { getUserService } from '@/infrastructure/service';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const session = await ensureSession(
-    await headers(),
-    ROUTES.settings.nested.accounts.href
-  );
+  const user = (await getUserService(ROUTES.settings.nested.accounts.href))
+    .self;
 
   return {
     ...ROUTES.settings.nested.accounts.metadata,
-    title: `${session.user.name}'s Linked Accounts`,
+    title: `${user.name}'s Linked Accounts`,
   };
 }
 
 export default async function AccountsPage() {
-  const headersList = await headers();
-  await ensureSession(headersList, ROUTES.settings.nested.danger.href);
-
-  const accounts = await auth.api.listUserAccounts({ headers: headersList });
+  const service = await getUserService(ROUTES.settings.nested.accounts.href);
+  const accounts = await service.listMyAccounts();
 
   return (
     <Card>
