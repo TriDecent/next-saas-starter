@@ -18,6 +18,7 @@ import { adminPluginConfigs } from './permissions';
 export const auth = betterAuth({
   appName: 'Trí Decent Auth',
   advanced: { cookiePrefix: 'tri-decent' },
+  impersonationSessionDuration: 60 * 60,
   session: { cookieCache: { enabled: true, maxAge: 60 * 5 } },
   plugins: [
     twoFactor(),
@@ -48,7 +49,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     sendResetPassword: async data => {
       console.log(data.url);
-      await sendPasswordResetEmail({
+      void sendPasswordResetEmail({
         to: data.user.email,
         userName: data.user.name,
         resetUrl: data.url,
@@ -60,7 +61,7 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     sendVerificationEmail: async data => {
       console.log(data.url);
-      await sendEmailVerification({
+      void sendEmailVerification({
         to: data.user.email,
         userName: data.user.name,
         verificationUrl: data.url,

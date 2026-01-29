@@ -5,10 +5,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cache } from 'react';
 import { auth } from './auth';
 
-export type AuthSession = NonNullable<
-  Awaited<ReturnType<typeof auth.api.getSession>>
->;
-
 export const ensureSession = cache(
   async (headers: Headers, callbackUrl: string) => {
     const session = await auth.api.getSession({ headers });
