@@ -23,5 +23,8 @@ export const getAuthService = cache(async () => {
   const headersList = await headers();
   const session = await auth.api.getSession({ headers: headersList });
 
-  return new AuthService(headersList, session?.user as User | undefined);
+  const actor = (session?.user ?? undefined) as User | undefined;
+  const currentSession = (session?.session ?? undefined) as Session | undefined;
+
+  return new AuthService(headersList, actor, currentSession);
 });

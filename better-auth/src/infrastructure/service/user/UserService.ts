@@ -413,9 +413,8 @@ export class UserService {
       params;
 
     const hasRbac = await hasPermission(this._actor.id, requiredRbac);
-    if (!hasRbac) {
+    if (!hasRbac)
       return { type: 'error', payload: { message: permissionError } };
-    }
 
     const targetUser = await this._repo.findUnique({
       where: { id: targetUserId },

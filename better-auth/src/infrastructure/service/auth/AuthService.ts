@@ -1,4 +1,4 @@
-import type { User } from '@/generated/prisma/client';
+import type { Session, User } from '@/generated/prisma/client';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
@@ -14,11 +14,16 @@ import type {
 export class AuthService {
   constructor(
     private readonly _headers: ReadonlyHeaders,
-    private readonly _actor?: User
+    private readonly _actor?: User,
+    private readonly _currentSession?: Session
   ) {}
 
   get self() {
     return this._actor;
+  }
+
+  get currentSession() {
+    return this._currentSession;
   }
 
   async signIn({
