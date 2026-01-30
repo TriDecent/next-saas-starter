@@ -1,5 +1,7 @@
+import type { Organization } from '@/generated/prisma/client';
 import { ROUTES } from '@/shared/constants';
 import type { User } from 'better-auth';
+import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { cache } from 'react';
@@ -42,6 +44,30 @@ export const hasPermission = cache(
   ) => {
     const hasPermission = await auth.api.userHasPermission({
       body: { userId, permissions },
+    });
+
+    return hasPermission.success;
+  }
+);
+
+export const hasOrganizationPermission = cache(
+  async (
+    {
+      organizationId,
+      permissions,
+    }: {
+      organizationId: Organization['id'];
+      permissions: NonNullable<
+        NonNullable<
+          Parameters<typeof auth.api.hasPermission>[0]
+        >['body']['permissions']
+      >;
+    },
+    headers: ReadonlyHeaders
+  ) => {
+    const hasPermission = await auth.api.hasPermission({
+      body: { organizationId, permissions },
+      headers,
     });
 
     return hasPermission.success;
