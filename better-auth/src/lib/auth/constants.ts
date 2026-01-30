@@ -6,6 +6,15 @@ import {
   FaGoogle,
 } from 'react-icons/fa6';
 
+export const ROLES = {
+  ['super-admin']: 'super-admin',
+  admin: 'admin',
+  owner: 'owner',
+  member: 'member',
+  moderator: 'moderator',
+  user: 'user',
+} as const;
+
 export const SUPPORTED_OAUTH_PROVIDERS = [
   { name: 'github', icon: FaGithub },
   { name: 'discord', icon: FaDiscord },

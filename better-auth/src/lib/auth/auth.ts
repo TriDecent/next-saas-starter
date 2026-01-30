@@ -13,7 +13,8 @@ import { nextCookies } from 'better-auth/next-js';
 import { admin } from 'better-auth/plugins';
 import { twoFactor } from 'better-auth/plugins/two-factor';
 import { prisma } from '../prisma';
-import { adminPluginConfigs } from './permissions';
+import { organizationPluginConfigs } from './organization-permissions';
+import { adminPluginConfigs } from './user-permissions';
 
 export const auth = betterAuth({
   appName: 'Trí Decent Auth',
