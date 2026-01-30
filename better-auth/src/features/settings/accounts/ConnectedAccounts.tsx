@@ -1,6 +1,6 @@
 'use client';
 
-import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/o-auth-providers';
+import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/constants';
 import {
   Badge,
   Item,

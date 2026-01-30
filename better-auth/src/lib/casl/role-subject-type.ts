@@ -1,6 +1,6 @@
 import type { InferSubjects } from '@casl/ability';
-import type { AppRoles } from '../auth';
+import type { AppRole } from '../auth';
 
-type RoleWithType = { name: AppRoles } & { kind: 'Role' };
+type RoleWithType = { name: AppRole } & { kind: 'Role' };
 export type RoleSubject = InferSubjects<RoleWithType>;
 export type RoleActionsType = 'assign';

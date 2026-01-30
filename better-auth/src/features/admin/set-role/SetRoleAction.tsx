@@ -1,8 +1,8 @@
 'use client';
 
 import type { User } from '@/generated/prisma/client';
-import { ROLES } from '@/lib/auth/permissions';
-import type { AppRoles } from '@/lib/auth/types';
+import { ROLES } from '@/lib/auth/constants';
+import type { UserRole } from '@/lib/auth/types';
 import { DropdownMenuCheckboxItem } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { useTransition } from 'react';
@@ -16,7 +16,7 @@ export function SetRoleAction({
   currentRoles,
 }: {
   userId: User['id'];
-  role: AppRoles;
+  role: UserRole;
   currentRoles: string;
 }) {
   const [isPending, startTransition] = useTransition();
@@ -24,8 +24,8 @@ export function SetRoleAction({
   const normalizedCurrent = normalizeRoles(currentRoles);
   const isChecked = normalizedCurrent.includes(role);
 
-  const computeNextRoles = (nextChecked: boolean): AppRoles[] => {
-    const set = new Set<AppRoles>(normalizedCurrent);
+  const computeNextRoles = (nextChecked: boolean): UserRole[] => {
+    const set = new Set<UserRole>(normalizedCurrent);
 
     if (nextChecked) set.add(role);
     else set.delete(role);
@@ -76,11 +76,11 @@ export function SetRoleAction({
   );
 }
 
-function isAppRole(role: string): role is AppRoles {
+function isAppRole(role: string): role is UserRole {
   return Object.hasOwnProperty.call(ROLES, role);
 }
 
-function normalizeRoles(input: string): AppRoles[] {
+function normalizeRoles(input: string): UserRole[] {
   const arr = input.split(',');
   return arr.filter(isAppRole);
 }

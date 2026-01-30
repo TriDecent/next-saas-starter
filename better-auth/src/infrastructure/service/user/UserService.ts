@@ -3,7 +3,7 @@ import {
   verifySudoToken,
 } from '@/features/auth/authenticate-prior/sudo-mode';
 import type { Session, User } from '@/generated/prisma/client';
-import { auth, hasPermission, type AppRoles } from '@/lib/auth';
+import { auth, hasPermission, type UserRole } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
@@ -312,7 +312,7 @@ export class UserService {
     roles,
   }: {
     userId: string;
-    roles: AppRoles[];
+    roles: UserRole[];
   }): Promise<GeneralUserResponse> {
     const ability = defineAbilityFor(this._actor);
     for (const role of roles) {
