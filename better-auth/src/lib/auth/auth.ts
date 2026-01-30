@@ -10,7 +10,7 @@ import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
-import { admin } from 'better-auth/plugins';
+import { admin, organization } from 'better-auth/plugins';
 import { twoFactor } from 'better-auth/plugins/two-factor';
 import { prisma } from '../prisma';
 import { organizationPluginConfigs } from './organization-permissions';
@@ -27,6 +27,7 @@ export const auth = betterAuth({
       authenticatorSelection: { authenticatorAttachment: 'cross-platform' },
     }),
     admin(adminPluginConfigs),
+    organization(organizationPluginConfigs),
     nextCookies(),
   ],
   database: prismaAdapter(prisma, {
