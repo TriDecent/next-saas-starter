@@ -15,7 +15,7 @@ export async function deleteAccountAction(token?: string) {
   const decision = await ajExtremeRestrictiveAuthenticated.protect(
     await request(),
     {
-      userId: service.self.id,
+      userId: service.actor.id,
       action: token ? 'delete-account' : 'send-delete-verification-email',
     }
   );

@@ -34,7 +34,7 @@ export async function updateProfileAction(
   const profileData = parsedResult.data;
 
   const updateProfileDecision = await ajRestrictiveAuthenticated.protect(req, {
-    userId: service.self.id,
+    userId: service.actor.id,
     action: 'sa-update-profile',
   });
 

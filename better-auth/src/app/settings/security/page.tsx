@@ -11,7 +11,7 @@ import type { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
   const user = (await getUserService(ROUTES.settings.nested.security.href))
-    .self;
+    .actor;
 
   return {
     ...ROUTES.settings.nested.security.metadata,
@@ -31,11 +31,11 @@ export default async function SecurityPage() {
   );
 
   return !hasCredentialAccount ? (
-    <RequestPasswordResetCard email={service.self.email} />
+    <RequestPasswordResetCard email={service.actor.email} />
   ) : (
     <div className='space-y-8'>
-      <AuthenticatePriorProvider user={service.self}>
-        <TwoFactorsCard isEnabled={!!service.self.twoFactorEnabled} />
+      <AuthenticatePriorProvider user={service.actor}>
+        <TwoFactorsCard isEnabled={!!service.actor.twoFactorEnabled} />
         <ChangePasswordCard />
         <PasskeysList passkeys={passkeys} />
       </AuthenticatePriorProvider>

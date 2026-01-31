@@ -18,7 +18,7 @@ export async function enableTwoFactorsAction(
 
   const decision = await ajRestrictiveAuthenticated.protect(req, {
     action: 'enable-2fa',
-    userId: service.self.id,
+    userId: service.actor.id,
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 

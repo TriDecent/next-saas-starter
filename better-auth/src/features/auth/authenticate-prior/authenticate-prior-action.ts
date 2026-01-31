@@ -18,7 +18,7 @@ export async function authenticatePriorAction(
 
   const service = await getUserService(ROUTES.settings.nested.security.href);
 
-  const schema = service.self.twoFactorEnabled
+  const schema = service.actor.twoFactorEnabled
     ? twoFAAuthSchema
     : basicAuthSchema;
 
@@ -29,7 +29,7 @@ export async function authenticatePriorAction(
 
   const decision = await ajLaxAuthenticated.protect(req, {
     action: 'authenticate-prior-action',
-    userId: service.self.id,
+    userId: service.actor.id,
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 

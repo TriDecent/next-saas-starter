@@ -29,7 +29,7 @@ export async function changePasswordAction(
     reqList,
     {
       action: 'sa-update-password',
-      userId: service.self.id,
+      userId: service.actor.id,
     }
   );
 

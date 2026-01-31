@@ -15,7 +15,7 @@ import type { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
   const user = (await getUserService(ROUTES.settings.nested.accounts.href))
-    .self;
+    .actor;
 
   return {
     ...ROUTES.settings.nested.accounts.metadata,

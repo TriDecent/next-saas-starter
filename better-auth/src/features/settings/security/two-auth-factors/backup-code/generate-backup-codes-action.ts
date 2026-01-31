@@ -27,7 +27,7 @@ export async function generateBackupCodesAction(
 
   const decision = await ajRestrictiveAuthenticated.protect(req, {
     action: 'generate-backup-codes',
-    userId: service.self.id,
+    userId: service.actor.id,
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 

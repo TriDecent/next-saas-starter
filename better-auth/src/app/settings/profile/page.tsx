@@ -4,7 +4,8 @@ import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const user = (await getUserService(ROUTES.settings.nested.profile.href)).self;
+  const user = (await getUserService(ROUTES.settings.nested.profile.href))
+    .actor;
 
   return {
     ...ROUTES.settings.nested.profile.metadata,
@@ -15,5 +16,5 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProfilePage() {
   const service = await getUserService(ROUTES.settings.nested.profile.href);
 
-  return <ProfileCard user={service.self} />;
+  return <ProfileCard user={service.actor} />;
 }
