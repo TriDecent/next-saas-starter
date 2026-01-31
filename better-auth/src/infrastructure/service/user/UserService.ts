@@ -1,14 +1,9 @@
-import {
-  createSudoToken,
-  verifySudoToken,
-} from '@/features/auth/authenticate-prior/sudo-mode';
+import { createSudoToken } from '@/features/auth/authenticate-prior/sudo-mode';
 import type { Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
-import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
+import { defineAbilityFor } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
-import { APIError } from 'better-auth';
-import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import { type IUserRepository } from '../../repositories';
+import type { IServiceExecutor } from '../ServiceExecutor';
 import type { ServiceResponse } from '../types';
 import type {
   AuthenticatePriorResponse,
@@ -20,34 +15,32 @@ import type {
 
 export class UserService {
   constructor(
-    private readonly _actor: User,
-    private readonly _currentSession: Session,
-    private readonly _repo: IUserRepository,
-    private readonly _headers: ReadonlyHeaders
+    private readonly _serviceExecutor: IServiceExecutor,
+    private readonly _currentSession: Session
   ) {}
 
-  get self() {
-    return this._actor;
+  get actor() {
+    return this._serviceExecutor.actor;
+  }
+
+  get headers() {
+    return this._serviceExecutor.headers;
   }
 
   get currentSession() {
     return this._currentSession;
   }
 
-  get headers() {
-    return this._headers;
-  }
-
   listMyAccounts() {
-    return auth.api.listUserAccounts({ headers: this._headers });
+    return auth.api.listUserAccounts({ headers: this.headers });
   }
 
   listMyPasskey() {
-    return auth.api.listPasskeys({ headers: this._headers });
+    return auth.api.listPasskeys({ headers: this.headers });
   }
 
   listMySessions() {
-    return auth.api.listSessions({ headers: this._headers });
+    return auth.api.listSessions({ headers: this.headers });
   }
 
   async getUsers(
@@ -56,7 +49,7 @@ export class UserService {
     orderBy?: Record<string, 'asc' | 'desc'>[],
     keyword?: string
   ): Promise<GetUsersResponse> {
-    const canListUsers = await hasPermission(this._actor.id, {
+    const canListUsers = await hasPermission(this.actor.id, {
       user: ['list'],
     });
 
@@ -67,7 +60,7 @@ export class UserService {
       };
 
     const skip = pageIndex * pageSize;
-    const { data, total } = await this._repo.getUsers(
+    const { data, total } = await this.repo.getUsers(
       skip,
       pageSize,
       orderBy,
@@ -78,20 +71,20 @@ export class UserService {
   }
 
   toggleBanStatus(userId: User['id'], shouldBan: boolean) {
-    return this.executeProtectedAction({
+    return this._serviceExecutor.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { user: ['ban'] },
       abacAction: 'ban-user',
       permissionError: 'You do not have permission to ban/unban users.',
       action: () =>
         shouldBan
-          ? auth.api.banUser({ body: { userId }, headers: this._headers })
-          : auth.api.unbanUser({ body: { userId }, headers: this._headers }),
+          ? auth.api.banUser({ body: { userId }, headers: this.headers })
+          : auth.api.unbanUser({ body: { userId }, headers: this.headers }),
     });
   }
 
   revokeUser(userId: User['id']) {
-    return this.executeProtectedAction({
+    return this._serviceExecutor.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { session: ['revoke'] },
       abacAction: 'revoke-user',
@@ -99,36 +92,36 @@ export class UserService {
       action: () =>
         auth.api.revokeUserSessions({
           body: { userId },
-          headers: this._headers,
+          headers: this.headers,
         }),
     });
   }
 
   deleteUser(userId: User['id']) {
-    return this.executeProtectedAction({
+    return this._serviceExecutor.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { user: ['delete'] },
       abacAction: 'delete',
       permissionError: 'You do not have permission to delete users.',
       action: () =>
-        auth.api.removeUser({ body: { userId }, headers: this._headers }),
+        auth.api.removeUser({ body: { userId }, headers: this.headers }),
     });
   }
 
   impersonateUser(userId: User['id']) {
-    return this.executeProtectedAction({
+    return this._serviceExecutor.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { user: ['impersonate'] },
       abacAction: 'impersonate-user',
       permissionError: 'You do not have permission to impersonate users.',
       action: () =>
-        auth.api.impersonateUser({ body: { userId }, headers: this._headers }),
+        auth.api.impersonateUser({ body: { userId }, headers: this.headers }),
     });
   }
 
   stopImpersonate(): Promise<ServiceResponse<undefined, { message: string }>> {
-    return this.runSafely(async () => {
-      await auth.api.stopImpersonating({ headers: this._headers });
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.stopImpersonating({ headers: this.headers });
       return undefined;
     });
   }
@@ -143,21 +136,21 @@ export class UserService {
   async deleteAccount(token?: string): Promise<void> {
     try {
       await auth.api.deleteUser({
-        headers: this._headers,
+        headers: this.headers,
         body: { token, callbackURL: ROUTES.auth.href },
       });
 
-      if (token) await auth.api.signOut({ headers: this._headers }); // prevent client session cache
+      if (token) await auth.api.signOut({ headers: this.headers }); // prevent client session cache
     } catch (error) {
-      throw new Error(this.getErrorMessage(error));
+      throw new Error(this._serviceExecutor.getErrorMessage(error));
     }
   }
 
   async revokeSessionWithToken(token: string): Promise<void> {
     try {
-      await auth.api.revokeSession({ body: { token }, headers: this._headers });
+      await auth.api.revokeSession({ body: { token }, headers: this.headers });
     } catch (error) {
-      throw new Error(this.getErrorMessage(error));
+      throw new Error(this._serviceExecutor.getErrorMessage(error));
     }
   }
 
@@ -165,20 +158,20 @@ export class UserService {
     password: string,
     totp?: string
   ): Promise<AuthenticatePriorResponse> {
-    return this.runSafely(async () => {
+    return this._serviceExecutor.runSafely(async () => {
       await auth.api.signInEmail({
-        body: { email: this._actor.email, password },
-        headers: this._headers,
+        body: { email: this.actor.email, password },
+        headers: this.headers,
       });
 
-      if (this._actor.twoFactorEnabled && totp) {
+      if (this.actor.twoFactorEnabled && totp) {
         await auth.api.verifyTOTP({
           body: { code: totp },
-          headers: this._headers,
+          headers: this.headers,
         });
       }
 
-      const sudoToken = await createSudoToken(this._actor.id);
+      const sudoToken = await createSudoToken(this.actor.id);
       return { sudoToken };
     });
   }
@@ -195,19 +188,19 @@ export class UserService {
     },
     callbackURL: string
   ): Promise<GeneralUserResponse> {
-    return this.runSafely(async () => {
+    return this._serviceExecutor.runSafely(async () => {
       const promises = [
         auth.api.updateUser({
           body: { name, favoriteNumber },
-          headers: this._headers,
+          headers: this.headers,
         }),
       ];
 
-      if (email !== this._actor.email) {
+      if (email !== this.actor.email) {
         promises.push(
           auth.api.changeEmail({
             body: { newEmail: email, callbackURL },
-            headers: this._headers,
+            headers: this.headers,
           })
         );
       }
@@ -220,13 +213,13 @@ export class UserService {
     passkeyId: string,
     sudoToken?: string
   ): Promise<GeneralUserResponse> {
-    return this.runWithSudo(
+    return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to perform this action',
       async () => {
         await auth.api.deletePasskey({
           body: { id: passkeyId },
-          headers: this._headers,
+          headers: this.headers,
         });
         return undefined;
       }
@@ -241,13 +234,13 @@ export class UserService {
     },
     sudoToken?: string
   ): Promise<GeneralUserResponse> {
-    return this.runWithSudo(
+    return this._serviceExecutor.runWithSudo(
       sudoToken,
       'Please re-authenticate to change your password.',
       async () => {
         await auth.api.changePassword({
           body: params,
-          headers: this._headers,
+          headers: this.headers,
         });
         return undefined;
       }
@@ -258,13 +251,13 @@ export class UserService {
     password: string,
     sudoToken?: string
   ): Promise<GeneralUserResponse> {
-    return this.runWithSudo(
+    return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to disable 2FA authentication.',
       async () => {
         await auth.api.disableTwoFactor({
           body: { password },
-          headers: this._headers,
+          headers: this.headers,
         });
         return undefined;
       }
@@ -272,13 +265,13 @@ export class UserService {
   }
 
   enable2FA(password: string, sudoToken?: string): Promise<Enable2FAResponse> {
-    return this.runWithSudo(
+    return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to enable 2FA authentication.',
       () =>
         auth.api.enableTwoFactor({
           body: { password },
-          headers: this._headers,
+          headers: this.headers,
         })
     );
   }
@@ -292,15 +285,15 @@ export class UserService {
     password: string;
     trustDevice?: boolean;
   }): Promise<GenerateBackUpCodesResponse> {
-    return this.runSafely(async () => {
+    return this._serviceExecutor.runSafely(async () => {
       await auth.api.verifyTOTP({
         body: { code: totpCode, trustDevice },
-        headers: this._headers,
+        headers: this.headers,
       });
 
       const data = await auth.api.generateBackupCodes({
         body: { password },
-        headers: this._headers,
+        headers: this.headers,
       });
 
       return { backupCodes: data.backupCodes };
@@ -314,7 +307,7 @@ export class UserService {
     userId: string;
     roles: UserRole[];
   }): Promise<GeneralUserResponse> {
-    const ability = defineAbilityFor(this._actor);
+    const ability = defineAbilityFor(this.actor);
     for (const role of roles) {
       if (ability.cannot('assign', { name: role, kind: 'Role' }))
         return {
@@ -325,7 +318,7 @@ export class UserService {
         };
     }
 
-    return this.executeProtectedAction({
+    return this._serviceExecutor.executeProtectedAction({
       targetUserId: userId,
       requiredRbac: { user: ['set-role'] },
       abacAction: 'set-role',
@@ -333,116 +326,12 @@ export class UserService {
       action: () =>
         auth.api.setRole({
           body: { userId, role: roles },
-          headers: this._headers,
+          headers: this.headers,
         }),
     });
   }
 
-  private async runSafely<TSuccess>(
-    operation: () => Promise<TSuccess>
-  ): Promise<ServiceResponse<TSuccess, { message: string }>> {
-    try {
-      const data = await operation();
-      return { type: 'success', payload: data };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: { message: this.getErrorMessage(error) },
-      };
-    }
-  }
-
-  private async runSafelyWithExtraErrorReturn<TSuccess, TError>(
-    operation: () => Promise<TSuccess>,
-    extraErrorDetails: TError
-  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
-    try {
-      const data = await operation();
-      return { type: 'success', payload: data };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message: this.getErrorMessage(error),
-          more: extraErrorDetails,
-        },
-      };
-    }
-  }
-
-  private async runWithSudo<T>(
-    token: string | undefined,
-    errorMessage: string,
-    operation: () => Promise<T>
-  ): Promise<ServiceResponse<T, { message: string }>> {
-    const isValid = token
-      ? await verifySudoToken(token, this._actor.id)
-      : false;
-
-    return isValid
-      ? this.runSafely(operation)
-      : { type: 'error', payload: { message: errorMessage } };
-  }
-
-  private async runWithSudoWithExtraErrorReturn<TSuccess, TError>(
-    token: string | undefined,
-    errorMessage: string,
-    operation: () => Promise<TSuccess>,
-    extraErrorDetails: TError
-  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
-    const isValid = token
-      ? await verifySudoToken(token, this._actor.id)
-      : false;
-
-    return isValid
-      ? this.runSafelyWithExtraErrorReturn(operation, extraErrorDetails)
-      : {
-          type: 'error',
-          payload: { message: errorMessage, more: extraErrorDetails },
-        };
-  }
-
-  private async executeProtectedAction(params: {
-    targetUserId: string;
-    requiredRbac: Parameters<typeof hasPermission>[1];
-    abacAction: UserActionTypes | CRUD;
-    permissionError: string;
-    action: () => Promise<unknown>;
-  }): Promise<ServiceResponse<undefined, { message: string }>> {
-    const { targetUserId, requiredRbac, abacAction, permissionError, action } =
-      params;
-
-    const hasRbac = await hasPermission(this._actor.id, requiredRbac);
-    if (!hasRbac)
-      return { type: 'error', payload: { message: permissionError } };
-
-    const targetUser = await this._repo.findUnique({
-      where: { id: targetUserId },
-    });
-    if (!targetUser)
-      return { type: 'error', payload: { message: 'User not found.' } };
-
-    const ability = defineAbilityFor(this._actor);
-    if (ability.cannot(abacAction, { ...targetUser, kind: 'User' }))
-      return {
-        type: 'error',
-        payload: {
-          message: `You do not have permission to ${abacAction.replace(
-            '-',
-            ' '
-          )} this user.`,
-        },
-      };
-
-    return this.runSafely(async () => {
-      await action();
-      return undefined;
-    });
-  }
-
-  private getErrorMessage(error: unknown): string {
-    return error instanceof APIError || error instanceof Error
-      ? error.message
-      : 'Unknown error';
+  private get repo() {
+    return this._serviceExecutor.repo;
   }
 }
