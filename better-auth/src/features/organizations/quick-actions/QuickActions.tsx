@@ -13,9 +13,8 @@ import {
   ItemTitle,
   Separator,
 } from '@/shared/components/ui';
-
 import { FaArrowRight, FaPlus, FaUsers } from 'react-icons/fa';
-import { CreateOrgModal } from './CreateOrgModal';
+import { CreateOrgModal } from '../create-org';
 
 export function QuickActions() {
   return (

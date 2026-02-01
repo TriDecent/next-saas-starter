@@ -1,3 +1,4 @@
+import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
 import {
   Badge,
   Button,
@@ -25,8 +26,6 @@ import {
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
-
-import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
 import {
   FaBuilding,
   FaCog,
@@ -34,7 +33,7 @@ import {
   FaPlus,
   FaUserFriends,
 } from 'react-icons/fa';
-import { CreateOrgModal } from '../quick-actions';
+import { CreateOrgModal } from '../create-org';
 
 type OrganizationRow = OrganizationWithRole;
 
