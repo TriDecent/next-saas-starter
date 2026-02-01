@@ -41,17 +41,25 @@ export function BaseFormLayout<T extends FieldValues>({
         <FieldGroup className='mx-auto max-w-xl px-4 pb-8'>
           {children}
 
-          <Button
-            disabled={isPending}
-            type='submit'
-            className='mx-auto w-full min-w-32 sm:w-fit'
-          >
-            <GiConfirmed className='mr-2' /> {submitLabel}
-          </Button>
+          <div className='mt-2 flex flex-col gap-2 sm:ml-auto sm:flex-row'>
+            <Button
+              disabled={isPending}
+              type='submit'
+              className='order-1 w-full min-w-32 sm:order-2 sm:w-fit'
+            >
+              <GiConfirmed className='mr-2' /> {submitLabel}
+            </Button>
 
-          <Button variant={'ghost'} disabled={isPending}>
-            Cancel
-          </Button>
+            <Button
+              type='reset'
+              variant={'ghost'}
+              disabled={isPending}
+              onClick={() => methods.reset()}
+              className='order-2 w-full sm:order-1 sm:w-fit'
+            >
+              Cancel
+            </Button>
+          </div>
 
           {error ? (
             <p className='text-destructive mt-2 text-center text-sm'>{error}</p>

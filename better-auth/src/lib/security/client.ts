@@ -18,7 +18,7 @@ const ARCJET_KEY = process.env.ARCJET_KEY!;
 
 // Authenticated users - track by userId only
 const ajAuthenticated = arcjet({
-  key: ARCJET_KEY!,
+  key: ARCJET_KEY,
   characteristics: ['userId', 'action'],
   rules: [shield({ mode: arcjetMode })],
 });
@@ -26,7 +26,7 @@ const ajAuthenticated = arcjet({
 // Anonymous users - track by IP only
 const ajAnonymous = arcjet({
   key: ARCJET_KEY,
-  characteristics: ['ip.src', 'action'],
+  characteristics: ['src.ip', 'action'],
   rules: [shield({ mode: arcjetMode })],
 });
 
