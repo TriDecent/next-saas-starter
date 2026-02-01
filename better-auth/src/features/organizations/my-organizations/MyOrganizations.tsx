@@ -1,4 +1,3 @@
-import type { Organization } from '@/generated/prisma/client';
 import {
   Badge,
   Button,
@@ -27,6 +26,7 @@ import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
 import {
   FaBuilding,
   FaCog,
@@ -34,11 +34,9 @@ import {
   FaPlus,
   FaUserFriends,
 } from 'react-icons/fa';
+import { CreateOrgModal } from '../quick-actions';
 
-type OrganizationRow = Organization & {
-  membersCount?: number;
-  roleLabel?: string;
-};
+type OrganizationRow = OrganizationWithRole;
 
 export function MyOrganizations({
   organizations,
@@ -58,18 +56,18 @@ export function MyOrganizations({
         </CardDescription>
 
         <CardAction>
-          <Button asChild>
-            <Link href='/organizations/new' className='gap-2'>
+          <CreateOrgModal>
+            <Button>
               <FaPlus className='size-4' />
               Create
-            </Link>
-          </Button>
+            </Button>
+          </CreateOrgModal>
         </CardAction>
       </CardHeader>
 
       <Separator />
 
-      <CardContent className='pt-6'>
+      <CardContent>
         {organizations.length === 0 ? (
           <EmptyOrganization />
         ) : (
@@ -125,10 +123,14 @@ function OrganizationDisplay({
       variant='outline'
       className='group hover:bg-muted/40 shadow transition-colors duration-300'
     >
-      <ItemMedia variant='image' className='overflow-hidden rounded-lg shadow'>
+      <ItemMedia
+        variant='image'
+        className='relative overflow-hidden rounded-lg shadow'
+      >
         {organization.logo ? (
           <Image
             fill
+            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
             src={organization.logo}
             alt={organization.name}
             className='rounded-lg object-cover'
@@ -156,13 +158,13 @@ function OrganizationDisplay({
 
           <span className='inline-flex items-center gap-1 whitespace-nowrap'>
             <FaUserFriends className='size-3.5' />
-            {organization.membersCount}
+            {organization.memberCounts}
           </span>
 
           <span className='hidden sm:inline'>•</span>
 
           <Badge variant={'outline'} className='text-muted-foreground'>
-            {organization.roleLabel}
+            {organization.currentUserRole}
           </Badge>
         </ItemDescription>
       </ItemContent>
