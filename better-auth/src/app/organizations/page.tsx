@@ -4,7 +4,9 @@ import { QuickActions } from '@/features/organizations/quick-actions';
 import { SectionHeader } from '@/shared/components';
 import { FaBuilding } from 'react-icons/fa';
 
-export default async function OrganizationsPage() {
+export const metadata: Metadata = ROUTES.organization.metadata;
+
+export default function OrganizationsPage() {
   return (
     <section className='space-y-6'>
       <SectionHeader

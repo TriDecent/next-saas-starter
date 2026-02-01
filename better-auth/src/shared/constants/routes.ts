@@ -76,6 +76,29 @@ export const ROUTES = {
       },
     },
   }),
+  organization: defineRoute({
+    href: '/organization',
+    metadata: {
+      title: 'Organization',
+      description:
+        'Manage organization settings, members, roles, invitations, and security controls.',
+      openGraph: {
+        title: `Organization | ${APP_NAME}`,
+        description:
+          'Manage organization settings, members, roles, invitations, and security controls.',
+        url: `${BASE_URL}/organization`,
+        siteName: APP_NAME,
+        type: 'website',
+        locale: 'en_US',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `Organization | ${APP_NAME}`,
+        description:
+          'Manage organization settings, members, roles, invitations, and security controls.',
+      },
+    },
+  }),
   auth: defineRoute({
     href: '/auth',
     metadata: {
