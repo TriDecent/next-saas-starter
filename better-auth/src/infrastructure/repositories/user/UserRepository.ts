@@ -1,6 +1,6 @@
 import type { Prisma, User } from '@/generated/prisma/client';
 import { prisma } from '@/lib';
-import { BaseRepository, type IBaseRepository } from './BaseRepository';
+import { BaseRepository, type IBaseRepository } from '../BaseRepository';
 
 export interface IUserRepository extends IBaseRepository<typeof prisma.user> {
   getUsers(
@@ -11,7 +11,7 @@ export interface IUserRepository extends IBaseRepository<typeof prisma.user> {
   ): Promise<{ data: User[]; total: number }>;
 }
 
-class UserRepository
+export class UserRepository
   extends BaseRepository<typeof prisma.user>
   implements IUserRepository
 {
@@ -43,5 +43,3 @@ class UserRepository
     return { data, total };
   }
 }
-
-export const userRepo = new UserRepository();
