@@ -13,6 +13,8 @@ import {
   ItemTitle,
   Separator,
 } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
+import Link from 'next/link';
 import { FaArrowRight, FaPlus, FaUsers } from 'react-icons/fa';
 import { RenderModal } from '../_shared';
 import { CreateNewOrganization } from '../create-org';
@@ -67,17 +69,25 @@ function CreateAnOrgItem() {
 
 function InvitationsItem() {
   return (
-    <Item variant='muted' className='hover:bg-muted cursor-pointer shadow'>
-      <ItemMedia variant='icon' className='rounded-md'>
-        <FaUsers />
-      </ItemMedia>
-      <ItemContent>
-        <ItemTitle>Invitations</ItemTitle>
-        <ItemDescription>Manage incoming and pending invites.</ItemDescription>
-      </ItemContent>
-      <ItemActions>
-        <FaArrowRight className='text-muted-foreground size-4' />
-      </ItemActions>
+    <Item
+      asChild
+      variant='muted'
+      className='hover:bg-muted cursor-pointer shadow'
+    >
+      <Link href={ROUTES.invitations.href}>
+        <ItemMedia variant='icon' className='rounded-md'>
+          <FaUsers />
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>Invitations</ItemTitle>
+          <ItemDescription>
+            Manage incoming and pending invites.
+          </ItemDescription>
+        </ItemContent>
+        <ItemActions>
+          <FaArrowRight className='text-muted-foreground size-4' />
+        </ItemActions>
+      </Link>
     </Item>
   );
 }
