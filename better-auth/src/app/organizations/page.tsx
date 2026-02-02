@@ -39,8 +39,7 @@ async function MyOrgsWrapper() {
   const service = await getOrgService(ROUTES.organization.href);
   const response = await service.listMyOrgs();
 
-  if (response.type === 'error')
-    throw new Error('Failed to load organizations');
+  if (response.type === 'error') throw new Error(response.payload.message);
 
   return <MyOrganizations organizations={response.payload} />;
 }

@@ -1,5 +1,6 @@
 import type { IOrganizationRepository } from '@/infrastructure/repositories/organization';
 import { auth } from '@/lib/auth';
+import { defineAbilityFor } from '@/lib/casl';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type { CreateOrgInput } from './org-dtos';
 
@@ -10,6 +11,10 @@ export class OrganizationService {
   ) {}
 
   createOrg(params: CreateOrgInput) {
+    const ability = defineAbilityFor(this.actor);
+    if (ability.cannot('create', 'Organization'))
+      return { type: 'error', payload: { message: 'Unauthorized' } } as const;
+
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.createOrganization({
         body: params,

@@ -4,16 +4,21 @@ import {
   type MongoAbility,
 } from '@casl/ability';
 import { ROLES, type AuthSession } from '../auth';
+import type {
+  OrganizationActionTypes,
+  OrganizationSubject,
+} from './organization.subject-type';
 import type { RoleActionsType, RoleSubject } from './role-subject-type';
 import type { UserActionTypes, UserSubject } from './user-subject-types';
 
-type Subjects = 'all' | UserSubject | RoleSubject;
+type Subjects = 'all' | UserSubject | RoleSubject | OrganizationSubject;
 export type CRUD = 'create' | 'read' | 'update' | 'delete';
 type Actions = 'manage' | CRUD;
 export type AppAbility = MongoAbility<
   | [Actions, Subjects]
   | [UserActionTypes, UserSubject]
   | [RoleActionsType, RoleSubject]
+  | [OrganizationActionTypes, OrganizationSubject]
 >;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
@@ -70,6 +75,8 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     cannot('ban-user', 'User', {
       role: { $regex: `^(${ROLES.admin}|${ROLES.moderator})$` },
     });
+
+    can('create', 'Organization');
   }
 
   function defineAbilityForUser() {}

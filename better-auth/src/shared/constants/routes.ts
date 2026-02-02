@@ -77,7 +77,7 @@ export const ROUTES = {
     },
   }),
   organization: defineRoute({
-    href: '/organization',
+    href: '/organizations',
     metadata: {
       title: 'Organization',
       description:
