@@ -1,8 +1,16 @@
-import type { IOrganizationRepository } from '@/infrastructure/repositories/organization';
+import type {
+  IOrganizationRepository,
+  OrganizationWithRole,
+} from '@/infrastructure/repositories/organization';
 import { auth } from '@/lib/auth';
 import { defineAbilityFor } from '@/lib/casl';
 import type { IServiceExecutor } from '../ServiceExecutor';
-import type { CreateOrgInput } from './org-dtos';
+import type { ServiceResponse } from '../types';
+import type {
+  CreateInvitationInput,
+  CreateOrgInput,
+  GeneralOrgResponse,
+} from './org-dtos';
 
 export class OrganizationService {
   constructor(
@@ -10,10 +18,15 @@ export class OrganizationService {
     private readonly _repo: IOrganizationRepository
   ) {}
 
-  createOrg(params: CreateOrgInput) {
+  createOrg(params: CreateOrgInput): Promise<GeneralOrgResponse> {
     const ability = defineAbilityFor(this.actor);
     if (ability.cannot('create', 'Organization'))
-      return { type: 'error', payload: { message: 'Unauthorized' } } as const;
+      return Promise.resolve({
+        type: 'error',
+        payload: {
+          message: 'You are not authorized to create an organization',
+        },
+      });
 
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.createOrganization({
@@ -25,10 +38,27 @@ export class OrganizationService {
     });
   }
 
-  listMyOrgs() {
+  listMyOrgs(): Promise<
+    ServiceResponse<OrganizationWithRole[], { message: string }>
+  > {
     return this._serviceExecutor.runSafely(async () =>
       this._repo.listOrganizationsForUser(this.actor.id)
     );
+  }
+
+  createInvitation(params: CreateInvitationInput): Promise<GeneralOrgResponse> {
+    const ability = defineAbilityFor(this.actor);
+    if (ability.cannot('create', 'Invitation'))
+      return Promise.resolve({
+        type: 'error',
+        payload: { message: 'You are not authorized to send an invitation' },
+      });
+
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.createInvitation({ body: params, headers: this.headers });
+
+      return undefined;
+    });
   }
 
   get actor() {
