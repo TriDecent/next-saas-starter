@@ -70,10 +70,6 @@ export const ROUTES = {
           'Access administrative controls and manage system settings.',
         url: `${BASE_URL}/admin`,
       },
-      robots: {
-        index: false,
-        follow: false,
-      },
     },
   }),
   organization: defineRoute({
@@ -96,6 +92,20 @@ export const ROUTES = {
         title: `Organization | ${APP_NAME}`,
         description:
           'Manage organization settings, members, roles, invitations, and security controls.',
+      },
+    },
+  }),
+  invitations: defineRoute({
+    href: '/invitations',
+    metadata: {
+      title: 'Organization Invitations',
+      description:
+        'Manage invitations to join your organization, including sending, accepting, and tracking invitation statuses.',
+      openGraph: {
+        title: `Organization Invitations | ${APP_NAME}`,
+        description:
+          'Manage invitations to join your organization, including sending, accepting, and tracking invitation statuses.',
+        url: `${BASE_URL}/organizations/invitations`,
       },
     },
   }),

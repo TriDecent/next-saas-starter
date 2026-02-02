@@ -3,6 +3,10 @@
 import { Resend, type CreateEmailOptions } from 'resend';
 import { DeleteAccountTemplate } from './template/DeleteAccountTemplate';
 import { EmailVerificationTemplate } from './template/EmailVerificationTemplate';
+import {
+  OrganizationInvitationTemplate,
+  type OrganizationInvitationTemplateProps,
+} from './template/OrganizationInvitationTemplate';
 import { PasswordResetTemplate } from './template/PasswordResetTemplate';
 import { WelcomeTemplate } from './WelcomeTemplate';
 
@@ -58,6 +62,16 @@ export async function sendDeleteAccountVerification(
     [payload.to],
     'Delete Account Verification',
     DeleteAccountTemplate(payload)
+  );
+}
+
+export async function sendOrganizationInvitationEmail(
+  payload: OrganizationInvitationTemplateProps
+) {
+  return sendEmail(
+    [payload.recipientEmail],
+    'Invitation to join ' + payload.organizationName,
+    OrganizationInvitationTemplate(payload)
   );
 }
 

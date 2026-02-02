@@ -26,7 +26,7 @@ const ajAuthenticated = arcjet({
 // Anonymous users - track by IP only
 const ajAnonymous = arcjet({
   key: ARCJET_KEY,
-  characteristics: ['src.ip', 'action'],
+  characteristics: ['ip.src', 'action'],
   rules: [shield({ mode: arcjetMode })],
 });
 
