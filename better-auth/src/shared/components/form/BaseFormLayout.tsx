@@ -17,7 +17,7 @@ type BaseFormLayoutProps<T extends FieldValues> = {
   error?: string;
   animationRef?: RefObject<HTMLFormElement>;
   isPending: boolean;
-  submitLabel?: string;
+  submit?: ReactNode;
   className?: string;
 };
 
@@ -28,7 +28,7 @@ export function BaseFormLayout<T extends FieldValues>({
   animationRef,
   isPending,
   children,
-  submitLabel = 'Confirm',
+  submit: submit = 'Confirm',
   className,
 }: BaseFormLayoutProps<T>) {
   return (
@@ -47,7 +47,11 @@ export function BaseFormLayout<T extends FieldValues>({
               type='submit'
               className='order-1 w-full min-w-32 sm:order-2 sm:w-fit'
             >
-              <GiConfirmed className='mr-2' /> {submitLabel}
+              {submit ?? (
+                <>
+                  <GiConfirmed className='mr-2' /> Confirm
+                </>
+              )}
             </Button>
 
             <Button
