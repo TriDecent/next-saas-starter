@@ -72,7 +72,7 @@ export function Modal({ children, onClose, ref }: ModalProps) {
                 setIsOpen(false);
                 onClose?.();
               }}
-              className='mx-auto my-auto w-4/5 max-w-2xl rounded-lg bg-transparent p-4 select-none backdrop:backdrop-blur-sm'
+              className='mx-auto my-auto w-4/5 max-w-2xl rounded-lg bg-transparent p-4 select-none backdrop:bg-black/60'
             >
               {children}
             </motion.dialog>

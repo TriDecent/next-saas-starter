@@ -38,7 +38,7 @@ export function BaseFormLayout<T extends FieldValues>({
         onSubmit={methods.handleSubmit(onSubmit)}
         className={className}
       >
-        <FieldGroup className='mx-auto max-w-xl px-4 pb-8'>
+        <FieldGroup>
           {children}
 
           <div className='mt-2 flex flex-col gap-2 sm:ml-auto sm:flex-row'>

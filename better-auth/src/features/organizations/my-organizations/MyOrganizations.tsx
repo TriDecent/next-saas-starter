@@ -47,7 +47,7 @@ export function MyOrganizations({
       <CardHeader>
         <CardTitle className='flex items-end gap-x-2'>
           <span>Your organizations</span>
-          <Badge variant={'outline'}>5</Badge>
+          <Badge variant={'outline'}>{organizations.length}</Badge>
         </CardTitle>
 
         <CardDescription>
@@ -86,9 +86,9 @@ export function MyOrganizations({
 
 function EmptyOrganization() {
   return (
-    <Empty className='border'>
+    <Empty className='border shadow'>
       <EmptyHeader>
-        <EmptyMedia variant='icon'>
+        <EmptyMedia variant='icon' className='shadow'>
           <FaBuilding className='text-primary size-5' />
         </EmptyMedia>
         <EmptyTitle>No organizations yet</EmptyTitle>
@@ -97,12 +97,12 @@ function EmptyOrganization() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button asChild>
-          <Link href='/organizations/new' className='gap-2'>
+        <CreateOrgModal>
+          <Button>
             <FaPlus className='size-4' />
             Create organization
-          </Link>
-        </Button>
+          </Button>
+        </CreateOrgModal>
       </EmptyContent>
     </Empty>
   );
