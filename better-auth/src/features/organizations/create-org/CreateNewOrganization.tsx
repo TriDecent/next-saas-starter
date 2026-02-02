@@ -40,7 +40,7 @@ export function CreateNewOrganization() {
 }
 
 function CreateNewOrgForm() {
-  const { isPending, animationScope, dispatch, methods } = useActionForm<
+  const { isPending, animationScope, dispatch, methods, state } = useActionForm<
     Response,
     CreateOrgInput
   >({
@@ -88,6 +88,7 @@ function CreateNewOrgForm() {
       onSubmit={data => {
         startTransition(() => dispatch(data));
       }}
+      error={state.type === 'error' ? state.payload.message : undefined}
     >
       <Toaster id='create-new-org' position='top-right' richColors />
       <FormField
