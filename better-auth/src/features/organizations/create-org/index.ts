@@ -1,1 +1,2 @@
-export { CreateOrgModal } from './CreateOrgModal';
+export { CreateNewOrganization } from './CreateNewOrganization';
+

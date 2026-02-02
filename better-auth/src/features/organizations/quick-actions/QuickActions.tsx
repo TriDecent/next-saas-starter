@@ -14,7 +14,8 @@ import {
   Separator,
 } from '@/shared/components/ui';
 import { FaArrowRight, FaPlus, FaUsers } from 'react-icons/fa';
-import { CreateOrgModal } from '../create-org';
+import { RenderModal } from '../_shared';
+import { CreateNewOrganization } from '../create-org';
 
 export function QuickActions() {
   return (
@@ -41,22 +42,26 @@ export function QuickActions() {
 
 function CreateAnOrgItem() {
   return (
-    <CreateOrgModal>
-      <Item variant='muted' className='hover:bg-muted cursor-pointer shadow'>
-        <ItemMedia variant='icon' className='rounded-md'>
-          <FaPlus />
-        </ItemMedia>
-        <ItemContent className='text-left'>
-          <ItemTitle>Create an organization</ItemTitle>
-          <ItemDescription>
-            Start a new workspace for your team.
-          </ItemDescription>
-        </ItemContent>
-        <ItemActions>
-          <FaArrowRight className='text-muted-foreground size-4' />
-        </ItemActions>
-      </Item>
-    </CreateOrgModal>
+    <RenderModal
+      renderTrigger={
+        <Item variant='muted' className='hover:bg-muted cursor-pointer shadow'>
+          <ItemMedia variant='icon' className='rounded-md'>
+            <FaPlus />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>Create an organization</ItemTitle>
+            <ItemDescription>
+              Start a new workspace for your team.
+            </ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <FaArrowRight className='text-muted-foreground size-4' />
+          </ItemActions>
+        </Item>
+      }
+    >
+      <CreateNewOrganization />
+    </RenderModal>
   );
 }
 

@@ -1,0 +1,1 @@
+export { RenderModal } from './RenderModal';

@@ -33,7 +33,8 @@ import {
   FaPlus,
   FaUserFriends,
 } from 'react-icons/fa';
-import { CreateOrgModal } from '../create-org';
+import { RenderModal } from '../_shared';
+import { CreateNewOrganization } from '../create-org';
 
 type OrganizationRow = OrganizationWithRole;
 
@@ -55,12 +56,16 @@ export function MyOrganizations({
         </CardDescription>
 
         <CardAction>
-          <CreateOrgModal>
-            <Button>
-              <FaPlus className='size-4' />
-              Create
-            </Button>
-          </CreateOrgModal>
+          <RenderModal
+            renderTrigger={
+              <Button>
+                <FaPlus className='size-4' />
+                Create
+              </Button>
+            }
+          >
+            <CreateNewOrganization />
+          </RenderModal>
         </CardAction>
       </CardHeader>
 
@@ -97,12 +102,16 @@ function EmptyOrganization() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <CreateOrgModal>
-          <Button>
-            <FaPlus className='size-4' />
-            Create organization
-          </Button>
-        </CreateOrgModal>
+        <RenderModal
+          renderTrigger={
+            <Button>
+              <FaPlus className='size-4' />
+              Create organization
+            </Button>
+          }
+        >
+          <CreateNewOrganization />
+        </RenderModal>
       </EmptyContent>
     </Empty>
   );
