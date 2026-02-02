@@ -5,13 +5,22 @@ import {
 } from '@casl/ability';
 import { ROLES, type AuthSession } from '../auth';
 import type {
+  InvitationActionTypes,
+  InvitationSubject,
+} from './invitation-subject-type';
+import type {
   OrganizationActionTypes,
   OrganizationSubject,
-} from './organization.subject-type';
+} from './organization-subject-type';
 import type { RoleActionsType, RoleSubject } from './role-subject-type';
 import type { UserActionTypes, UserSubject } from './user-subject-types';
 
-type Subjects = 'all' | UserSubject | RoleSubject | OrganizationSubject;
+type Subjects =
+  | 'all'
+  | UserSubject
+  | RoleSubject
+  | OrganizationSubject
+  | InvitationSubject;
 export type CRUD = 'create' | 'read' | 'update' | 'delete';
 type Actions = 'manage' | CRUD;
 export type AppAbility = MongoAbility<
@@ -19,6 +28,7 @@ export type AppAbility = MongoAbility<
   | [UserActionTypes, UserSubject]
   | [RoleActionsType, RoleSubject]
   | [OrganizationActionTypes, OrganizationSubject]
+  | [InvitationActionTypes, InvitationSubject]
 >;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
@@ -77,6 +87,7 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     });
 
     can('create', 'Organization');
+    can('create', 'Invitation');
   }
 
   function defineAbilityForUser() {}
