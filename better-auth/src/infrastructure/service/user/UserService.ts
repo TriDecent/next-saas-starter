@@ -159,8 +159,8 @@ export class UserService {
     totp?: string
   ): Promise<AuthenticatePriorResponse> {
     return this._serviceExecutor.runSafely(async () => {
-      await auth.api.signInEmail({
-        body: { email: this.actor.email, password },
+      await auth.api.verifyPassword({
+        body: { password },
         headers: this.headers,
       });
 
