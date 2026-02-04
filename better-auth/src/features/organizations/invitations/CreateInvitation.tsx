@@ -14,7 +14,6 @@ import {
   Separator,
 } from '@/shared/components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { startTransition } from 'react';
 import { FaArrowRight, FaUserPlus } from 'react-icons/fa';
 import { toast } from 'sonner';
 import {
@@ -25,6 +24,7 @@ import { createInvitationSchema } from './schema';
 import { SelectOrganization } from './SelectOrganization';
 import { SelectRecipient } from './SelectRecipient';
 import { SelectRole } from './SelectRole';
+import { startTransition } from 'react';
 
 export function CreateInvitation({
   organizations,
@@ -67,13 +67,13 @@ export function CreateInvitation({
 function CreateInvitationForm({ children }: { children: React.ReactNode }) {
   const { methods, animationScope, dispatch, isPending, state } = useActionForm<
     CreateInvitationResponse,
-    CreateInvitationInput
+    Omit<CreateInvitationInput, 'organizationId'> & { organizationId: string }
   >({
     action: createInvitationAction,
     initialState: { type: 'initial' },
     formConfiguration: {
       resolver: zodResolver(createInvitationSchema),
-      defaultValues: {},
+      defaultValues: { email: '', organizationId: '', role: 'member' },
     },
     onFormSuccess: () => {
       toast.success('Invitation sent!', {
@@ -100,6 +100,7 @@ function CreateInvitationForm({ children }: { children: React.ReactNode }) {
       isPending={isPending}
       animationRef={animationScope}
       onSubmit={data => {
+        console.log(data);
         startTransition(() => dispatch(data));
       }}
       submit={
