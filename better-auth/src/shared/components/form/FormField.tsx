@@ -92,14 +92,14 @@ export function FormField(props: FormFieldProps) {
 }
 
 function ControlledInputField({ ...props }: InputFieldProps) {
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
   const { labelText, ...rest } = props;
 
   return (
     <Controller
       name={props.name}
       control={control}
-      render={({ field, fieldState, formState }) => (
+      render={({ field, fieldState }) => (
         <FieldWrapper
           {...props}
           labelText={labelText}
@@ -118,7 +118,7 @@ function ControlledInputField({ ...props }: InputFieldProps) {
               {...rest}
               id={props.id}
               name={props.name}
-              disabled={props.disabled || formState.isSubmitting}
+              disabled={formState.isSubmitting}
               aria-invalid={fieldState.invalid}
             />
             {props.addons}
@@ -130,14 +130,14 @@ function ControlledInputField({ ...props }: InputFieldProps) {
 }
 
 function ControlledTextareaField({ ...props }: TextareaFieldProps) {
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
   const { labelText, ...rest } = props;
 
   return (
     <Controller
       name={props.name}
       control={control}
-      render={({ field, fieldState, formState }) => (
+      render={({ field, fieldState }) => (
         <FieldWrapper
           {...props}
           labelText={labelText}
@@ -168,14 +168,14 @@ function ControlledTextareaField({ ...props }: TextareaFieldProps) {
 }
 
 function ControlledSelectField({ ...props }: SelectFieldProps) {
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
   const { labelText, ...rest } = props;
 
   return (
     <Controller
       name={props.name}
       control={control}
-      render={({ field, fieldState, formState }) => (
+      render={({ field, fieldState }) => (
         <FieldWrapper
           {...props}
           id={props.id}
@@ -213,14 +213,14 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
 }
 
 function ControlledCheckboxField({ variant, ...props }: CheckboxFieldProps) {
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
   const { labelText, ...rest } = props;
 
   return (
     <Controller
       name={props.name}
       control={control}
-      render={({ field, fieldState, formState }) => (
+      render={({ field, fieldState }) => (
         <Field
           orientation={'horizontal'}
           data-invalid={fieldState.invalid}
@@ -278,15 +278,15 @@ function ControlledCheckboxField({ variant, ...props }: CheckboxFieldProps) {
 }
 
 function ControlledRadioField({ children, ...props }: RadioFieldProps) {
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
 
   return (
     <Controller
       control={control}
       name={props.name}
-      render={({ field, fieldState, formState }) => (
+      render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
-          <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
+          <RadioGroup onValueChange={field.onChange} value={field.value}>
             {children({
               isError: fieldState.invalid,
               isDisabled: props.disabled || formState.isSubmitting,
