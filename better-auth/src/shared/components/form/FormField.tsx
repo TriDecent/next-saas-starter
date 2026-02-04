@@ -14,15 +14,13 @@ import {
   FieldDescription,
   FieldError,
   FieldLabel,
+  FieldTitle,
   InputGroup,
   InputGroupInput,
   InputGroupTextarea,
-  Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
-  ItemTitle,
-  Label,
+  RadioGroup,
   Select,
   SelectContent,
   SelectTrigger,
@@ -36,7 +34,7 @@ interface BaseFieldProps {
   name: string;
   labelText: string;
   labelClassName?: string;
-  description?: string;
+  description?: React.ReactNode;
   className?: string;
   orientation?: FieldOrientation;
   addons?: React.ReactNode;
@@ -55,13 +53,24 @@ export type SelectFieldProps<TSelectProps = Record<string, unknown>> =
     };
 
 type CheckboxFieldProps = BaseFieldProps &
-  React.ComponentPropsWithoutRef<typeof Checkbox>;
+  React.ComponentPropsWithoutRef<typeof Checkbox> & {
+    variant: 'card' | 'inline';
+  };
+
+type RadioFieldProps = Omit<BaseFieldProps, 'labelText'> &
+  Omit<React.ComponentPropsWithoutRef<typeof RadioGroup>, 'children'> & {
+    children: (state: {
+      isError: boolean;
+      isDisabled: boolean;
+    }) => React.ReactNode;
+  };
 
 export type FormFieldProps<TSelectProps = Record<string, unknown>> =
   | ({ kind: 'input' } & InputFieldProps)
   | ({ kind: 'textarea' } & TextareaFieldProps)
   | ({ kind: 'select' } & SelectFieldProps<TSelectProps>)
-  | ({ kind: 'checkbox' } & CheckboxFieldProps);
+  | ({ kind: 'checkbox' } & CheckboxFieldProps)
+  | ({ kind: 'radio' } & RadioFieldProps);
 
 export function FormField(props: FormFieldProps) {
   const { kind, ...rest } = props;
@@ -75,6 +84,8 @@ export function FormField(props: FormFieldProps) {
       return <ControlledSelectField {...(rest as SelectFieldProps)} />;
     case 'checkbox':
       return <ControlledCheckboxField {...(rest as CheckboxFieldProps)} />;
+    case 'radio':
+      return <ControlledRadioField {...(rest as RadioFieldProps)} />;
     default:
       return null;
   }
@@ -89,7 +100,12 @@ function ControlledInputField({ ...props }: InputFieldProps) {
       name={props.name}
       control={control}
       render={({ field, fieldState, formState }) => (
-        <FieldWrapper {...props} labelText={labelText} error={fieldState.error}>
+        <FieldWrapper
+          {...props}
+          labelText={labelText}
+          error={fieldState.error}
+          disabled={props.disabled || formState.isSubmitting}
+        >
           <InputGroup
             className={cn(
               'read-only:cursor-not-allowed',
@@ -122,7 +138,12 @@ function ControlledTextareaField({ ...props }: TextareaFieldProps) {
       name={props.name}
       control={control}
       render={({ field, fieldState, formState }) => (
-        <FieldWrapper {...props} labelText={labelText} error={fieldState.error}>
+        <FieldWrapper
+          {...props}
+          labelText={labelText}
+          error={fieldState.error}
+          disabled={props.disabled || formState.isSubmitting}
+        >
           <InputGroup
             className={cn(
               'read-only:cursor-not-allowed',
@@ -161,6 +182,7 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
           name={props.name}
           error={fieldState.error}
           labelText={labelText}
+          disabled={props.disabled || formState.isSubmitting}
         >
           <Select
             {...field}
@@ -190,10 +212,7 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
   );
 }
 
-function ControlledCheckboxField({
-  orientation = 'responsive',
-  ...props
-}: CheckboxFieldProps) {
+function ControlledCheckboxField({ variant, ...props }: CheckboxFieldProps) {
   const { control } = useFormContext();
   const { labelText, ...rest } = props;
 
@@ -202,40 +221,79 @@ function ControlledCheckboxField({
       name={props.name}
       control={control}
       render={({ field, fieldState, formState }) => (
-        <Field orientation={orientation} data-invalid={fieldState.invalid}>
-          <FieldContent>
-            <Item asChild>
-              <Label
-                htmlFor={props.id}
-                className={cn(
-                  'bg-muted/50 cursor-pointer items-start rounded-md transition-colors',
-                  fieldState.invalid ? 'error border-destructive border' : '',
-                  props.disabled || formState.isSubmitting ? 'opacity-70' : '',
-                  props.className
-                )}
-              >
-                <ItemActions>
-                  <Checkbox
-                    {...rest}
-                    id={props.id}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    disabled={props.disabled || formState.isSubmitting}
-                    aria-invalid={fieldState.invalid}
-                  />
-                </ItemActions>
+        <Field
+          orientation={'horizontal'}
+          data-invalid={fieldState.invalid}
+          data-disabled={props.disabled || formState.isSubmitting}
+        >
+          {variant === 'card' ? (
+            <FieldLabel htmlFor={props.id} className='rounded px-4 py-2.5'>
+              <Checkbox
+                {...rest}
+                id={props.id}
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={props.disabled || formState.isSubmitting}
+                aria-invalid={fieldState.invalid}
+                className='self-start'
+              />
 
-                <ItemContent>
-                  <ItemTitle className='leading-none'>{labelText}</ItemTitle>
-                  <ItemDescription>{props.description}</ItemDescription>
+              <ItemContent>
+                <FieldTitle className='leading-none'>{labelText}</FieldTitle>
+                <ItemDescription>{props.description}</ItemDescription>
 
-                  {fieldState.error ? (
-                    <FieldError errors={[fieldState.error]} />
-                  ) : null}
-                </ItemContent>
-              </Label>
-            </Item>
-          </FieldContent>
+                {fieldState.error ? (
+                  <FieldError errors={[fieldState.error]} />
+                ) : null}
+              </ItemContent>
+            </FieldLabel>
+          ) : (
+            <>
+              <Checkbox
+                {...rest}
+                id={props.id}
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                disabled={props.disabled || formState.isSubmitting}
+                aria-invalid={fieldState.invalid}
+                className='self-start'
+              />
+
+              <ItemContent>
+                <FieldLabel htmlFor={props.id} className='leading-none'>
+                  {labelText}
+                </FieldLabel>
+                <ItemDescription>{props.description}</ItemDescription>
+
+                {fieldState.error ? (
+                  <FieldError errors={[fieldState.error]} />
+                ) : null}
+              </ItemContent>
+            </>
+          )}
+        </Field>
+      )}
+    />
+  );
+}
+
+function ControlledRadioField({ children, ...props }: RadioFieldProps) {
+  const { control } = useFormContext();
+
+  return (
+    <Controller
+      control={control}
+      name={props.name}
+      render={({ field, fieldState, formState }) => (
+        <Field data-invalid={fieldState.invalid}>
+          <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
+            {children({
+              isError: fieldState.invalid,
+              isDisabled: props.disabled || formState.isSubmitting,
+            })}
+          </RadioGroup>
+
+          {fieldState.error ? <FieldError errors={[fieldState.error]} /> : null}
         </Field>
       )}
     />
@@ -249,10 +307,19 @@ function FieldWrapper({
   description,
   error,
   orientation = 'responsive',
+  disabled,
   children,
-}: BaseFieldProps & { error?: FieldErrorType; children: React.ReactNode }) {
+}: BaseFieldProps & {
+  error?: FieldErrorType;
+  disabled: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <Field orientation={orientation} data-invalid={!!error}>
+    <Field
+      orientation={orientation}
+      data-invalid={!!error}
+      data-disabled={disabled}
+    >
       <FieldLabel htmlFor={id} className={cn('max-w-40', labelClassName)}>
         {labelText}
       </FieldLabel>
