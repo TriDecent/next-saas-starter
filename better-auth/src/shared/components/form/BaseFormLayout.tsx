@@ -9,6 +9,7 @@ import {
   type UseFormReturn,
 } from 'react-hook-form';
 import { GiConfirmed } from 'react-icons/gi';
+import { MiniLoader } from '../MiniLoading';
 
 type BaseFormLayoutProps<T extends FieldValues> = {
   methods: UseFormReturn<T>;
@@ -47,10 +48,14 @@ export function BaseFormLayout<T extends FieldValues>({
               type='submit'
               className='order-1 w-full min-w-32 sm:order-2 sm:w-fit'
             >
-              {submit ?? (
-                <>
-                  <GiConfirmed className='mr-2' /> Confirm
-                </>
+              {isPending ? (
+                <MiniLoader />
+              ) : (
+                (submit ?? (
+                  <>
+                    <GiConfirmed className='mr-2' /> Confirm
+                  </>
+                ))
               )}
             </Button>
 

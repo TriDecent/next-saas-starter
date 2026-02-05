@@ -1,8 +1,11 @@
 'use client';
 
 import { ROLES } from '@/lib/auth/constants';
+import { FormField } from '@/shared/components/form';
 import {
-  Button,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
   FieldLegend,
   FieldSet,
   Item,
@@ -13,48 +16,74 @@ import {
   ItemHeader,
   ItemMedia,
   ItemTitle,
+  RadioGroupItem,
 } from '@/shared/components/ui';
 import { HiCog, HiShieldCheck, HiStar, HiUserGroup } from 'react-icons/hi';
 
 export function SelectRole() {
   return (
-    <FieldSet className='space-y-3'>
-      <div className='space-y-1'>
-        <FieldLegend className='text-sm font-semibold'>3) Role</FieldLegend>
-        <div className='text-muted-foreground text-sm'>
-          Choose what access the invited member will have.
-        </div>
-      </div>
+    <FieldSet>
+      <FieldLegend className='text-sm font-semibold'>3) Role</FieldLegend>
+      <FieldDescription className='text-muted-foreground text-sm'>
+        Choose what access the invited member will have.
+      </FieldDescription>
 
-      <ItemGroup className='gap-2'>
-        {roles.map(role => (
-          <Item key={role.value} variant='outline' className='p-3'>
-            <ItemHeader>
-              <div className='flex items-center gap-2'>
-                <ItemMedia variant='icon' className='rounded-lg'>
-                  {role.icon}
-                </ItemMedia>
-
-                <ItemContent className='min-w-0'>
-                  <ItemTitle>{role.label}</ItemTitle>
-                  {role.description ? (
-                    <ItemDescription>{role.description}</ItemDescription>
-                  ) : null}
-                </ItemContent>
-              </div>
-
-              <ItemActions>
-                <Button variant='outline' size='sm'>
-                  Choose
-                </Button>
-              </ItemActions>
-            </ItemHeader>
-          </Item>
-        ))}
+      <ItemGroup className='gap-3'>
+        <FormField kind='radio' name='role' id='role'>
+          {({ isDisabled, isError }) =>
+            roles.map(role => (
+              <FieldLabel key={role.value} className='w-full rounded-md'>
+                <FieldContent>
+                  <RoleDisplay
+                    role={role}
+                    renderActions={
+                      <RadioGroupItem
+                        value={role.value}
+                        disabled={isDisabled}
+                        aria-invalid={isError}
+                      />
+                    }
+                  />
+                </FieldContent>
+              </FieldLabel>
+            ))
+          }
+        </FormField>
       </ItemGroup>
     </FieldSet>
   );
 }
+
+function RoleDisplay({
+  role,
+  renderActions,
+}: {
+  role: Role;
+  renderActions: React.ReactNode;
+}) {
+  return (
+    <Item key={role.value} variant='outline' className='p-3'>
+      <ItemHeader>
+        <div className='flex items-center gap-2'>
+          <ItemMedia variant='icon' className='rounded-lg'>
+            {role.icon}
+          </ItemMedia>
+
+          <ItemContent className='min-w-0'>
+            <ItemTitle>{role.label}</ItemTitle>
+            {role.description ? (
+              <ItemDescription>{role.description}</ItemDescription>
+            ) : null}
+          </ItemContent>
+        </div>
+
+        <ItemActions>{renderActions}</ItemActions>
+      </ItemHeader>
+    </Item>
+  );
+}
+
+type Role = (typeof roles)[number];
 
 const roles = [
   {

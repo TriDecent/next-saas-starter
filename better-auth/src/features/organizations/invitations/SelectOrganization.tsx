@@ -31,31 +31,29 @@ export function SelectOrganization({
         <EmptyOrganization />
       ) : (
         <FormField kind='radio' id='organizationId' name='organizationId'>
-          {({ isError, isDisabled }) => (
-            <>
-              {organizations.map(org => (
-                <FieldLabel
-                  key={org.id}
-                  htmlFor={org.id}
-                  className='w-full cursor-pointer rounded-md'
-                >
-                  <FieldContent>
-                    <OrganizationItem
-                      organization={org}
-                      renderActions={
-                        <RadioGroupItem
-                          value={org.id}
-                          id={org.id}
-                          aria-invalid={isError}
-                          disabled={isDisabled}
-                        />
-                      }
-                    />
-                  </FieldContent>
-                </FieldLabel>
-              ))}
-            </>
-          )}
+          {({ isError, isDisabled }) =>
+            organizations.map(org => (
+              <FieldLabel
+                key={org.id}
+                htmlFor={org.id}
+                className='w-full rounded-md'
+              >
+                <FieldContent>
+                  <OrganizationItem
+                    organization={org}
+                    renderActions={
+                      <RadioGroupItem
+                        value={org.id}
+                        id={org.id}
+                        aria-invalid={isError}
+                        disabled={isDisabled}
+                      />
+                    }
+                  />
+                </FieldContent>
+              </FieldLabel>
+            ))
+          }
         </FormField>
       )}
     </FieldSet>
