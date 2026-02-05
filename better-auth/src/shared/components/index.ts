@@ -1,7 +1,6 @@
 export { ActionButton } from './ActionButton';
 export { AuthFormLayout } from './AuthFormLayout';
 export { BackupCodeField } from './BackupCodeField';
-export { SkeletonCard } from './SkeletonCard';
 export { DrawerOpener } from './DrawerOpener';
 export { ErrorBlock } from './ErrorBlock';
 export { Loading } from './Loading';
@@ -12,6 +11,8 @@ export { PageLayout } from './PageLayout';
 export { PasswordField } from './PasswordField';
 export { SectionHeader } from './SectionHeader';
 export { SendEmailButton } from './SendEmailButton';
+export { SkeletonCard } from './SkeletonCard';
+export { SkeletonForm } from './SkeletonForm';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
 export { TotpField } from './TotpField';

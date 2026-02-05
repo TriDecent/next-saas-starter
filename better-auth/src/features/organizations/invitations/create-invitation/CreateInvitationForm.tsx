@@ -1,6 +1,5 @@
 'use client';
 
-import type { CreateInvitationInput } from '@/infrastructure/service/organization';
 import { BaseFormLayout, useActionForm } from '@/shared/components/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
@@ -10,7 +9,7 @@ import {
   createInvitationAction,
   CreateInvitationResponse,
 } from './create-invitation-action';
-import { createInvitationSchema } from './schema';
+import { createInvitationSchema, type CreateInvitationSchema } from './schema';
 
 export function CreateInvitationForm({
   children,
@@ -19,7 +18,7 @@ export function CreateInvitationForm({
 }) {
   const { methods, animationScope, dispatch, isPending, state } = useActionForm<
     CreateInvitationResponse,
-    Omit<CreateInvitationInput, 'organizationId'> & { organizationId: string }
+    CreateInvitationSchema
   >({
     action: createInvitationAction,
     initialState: { type: 'initial' },
