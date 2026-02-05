@@ -10,13 +10,17 @@ import {
   FieldSet,
   RadioGroupItem,
 } from '@/shared/components/ui';
+import { useFormContext } from 'react-hook-form';
 import { EmptyOrganization, OrganizationItem } from '../../my-organizations';
+import type { CreateInvitationSchema } from './schema';
 
 export function SelectOrganization({
   organizations,
 }: {
   organizations: OrganizationWithRole[];
 }) {
+  const { setValue } = useFormContext<CreateInvitationSchema>();
+
   return (
     <FieldSet>
       <FieldLegend className='text-sm font-semibold'>
@@ -47,6 +51,7 @@ export function SelectOrganization({
                         id={org.id}
                         aria-invalid={isError}
                         disabled={isDisabled}
+                        onClick={() => setValue('selectedOrganization', org)}
                       />
                     }
                   />
