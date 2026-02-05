@@ -1,70 +1,22 @@
 'use client';
 
-import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
 import type { CreateInvitationInput } from '@/infrastructure/service/organization';
 import { BaseFormLayout, useActionForm } from '@/shared/components/form';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  FieldGroup,
-  FieldSeparator,
-  Separator,
-} from '@/shared/components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
-import { FaArrowRight, FaUserPlus } from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa';
 import { toast } from 'sonner';
 import {
   createInvitationAction,
   CreateInvitationResponse,
 } from './create-invitation-action';
 import { createInvitationSchema } from './schema';
-import { SelectOrganization } from './SelectOrganization';
-import { SelectRecipient } from './SelectRecipient';
-import { SelectRole } from './SelectRole';
 
-export function CreateInvitation({
-  organizations,
+export function CreateInvitationForm({
+  children,
 }: {
-  organizations: OrganizationWithRole[];
+  children: React.ReactNode;
 }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='flex items-center gap-2'>
-          <FaUserPlus className='text-muted-foreground size-4' />
-          Invite members
-        </CardTitle>
-        <CardDescription>
-          Choose an organization, then send an invitation by email.
-        </CardDescription>
-      </CardHeader>
-
-      <Separator />
-
-      <CardContent>
-        <CreateInvitationForm>
-          <SelectOrganization organizations={organizations} />
-
-          <FieldSeparator />
-
-          <SelectRecipient />
-
-          <FieldSeparator />
-
-          <SelectRole />
-
-          <FieldSeparator />
-        </CreateInvitationForm>
-      </CardContent>
-    </Card>
-  );
-}
-
-function CreateInvitationForm({ children }: { children: React.ReactNode }) {
   const { methods, animationScope, dispatch, isPending, state } = useActionForm<
     CreateInvitationResponse,
     Omit<CreateInvitationInput, 'organizationId'> & { organizationId: string }
@@ -109,7 +61,7 @@ function CreateInvitationForm({ children }: { children: React.ReactNode }) {
       }
       error={state.type === 'error' ? state.payload.message : undefined}
     >
-      <FieldGroup>{children}</FieldGroup>
+      {children}
     </BaseFormLayout>
   );
 }

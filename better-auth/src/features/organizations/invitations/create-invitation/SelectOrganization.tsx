@@ -10,7 +10,7 @@ import {
   FieldSet,
   RadioGroupItem,
 } from '@/shared/components/ui';
-import { EmptyOrganization, OrganizationItem } from '../my-organizations';
+import { EmptyOrganization, OrganizationItem } from '../../my-organizations';
 
 export function SelectOrganization({
   organizations,
