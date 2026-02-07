@@ -1,4 +1,4 @@
-import { getOrgService } from '@/infrastructure/service';
+import { getOrgService, getUserService } from '@/infrastructure/service';
 import { SkeletonForm } from '@/shared/components';
 import {
   Card,
@@ -51,12 +51,14 @@ function CreateInvitationCard() {
       <CardContent>
         <FieldGroup>
           <Suspense fallback={<SkeletonForm />}>
-            <Wrapper />
+            <SelectOrgWrapper />
           </Suspense>
 
           <FieldSeparator />
 
-          <SelectRecipient />
+          <Suspense fallback={<SkeletonForm />}>
+            <SelectRecipientWrapper />
+          </Suspense>
 
           <FieldSeparator />
 
@@ -67,11 +69,25 @@ function CreateInvitationCard() {
   );
 }
 
-async function Wrapper() {
+async function SelectOrgWrapper() {
   const service = await getOrgService(ROUTES.organization.href);
   const response = await service.listMyOrgs();
 
   if (response.type === 'error') throw new Error(response.payload.message);
 
   return <SelectOrganization organizations={response.payload} />;
+}
+
+async function SelectRecipientWrapper() {
+  const service = await getUserService(ROUTES.organization.href);
+  // * This implementation is not scalable.
+  // *It fetches a hard-coded limit of the first 100 users,
+  // * which will break with larger datasets.
+  // * Consider implementing a client side combobox component with RTK query
+  // * instead of fetching all users upfront.
+  const response = await service.getUsers(0, 100);
+
+  if (response.type === 'error') throw new Error(response.payload.message);
+
+  return <SelectRecipient recipients={response.payload.users} />;
 }
