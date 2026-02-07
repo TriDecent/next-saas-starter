@@ -41,7 +41,7 @@ export class OrganizationService {
   listMyOrgs(): Promise<
     ServiceResponse<OrganizationWithRole[], { message: string }>
   > {
-    return this._serviceExecutor.runSafely(async () =>
+    return this._serviceExecutor.runSafely(() =>
       this._repo.listOrganizationsForUser(this.actor.id)
     );
   }

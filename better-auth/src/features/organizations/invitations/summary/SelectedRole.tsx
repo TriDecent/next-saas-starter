@@ -12,10 +12,8 @@ import { FaShieldAlt } from 'react-icons/fa';
 import { CreateInvitationSchema } from '../create-invitation';
 
 export function SelectedRole() {
-  const { control, formState } = useFormContext<CreateInvitationSchema>();
+  const { control } = useFormContext<CreateInvitationSchema>();
   const role = useWatch({ control, name: 'role' });
-
-  console.log(formState.errors)
 
   return (
     <Item variant='muted' size='sm' className='w-full'>

@@ -22,7 +22,6 @@ import {
   ItemDescription,
   RadioGroup,
   Select,
-  SelectContent,
   SelectTrigger,
   SelectValue,
 } from '../ui';
@@ -189,7 +188,8 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
             {...rest}
             name={props.name}
             onValueChange={field.onChange}
-            defaultValue={field.value}
+            value={field.value}
+            autoComplete='none'
           >
             <SelectTrigger
               id={props.id}
@@ -202,9 +202,13 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
                 props.className
               )}
             >
-              <SelectValue placeholder={props.placeholder} />
+              <div className='flex items-center gap-2'>
+                {props.addons}
+                <SelectValue placeholder={props.placeholder} />
+              </div>
             </SelectTrigger>
-            <SelectContent>{props.children}</SelectContent>
+
+            {props.children}
           </Select>
         </FieldWrapper>
       )}

@@ -35,7 +35,7 @@ export function InvitationSummary() {
       <Separator />
 
       <CardFooter>
-        <p className='text-muted-foreground rounded-lg border border-dashed p-3 text-xs'>
+        <p className='text-muted-foreground rounded-lg border border-dashed p-3 text-xs mx-auto'>
           You can customize the email content later (optional).
         </p>
       </CardFooter>
