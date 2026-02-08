@@ -1,5 +1,5 @@
 import { createSudoToken } from '@/features/auth/authenticate-prior/sudo-mode';
-import type { Session, User } from '@/generated/prisma/client';
+import type { Prisma, Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
 import { defineAbilityFor } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
@@ -46,7 +46,7 @@ export class UserService {
   async getUsers(
     pageIndex: number,
     pageSize: number,
-    orderBy?: Record<string, 'asc' | 'desc'>[],
+    orderBy?: Prisma.UserOrderByWithRelationInput[],
     keyword?: string
   ): Promise<GetUsersResponse> {
     const canListUsers = await hasPermission(this.actor.id, {
