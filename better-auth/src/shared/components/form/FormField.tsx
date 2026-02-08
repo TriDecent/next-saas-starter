@@ -1,14 +1,19 @@
 'use client';
 
-import { type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react';
+import React, {
+  type InputHTMLAttributes,
+  type TextareaHTMLAttributes,
+} from 'react';
 import {
   Controller,
-  type FieldError as FieldErrorType,
   useFormContext,
+  type FieldError as FieldErrorType,
 } from 'react-hook-form';
 import { cn } from '../../utils';
 import {
   Checkbox,
+  Combobox,
+  ComboboxInput,
   Field,
   FieldContent,
   FieldDescription,
@@ -64,14 +69,22 @@ type RadioFieldProps = Omit<BaseFieldProps, 'labelText'> &
     }) => React.ReactNode;
   };
 
+type ComboboxFieldProps<TItem> = BaseFieldProps &
+  React.ComponentPropsWithoutRef<typeof Combobox<TItem>> & {
+    placeholder: string;
+    autoComplete: React.HTMLInputAutoCompleteAttribute;
+    valueAs: (item: TItem) => string;
+  };
+
 export type FormFieldProps<TSelectProps = Record<string, unknown>> =
   | ({ kind: 'input' } & InputFieldProps)
   | ({ kind: 'textarea' } & TextareaFieldProps)
   | ({ kind: 'select' } & SelectFieldProps<TSelectProps>)
   | ({ kind: 'checkbox' } & CheckboxFieldProps)
-  | ({ kind: 'radio' } & RadioFieldProps);
+  | ({ kind: 'radio' } & RadioFieldProps)
+  | ({ kind: 'combobox' } & ComboboxFieldProps<TSelectProps>);
 
-export function FormField(props: FormFieldProps) {
+export function FormField<TItem>(props: FormFieldProps<TItem>) {
   const { kind, ...rest } = props;
 
   switch (kind) {
@@ -85,6 +98,12 @@ export function FormField(props: FormFieldProps) {
       return <ControlledCheckboxField {...(rest as CheckboxFieldProps)} />;
     case 'radio':
       return <ControlledRadioField {...(rest as RadioFieldProps)} />;
+    case 'combobox':
+      return (
+        <ControlledComboboxField<TItem>
+          {...(rest as ComboboxFieldProps<TItem>)}
+        />
+      );
     default:
       return null;
   }
@@ -233,6 +252,7 @@ function ControlledCheckboxField({ variant, ...props }: CheckboxFieldProps) {
           {variant === 'card' ? (
             <FieldLabel htmlFor={props.id} className='rounded px-4 py-2.5'>
               <Checkbox
+                {...field}
                 {...rest}
                 id={props.id}
                 checked={field.value}
@@ -254,6 +274,7 @@ function ControlledCheckboxField({ variant, ...props }: CheckboxFieldProps) {
           ) : (
             <>
               <Checkbox
+                {...field}
                 {...rest}
                 id={props.id}
                 checked={field.value}
@@ -290,7 +311,11 @@ function ControlledRadioField({ children, ...props }: RadioFieldProps) {
       name={props.name}
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
-          <RadioGroup onValueChange={field.onChange} value={field.value}>
+          <RadioGroup
+            {...field}
+            onValueChange={field.onChange}
+            value={field.value}
+          >
             {children({
               isError: fieldState.invalid,
               isDisabled: props.disabled || formState.isSubmitting,
@@ -300,6 +325,59 @@ function ControlledRadioField({ children, ...props }: RadioFieldProps) {
           {fieldState.error ? <FieldError errors={[fieldState.error]} /> : null}
         </Field>
       )}
+    />
+  );
+}
+
+function ControlledComboboxField<TItem>(props: ComboboxFieldProps<TItem>) {
+  const { control, formState } = useFormContext();
+  const { labelText, items, valueAs, ...rest } = props;
+
+  return (
+    <Controller
+      name={props.name}
+      control={control}
+      render={({ field, fieldState }) => {
+        const selectedValue = items
+          ? (items.find(item => valueAs(item) === field.value) ?? null)
+          : (field.value ?? null);
+
+        return (
+          <FieldWrapper
+            {...props}
+            id={props.id}
+            error={fieldState.error}
+            labelText={labelText}
+            disabled={props.disabled || formState.isSubmitting}
+          >
+            <Combobox
+              {...rest}
+              {...field}
+              items={items}
+              value={selectedValue}
+              onValueChange={newItem => {
+                field.onChange(newItem ? valueAs(newItem) : newItem);
+              }}
+            >
+              <ComboboxInput
+                id={props.id}
+                disabled={props.disabled || formState.isSubmitting}
+                aria-invalid={fieldState.invalid}
+                placeholder={props.placeholder}
+                autoComplete={props.autoComplete}
+                className={cn(
+                  fieldState.invalid ? 'error' : '',
+                  props.className
+                )}
+              >
+                {props.addons}
+              </ComboboxInput>
+
+              {props.children}
+            </Combobox>
+          </FieldWrapper>
+        );
+      }}
     />
   );
 }
