@@ -3,15 +3,18 @@
 import type { User } from '@/generated/prisma/client';
 import { FormField } from '@/shared/components/form';
 import {
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxSeparator,
   FieldDescription,
   FieldLegend,
   FieldSet,
   InputGroupAddon,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
 } from '@/shared/components/ui';
 import { useFormContext } from 'react-hook-form';
 import { FaEnvelope } from 'react-icons/fa';
@@ -27,38 +30,44 @@ export function SelectRecipient({ recipients }: { recipients: User[] }) {
         Enter the email address of the person you want to invite.
       </FieldDescription>
 
-      <FormField
-        kind='select'
+      <FormField<User>
+        kind='combobox'
         id='email'
         name='email'
         labelText='Email'
         placeholder='name@company.com'
         description='Tip: you can invite external emails too.'
         addons={
-          <InputGroupAddon className='pl-0'>
+          <InputGroupAddon>
             <FaEnvelope />
           </InputGroupAddon>
         }
+        autoComplete='email'
+        items={recipients}
+        itemToStringLabel={user => user.email}
+        valueAs={user => user.email}
       >
-        <SelectContent position='item-aligned' className='truncate'>
-          <SelectGroup>
-            <SelectLabel>Users</SelectLabel>
-            <SelectSeparator />
+        <ComboboxContent>
+          <ComboboxEmpty>No emails found.</ComboboxEmpty>
+          <ComboboxList>
+            <ComboboxGroup>
+              <ComboboxLabel>Users</ComboboxLabel>
+              <ComboboxSeparator />
 
-            {recipients.map(recipient => (
-              <SelectItem
-                key={recipient.id}
-                value={recipient.email}
-                onClick={() => setValue('selectedRecipient', recipient)}
-              >
-                <RecipientDisplay
-                  email={recipient.email}
-                  role={recipient.role}
-                />
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
+              <ComboboxCollection>
+                {(user: User) => (
+                  <ComboboxItem
+                    key={user.id}
+                    value={user}
+                    onClick={() => setValue('selectedRecipient', user)}
+                  >
+                    <RecipientDisplay email={user.email} role={user.role} />
+                  </ComboboxItem>
+                )}
+              </ComboboxCollection>
+            </ComboboxGroup>
+          </ComboboxList>
+        </ComboboxContent>
       </FormField>
     </FieldSet>
   );
