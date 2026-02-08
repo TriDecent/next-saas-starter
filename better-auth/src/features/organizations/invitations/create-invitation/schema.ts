@@ -1,4 +1,5 @@
 import { ROLES } from '@/lib/auth/constants';
+import { userSchema } from '@/shared/schema';
 import { z } from 'zod';
 
 export const createInvitationSchema = z.object({
@@ -24,24 +25,7 @@ export const createInvitationSchema = z.object({
     })
     .optional(),
 
-  selectedRecipient: z
-    .object({
-      email: z.string(),
-      role: z.string(),
-      name: z.string(),
-      id: z.string(),
-      createdAt: z.date(),
-      emailVerified: z.boolean(),
-      image: z.string().nullable(),
-      updatedAt: z.date(),
-      welcomeSent: z.boolean(),
-      favoriteNumber: z.number(),
-      twoFactorEnabled: z.boolean().nullable(),
-      banned: z.boolean().nullable(),
-      banReason: z.string().nullable(),
-      banExpires: z.date().nullable(),
-    })
-    .optional(),
+  selectedRecipient: userSchema.optional(),
 });
 
 export type CreateInvitationSchema = z.infer<typeof createInvitationSchema>;
