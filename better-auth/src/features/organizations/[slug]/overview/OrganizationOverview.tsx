@@ -14,14 +14,14 @@ import {
   ItemTitle,
   Separator,
 } from '@/shared/components/ui';
-import { cn } from '@/shared/utils';
 import type { User } from 'better-auth';
 import type { Member, Organization } from 'better-auth/plugins';
 import { format } from 'date-fns';
+import { CiEdit } from 'react-icons/ci';
 import { FaBuilding, FaClock } from 'react-icons/fa6';
 import { FiMail, FiPlus, FiUsers } from 'react-icons/fi';
 import { GrOverview } from 'react-icons/gr';
-import { CiEdit } from "react-icons/ci";
+import { Kpi } from '../_shared';
 
 export type OrgOverviewProps = NonNullable<
   Extract<GetOrgResponse, { type: 'success' }>['payload']
@@ -156,39 +156,6 @@ function QuickActions() {
   );
 }
 
-function Kpi({
-  icon,
-  label,
-  value,
-  mono,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <Item variant={'outline'} className='bg-muted/20'>
-      <ItemContent className='gap-3'>
-        <ItemTitle className='text-muted-foreground'>
-          <ItemMedia variant={'icon'} className='text-muted-foreground shadow'>
-            {icon}
-          </ItemMedia>
-          <span className='font-medium'>{label}</span>
-        </ItemTitle>
-        <ItemDescription
-          className={cn(
-            'text-foreground text-sm font-semibold',
-            mono ? 'font-mono' : ''
-          )}
-        >
-          {value}
-        </ItemDescription>
-      </ItemContent>
-    </Item>
-  );
-}
-
-function formatDate(d: Date) {
-  return format(d, 'MMM dd, yyyy');
+function formatDate(date: Date) {
+  return format(date, 'MMM dd, yyyy');
 }
