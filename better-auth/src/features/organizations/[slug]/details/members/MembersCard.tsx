@@ -43,7 +43,7 @@ export function MembersCard({
 
       <Separator />
 
-      <CardContent className='mt-6'>
+      <CardContent>
         {members.length === 0 ? (
           <EmptyMember />
         ) : (

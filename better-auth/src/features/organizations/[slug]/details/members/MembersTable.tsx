@@ -2,12 +2,12 @@
 
 import { DataTable } from '@/shared/components/DataTable';
 import type { OrganizationDetailsProps } from '../OrganizationDetails';
-import { useColumns } from './use-columns';
+import { useMembersColumns } from './use-members-columns';
 
 export type Member = OrganizationDetailsProps['members'][number];
 
 export function MembersTable({ members }: { members: Member[] }) {
-  const columns = useColumns();
+  const columns = useMembersColumns();
 
   return (
     <DataTable

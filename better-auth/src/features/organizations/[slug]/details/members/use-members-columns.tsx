@@ -171,7 +171,7 @@ const columns: ColumnDef<Member>[] = [
   actionsColumn,
 ];
 
-export function useColumns() {
+export function useMembersColumns() {
   return useMemo(() => columns, []);
 }
 
