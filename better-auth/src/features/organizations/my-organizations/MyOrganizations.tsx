@@ -10,6 +10,7 @@ import {
   ItemGroup,
   Separator,
 } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import { FaCog, FaLink, FaPlus } from 'react-icons/fa';
 import { RenderModal } from '../_shared';
@@ -73,7 +74,6 @@ function OrganizationDisplay({
 }: {
   organization: OrganizationRow;
 }) {
-  const href = `/organizations/${organization.slug}`;
   const settingsHref = `/organizations/${organization.slug}/settings`;
 
   return (
@@ -88,7 +88,10 @@ function OrganizationDisplay({
             </Link>
           </Button>
           <Button variant='outline' size='sm' asChild>
-            <Link href={href} className='gap-2'>
+            <Link
+              href={`${ROUTES.organization.href}/${organization.slug}`}
+              className='gap-2'
+            >
               <FaLink className='size-4' />
               Open
             </Link>

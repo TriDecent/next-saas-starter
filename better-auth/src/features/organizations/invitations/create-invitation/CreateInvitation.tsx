@@ -22,10 +22,12 @@ import { SelectRole } from './SelectRole';
 export function CreateInvitation() {
   return (
     <CreateInvitationForm>
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-[1.25fr_0.75fr]'>
-        <CreateInvitationCard />
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-8'>
+        <div className='md:col-span-5'>
+          <CreateInvitationCard />
+        </div>
 
-        <aside className='space-y-4'>
+        <aside className='space-y-4 md:col-span-3'>
           <InvitationSummary />
         </aside>
       </div>
