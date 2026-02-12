@@ -13,6 +13,7 @@ export { SectionHeader } from './SectionHeader';
 export { SendEmailButton } from './SendEmailButton';
 export { SkeletonCard } from './SkeletonCard';
 export { SkeletonForm } from './SkeletonForm';
+export { SkeletonTable } from './SkeletonTable';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
 export { TotpField } from './TotpField';

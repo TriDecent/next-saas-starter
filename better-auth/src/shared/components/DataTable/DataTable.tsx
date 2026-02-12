@@ -1,4 +1,5 @@
 'use no memo';
+'use client';
 
 import { DataTableContent } from './DataTableContent';
 import { DataTablePagination } from './DataTablePagination';
