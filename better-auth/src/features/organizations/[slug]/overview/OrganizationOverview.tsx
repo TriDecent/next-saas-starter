@@ -16,12 +16,11 @@ import {
 } from '@/shared/components/ui';
 import type { User } from 'better-auth';
 import type { Member, Organization } from 'better-auth/plugins';
-import { format } from 'date-fns';
 import { CiEdit } from 'react-icons/ci';
 import { FaBuilding, FaClock } from 'react-icons/fa6';
 import { FiMail, FiPlus, FiUsers } from 'react-icons/fi';
 import { GrOverview } from 'react-icons/gr';
-import { Kpi } from '../_shared';
+import { formatDate, Kpi } from '../_shared';
 
 export type OrgOverviewProps = NonNullable<
   Extract<GetOrgResponse, { type: 'success' }>['payload']
@@ -154,8 +153,4 @@ function QuickActions() {
       </CardContent>
     </Card>
   );
-}
-
-function formatDate(date: Date) {
-  return format(date, 'MMM dd, yyyy');
 }
