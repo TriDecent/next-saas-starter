@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import { FiRefreshCcw } from 'react-icons/fi';
 import { IoSearch } from 'react-icons/io5';
-import { columns } from './columns';
+import { useColumns } from './columns';
 
 export function UsersTable(props: {
   users: User[];
@@ -27,6 +27,8 @@ export function UsersTable(props: {
   sortingState: DataTableServerProps['sortingState'];
   globalFilter: DataTableServerProps['globalFilter'];
 }) {
+  const columns = useColumns();
+
   return (
     <div className='rounded-lg border p-2'>
       <AlertDialog>

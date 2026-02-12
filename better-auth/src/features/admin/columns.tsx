@@ -34,6 +34,7 @@ import {
   ShieldAlert,
   ShieldCheck,
 } from 'lucide-react';
+import { useMemo } from 'react';
 import { BanUserAction } from './ban-user';
 import { CopyUserAction } from './copy-user';
 import { DeleteUserAction } from './delete-user';
@@ -109,7 +110,7 @@ const emailColumn: ColumnDef<User> = {
     <DataTableColumnHeader column={column} title='Email' />
   ),
   cell: ({ row }) => (
-    <div className='mx-auto max-w-[200px] truncate font-medium'>
+    <div className='mx-auto max-w-50 truncate font-medium'>
       {row.getValue('email')}
     </div>
   ),
@@ -374,7 +375,11 @@ const actionsColumn: ColumnDef<User> = {
   },
 };
 
-export const columns: ColumnDef<User>[] = [
+export function useColumns() {
+  return useMemo(() => columns, []);
+}
+
+const columns: ColumnDef<User>[] = [
   selectColumn,
   nameColumn,
   emailColumn,
