@@ -135,14 +135,23 @@ const actionsColumn: ColumnDef<Member> = {
           <DropdownMenuSeparator />
 
           <DropdownMenuGroup>
-            <DropdownMenuLabel className='text-muted-foreground'>
-              Quick actions
+            <DropdownMenuLabel className='text-muted-foreground text-xs'>
+              Actions
             </DropdownMenuLabel>
 
             <DropdownMenuItem>
               <TbArrowsExchange2 />
               Change role
             </DropdownMenuItem>
+          </DropdownMenuGroup>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-muted-foreground text-xs'>
+              Danger zone
+            </DropdownMenuLabel>
+
             <DropdownMenuItem className='text-destructive'>
               <FaTrash className='text-destructive' />
               Remove from org
@@ -177,16 +186,18 @@ function UserSummary({
   contentClassName?: string;
 }) {
   return (
-    <Item className={className}>
+    <Item className={cn('p-0', className)}>
       <ItemMedia variant='image'>
         <Avatar>
           <AvatarImage src={image ?? undefined} alt={name} />
           <AvatarFallback>{getInitials(name)}</AvatarFallback>
         </Avatar>
       </ItemMedia>
-      <ItemContent className={cn('items-center', contentClassName)}>
-        <ItemTitle>{name}</ItemTitle>
-        <ItemDescription>{email}</ItemDescription>
+      <ItemContent className={cn('max-w-52 items-center', contentClassName)}>
+        <ItemTitle className='w-full min-w-0'>
+          <span className='truncate'>{name}</span>
+        </ItemTitle>
+        <ItemDescription className='truncate'>{email}</ItemDescription>
       </ItemContent>
     </Item>
   );
