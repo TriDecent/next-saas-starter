@@ -1,7 +1,7 @@
 import { verifySudoToken } from '@/features/auth/authenticate-prior/sudo-mode';
 import type { User } from '@/generated/prisma/client';
 import { hasPermission } from '@/lib/auth';
-import { defineAbilityFor, type CRUD, type UserActionTypes } from '@/lib/casl';
+import { defineAbilityFor, type CRUD, type UserAction } from '@/lib/casl';
 import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { type IUserRepository } from '../repositories/user';
@@ -29,7 +29,7 @@ export interface IServiceExecutor {
   executeProtectedAction(params: {
     targetUserId: string;
     requiredRbac: Parameters<typeof hasPermission>[1];
-    abacAction: UserActionTypes | CRUD;
+    abacAction: UserAction | CRUD;
     permissionError: string;
     action: () => Promise<unknown>;
   }): Promise<ServiceResponse<undefined, { message: string }>>;
@@ -124,7 +124,7 @@ export class ServiceExecutor implements IServiceExecutor {
   async executeProtectedAction(params: {
     targetUserId: string;
     requiredRbac: Parameters<typeof hasPermission>[1];
-    abacAction: UserActionTypes | CRUD;
+    abacAction: UserAction | CRUD;
     permissionError: string;
     action: () => Promise<unknown>;
   }): Promise<ServiceResponse<undefined, { message: string }>> {

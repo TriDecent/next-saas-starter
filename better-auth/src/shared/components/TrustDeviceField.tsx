@@ -11,6 +11,7 @@ export function TrustDeviceField({ isPending }: { isPending: boolean }) {
       description='Remember this device and skip 2FA for 30 days.'
       addons={<VscWorkspaceTrusted />}
       disabled={isPending}
+      variant='card'
     />
   );
 }

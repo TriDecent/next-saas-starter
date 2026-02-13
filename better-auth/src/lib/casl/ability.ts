@@ -5,33 +5,34 @@ import {
 } from '@casl/ability';
 import { ROLES, type AuthSession } from '../auth';
 import type {
-  InvitationActionTypes,
+  InvitationAction,
   InvitationSubject,
 } from './invitation-subject-type';
 import type {
-  OrganizationActionTypes,
+  OrganizationAction,
   OrganizationSubject,
-  OrganizationWithMembersActionTypes,
+  OrganizationWithMembersAction,
   OrganizationWithMembersSubject,
 } from './organization-subject-type';
-import type { RoleActionsType, RoleSubject } from './role-subject-type';
-import type { UserActionTypes, UserSubject } from './user-subject-types';
+import type { RoleAction, RoleSubject } from './role-subject-type';
+import type { UserAction, UserSubject } from './user-subject-types';
 
-type Subjects =
+type Subject =
   | 'all'
   | UserSubject
   | RoleSubject
   | OrganizationSubject
-  | InvitationSubject;
+  | InvitationSubject
+  | OrganizationWithMembersSubject;
 export type CRUD = 'create' | 'read' | 'update' | 'delete';
-type Actions = 'manage' | CRUD;
+type Action = 'manage' | CRUD;
 export type AppAbility = MongoAbility<
-  | [Actions, Subjects]
-  | [UserActionTypes, UserSubject]
-  | [RoleActionsType, RoleSubject]
-  | [OrganizationActionTypes, OrganizationSubject]
-  | [InvitationActionTypes, InvitationSubject]
-  | [OrganizationWithMembersActionTypes, OrganizationWithMembersSubject]
+  | [Action, Subject]
+  | [UserAction, UserSubject]
+  | [RoleAction, RoleSubject]
+  | [OrganizationAction, OrganizationSubject]
+  | [InvitationAction, InvitationSubject]
+  | [OrganizationWithMembersAction, OrganizationWithMembersSubject]
 >;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
