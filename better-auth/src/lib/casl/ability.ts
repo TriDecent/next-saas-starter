@@ -11,6 +11,8 @@ import type {
 import type {
   OrganizationActionTypes,
   OrganizationSubject,
+  OrganizationWithMembersActionTypes,
+  OrganizationWithMembersSubject,
 } from './organization-subject-type';
 import type { RoleActionsType, RoleSubject } from './role-subject-type';
 import type { UserActionTypes, UserSubject } from './user-subject-types';
@@ -29,6 +31,7 @@ export type AppAbility = MongoAbility<
   | [RoleActionsType, RoleSubject]
   | [OrganizationActionTypes, OrganizationSubject]
   | [InvitationActionTypes, InvitationSubject]
+  | [OrganizationWithMembersActionTypes, OrganizationWithMembersSubject]
 >;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
@@ -90,5 +93,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     can('create', 'Invitation');
   }
 
-  function defineAbilityForUser() {}
+  function defineAbilityForUser() {
+    can('read', 'OrganizationWithMembers', {
+      members: actor.id,
+    });
+  }
 }
