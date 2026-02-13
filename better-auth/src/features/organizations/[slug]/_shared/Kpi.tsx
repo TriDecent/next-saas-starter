@@ -20,7 +20,7 @@ export function Kpi({
 }) {
   return (
     <Item variant={'outline'} className='bg-muted/20'>
-      <ItemContent className='gap-3'>
+      <ItemContent className='min-w-0 gap-3'>
         <ItemTitle className='text-muted-foreground'>
           <ItemMedia variant={'icon'} className='text-muted-foreground shadow'>
             {icon}
@@ -29,7 +29,7 @@ export function Kpi({
         </ItemTitle>
         <ItemDescription
           className={cn(
-            'text-foreground text-sm font-semibold',
+            'text-foreground truncate text-sm font-semibold',
             mono ? 'font-mono' : ''
           )}
         >
