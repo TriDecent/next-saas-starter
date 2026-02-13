@@ -7,7 +7,7 @@ type Route = {
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-const APP_NAME = 'Better Auth Demo';
+const APP_NAME = 'Auth Demo';
 const APP_DESCRIPTION =
   'A modern authentication demo built with Better Auth, Next.js, and Prisma. Features email verification, password reset, and social login.';
 
@@ -93,6 +93,27 @@ export const ROUTES = {
         description:
           'Manage organization settings, members, roles, invitations, and security controls.',
       },
+    },
+    nested: {
+      slug: defineRoute({
+        href: '/organizations/[slug]',
+        metadata: {
+          description:
+            'View and manage details of a specific organization, including members and settings.',
+        },
+        title: 'Organization Details',
+        openGraph: {
+          title: `Organization Details | ${APP_NAME}`,
+          description:
+            'View and manage details of a specific organization, including members and settings.',
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: `Organization Details | ${APP_NAME}`,
+          description:
+            'View and manage details of a specific organization, including members and settings.',
+        },
+      }),
     },
   }),
   invitations: defineRoute({
