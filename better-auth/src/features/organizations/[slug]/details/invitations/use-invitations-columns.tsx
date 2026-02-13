@@ -86,7 +86,25 @@ const statusColumn = {
   header: ({ column }) => (
     <DataTableColumnHeader column={column} title='Status' />
   ),
-  cell: ({ row }) => <StatusBadge status={row.original.status} />,
+  cell: ({ row }) => {
+    const status = row.original.status;
+
+    return (
+      <Badge
+        variant={
+          status === 'accepted'
+            ? 'success'
+            : status === 'rejected'
+              ? 'error'
+              : status === 'canceled'
+                ? 'warning'
+                : 'default'
+        }
+      >
+        {status}
+      </Badge>
+    );
+  },
 } satisfies ColumnDef<Invitation>;
 
 const expiresAtColumn = {
@@ -198,22 +216,3 @@ const columns = [
   createdAtColumn,
   actionsColumn,
 ] satisfies ColumnDef<Invitation>[];
-
-function StatusBadge({ status }: { status: Invitation['status'] }) {
-  const cls =
-    status === 'pending'
-      ? 'border-amber-200/50 bg-amber-500/10 text-amber-700'
-      : status === 'accepted'
-        ? 'border-emerald-200/50 bg-emerald-500/10 text-emerald-700'
-        : status === 'rejected'
-          ? 'border-rose-200/50 bg-rose-500/10 text-rose-700'
-          : 'border-border bg-muted/30 text-muted-foreground';
-
-  return (
-    <Badge
-      className={`inline-flex items-center rounded-md border px-2 py-1 text-xs font-medium capitalize ${cls}`}
-    >
-      {status}
-    </Badge>
-  );
-}
