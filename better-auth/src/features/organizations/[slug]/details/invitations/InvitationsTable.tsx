@@ -1,13 +1,13 @@
 'use client';
 
 import { DataTable } from '@/shared/components/DataTable';
-import type { OrganizationDetailsProps } from '../OrganizationDetails';
+import type { Invitation } from 'better-auth/plugins';
 import { useInvitationsColumns } from './use-invitations-columns';
 
 export function InvitationsTable({
   invitations,
 }: {
-  invitations: OrganizationDetailsProps['invitations'];
+  invitations: Invitation[];
 }) {
   const columns = useInvitationsColumns();
 

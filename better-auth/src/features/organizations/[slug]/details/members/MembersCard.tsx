@@ -23,7 +23,7 @@ import { MembersTable } from './MembersTable';
 export function MembersCard({
   members,
 }: {
-  members: OrganizationDetailsProps['members'];
+  members: OrganizationDetailsProps['org']['members'];
 }) {
   return (
     <Card>

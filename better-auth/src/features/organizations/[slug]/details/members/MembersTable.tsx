@@ -1,12 +1,10 @@
 'use client';
 
 import { DataTable } from '@/shared/components/DataTable';
-import type { OrganizationDetailsProps } from '../OrganizationDetails';
+import type { GetFullOrg } from '../_shared';
 import { useMembersColumns } from './use-members-columns';
 
-export type Member = OrganizationDetailsProps['members'][number];
-
-export function MembersTable({ members }: { members: Member[] }) {
+export function MembersTable({ members }: { members: GetFullOrg['members'] }) {
   const columns = useMembersColumns();
 
   return (

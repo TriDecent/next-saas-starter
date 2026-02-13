@@ -29,7 +29,7 @@ import { useMemo } from 'react';
 import { FaTrash } from 'react-icons/fa';
 import { TbArrowsExchange2 } from 'react-icons/tb';
 import { formatDate, getInitials } from '../../_shared';
-import type { Member } from './MembersTable';
+import { GetFullOrg } from '../_shared';
 
 const selectColumn = {
   id: 'select',
@@ -170,6 +170,8 @@ const columns: ColumnDef<Member>[] = [
   createdAtColumn,
   actionsColumn,
 ];
+
+type Member = GetFullOrg['members'][number];
 
 export function useMembersColumns() {
   return useMemo(() => columns, []);

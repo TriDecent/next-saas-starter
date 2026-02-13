@@ -14,14 +14,14 @@ import {
   EmptyTitle,
   Separator,
 } from '@/shared/components/ui';
+import type { Invitation } from 'better-auth/plugins';
 import { FiMail } from 'react-icons/fi';
-import type { OrganizationDetailsProps } from '../OrganizationDetails';
 import { InvitationsTable } from './InvitationsTable';
 
 export function InvitationsCard({
   invitations,
 }: {
-  invitations: OrganizationDetailsProps['invitations'];
+  invitations: Invitation[];
 }) {
   return (
     <Card>
