@@ -9,6 +9,15 @@ export type CreateInvitationInput = Omit<
   ExtractEndpointBody<typeof auth.api.createInvitation>,
   'role'
 > & { role: OrganizationRole };
+export type GetOrgInput = ExtractEndpointQuery<
+  typeof auth.api.getFullOrganization
+>;
+
+export type GetOrgResponse = ServiceResponse<
+  Awaited<ReturnType<typeof auth.api.getFullOrganization>>,
+  { message: string }
+>;
+
 export type GeneralOrgResponse = ServiceResponse<
   undefined,
   { message: string }
@@ -17,6 +26,13 @@ export type GeneralOrgResponse = ServiceResponse<
 type ExtractEndpointBody<T> =
   T extends StrictEndpoint<string, infer Req, unknown>
     ? Req extends { body: infer B }
+      ? z.infer<B>
+      : never
+    : never;
+
+type ExtractEndpointQuery<T> =
+  T extends StrictEndpoint<string, infer Req, unknown>
+    ? Req extends { query: infer B }
       ? z.infer<B>
       : never
     : never;

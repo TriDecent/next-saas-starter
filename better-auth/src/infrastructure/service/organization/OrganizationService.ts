@@ -3,6 +3,7 @@ import type {
   OrganizationWithRole,
 } from '@/infrastructure/repositories/organization';
 import { auth } from '@/lib/auth';
+import type { OrganizationWithMembersSubject } from '@/lib/casl';
 import { defineAbilityFor } from '@/lib/casl';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type { ServiceResponse } from '../types';
@@ -10,6 +11,8 @@ import type {
   CreateInvitationInput,
   CreateOrgInput,
   GeneralOrgResponse,
+  GetOrgInput,
+  GetOrgResponse,
 } from './org-dtos';
 
 export class OrganizationService {
@@ -59,6 +62,38 @@ export class OrganizationService {
 
       return undefined;
     });
+  }
+
+  async getFullOrganization(params: GetOrgInput): Promise<GetOrgResponse> {
+    const response = await this._serviceExecutor.runSafely(() =>
+      auth.api.getFullOrganization({
+        query: params,
+        headers: this.headers,
+      })
+    );
+    if (response.type === 'error') return response;
+    const organization = response.payload;
+
+    const ability = defineAbilityFor(this.actor);
+    if (!organization) return { type: 'success', payload: organization };
+
+    const organizationWithMemberIds = {
+      ...organization,
+      members: organization.members.map(member => member.userId),
+      metadata: organization.metadata ?? null,
+      logo: organization.logo ?? null,
+      kind: 'OrganizationWithMembers',
+    } satisfies OrganizationWithMembersSubject;
+
+    if (ability.cannot('read', organizationWithMemberIds))
+      return {
+        type: 'error',
+        payload: {
+          message: 'You are not authorized to view this organization.',
+        },
+      };
+
+    return response;
   }
 
   get actor() {
