@@ -1,3 +1,4 @@
+import { OrgContextProvider } from '@/features/organizations/[slug]/context';
 import { OrganizationDetails } from '@/features/organizations/[slug]/details';
 import { OrganizationOverview } from '@/features/organizations/[slug]/overview';
 import { getOrgRepo } from '@/infrastructure/repositories';
@@ -53,10 +54,10 @@ async function Wrapper({ params }: SlugParams) {
   const org = await getFullOrg(slug);
 
   return (
-    <>
+    <OrgContextProvider value={{ slug }}>
       <OrganizationOverview org={org} />
       <OrganizationDetails org={org} />
-    </>
+    </OrgContextProvider>
   );
 }
 
