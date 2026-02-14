@@ -2,7 +2,7 @@ import type {
   IOrganizationRepository,
   OrganizationWithRole,
 } from '@/infrastructure/repositories/organization';
-import { auth } from '@/lib/auth';
+import { auth, hasPermission } from '@/lib/auth';
 import type { OrganizationWithMembersSubject } from '@/lib/casl';
 import { defineAbilityFor } from '@/lib/casl';
 import type { IServiceExecutor } from '../ServiceExecutor';
@@ -21,15 +21,17 @@ export class OrganizationService {
     private readonly _repo: IOrganizationRepository
   ) {}
 
-  createOrg(params: CreateOrgInput): Promise<GeneralOrgResponse> {
-    const ability = defineAbilityFor(this.actor);
-    if (ability.cannot('create', 'Organization'))
-      return Promise.resolve({
+  async createOrg(params: CreateOrgInput): Promise<GeneralOrgResponse> {
+    const canCreateOrg = await hasPermission(this.actor.id, {
+      organization: ['create'],
+    });
+    if (!canCreateOrg)
+      return {
         type: 'error',
         payload: {
           message: 'You are not authorized to create an organization',
         },
-      });
+      };
 
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.createOrganization({
@@ -49,13 +51,17 @@ export class OrganizationService {
     );
   }
 
-  createInvitation(params: CreateInvitationInput): Promise<GeneralOrgResponse> {
-    const ability = defineAbilityFor(this.actor);
-    if (ability.cannot('create', 'Invitation'))
-      return Promise.resolve({
+  async createInvitation(
+    params: CreateInvitationInput
+  ): Promise<GeneralOrgResponse> {
+    const canCreateInvitation = await hasPermission(this.actor.id, {
+      invitation: ['create'],
+    });
+    if (!canCreateInvitation)
+      return {
         type: 'error',
         payload: { message: 'You are not authorized to send an invitation' },
-      });
+      };
 
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.createInvitation({ body: params, headers: this.headers });
@@ -74,7 +80,6 @@ export class OrganizationService {
     if (response.type === 'error') return response;
     const organization = response.payload;
 
-    const ability = defineAbilityFor(this.actor);
     if (!organization) return { type: 'success', payload: organization };
 
     const organizationWithMemberIds = {
@@ -85,6 +90,7 @@ export class OrganizationService {
       kind: 'OrganizationWithMembers',
     } satisfies OrganizationWithMembersSubject;
 
+    const ability = defineAbilityFor(this.actor);
     if (ability.cannot('read', organizationWithMemberIds))
       return {
         type: 'error',
