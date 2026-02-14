@@ -13,6 +13,8 @@ import type {
   GeneralOrgResponse,
   GetOrgInput,
   GetOrgResponse,
+  RemoveUserInput,
+  UpdateRoleInput,
 } from './org-dtos';
 
 export class OrganizationService {
@@ -100,6 +102,22 @@ export class OrganizationService {
       };
 
     return response;
+  }
+
+  updateRole(params: UpdateRoleInput): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.updateMemberRole({ body: params, headers: this.headers });
+
+      return undefined;
+    });
+  }
+
+  removeUser(params: RemoveUserInput): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.removeUser({ body: params, headers: this.headers });
+
+      return undefined;
+    });
   }
 
   get actor() {

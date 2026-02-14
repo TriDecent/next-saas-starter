@@ -12,12 +12,17 @@ export type CreateInvitationInput = Omit<
 export type GetOrgInput = ExtractEndpointQuery<
   typeof auth.api.getFullOrganization
 >;
+export type UpdateRoleInput = NonNullableProps<
+  ExtractEndpointBody<typeof auth.api.updateMemberRole>
+>;
+export type RemoveUserInput = NonNullableProps<
+  ExtractEndpointBody<typeof auth.api.removeUser>
+>;
 
 export type GetOrgResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.getFullOrganization>>,
   { message: string }
 >;
-
 export type GeneralOrgResponse = ServiceResponse<
   undefined,
   { message: string }
@@ -36,3 +41,7 @@ type ExtractEndpointQuery<T> =
       ? z.infer<B>
       : never
     : never;
+
+type NonNullableProps<T> = {
+  [K in keyof T]-?: NonNullable<T[K]>;
+};
