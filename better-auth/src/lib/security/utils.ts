@@ -7,7 +7,7 @@ import { redirect, RedirectType } from 'next/navigation';
 export function handleDeniedInServerAction(
   decision: ArcjetDecision,
   callbackUrl?: string
-) {
+): never {
   const searchParams = new URLSearchParams();
 
   const message = decision.reason.isRateLimit()
