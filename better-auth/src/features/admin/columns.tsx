@@ -3,9 +3,6 @@
 import type { User } from '@/generated/prisma/client';
 import { DataTableColumnHeader } from '@/shared/components/DataTable';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Checkbox,
@@ -68,40 +65,9 @@ const nameColumn: ColumnDef<User> = {
   header: ({ column }) => (
     <DataTableColumnHeader column={column} title='User' />
   ),
-  cell: ({ row }) => {
-    const user = row.original;
-    const initials = user.name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-
-    return (
-      <div className='flex justify-center'>
-        <div className='flex items-center gap-3'>
-          <Avatar className='text-muted-foreground border-card-foreground/20 size-9 border'>
-            <AvatarImage
-              src={user.image ?? undefined}
-              alt={`${user.name} avatar`}
-              loading='lazy'
-              className='size-9'
-            />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-
-          <div className='flex w-32 flex-col items-start xl:w-36'>
-            <span className='max-w-32 truncate font-medium xl:max-w-36'>
-              {user.name}
-            </span>
-            <span className='text-muted-foreground max-w-32 truncate text-xs xl:max-w-36'>
-              {user.email}
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  },
+  cell: ({ row }) => (
+    <UserSummary {...row.original} contentClassName='items-start' />
+  ),
 };
 
 const emailColumn: ColumnDef<User> = {
@@ -257,29 +223,10 @@ const actionsColumn: ColumnDef<User> = {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>
             <div className='flex items-center gap-2'>
-              <Avatar className='size-7 border'>
-                <AvatarImage src={user.image ?? undefined} alt={user.name} />
-                <AvatarFallback>
-                  {user.name
-                    .split(' ')
-                    .map(n => n[0])
-                    .join('')
-                    .toUpperCase()
-                    .slice(0, 2)}
-                </AvatarFallback>
-              </Avatar>
-
-              <div>
-                <div className='truncate text-sm font-medium'>{user.name}</div>
-                <div className='text-muted-foreground truncate text-xs'>
-                  {user.email}
-                </div>
-              </div>
+              <UserSummary {...user} />
 
               <Badge variant='outline' className='ml-auto uppercase'>
-                <span className='max-w-24 overflow-x-clip text-ellipsis'>
-                  {user.role}
-                </span>
+                <span className='max-w-24 truncate'>{user.role}</span>
               </Badge>
             </div>
           </DropdownMenuLabel>

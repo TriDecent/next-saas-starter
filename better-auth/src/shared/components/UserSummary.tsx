@@ -10,7 +10,6 @@ import {
   ItemTitle,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/utils';
-import { getInitials } from '../../_shared';
 
 export function UserSummary({
   name,
@@ -23,7 +22,7 @@ export function UserSummary({
   contentClassName?: string;
 }) {
   return (
-    <Item className={cn('p-0', className)}>
+    <Item className={cn('flex-nowrap p-0', className)}>
       <ItemMedia variant='image'>
         <Avatar>
           <AvatarImage src={image ?? undefined} alt={name} />
@@ -38,4 +37,12 @@ export function UserSummary({
       </ItemContent>
     </Item>
   );
+}
+
+export function getInitials(name: string) {
+  const n = name.trim();
+  if (!n) return 'U';
+
+  const parts = n.split(/\s+/).slice(0, 2);
+  return parts.map(p => p[0]?.toUpperCase()).join('');
 }

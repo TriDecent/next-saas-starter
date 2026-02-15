@@ -19,3 +19,4 @@ export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
 export { TotpField } from './TotpField';
 export { TrustDeviceField } from './TrustDeviceField';
+export { UserSummary } from './UserSummary';

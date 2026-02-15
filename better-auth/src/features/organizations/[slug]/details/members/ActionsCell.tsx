@@ -1,5 +1,6 @@
 'use client';
 
+import { UserSummary } from '@/shared/components';
 import {
   Button,
   DropdownMenu,
@@ -17,7 +18,7 @@ import type { CellContext } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { TbArrowsExchange2 } from 'react-icons/tb';
 import { useOrgContext } from '../../context';
-import { UserSummary, type GetFullOrg } from '../_shared';
+import { type GetFullOrg } from '../_shared';
 import { CopyMemberAction } from './copy-member';
 import { RemoveMemberAction } from './remove-user';
 import { UpdateRolesActions } from './set-role';

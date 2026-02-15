@@ -1,11 +1,12 @@
 'use client';
 
+import { UserSummary } from '@/shared/components';
 import { DataTableColumnHeader } from '@/shared/components/DataTable';
 import { Badge, Checkbox } from '@/shared/components/ui';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { formatDate } from '../../_shared';
-import { GetFullOrg, UserSummary } from '../_shared';
+import { GetFullOrg } from '../_shared';
 import { ActionsCell } from './ActionsCell';
 
 const selectColumn = {
