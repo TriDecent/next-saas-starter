@@ -42,14 +42,11 @@ export function InvitationActionsCell({
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuLabel className='text-muted-foreground text-xs'>
+          <DropdownMenuLabel className='text-destructive text-xs font-semibold'>
             Danger zone
           </DropdownMenuLabel>
 
-          <DropdownMenuItem className='text-destructive'>
-            <FaArrowRotateLeft className='text-destructive' />
-            Revoke
-          </DropdownMenuItem>
+          <CancelInvitationAction invitationId={invitation.id} />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

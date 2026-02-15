@@ -120,6 +120,17 @@ export class OrganizationService {
     });
   }
 
+  cancelInvitation(invitationId: string): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.cancelInvitation({
+        body: { invitationId },
+        headers: this.headers,
+      });
+
+      return undefined;
+    });
+  }
+
   get actor() {
     return this._serviceExecutor.actor;
   }
