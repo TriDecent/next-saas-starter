@@ -1,1 +1,1 @@
-export { UpdateRoleAction } from './UpdateRoleAction';
+export { UpdateRolesActions } from './UpdateRoleActions';

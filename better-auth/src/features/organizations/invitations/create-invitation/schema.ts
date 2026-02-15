@@ -2,14 +2,12 @@ import { ORG_ROLES } from '@/lib/auth/constants';
 import { userSchema } from '@/shared/schema';
 import { z } from 'zod';
 
-const orgRoles = Object.entries(ORG_ROLES).map(entry => entry[1]);
-
 export const createInvitationSchema = z.object({
   organizationId: z.string().nonempty(),
   email: z.email(),
   teamId: z.union([z.string(), z.array(z.string())]).optional(),
   resend: z.boolean().optional(),
-  role: z.enum(orgRoles),
+  role: z.enum(Object.values(ORG_ROLES)),
 
   selectedOrganization: z
     .object({

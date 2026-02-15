@@ -20,7 +20,7 @@ import { useOrgContext } from '../../context';
 import { UserSummary, type GetFullOrg } from '../_shared';
 import { CopyMemberAction } from './copy-member';
 import { RemoveMemberAction } from './remove-user';
-import { UpdateRoleAction } from './set-role';
+import { UpdateRolesActions } from './set-role';
 
 export function ActionsCell({
   row,
@@ -30,12 +30,6 @@ export function ActionsCell({
   const orgCtx = useOrgContext();
 
   const callbackUrl = `${ROUTES.organization.href}/${orgCtx.slug}`;
-  const updateRolePayload = {
-    memberId: member.id,
-    organizationId: member.organizationId,
-    role: 'member',
-    currentRoles: member.role,
-  } as const satisfies Parameters<typeof UpdateRoleAction>['0']['payload'];
 
   return (
     <DropdownMenu>
@@ -71,18 +65,7 @@ export function ActionsCell({
               Role
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <UpdateRoleAction
-                payload={{ ...updateRolePayload, role: 'owner' }}
-                callbackUrl={callbackUrl}
-              />
-              <UpdateRoleAction
-                payload={{ ...updateRolePayload, role: 'admin' }}
-                callbackUrl={callbackUrl}
-              />
-              <UpdateRoleAction
-                payload={updateRolePayload}
-                callbackUrl={callbackUrl}
-              />
+              <UpdateRolesActions member={member} callbackUrl={callbackUrl} />
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         </DropdownMenuGroup>
