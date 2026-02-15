@@ -18,7 +18,7 @@ import {
 import { Suspense } from 'react';
 import { FiMail, FiPlus, FiUsers } from 'react-icons/fi';
 import type { OrganizationDetailsProps } from '../OrganizationDetails';
-import { MembersTable } from './MembersTable';
+import { MembersTable } from './table';
 
 export function MembersCard({
   members,

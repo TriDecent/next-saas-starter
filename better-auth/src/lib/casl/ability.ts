@@ -89,7 +89,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   function defineAbilityForModerator() {
     can('ban-user', 'User');
     cannot('ban-user', 'User', {
-      role: { $regex: `^(${APP_ROLES.admin}|${APP_ROLES.moderator})$` },
+      role: {
+        $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin}|${APP_ROLES.moderator})$`,
+      },
     });
   }
 
