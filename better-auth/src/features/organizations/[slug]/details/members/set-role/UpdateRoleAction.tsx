@@ -4,25 +4,25 @@ import type { User } from '@/generated/prisma/client';
 import { ROLES } from '@/lib/auth/constants';
 import type { OrganizationRole } from '@/lib/auth/types';
 import { DropdownMenuCheckboxItem } from '@/shared/components/ui';
-import { ROUTES } from '@/shared/constants';
 import type { Organization } from 'better-auth/plugins';
 import { useTransition } from 'react';
 import { MdAssignmentAdd } from 'react-icons/md';
 import { toast } from 'sonner';
 import { updateRoleAction } from './update-role-action';
 
-export function UpdateRoleAction({
-  memberId,
-  organizationId,
-  organizationSlug,
-  role,
-  currentRoles,
-}: {
+type UpdateRolePayload = {
   memberId: User['id'];
   organizationId: Organization['id'];
-  organizationSlug: Organization['slug'];
   role: OrganizationRole;
   currentRoles: string;
+};
+
+export function UpdateRoleAction({
+  payload: { memberId, organizationId, role, currentRoles },
+  callbackUrl,
+}: {
+  payload: UpdateRolePayload;
+  callbackUrl: string;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -53,7 +53,7 @@ export function UpdateRoleAction({
 
       const response = await updateRoleAction(
         { memberId, organizationId, role: nextRoles },
-        `${ROUTES.organization.href}/${organizationSlug}`
+        callbackUrl
       );
 
       if (response.type === 'success')

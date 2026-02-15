@@ -28,6 +28,14 @@ export function ActionsCell({
   const user = member.user;
   const orgCtx = useOrgContext();
 
+  const callbackUrl = `${ROUTES.organization.href}/${orgCtx.slug}`;
+  const updateRolePayload = {
+    memberId: member.id,
+    organizationId: member.organizationId,
+    role: 'member',
+    currentRoles: member.role,
+  } as const satisfies Parameters<typeof UpdateRoleAction>['0']['payload'];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -61,25 +69,16 @@ export function ActionsCell({
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <UpdateRoleAction
-                memberId={member.id}
-                organizationId={member.organizationId}
-                organizationSlug={orgCtx.slug}
-                role={'owner'}
-                currentRoles={member.role}
+                payload={{ ...updateRolePayload, role: 'owner' }}
+                callbackUrl={callbackUrl}
               />
               <UpdateRoleAction
-                memberId={member.id}
-                organizationId={member.organizationId}
-                organizationSlug={orgCtx.slug}
-                role={'admin'}
-                currentRoles={member.role}
+                payload={{ ...updateRolePayload, role: 'admin' }}
+                callbackUrl={callbackUrl}
               />
               <UpdateRoleAction
-                memberId={member.id}
-                organizationId={member.organizationId}
-                organizationSlug={orgCtx.slug}
-                role={'member'}
-                currentRoles={member.role}
+                payload={updateRolePayload}
+                callbackUrl={callbackUrl}
               />
             </DropdownMenuSubContent>
           </DropdownMenuSub>
