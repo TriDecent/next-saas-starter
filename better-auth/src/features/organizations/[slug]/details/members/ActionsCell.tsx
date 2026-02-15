@@ -91,10 +91,13 @@ export function ActionsCell({
             Danger zone
           </DropdownMenuLabel>
 
-          <DropdownMenuItem className='text-destructive'>
-            <FaTrash className='text-destructive' />
-            Remove from org
-          </DropdownMenuItem>
+          <RemoveMemberAction
+            payload={{
+              memberIdOrEmail: member.id,
+              organizationId: member.organizationId,
+            }}
+            callbackUrl={callbackUrl}
+          />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
