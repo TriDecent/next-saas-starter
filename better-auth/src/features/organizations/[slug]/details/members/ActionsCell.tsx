@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuSub,
@@ -13,12 +12,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/constants';
 import type { CellContext } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
-import { FaTrash } from 'react-icons/fa';
 import { TbArrowsExchange2 } from 'react-icons/tb';
 import { useOrgContext } from '../../context';
 import { UserSummary, type GetFullOrg } from '../_shared';
+import { CopyMemberAction } from './copy-member';
+import { RemoveMemberAction } from './remove-user';
 import { UpdateRoleAction } from './set-role';
 
 export function ActionsCell({
@@ -61,6 +62,8 @@ export function ActionsCell({
           <DropdownMenuLabel className='text-muted-foreground text-xs'>
             Actions
           </DropdownMenuLabel>
+
+          <CopyMemberAction member={member} />
 
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
