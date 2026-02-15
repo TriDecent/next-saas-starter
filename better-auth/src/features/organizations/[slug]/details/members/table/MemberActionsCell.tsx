@@ -23,7 +23,7 @@ import { CopyMemberAction } from '../copy-member';
 import { RemoveMemberAction } from '../remove-user';
 import { UpdateRolesActions } from '../set-role';
 
-export function ActionsCell({
+export function MemberActionsCell({
   row,
 }: CellContext<GetFullOrg['members'][number], unknown>) {
   const member = row.original;

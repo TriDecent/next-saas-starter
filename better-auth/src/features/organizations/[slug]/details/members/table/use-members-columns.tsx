@@ -7,7 +7,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { formatDate } from '../../../_shared';
 import { GetFullOrg } from '../../_shared';
-import { ActionsCell } from './ActionsCell';
+import { MemberActionsCell } from './MemberActionsCell';
 
 const selectColumn = {
   id: 'select',
@@ -88,7 +88,7 @@ const createdAtColumn = {
 
 const actionsColumn: ColumnDef<Member> = {
   id: 'actions',
-  cell: ctx => <ActionsCell {...ctx} />,
+  cell: ctx => <MemberActionsCell {...ctx} />,
 };
 
 const columns: ColumnDef<Member>[] = [

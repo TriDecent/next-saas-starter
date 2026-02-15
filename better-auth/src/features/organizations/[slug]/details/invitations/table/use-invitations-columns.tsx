@@ -1,24 +1,13 @@
 'use client';
 
 import { DataTableColumnHeader } from '@/shared/components/DataTable';
-import {
-  Badge,
-  Button,
-  Checkbox,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/shared/components/ui';
+import { Badge, Checkbox } from '@/shared/components/ui';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Invitation } from 'better-auth/plugins';
-import { Clock, Mail, MoreHorizontal, Users } from 'lucide-react';
+import { Clock, Mail, Users } from 'lucide-react';
 import { useMemo } from 'react';
-import { FaArrowRotateLeft, FaCopy } from 'react-icons/fa6';
-import { formatDate } from '../../_shared';
+import { formatDate } from '../../../_shared';
+import { InvitationActionsCell } from './InvitationActionsCell';
 
 const selectColumn = {
   id: 'select',
@@ -157,49 +146,7 @@ const actionsColumn = {
   id: 'actions',
   enableSorting: false,
   enableHiding: false,
-  cell: ({ row }) => {
-    const invitation = row.original;
-
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='ghost'>
-            <MoreHorizontal />
-          </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align='end'>
-          <DropdownMenuLabel className='max-w-52 truncate'>
-            {invitation.email}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className='text-muted-foreground text-xs'>
-              Actions
-            </DropdownMenuLabel>
-
-            <DropdownMenuItem>
-              <FaCopy />
-              Copy invite link
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className='text-muted-foreground text-xs'>
-              Danger zone
-            </DropdownMenuLabel>
-
-            <DropdownMenuItem className='text-destructive'>
-              <FaArrowRotateLeft className='text-destructive' />
-              Revoke
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  },
+  cell: ({ row }) => <InvitationActionsCell invitation={row.original} />,
 } satisfies ColumnDef<Invitation>;
 
 export function useInvitationsColumns() {
