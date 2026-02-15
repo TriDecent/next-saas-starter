@@ -112,9 +112,9 @@ export class OrganizationService {
     });
   }
 
-  removeUser(params: RemoveUserInput): Promise<GeneralOrgResponse> {
+  removeMember(params: RemoveUserInput): Promise<GeneralOrgResponse> {
     return this._serviceExecutor.runSafely(async () => {
-      await auth.api.removeUser({ body: params, headers: this.headers });
+      await auth.api.removeMember({ body: params, headers: this.headers });
 
       return undefined;
     });

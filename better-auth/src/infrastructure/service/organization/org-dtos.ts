@@ -16,7 +16,7 @@ export type UpdateRoleInput = NonNullableProps<
   ExtractEndpointBody<typeof auth.api.updateMemberRole>
 >;
 export type RemoveUserInput = NonNullableProps<
-  ExtractEndpointBody<typeof auth.api.removeUser>
+  ExtractEndpointBody<typeof auth.api.removeMember>
 >;
 
 export type GetOrgResponse = ServiceResponse<
