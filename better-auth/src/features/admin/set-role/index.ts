@@ -1,1 +1,1 @@
-export { SetRoleAction } from './SetRoleAction';
+export { SetRoleActions } from './SetRoleActions';

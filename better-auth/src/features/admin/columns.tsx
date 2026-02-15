@@ -1,6 +1,7 @@
 'use client';
 
 import type { User } from '@/generated/prisma/client';
+import { UserSummary } from '@/shared/components';
 import { DataTableColumnHeader } from '@/shared/components/DataTable';
 import {
   Badge,
@@ -37,7 +38,7 @@ import { CopyUserAction } from './copy-user';
 import { DeleteUserAction } from './delete-user';
 import { ImpersonateUserAction } from './impersonation';
 import { RevokeUserSessionsAction } from './revoke-sessions';
-import { SetRoleAction } from './set-role';
+import { SetRoleActions } from './set-role';
 
 const selectColumn: ColumnDef<User> = {
   id: 'select',
@@ -272,26 +273,7 @@ const actionsColumn: ColumnDef<User> = {
 
               <DropdownMenuSeparator />
 
-              <SetRoleAction
-                userId={user.id}
-                role={'super-admin'}
-                currentRoles={user.role}
-              />
-              <SetRoleAction
-                userId={user.id}
-                role={'admin'}
-                currentRoles={user.role}
-              />
-              <SetRoleAction
-                userId={user.id}
-                role={'moderator'}
-                currentRoles={user.role}
-              />
-              <SetRoleAction
-                userId={user.id}
-                role={'user'}
-                currentRoles={user.role}
-              />
+              <SetRoleActions user={user} />
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
