@@ -1,7 +1,7 @@
 'use client';
 
 import type { User } from '@/generated/prisma/client';
-import { ROLES } from '@/lib/auth/constants';
+import { ORG_ROLES } from '@/lib/auth/constants';
 import type { OrganizationRole } from '@/lib/auth/types';
 import { DropdownMenuCheckboxItem } from '@/shared/components/ui';
 import type { Organization } from 'better-auth/plugins';
@@ -81,11 +81,11 @@ export function UpdateRoleAction({
   );
 }
 
-function isAppRole(role: string): role is OrganizationRole {
-  return Object.hasOwnProperty.call(ROLES, role);
+function isOrgRole(role: string): role is OrganizationRole {
+  return Object.hasOwnProperty.call(ORG_ROLES, role);
 }
 
 function normalizeRoles(input: string): OrganizationRole[] {
   const arr = input.split(',');
-  return arr.filter(isAppRole);
+  return arr.filter(isOrgRole);
 }

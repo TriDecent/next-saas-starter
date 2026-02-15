@@ -14,8 +14,8 @@ export const APP_ROLES = {
 } as const;
 
 export const ORG_ROLES = {
-  admin: 'admin',
   owner: 'owner',
+  admin: 'admin',
   member: 'member',
   viewer: 'viewer',
 } as const;

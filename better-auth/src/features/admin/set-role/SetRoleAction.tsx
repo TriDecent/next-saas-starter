@@ -76,11 +76,11 @@ export function SetRoleAction({
   );
 }
 
-function isAppRole(role: string): role is UserRole {
+function isUserRole(role: string): role is UserRole {
   return Object.hasOwnProperty.call(APP_ROLES, role);
 }
 
 function normalizeRoles(input: string): UserRole[] {
   const arr = input.split(',');
-  return arr.filter(isAppRole);
+  return arr.filter(isUserRole);
 }
