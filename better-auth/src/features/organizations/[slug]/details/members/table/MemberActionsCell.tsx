@@ -74,7 +74,7 @@ export function MemberActionsCell({
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuLabel className='text-muted-foreground text-xs'>
+          <DropdownMenuLabel className='text-destructive text-xs font-bold'>
             Danger zone
           </DropdownMenuLabel>
 
