@@ -1,6 +1,7 @@
 export { ActionButton } from './ActionButton';
 export { AuthFormLayout } from './AuthFormLayout';
 export { BackupCodeField } from './BackupCodeField';
+export { CopyText } from './CopyText';
 export { DrawerOpener } from './DrawerOpener';
 export { ErrorBlock } from './ErrorBlock';
 export { Loading } from './Loading';
