@@ -3,15 +3,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/components/ui';
 import type { Invitation } from 'better-auth/plugins';
 import { MoreHorizontal } from 'lucide-react';
-import { FaArrowRotateLeft, FaCopy } from 'react-icons/fa6';
 import { MdEmail } from 'react-icons/md';
+import { CancelInvitationAction } from '../cancel-invitation';
+import { CopyInviteLinkAction } from '../copy-invite-link';
 
 export function InvitationActionsCell({
   invitation,
@@ -36,10 +36,7 @@ export function InvitationActionsCell({
             Actions
           </DropdownMenuLabel>
 
-          <DropdownMenuItem>
-            <FaCopy />
-            Copy invite link
-          </DropdownMenuItem>
+          <CopyInviteLinkAction invitation={invitation} />
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
