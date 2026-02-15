@@ -7,7 +7,7 @@ import {
   memberAc,
   ownerAc,
 } from 'better-auth/plugins/organization/access';
-import { ROLES } from './constants';
+import { ORG_ROLES } from './constants';
 
 const statements = { ...defaultStatements } as const;
 
@@ -16,12 +16,13 @@ const ac = createAccessControl(statements);
 const extendedOwnerAc = ac.newRole({ ...ownerAc.statements });
 const extendedAdminAc = ac.newRole({ ...adminAc.statements });
 const extendedMemberAc = ac.newRole({ ...memberAc.statements });
+const viewerMemberAc = ac.newRole({ ac: ['read'] });
 
 const ROLES_STATEMENTS = {
-  [ROLES['super-admin']]: extendedOwnerAc,
-  [ROLES.admin]: extendedAdminAc,
-  [ROLES.owner]: extendedOwnerAc,
-  member: extendedMemberAc,
+  [ORG_ROLES.admin]: extendedAdminAc,
+  [ORG_ROLES.owner]: extendedOwnerAc,
+  [ORG_ROLES.member]: extendedMemberAc,
+  [ORG_ROLES.viewer]: viewerMemberAc,
 } as const;
 
 export const organizationPluginConfigs = {

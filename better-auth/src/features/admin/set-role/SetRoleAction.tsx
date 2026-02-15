@@ -1,7 +1,7 @@
 'use client';
 
 import type { User } from '@/generated/prisma/client';
-import { ROLES } from '@/lib/auth/constants';
+import { APP_ROLES } from '@/lib/auth/constants';
 import type { UserRole } from '@/lib/auth/types';
 import { DropdownMenuCheckboxItem } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
@@ -77,7 +77,7 @@ export function SetRoleAction({
 }
 
 function isAppRole(role: string): role is UserRole {
-  return Object.hasOwnProperty.call(ROLES, role);
+  return Object.hasOwnProperty.call(APP_ROLES, role);
 }
 
 function normalizeRoles(input: string): UserRole[] {

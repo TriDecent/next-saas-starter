@@ -5,7 +5,7 @@ import {
   defaultStatements,
   userAc,
 } from 'better-auth/plugins/admin/access';
-import { ROLES } from './constants';
+import { APP_ROLES } from './constants';
 
 const statement = {
   ...defaultStatements,
@@ -31,9 +31,9 @@ const moderatorAc = ac.newRole({
 const extendedUserAc = ac.newRole({ ...userAc.statements });
 
 const ROLES_STATEMENTS = {
-  [ROLES['super-admin']]: extendedAdminAc,
-  [ROLES.admin]: extendedAdminAc,
-  [ROLES.moderator]: moderatorAc,
+  [APP_ROLES['super-admin']]: extendedAdminAc,
+  [APP_ROLES.admin]: extendedAdminAc,
+  [APP_ROLES.moderator]: moderatorAc,
   user: extendedUserAc,
 } as const;
 

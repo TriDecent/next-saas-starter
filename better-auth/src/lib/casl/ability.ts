@@ -3,7 +3,7 @@ import {
   createMongoAbility,
   type MongoAbility,
 } from '@casl/ability';
-import { ROLES, type AuthSession } from '../auth';
+import { APP_ROLES, type AuthSession } from '../auth';
 import type {
   InvitationAction,
   InvitationSubject,
@@ -42,10 +42,12 @@ export function defineAbilityFor(actor: AuthSession['user']) {
 
   const actorRoles = actor.role?.split(',') ?? [];
 
-  if (actorRoles.includes(ROLES['super-admin'])) defineAbilityForSuperAdmin();
-  else if (actorRoles.includes(ROLES.admin)) defineAbilityForAdmin();
-  else if (actorRoles.includes(ROLES.moderator)) defineAbilityForModerator();
-  else if (actorRoles.includes(ROLES.user)) defineAbilityForUser();
+  if (actorRoles.includes(APP_ROLES['super-admin']))
+    defineAbilityForSuperAdmin();
+  else if (actorRoles.includes(APP_ROLES.admin)) defineAbilityForAdmin();
+  else if (actorRoles.includes(APP_ROLES.moderator))
+    defineAbilityForModerator();
+  else if (actorRoles.includes(APP_ROLES.user)) defineAbilityForUser();
 
   return build({ detectSubjectType: item => item.kind });
 
@@ -56,38 +58,38 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   function defineAbilityForAdmin() {
     can('manage', 'all');
     cannot('ban-user', 'User', {
-      role: { $regex: `^(${ROLES['super-admin']}|${ROLES.admin})$` },
+      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
     });
 
     cannot('revoke-user', 'User', { id: actor.id });
     cannot('revoke-user', 'User', {
-      role: { $regex: `^(${ROLES['super-admin']}|${ROLES.admin})$` },
+      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
     });
 
     cannot('delete', 'User', { id: actor.id });
     cannot('delete', 'User', {
-      role: { $regex: `^(${ROLES['super-admin']}|${ROLES.admin})$` },
+      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
     });
 
     cannot('impersonate-user', 'User', { id: actor.id });
     cannot('impersonate-user', 'User', {
-      role: { $regex: `^(${ROLES['super-admin']}|${ROLES.admin})$` },
+      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
     });
 
     cannot('set-role', 'User', { id: actor.id });
     cannot('set-role', 'User', {
-      role: { $regex: `^(${ROLES['super-admin']}|${ROLES.admin})$` },
+      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
     });
 
     cannot('assign', 'Role', {
-      name: { $in: [ROLES['super-admin'], ROLES['admin']] },
+      name: { $in: [APP_ROLES['super-admin'], APP_ROLES['admin']] },
     });
   }
 
   function defineAbilityForModerator() {
     can('ban-user', 'User');
     cannot('ban-user', 'User', {
-      role: { $regex: `^(${ROLES.admin}|${ROLES.moderator})$` },
+      role: { $regex: `^(${APP_ROLES.admin}|${APP_ROLES.moderator})$` },
     });
   }
 

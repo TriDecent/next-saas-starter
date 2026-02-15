@@ -1,6 +1,6 @@
 'use client';
 
-import { ROLES } from '@/lib/auth/constants';
+import { ORG_ROLES } from '@/lib/auth/constants';
 import { FormField } from '@/shared/components/form';
 import {
   FieldContent,
@@ -18,7 +18,7 @@ import {
   ItemTitle,
   RadioGroupItem,
 } from '@/shared/components/ui';
-import { HiCog, HiShieldCheck, HiStar, HiUserGroup } from 'react-icons/hi';
+import { HiCog, HiEye, HiStar, HiUserGroup } from 'react-icons/hi';
 
 export function SelectRole() {
   return (
@@ -87,27 +87,27 @@ type Role = (typeof roles)[number];
 
 const roles = [
   {
-    value: ROLES['super-admin'],
-    label: 'Super Admin',
-    description: 'Highest level access.',
-    icon: <HiShieldCheck />,
-  },
-  {
-    value: ROLES['owner'],
+    value: ORG_ROLES['owner'],
     label: 'Owner',
     description: 'Full access to org.',
     icon: <HiStar />,
   },
   {
-    value: ROLES['admin'],
+    value: ORG_ROLES['admin'],
     label: 'Admin',
     description: 'Can manage members and settings.',
     icon: <HiCog />,
   },
   {
-    value: ROLES['member'],
+    value: ORG_ROLES['member'],
     label: 'Member',
     description: 'Can view and collaborate.',
     icon: <HiUserGroup />,
+  },
+  {
+    value: ORG_ROLES['viewer'],
+    label: 'Viewer',
+    description: 'Read-only access to org.',
+    icon: <HiEye />,
   },
 ];

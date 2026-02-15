@@ -1,15 +1,10 @@
 import type { auth } from './auth';
-import { ROLES } from './constants';
+import type { APP_ROLES, ORG_ROLES } from './constants';
 
-export type AppRole = keyof typeof ROLES;
-export type UserRole = Extract<
-  AppRole,
-  'super-admin' | 'admin' | 'user' | 'moderator'
->;
-export type OrganizationRole = Extract<
-  AppRole,
-  'super-admin' | 'admin' | 'owner' | 'member'
->;
+export type AppRole = keyof typeof APP_ROLES;
+export type UserRole = AppRole;
+export type OrganizationRole = keyof typeof ORG_ROLES;
+
 export type AuthSession = NonNullable<
   Awaited<ReturnType<typeof auth.api.getSession>>
 >;

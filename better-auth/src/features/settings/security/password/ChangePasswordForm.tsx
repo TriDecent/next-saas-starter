@@ -128,6 +128,7 @@ export function ChangePasswordForm({
 
             <FormField
               kind='checkbox'
+              variant='card'
               id='revokeOtherSessions'
               name='revokeOtherSessions'
               disabled={isPending}
