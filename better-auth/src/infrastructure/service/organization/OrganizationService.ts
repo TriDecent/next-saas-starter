@@ -11,6 +11,7 @@ import type {
   CreateInvitationInput,
   CreateOrgInput,
   GeneralOrgResponse,
+  GetInvitationResponse,
   GetOrgInput,
   GetOrgResponse,
   RemoveUserInput,
@@ -81,6 +82,15 @@ export class OrganizationService {
 
       return undefined;
     });
+  }
+
+  getInvitation(id: string): Promise<GetInvitationResponse> {
+    return this._serviceExecutor.runSafely(() =>
+      auth.api.getInvitation({
+        query: { id },
+        headers: this.headers,
+      })
+    );
   }
 
   async getFullOrganization(params: GetOrgInput): Promise<GetOrgResponse> {
