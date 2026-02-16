@@ -1,3 +1,4 @@
+export * from './accordion';
 export * from './alert-dialog';
 export * from './avatar';
 export * from './badge';
@@ -18,6 +19,7 @@ export * from './input-otp';
 export * from './item';
 export * from './label';
 export * from './popover';
+export * from './progress';
 export * from './radio-group';
 export * from './scroll-area';
 export * from './select';
