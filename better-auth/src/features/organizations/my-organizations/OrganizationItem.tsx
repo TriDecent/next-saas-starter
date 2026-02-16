@@ -83,12 +83,12 @@ function formatDate(date: Date) {
 }
 
 function initials(name: string) {
-  const parts = name
-    .trim()
-    .split(/\s+/)
-    .filter(part => part);
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+
+  if (parts.length === 0) return 'OO';
 
   const a = parts[0][0] ?? 'O';
-  const b = parts[1][0] ?? parts[0][1] ?? '';
+  const b = parts[1]?.[0] ?? parts[0][1] ?? '';
+
   return (a + b).toUpperCase();
 }
