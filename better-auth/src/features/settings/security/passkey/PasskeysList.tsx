@@ -50,8 +50,6 @@ function Passkeys({ passkeys }: { passkeys: Passkey[] }) {
           ))}
         </ItemGroup>
       </CardContent>
-
-      <Separator />
     </Card>
   );
 }

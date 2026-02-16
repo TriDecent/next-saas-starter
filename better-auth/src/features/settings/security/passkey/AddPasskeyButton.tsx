@@ -9,7 +9,7 @@ export function AddPasskeyButton() {
       title={'Add Passkey'}
       description={'Add a new passkey for authentication'}
       trigger={
-        <Button variant={'outline'} size={'sm'}>
+        <Button variant={'outline'}>
           <IoMdAddCircleOutline /> Add a Passkey
         </Button>
       }

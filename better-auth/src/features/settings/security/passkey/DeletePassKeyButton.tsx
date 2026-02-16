@@ -26,11 +26,7 @@ export function DeletePassKeyButton({ passkeyId }: { passkeyId: string }) {
   return (
     <AuthenticatePriorAction
       trigger={
-        <Button
-          variant={'ghost'}
-          size='icon'
-          className='text-destructive hover:text-destructive'
-        >
+        <Button size='icon-lg' variant={'destructive'}>
           <Trash2 className='size-4' />
         </Button>
       }

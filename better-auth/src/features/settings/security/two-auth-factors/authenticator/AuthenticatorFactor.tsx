@@ -7,6 +7,8 @@ import {
 import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
 import { Key } from 'lucide-react';
 import { use, type ReactNode } from 'react';
+import { GiShield, GiShieldDisabled } from 'react-icons/gi';
+import { IoIosSettings } from 'react-icons/io';
 import { FactorItem } from '../_shared/FactorItem';
 import { DisableTwoFactors } from './disable/DisableTwoFactors';
 import { EnableTwoFactors } from './enable/EnableTwoFactors';
@@ -37,10 +39,18 @@ export function AuthenticatorFactor() {
         trigger={
           <Button
             variant={is2FAEnabled ? 'destructive' : 'default'}
-            size={'sm'}
-            className='w-full sm:w-fit'
+            className='w-full min-w-24 sm:w-fit'
           >
-            {is2FAEnabled ? 'Disable' : 'Enable'}
+            {is2FAEnabled ? (
+              <>
+                <GiShieldDisabled /> Disable
+              </>
+            ) : (
+              <>
+                <GiShield />
+                Enable
+              </>
+            )}
           </Button>
         }
       >
@@ -57,7 +67,8 @@ export function AuthenticatorFactor() {
             )}
       </AuthenticatePriorAction>
 
-      <Button variant='outline' size='sm'>
+      <Button variant='outline' className='min-w-24'>
+        <IoIosSettings />
         Manage
       </Button>
     </FactorItem>

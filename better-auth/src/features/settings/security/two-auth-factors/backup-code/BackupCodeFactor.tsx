@@ -4,6 +4,7 @@ import { DrawerOpener } from '@/shared/components';
 import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
 import { FileText } from 'lucide-react';
 import { useState } from 'react';
+import { HiMiniArrowPathRoundedSquare } from 'react-icons/hi2';
 import { FactorItem } from '../_shared/FactorItem';
 import { BackupCodes } from './BackupCodes';
 import { GenerateBackupCodesForm } from './GenerateBackupCodesForm';
@@ -27,7 +28,8 @@ export function BackupCodeFactor() {
           'Generating new backup codes will invalidate your old ones. Make sure to save the new codes securely.'
         }
         trigger={
-          <Button variant='destructive' size='sm'>
+          <Button variant='destructive'>
+            <HiMiniArrowPathRoundedSquare />
             Regenerate
           </Button>
         }

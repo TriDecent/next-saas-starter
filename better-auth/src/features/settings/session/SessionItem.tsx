@@ -38,7 +38,7 @@ export function SessionItem({
       <ItemMedia variant='icon'>
         {clientInfoRetriever.getDeviceIcon(userAgent)}
       </ItemMedia>
-      <ItemContent>
+      <ItemContent className='min-w-0'>
         <ItemTitle>
           <span>
             {clientInfoRetriever.getBrowserInfo(userAgent)} on{' '}
@@ -47,9 +47,9 @@ export function SessionItem({
           {isActive ? <Badge>Current</Badge> : null}
         </ItemTitle>
         <ItemDescription className='line-clamp-none flex flex-col gap-y-2'>
-          <span className='flex items-center gap-1.5'>
-            <MdLocationOn />
-            {ipAddress ?? 'Unknown location'}
+          <span className='flex gap-1.5'>
+            <MdLocationOn className='shrink-0' />
+            <span className='truncate'>{ipAddress ?? 'Unknown location'}</span>
           </span>
           <span className='text-xs'>
             <strong>Last updated:</strong> {formatDate(updatedAt)}
@@ -61,7 +61,7 @@ export function SessionItem({
       </ItemContent>
       <ItemActions>
         {isActive ? (
-          <Button variant='outline' size='sm' disabled>
+          <Button variant='outline' disabled size='xs'>
             Active
           </Button>
         ) : (

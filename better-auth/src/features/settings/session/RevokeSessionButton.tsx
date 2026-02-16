@@ -16,7 +16,7 @@ export function RevokeSessionButton({
   return (
     <ActionButton
       variant={'destructive'}
-      size={'icon-sm'}
+      size={'icon-lg'}
       action={async () => {
         onRevoke?.();
         toast.loading('Revoking session...', {

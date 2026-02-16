@@ -64,7 +64,7 @@ export function PasskeyItem({ passkey }: { passkey: Passkey }) {
           </span>
         </ItemDescription>
 
-        <code className='bg-muted text-muted-foreground phone-lg:max-w-fit max-w-[200px] truncate rounded px-1.5 py-0.5 font-mono text-xs'>
+        <code className='bg-muted text-muted-foreground phone-lg:max-w-fit max-w-50 truncate rounded px-1.5 py-0.5 font-mono text-xs'>
           ID: {passkey.id}
         </code>
       </ItemContent>
@@ -72,7 +72,7 @@ export function PasskeyItem({ passkey }: { passkey: Passkey }) {
       <ItemActions className='self-items-start ml-auto'>
         <Button
           variant='ghost'
-          size='icon'
+          size='icon-lg'
           onClick={async () => {
             await navigator.clipboard.writeText(JSON.stringify(passkey));
             toast.success('Passkey information copied to clipboard');
