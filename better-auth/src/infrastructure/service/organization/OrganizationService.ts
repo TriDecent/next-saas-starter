@@ -45,6 +45,17 @@ export class OrganizationService {
     });
   }
 
+  deleteOrg(organizationId: string): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.deleteOrganization({
+        body: { organizationId },
+        headers: this.headers,
+      });
+
+      return undefined;
+    });
+  }
+
   listMyOrgs(): Promise<
     ServiceResponse<OrganizationWithRole[], { message: string }>
   > {
