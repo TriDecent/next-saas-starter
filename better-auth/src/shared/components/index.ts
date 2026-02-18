@@ -15,6 +15,7 @@ export { SendEmailButton } from './SendEmailButton';
 export { SkeletonCard } from './SkeletonCard';
 export { SkeletonForm } from './SkeletonForm';
 export { SkeletonTable } from './SkeletonTable';
+export { SkeletonText } from './SkeletonText';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
 export { TotpField } from './TotpField';
