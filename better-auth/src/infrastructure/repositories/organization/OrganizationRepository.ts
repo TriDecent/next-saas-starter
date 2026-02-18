@@ -1,6 +1,9 @@
 import type { User } from '@/generated/prisma/client';
+import type { GlobalOmitConfig } from '@/generated/prisma/internal/prismaNamespace';
+import type { OrganizationDelegate } from '@/generated/prisma/models';
 import { prisma } from '@/lib';
-import { BaseRepository, type IBaseRepository } from '../BaseRepository';
+import type { DefaultArgs } from '@prisma/client/runtime/client';
+import { IRepository } from '../IRepository';
 import type { OrganizationWithRole } from './types';
 
 export interface IOrganizationRepository extends IRepository<
