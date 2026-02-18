@@ -26,7 +26,7 @@ export default function OrganizationsPage() {
           </Suspense>
         </div>
 
-        <div className='space-y-6'>
+        <div className='sticky top-32 h-fit space-y-6'>
           <QuickActions />
           <AccessControl />
         </div>
