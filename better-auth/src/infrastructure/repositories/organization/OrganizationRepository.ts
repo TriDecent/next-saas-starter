@@ -3,24 +3,28 @@ import { prisma } from '@/lib';
 import { BaseRepository, type IBaseRepository } from '../BaseRepository';
 import type { OrganizationWithRole } from './types';
 
-export interface IOrganizationRepository extends IBaseRepository<
+export interface IOrganizationRepository extends IRepository<
   typeof prisma.organization
 > {
   listOrganizationsForUser(userId: User['id']): Promise<OrganizationWithRole[]>;
 }
 
-export class OrganizationRepository
-  extends BaseRepository<typeof prisma.organization>
-  implements IOrganizationRepository
-{
-  constructor() {
-    super(prisma.organization);
+export class OrganizationRepository implements IOrganizationRepository {
+  private readonly _delegate = prisma.organization;
+
+  constructor() {}
+
+  get model(): OrganizationDelegate<
+    DefaultArgs,
+    { omit: GlobalOmitConfig | undefined }
+  > {
+    return prisma.organization;
   }
 
   async listOrganizationsForUser(
     userId: User['id']
   ): Promise<OrganizationWithRole[]> {
-    const orgs = await this.delegate.findMany({
+    const orgs = await this._delegate.findMany({
       where: { members: { some: { userId } } },
       include: {
         _count: { select: { members: true } },
