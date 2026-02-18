@@ -19,19 +19,19 @@ export async function generateMetadata({
   return {
     ...ROUTES.organization.nested.slug.metadata,
     title: `${org.name} Organization`,
+    description: `Details and settings of ${org.name} organization.`,
   };
 }
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  const repo = getOrgRepo();
-  const orgs = await repo.findMany({ select: { slug: true } });
+  const slugs = await getOrgRepo().model.findMany({ select: { slug: true } });
 
-  return orgs.map(org => ({ slug: org.slug }));
+  return slugs.length > 1 ? slugs : [{ slug: 'does-not-exist' }];
 }
 
 type SlugParams = { params: Promise<{ slug: string }> };
 
-export default function OrganizationsPage({ params }: SlugParams) {
+export default function OrgDetailsPage({ params }: SlugParams) {
   return (
     <section className='space-y-6'>
       <SectionHeader
