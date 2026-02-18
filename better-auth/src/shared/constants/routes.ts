@@ -129,6 +129,16 @@ export const ROUTES = {
         url: `${BASE_URL}/organizations/invitations`,
       },
     },
+    nested: {
+      ['approval-process']: defineRoute({
+        href: '/invitations/[invitationId]',
+        metadata: {
+          title: 'Invitation Approval Process',
+          description:
+            'Review and manage the approval process for organization invitations, including pending and accepted invitations.',
+        },
+      }),
+    },
   }),
   auth: defineRoute({
     href: '/auth',
