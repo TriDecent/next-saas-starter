@@ -93,6 +93,28 @@ export class OrganizationService {
     );
   }
 
+  acceptInvitation(invitationId: string): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.acceptInvitation({
+        body: { invitationId },
+        headers: this.headers,
+      });
+
+      return undefined;
+    });
+  }
+
+  rejectInvitation(invitationId: string): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.rejectInvitation({
+        body: { invitationId },
+        headers: this.headers,
+      });
+
+      return undefined;
+    });
+  }
+
   async getFullOrganization(params: GetOrgInput): Promise<GetOrgResponse> {
     const response = await this._serviceExecutor.runSafely(() =>
       auth.api.getFullOrganization({
