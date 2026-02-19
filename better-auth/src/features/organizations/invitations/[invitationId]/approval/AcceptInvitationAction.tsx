@@ -37,7 +37,7 @@ export function AcceptInvitationAction({
           description: `Invitation ${invitationId} accepted successfully`,
         });
 
-        router.replace(ROUTES.organization.href);
+        router.replace(ROUTES.organizations.href);
       }
 
       if (response.type === 'error')

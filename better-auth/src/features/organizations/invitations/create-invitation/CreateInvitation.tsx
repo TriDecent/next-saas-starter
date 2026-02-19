@@ -72,7 +72,7 @@ function CreateInvitationCard() {
 }
 
 async function SelectOrgWrapper() {
-  const service = await getOrgService(ROUTES.organization.href);
+  const service = await getOrgService(ROUTES.organizations.href);
   const response = await service.listMyOrgs();
 
   if (response.type === 'error') throw new Error(response.payload.message);
@@ -81,7 +81,7 @@ async function SelectOrgWrapper() {
 }
 
 async function SelectRecipientWrapper() {
-  const service = await getUserService(ROUTES.organization.href);
+  const service = await getUserService(ROUTES.organizations.href);
   // * This implementation is not scalable.
   // *It fetches a hard-coded limit of the first 100 users,
   // * which will break with larger datasets.

@@ -89,7 +89,7 @@ function OrganizationDisplay({
           </Button>
           <Button variant='outline' size='sm' asChild>
             <Link
-              href={`${ROUTES.organization.href}/${organization.slug}`}
+              href={`${ROUTES.organizations.href}/${organization.slug}`}
               className='gap-2'
             >
               <FaLink className='size-4' />

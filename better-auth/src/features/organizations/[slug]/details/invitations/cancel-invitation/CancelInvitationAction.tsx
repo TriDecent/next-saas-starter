@@ -25,7 +25,7 @@ export function CancelInvitationAction({
 
       const response = await cancelInvitationAction(
         invitationId,
-        `${ROUTES.organization.href}/${orgCtx.slug}`
+        `${ROUTES.organizations.href}/${orgCtx.slug}`
       );
 
       if (response.type === 'success')

@@ -8,7 +8,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { FaBuilding } from 'react-icons/fa';
 
-export const metadata: Metadata = ROUTES.organization.metadata;
+export const metadata: Metadata = ROUTES.organizations.metadata;
 
 export default function OrganizationsPage() {
   return (
@@ -36,7 +36,7 @@ export default function OrganizationsPage() {
 }
 
 async function MyOrgsWrapper() {
-  const service = await getOrgService(ROUTES.organization.href);
+  const service = await getOrgService(ROUTES.organizations.href);
   const response = await service.listMyOrgs();
 
   if (response.type === 'error') throw new Error(response.payload.message);

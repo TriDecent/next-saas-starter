@@ -16,7 +16,7 @@ export async function generateMetadata({
   const org = await getFullOrg(slug);
 
   return {
-    ...ROUTES.organization.nested.slug.metadata,
+    ...ROUTES.organizations.nested.slug.metadata,
     title: `${org.name} Organization`,
     description: `Details and settings of ${org.name} organization.`,
   };
@@ -55,7 +55,7 @@ async function Wrapper({ params }: SlugParams) {
 }
 
 const getFullOrg = cache(async (slug: string) => {
-  const service = await getOrgService(`${ROUTES.organization.href}/${slug}`);
+  const service = await getOrgService(`${ROUTES.organizations.href}/${slug}`);
 
   const result = await service.getFullOrganization({
     organizationSlug: slug,

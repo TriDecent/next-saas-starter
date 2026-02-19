@@ -29,7 +29,7 @@ export function DeleteOrgAction({
 
       const response = await deleteOrgAction(
         organizationId,
-        `${ROUTES.organization.href}/${orgCtx.slug}`
+        `${ROUTES.organizations.href}/${orgCtx.slug}`
       );
 
       if (response.type === 'success') {
@@ -38,7 +38,7 @@ export function DeleteOrgAction({
           description: `Organization ${organizationId} has been deleted successfully`,
         });
 
-        router.replace(ROUTES.organization.href);
+        router.replace(ROUTES.organizations.href);
       }
 
       if (response.type === 'error')

@@ -16,7 +16,7 @@ export async function createNewOrg(
   input: unknown
 ): Promise<Response> {
   const [service, req] = await Promise.all([
-    getOrgService(ROUTES.organization.href),
+    getOrgService(ROUTES.organizations.href),
     request(),
   ]);
 

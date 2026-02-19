@@ -30,7 +30,7 @@ export function MemberActionsCell({
   const user = member.user;
   const orgCtx = useOrgContext();
 
-  const callbackUrl = `${ROUTES.organization.href}/${orgCtx.slug}`;
+  const callbackUrl = `${ROUTES.organizations.href}/${orgCtx.slug}`;
 
   return (
     <DropdownMenu>
