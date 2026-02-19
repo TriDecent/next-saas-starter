@@ -18,7 +18,7 @@ export class AuthService {
     private readonly _currentSession?: Session
   ) {}
 
-  get self() {
+  get actor() {
     return this._actor;
   }
 

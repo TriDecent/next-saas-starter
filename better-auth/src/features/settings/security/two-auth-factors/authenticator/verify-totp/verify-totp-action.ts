@@ -22,10 +22,10 @@ export async function verifyTotpAction(
 
   const [service, req] = await Promise.all([getAuthService(), request()]);
 
-  const decision = service.self
+  const decision = service.actor
     ? await ajRestrictiveAuthenticated.protect(req, {
         action: 'verify-totp',
-        userId: service.self.id,
+        userId: service.actor.id,
       })
     : await ajRestrictiveAnonymous.protect(req, { action: 'verify-totp' });
   if (decision.isDenied()) handleDeniedInServerAction(decision);

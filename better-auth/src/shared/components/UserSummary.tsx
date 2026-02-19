@@ -9,7 +9,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/shared/components/ui';
-import { cn } from '@/shared/utils';
+import { cn, getInitials } from '@/shared/utils';
 
 export function UserSummary({
   name,
@@ -37,12 +37,4 @@ export function UserSummary({
       </ItemContent>
     </Item>
   );
-}
-
-export function getInitials(name: string) {
-  const n = name.trim();
-  if (!n) return 'U';
-
-  const parts = n.split(/\s+/).slice(0, 2);
-  return parts.map(p => p[0]?.toUpperCase()).join('');
 }
