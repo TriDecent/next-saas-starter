@@ -1,7 +1,6 @@
 import { OrgContextProvider } from '@/features/organizations/[slug]/context';
 import { OrganizationDetails } from '@/features/organizations/[slug]/details';
 import { OrganizationOverview } from '@/features/organizations/[slug]/overview';
-import { getOrgRepo } from '@/infrastructure/repositories';
 import { getOrgService } from '@/infrastructure/service';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
@@ -21,12 +20,6 @@ export async function generateMetadata({
     title: `${org.name} Organization`,
     description: `Details and settings of ${org.name} organization.`,
   };
-}
-
-export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  const slugs = await getOrgRepo().model.findMany({ select: { slug: true } });
-
-  return slugs.length > 1 ? slugs : [{ slug: 'does-not-exist' }];
 }
 
 type SlugParams = { params: Promise<{ slug: string }> };
