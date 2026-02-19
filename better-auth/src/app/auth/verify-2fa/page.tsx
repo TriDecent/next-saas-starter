@@ -10,6 +10,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Separator,
   Tabs,
   TabsContent,
   TabsList,
@@ -50,14 +51,19 @@ export default async function Verify2FAPage() {
 
         {TWO_FACTORS_OPTIONS.map(option => (
           <TabsContent value={option.factor} key={option.factor}>
-            <Card className='max-w- mx-auto'>
+            <Card>
               <CardHeader>
                 <CardTitle>{option.cardTitle}</CardTitle>
                 <CardDescription>{option.cardDescription}</CardDescription>
               </CardHeader>
+
+              <Separator />
+
               <CardContent>
                 <Suspense fallback={<MiniLoader />}>{option.content}</Suspense>
               </CardContent>
+
+              <Separator />
               <CardFooter>{option.cardFooter}</CardFooter>
             </Card>
           </TabsContent>
@@ -81,7 +87,7 @@ const TWO_FACTORS_OPTIONS = [
     cardDescription:
       'Enter the 6-digit code from your authenticator app (Google Authenticator, Authy, etc.).',
     cardFooter: (
-      <span className='text-muted-foreground text-xs'>
+      <span className='text-muted-foreground mx-auto text-xs'>
         Can&apos;t access your authenticator app? Try using one of your{' '}
         <strong>backup codes</strong>.
       </span>
@@ -100,7 +106,7 @@ const TWO_FACTORS_OPTIONS = [
     cardDescription:
       'Enter one of your one-time backup codes. Each code can be used once.',
     cardFooter: (
-      <span className='text-muted-foreground text-xs'>
+      <span className='text-muted-foreground mx-auto text-xs'>
         Lost your backup codes? Regenerate them from your account security
         settings after signing in.
       </span>

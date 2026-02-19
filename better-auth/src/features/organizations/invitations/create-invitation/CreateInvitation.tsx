@@ -27,7 +27,7 @@ export function CreateInvitation() {
           <CreateInvitationCard />
         </div>
 
-        <aside className='space-y-4 md:col-span-3'>
+        <aside className='sticky top-24 h-fit space-y-4 md:col-span-3'>
           <InvitationSummary />
         </aside>
       </div>
