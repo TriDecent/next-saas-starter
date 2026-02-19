@@ -1,18 +1,18 @@
 'use client';
 
-import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui';
+import { Skeleton, Tabs, TabsList, TabsTrigger } from '@/shared/components/ui';
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useSyncExternalStore } from 'react';
+import { useEffect, useState } from 'react';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  const mounted = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  );
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const themes = [
     { value: 'light', icon: Sun, label: 'Light' },
@@ -20,7 +20,9 @@ export function ThemeToggle() {
     { value: 'system', icon: Monitor, label: 'System' },
   ] as const;
 
-  return mounted ? (
+  if (!mounted) return <ThemeToggleSkeleton />;
+
+  return (
     <Tabs value={theme} onValueChange={setTheme}>
       <TabsList>
         {themes.map(({ value, icon: Icon, label }) => (
@@ -30,5 +32,9 @@ export function ThemeToggle() {
         ))}
       </TabsList>
     </Tabs>
-  ) : null;
+  );
+}
+
+function ThemeToggleSkeleton() {
+  return <Skeleton className='h-10 w-28 rounded-md' />;
 }

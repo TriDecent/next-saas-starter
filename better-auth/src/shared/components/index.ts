@@ -1,5 +1,6 @@
 export { ActionButton } from './ActionButton';
 export { AuthFormLayout } from './AuthFormLayout';
+export { AvatarSkeleton } from './AvatarSkeleton';
 export { BackupCodeField } from './BackupCodeField';
 export { CopyText } from './CopyText';
 export { DrawerOpener } from './DrawerOpener';

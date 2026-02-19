@@ -1,5 +1,7 @@
 import { ImpersonationStatus } from '@/features/admin/impersonation';
+import { RenderUserDropdownNav } from '@/features/home';
 import {
+  AvatarSkeleton,
   NavTrail,
   PageLayout,
   ThemeProvider,
@@ -42,9 +44,14 @@ export default function RootLayout({
                 <h1 className='text-2xl font-medium tracking-wider'>
                   <Link href='/'>Auth Demo</Link>
                 </h1>
-                <Suspense>
+
+                <div className='flex items-center gap-2'>
                   <ThemeToggle />
-                </Suspense>
+
+                  <Suspense fallback={<AvatarSkeleton />}>
+                    <RenderUserDropdownNav />
+                  </Suspense>
+                </div>
               </PageLayout.Header>
               <PageLayout.Main>
                 <div className='mb-6'>
