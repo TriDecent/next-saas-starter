@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -7,8 +6,15 @@ import {
   CardTitle,
   Separator,
 } from '@/shared/components/ui';
+import type { Invitation } from 'better-auth/plugins';
+import { AcceptInvitationAction } from './AcceptInvitationAction';
+import { RejectInvitationAction } from './RejectInvitationAction';
 
-export function InvitationApproval() {
+export function InvitationApproval({
+  invitationId,
+}: {
+  invitationId: Invitation['id'];
+}) {
   return (
     <Card>
       <CardHeader>
@@ -18,15 +24,8 @@ export function InvitationApproval() {
         </CardDescription>
       </CardHeader>
       <CardContent className='space-y-3'>
-        <Button className='w-full' disabled>
-          Approve Invitation
-        </Button>
-        <Button variant='secondary' className='w-full' disabled>
-          Request Changes
-        </Button>
-        <Button variant='destructive' className='w-full' disabled>
-          Reject Invitation
-        </Button>
+        <AcceptInvitationAction invitationId={invitationId} />
+        <RejectInvitationAction invitationId={invitationId} />
 
         <Separator />
 

@@ -3,7 +3,6 @@ import {
   OrgEntityCard,
 } from '@/features/organizations/invitations/[invitationId]';
 import { InvitationApproval } from '@/features/organizations/invitations/[invitationId]/approval';
-import { getInvitationRepo } from '@/infrastructure/repositories';
 import { getOrgService } from '@/infrastructure/service';
 import { SectionHeader, SkeletonCard, SkeletonText } from '@/shared/components';
 import { Card, CardContent } from '@/shared/components/ui';
@@ -11,15 +10,6 @@ import { ROUTES } from '@/shared/constants';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { MdApproval } from 'react-icons/md';
-
-export async function generateStaticParams() {
-  const repo = getInvitationRepo();
-  const invitationIds = await repo.model.findMany({ select: { id: true } });
-
-  return invitationIds.length > 0
-    ? invitationIds.map(id => ({ invitationId: id }))
-    : [{ invitationId: 'does-not-exist' }];
-}
 
 export const metadata: Metadata =
   ROUTES.invitations.nested['approval-process'].metadata;
@@ -55,25 +45,25 @@ async function Wrapper({ params }: { params: Promise<Params> }) {
   const response = await service.getInvitation(invitationId);
   if (response.type === 'error') throw new Error(response.payload.message);
 
-  const data = response.payload;
+  const invitation = response.payload;
 
   return (
     <div className='space-y-6'>
       <OrgEntityCard
-        orgId={data.organizationId}
-        orgName={data.organizationName}
-        orgSlug={data.organizationSlug}
-        invitationStatus={data.status}
-        invitationRole={data.role}
+        orgId={invitation.organizationId}
+        orgName={invitation.organizationName}
+        orgSlug={invitation.organizationSlug}
+        invitationStatus={invitation.status}
+        invitationRole={invitation.role}
       />
 
       <div className='grid gap-6 md:grid-cols-3'>
         <div className='space-y-6 md:col-span-2'>
-          <InvitationDetails invitation={data} />
+          <InvitationDetails invitation={invitation} />
         </div>
 
         <div className='sticky top-32 h-fit space-y-6'>
-          <InvitationApproval />
+          <InvitationApproval invitationId={invitation.id} />
         </div>
       </div>
     </div>
