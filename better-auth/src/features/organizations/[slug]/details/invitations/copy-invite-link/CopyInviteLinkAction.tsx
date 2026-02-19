@@ -12,7 +12,7 @@ export function CopyInviteLinkAction({
   return (
     <DropdownMenuItem asChild>
       <CopyText
-        text={`${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.organization.href}/${invitation.id}`}
+        text={`${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.invitations.href}/${invitation.id}`}
         onSuccess='Invite link copied to clipboard!'
       >
         <IoCopy />
