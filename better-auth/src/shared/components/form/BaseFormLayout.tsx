@@ -20,6 +20,7 @@ type BaseFormLayoutProps<T extends FieldValues> = {
   isPending: boolean;
   submit?: ReactNode;
   className?: string;
+  shouldRenderSubmitButton?: boolean;
 };
 
 export function BaseFormLayout<T extends FieldValues>({
@@ -31,6 +32,7 @@ export function BaseFormLayout<T extends FieldValues>({
   children,
   submit: submit = 'Confirm',
   className,
+  shouldRenderSubmitButton = true,
 }: BaseFormLayoutProps<T>) {
   return (
     <FormProvider {...methods}>
@@ -42,33 +44,35 @@ export function BaseFormLayout<T extends FieldValues>({
         <FieldGroup>
           {children}
 
-          <div className='mt-2 flex flex-col gap-2 sm:ml-auto sm:flex-row'>
-            <Button
-              disabled={isPending}
-              type='submit'
-              className='order-1 w-full min-w-32 sm:order-2 sm:w-fit'
-            >
-              {isPending ? (
-                <MiniLoader />
-              ) : (
-                (submit ?? (
-                  <>
-                    <GiConfirmed className='mr-2' /> Confirm
-                  </>
-                ))
-              )}
-            </Button>
+          {shouldRenderSubmitButton ? (
+            <div className='mt-2 flex flex-col gap-2 sm:ml-auto sm:flex-row'>
+              <Button
+                disabled={isPending}
+                type='submit'
+                className='order-1 w-full min-w-32 sm:order-2 sm:w-fit'
+              >
+                {isPending ? (
+                  <MiniLoader />
+                ) : (
+                  (submit ?? (
+                    <>
+                      <GiConfirmed className='mr-2' /> Confirm
+                    </>
+                  ))
+                )}
+              </Button>
 
-            <Button
-              type='reset'
-              variant={'ghost'}
-              disabled={isPending}
-              onClick={() => methods.reset()}
-              className='order-2 w-full sm:order-1 sm:w-fit'
-            >
-              Cancel
-            </Button>
-          </div>
+              <Button
+                type='reset'
+                variant={'ghost'}
+                disabled={isPending}
+                onClick={() => methods.reset()}
+                className='order-2 w-full sm:order-1 sm:w-fit'
+              >
+                Cancel
+              </Button>
+            </div>
+          ) : null}
 
           {error ? (
             <p className='text-destructive mt-2 text-center text-sm'>{error}</p>
