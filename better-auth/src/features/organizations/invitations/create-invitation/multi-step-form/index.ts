@@ -1,1 +1,1 @@
-export { CreateInvitationMultiPageForm } from './CreateInvitationMultiPageForm';
+export { CreateInvitationMultiStepForm } from './CreateInvitationMultiStepForm';
