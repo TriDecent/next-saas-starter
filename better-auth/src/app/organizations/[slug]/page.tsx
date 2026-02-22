@@ -47,7 +47,7 @@ async function Wrapper({ params }: SlugParams) {
   const org = await getFullOrg(slug);
 
   return (
-    <OrgContextProvider value={{ slug }}>
+    <OrgContextProvider value={org}>
       <OrganizationOverview org={org} />
       <OrganizationDetails org={org} />
     </OrgContextProvider>

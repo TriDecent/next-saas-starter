@@ -13,14 +13,20 @@ import Image from 'next/image';
 import type React from 'react';
 import { FaUserFriends } from 'react-icons/fa';
 
-export type OrganizationRow = OrganizationWithRole;
+export type OrganizationRow = Omit<
+  OrganizationWithRole,
+  'memberCounts' | 'currentUserRole'
+> & {
+  memberCounts?: number;
+  currentUserRole?: string;
+};
 
 export function OrganizationItem({
   organization,
   renderActions,
 }: {
   organization: OrganizationRow;
-  renderActions: React.ReactNode;
+  renderActions?: React.ReactNode;
 }) {
   return (
     <Item
@@ -58,18 +64,26 @@ export function OrganizationItem({
 
           <span>Created {formatDate(organization.createdAt)}</span>
 
-          <span className='hidden sm:inline'>•</span>
+          {organization.memberCounts ? (
+            <>
+              <span className='hidden sm:inline'>•</span>
 
-          <span className='inline-flex items-center gap-1 whitespace-nowrap'>
-            <FaUserFriends className='size-3.5' />
-            {organization.memberCounts}
-          </span>
+              <span className='inline-flex items-center gap-1 whitespace-nowrap'>
+                <FaUserFriends className='size-3.5' />
+                {organization.memberCounts}
+              </span>
+            </>
+          ) : null}
 
-          <span className='hidden sm:inline'>•</span>
+          {organization.currentUserRole ? (
+            <>
+              <span className='hidden sm:inline'>•</span>
 
-          <Badge variant={'outline'} className='text-muted-foreground'>
-            {organization.currentUserRole}
-          </Badge>
+              <Badge variant={'outline'} className='text-muted-foreground'>
+                {organization.currentUserRole}
+              </Badge>
+            </>
+          ) : null}
         </ItemDescription>
       </ItemContent>
 
