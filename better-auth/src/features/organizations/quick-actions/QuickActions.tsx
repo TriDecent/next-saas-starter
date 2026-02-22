@@ -1,3 +1,4 @@
+import { RenderModal } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -16,7 +17,6 @@ import {
 import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import { FaArrowRight, FaPlus, FaUsers } from 'react-icons/fa';
-import { RenderModal } from '../_shared';
 import { CreateNewOrganization } from '../create-org';
 
 export function QuickActions() {

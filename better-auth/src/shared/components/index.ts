@@ -11,6 +11,7 @@ export { Modal, type ModalHandle } from './Modal';
 export { NavTrail } from './NavTrail';
 export { PageLayout } from './PageLayout';
 export { PasswordField } from './PasswordField';
+export { RenderModal } from './RenderModal';
 export { SectionHeader } from './SectionHeader';
 export { SendEmailButton } from './SendEmailButton';
 export { SkeletonCard } from './SkeletonCard';

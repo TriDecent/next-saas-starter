@@ -1,3 +1,4 @@
+import { RenderModal } from '@/shared/components';
 import {
   Badge,
   Button,
@@ -13,7 +14,6 @@ import {
 import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import { FaCog, FaLink, FaPlus } from 'react-icons/fa';
-import { RenderModal } from '../_shared';
 import { CreateNewOrganization } from '../create-org';
 import { EmptyOrganization } from './EmptyOrganization';
 import { OrganizationItem, type OrganizationRow } from './OrganizationItem';
