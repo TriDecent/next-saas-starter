@@ -13,15 +13,15 @@ import {
 import { ROUTES } from '@/shared/constants';
 import { Suspense } from 'react';
 import { FaUserPlus } from 'react-icons/fa';
-import { InvitationSummary } from '../summary';
-import { CreateInvitationForm } from './CreateInvitationForm';
+import { InvitationSummary } from '../../summary';
+import { BaseCreateInvitationForm } from '../_shared';
 import { SelectOrganization } from './SelectOrganization';
 import { SelectRecipient } from './SelectRecipient';
 import { SelectRole } from './SelectRole';
 
-export function CreateInvitation() {
+export function CreateInvitationSinglePageForm() {
   return (
-    <CreateInvitationForm>
+    <BaseCreateInvitationForm>
       <div className='grid grid-cols-1 gap-6 md:grid-cols-8'>
         <div className='md:col-span-5'>
           <CreateInvitationCard />
@@ -31,7 +31,7 @@ export function CreateInvitation() {
           <InvitationSummary />
         </aside>
       </div>
-    </CreateInvitationForm>
+    </BaseCreateInvitationForm>
   );
 }
 

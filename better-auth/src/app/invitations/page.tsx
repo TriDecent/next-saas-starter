@@ -1,4 +1,4 @@
-import { CreateInvitation } from '@/features/organizations/invitations/create-invitation';
+import { CreateInvitationSinglePageForm } from '@/features/organizations/invitations/create-invitation';
 import { SectionHeader } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
@@ -15,7 +15,7 @@ export default function InvitationsPage() {
         description='Manage your organization invitations and invite new members.'
       />
 
-      <CreateInvitation />
+      <CreateInvitationSinglePageForm />
     </section>
   );
 }
