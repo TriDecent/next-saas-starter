@@ -1,3 +1,4 @@
+import { CreateInvitationModal } from '@/features/organizations/invitations/create-invitation';
 import { SkeletonTable } from '@/shared/components';
 import {
   Button,
@@ -16,7 +17,7 @@ import {
   Separator,
 } from '@/shared/components/ui';
 import { Suspense } from 'react';
-import { FiMail, FiPlus, FiUsers } from 'react-icons/fi';
+import { FiPlus, FiUsers } from 'react-icons/fi';
 import type { OrganizationDetailsProps } from '../OrganizationDetails';
 import { MembersTable } from './table';
 
@@ -34,10 +35,7 @@ export function MembersCard({
         </CardDescription>
 
         <CardAction>
-          <Button className='gap-2'>
-            <FiMail />
-            Invite
-          </Button>
+          <CreateInvitationModal mode={'multi-step'} />
         </CardAction>
       </CardHeader>
 
