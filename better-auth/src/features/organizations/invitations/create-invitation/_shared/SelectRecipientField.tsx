@@ -12,9 +12,6 @@ import {
   ComboboxLabel,
   ComboboxList,
   ComboboxSeparator,
-  FieldDescription,
-  FieldLegend,
-  FieldSet,
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks';
@@ -24,7 +21,7 @@ import { useFormContext } from 'react-hook-form';
 import { FaEnvelope } from 'react-icons/fa';
 import type { CreateInvitationSchema } from './schema';
 
-export function SelectRecipient({ recipients }: { recipients: User[] }) {
+export function SelectRecipientField({ recipients }: { recipients: User[] }) {
   const { setValue } = useFormContext<CreateInvitationSchema>();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm);
@@ -46,40 +43,33 @@ export function SelectRecipient({ recipients }: { recipients: User[] }) {
   );
 
   return (
-    <FieldSet>
-      <FieldLegend>2) Recipient</FieldLegend>
-      <FieldDescription>
-        Enter the email address of the person you want to invite.
-      </FieldDescription>
-
-      <FormField<User>
-        kind='combobox'
-        id='email'
-        name='email'
-        labelText='Email'
-        placeholder='name@company.com'
-        description='Tip: you can invite external emails too.'
-        addons={
-          <InputGroupAddon>
-            <FaEnvelope />
-          </InputGroupAddon>
-        }
-        autoComplete='email'
-        items={users}
-        itemToStringLabel={user => user.email}
-        valueAs={user => user.email}
-        onInputValueChange={setSearchTerm}
-      >
-        <ComboboxContent>
-          <RecipientSearchList
-            usersCount={users.length}
-            isFetching={isFetching}
-            isError={isError}
-            onSelect={user => setValue('selectedRecipient', user)}
-          />
-        </ComboboxContent>
-      </FormField>
-    </FieldSet>
+    <FormField<User>
+      kind='combobox'
+      id='email'
+      name='email'
+      labelText='Email'
+      placeholder='name@company.com'
+      description='Tip: you can invite external emails too.'
+      addons={
+        <InputGroupAddon>
+          <FaEnvelope />
+        </InputGroupAddon>
+      }
+      autoComplete='email'
+      items={users}
+      itemToStringLabel={user => user.email}
+      valueAs={user => user.email}
+      onInputValueChange={setSearchTerm}
+    >
+      <ComboboxContent>
+        <RecipientSearchList
+          usersCount={users.length}
+          isFetching={isFetching}
+          isError={isError}
+          onSelect={user => setValue('selectedRecipient', user)}
+        />
+      </ComboboxContent>
+    </FormField>
   );
 }
 

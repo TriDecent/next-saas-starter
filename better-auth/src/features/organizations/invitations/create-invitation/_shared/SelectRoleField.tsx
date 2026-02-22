@@ -4,10 +4,7 @@ import { ORG_ROLES } from '@/lib/auth/constants';
 import { FormField } from '@/shared/components/form';
 import {
   FieldContent,
-  FieldDescription,
   FieldLabel,
-  FieldLegend,
-  FieldSet,
   Item,
   ItemActions,
   ItemContent,
@@ -20,37 +17,30 @@ import {
 } from '@/shared/components/ui';
 import { HiCog, HiEye, HiStar, HiUserGroup } from 'react-icons/hi';
 
-export function SelectRole() {
+export function SelectRoleField() {
   return (
-    <FieldSet>
-      <FieldLegend className='text-sm font-semibold'>3) Role</FieldLegend>
-      <FieldDescription className='text-muted-foreground text-sm'>
-        Choose what access the invited member will have.
-      </FieldDescription>
-
-      <ItemGroup className='gap-3'>
-        <FormField kind='radio' name='role' id='role'>
-          {({ isDisabled, isError }) =>
-            roles.map(role => (
-              <FieldLabel key={role.value} className='w-full rounded-md'>
-                <FieldContent>
-                  <RoleDisplay
-                    role={role}
-                    renderActions={
-                      <RadioGroupItem
-                        value={role.value}
-                        disabled={isDisabled}
-                        aria-invalid={isError}
-                      />
-                    }
-                  />
-                </FieldContent>
-              </FieldLabel>
-            ))
-          }
-        </FormField>
-      </ItemGroup>
-    </FieldSet>
+    <ItemGroup className='gap-3'>
+      <FormField kind='radio' name='role' id='role'>
+        {({ isDisabled, isError }) =>
+          roles.map(role => (
+            <FieldLabel key={role.value} className='w-full rounded-md'>
+              <FieldContent>
+                <RoleDisplay
+                  role={role}
+                  renderActions={
+                    <RadioGroupItem
+                      value={role.value}
+                      disabled={isDisabled}
+                      aria-invalid={isError}
+                    />
+                  }
+                />
+              </FieldContent>
+            </FieldLabel>
+          ))
+        }
+      </FormField>
+    </ItemGroup>
   );
 }
 
