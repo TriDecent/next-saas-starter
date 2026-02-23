@@ -1,3 +1,5 @@
+import { SessionsList } from '@/features/settings';
+import { getUserService } from '@/services';
 import {
   Card,
   CardContent,
@@ -5,9 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/components/ui';
-
-import { SessionsList } from '@/features/settings/session';
-import { getUserService } from '@/infrastructure/service';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 

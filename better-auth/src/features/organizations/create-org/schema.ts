@@ -1,4 +1,4 @@
-import type { CreateOrgInput } from '@/infrastructure/service/organization';
+import type { CreateOrgInput } from '@/services/organization';
 import { z } from 'zod';
 
 export const createNewOrgSchema = z.object({

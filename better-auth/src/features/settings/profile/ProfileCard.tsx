@@ -1,5 +1,5 @@
 import { SendVerificationEmailButton } from '@/features/email';
-import { SignOutButton } from '@/features/home/SignOutButton';
+import { SignOutButton } from '@/features/home';
 import type { AuthSession } from '@/lib/auth';
 import {
   Avatar,

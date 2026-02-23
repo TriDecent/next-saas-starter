@@ -1,12 +1,12 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
-import type { GeneralUserResponse } from '@/infrastructure/service/user';
 import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
+import { getUserService } from '@/services';
+import type { GeneralUserResponse } from '@/services/user';
 import { ROUTES } from '@/shared/constants';
 import { updateProfileSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';

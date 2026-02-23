@@ -1,3 +1,5 @@
+import { ConnectedAccounts } from '@/features/settings';
+import { getUserService } from '@/services';
 import {
   Card,
   CardContent,
@@ -7,9 +9,6 @@ import {
   CardTitle,
   Separator,
 } from '@/shared/components/ui';
-
-import { ConnectedAccounts } from '@/features/settings/accounts';
-import { getUserService } from '@/infrastructure/service';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 

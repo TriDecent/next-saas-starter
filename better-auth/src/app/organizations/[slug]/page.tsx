@@ -1,7 +1,9 @@
-import { OrgContextProvider } from '@/features/organizations/[slug]/context';
-import { OrganizationDetails } from '@/features/organizations/[slug]/details';
-import { OrganizationOverview } from '@/features/organizations/[slug]/overview';
-import { getOrgService } from '@/infrastructure/service';
+import {
+  OrganizationDetails,
+  OrganizationOverview,
+  OrgContextProvider,
+} from '@/features/organizations';
+import { getOrgService } from '@/services';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';

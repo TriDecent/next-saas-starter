@@ -1,11 +1,11 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
-import type { GeneralUserResponse } from '@/infrastructure/service/user';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
+import { getUserService } from '@/services';
+import type { GeneralUserResponse } from '@/services/user';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { cookies } from 'next/headers';

@@ -1,4 +1,4 @@
-import { getOrgService, getUserService } from '@/infrastructure/service';
+import { getOrgService, getUserService } from '@/services';
 import { SkeletonForm } from '@/shared/components';
 import {
   Card,

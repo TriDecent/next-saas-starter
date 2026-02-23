@@ -1,4 +1,4 @@
-import type { GetOrgResponse } from '@/infrastructure/service/organization';
+import type { GetOrgResponse } from '@/services/organization';
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,9 +1,9 @@
 import {
+  InvitationApproval,
   InvitationDetails,
   OrgEntityCard,
-} from '@/features/organizations/invitations/[invitationId]';
-import { InvitationApproval } from '@/features/organizations/invitations/[invitationId]/approval';
-import { getOrgService } from '@/infrastructure/service';
+} from '@/features/invitations';
+import { getOrgService } from '@/services';
 import { SectionHeader, SkeletonCard, SkeletonText } from '@/shared/components';
 import { Card, CardContent } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';

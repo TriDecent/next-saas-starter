@@ -1,4 +1,4 @@
-import { ImpersonationStatus } from '@/features/admin/impersonation';
+import { ImpersonationStatus } from '@/features/admin';
 import { RenderUserDropdownNav } from '@/features/home';
 import {
   AvatarSkeleton,

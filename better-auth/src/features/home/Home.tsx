@@ -1,4 +1,4 @@
-import { getAuthService } from '@/infrastructure/service';
+import { getAuthService } from '@/services';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';

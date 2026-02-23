@@ -1,10 +1,10 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
 import {
   ajExtremeRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
+import { getUserService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { refresh } from 'next/cache';

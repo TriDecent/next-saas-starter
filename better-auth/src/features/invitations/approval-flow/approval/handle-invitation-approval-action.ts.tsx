@@ -1,11 +1,11 @@
 'use server';
 
-import { getOrgService } from '@/infrastructure/service';
-import type { GeneralOrgResponse } from '@/infrastructure/service/organization';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
+import { getOrgService } from '@/services';
+import type { GeneralOrgResponse } from '@/services/organization';
 import { request } from '@arcjet/next';
 import { refresh } from 'next/cache';
 

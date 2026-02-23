@@ -1,8 +1,8 @@
 'use server';
 
 import type { User } from '@/generated/prisma/client';
-import { getUserService } from '@/infrastructure/service';
-import type { GeneralUserResponse } from '@/infrastructure/service/user';
+import { getUserService } from '@/services';
+import type { GeneralUserResponse } from '@/services/user';
 
 export async function impersonateUserAction(
   userId: User['id'],

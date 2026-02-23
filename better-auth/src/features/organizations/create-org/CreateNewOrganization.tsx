@@ -1,6 +1,6 @@
 'use client';
 
-import type { CreateOrgInput } from '@/infrastructure/service/organization/org-dtos';
+import type { CreateOrgInput } from '@/services/organization/org-dtos';
 import {
   BaseFormLayout,
   FormField,

@@ -1,8 +1,8 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
-import type { GeneralUserResponse } from '@/infrastructure/service/user';
 import type { UserRole } from '@/lib/auth';
+import { getUserService } from '@/services';
+import type { GeneralUserResponse } from '@/services/user';
 import { refresh } from 'next/cache';
 
 export async function setRoleAction(

@@ -1,6 +1,6 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
+import { getUserService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { type Session } from 'better-auth';
 import { refresh } from 'next/cache';

@@ -1,4 +1,4 @@
-import { getAuthService } from '@/infrastructure/service';
+import { getAuthService } from '@/services';
 import { UserDropdownNav } from './UserDropdownNav';
 
 export async function RenderUserDropdownNav() {

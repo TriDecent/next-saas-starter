@@ -1,11 +1,11 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
-import type { Enable2FAResponse } from '@/infrastructure/service/user';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
+import { getUserService } from '@/services';
+import type { Enable2FAResponse } from '@/services/user';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { cookies } from 'next/headers';

@@ -1,12 +1,12 @@
 'use server';
 
-import { getAuthService } from '@/infrastructure/service';
-import type { GeneralUserResponse } from '@/infrastructure/service/user';
 import {
   ajRestrictiveAnonymous,
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/security';
+import { getAuthService } from '@/services';
+import type { GeneralUserResponse } from '@/services/user';
 import { totpAuthSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 

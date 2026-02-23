@@ -1,4 +1,4 @@
-import type { GetInvitationResponse } from '@/infrastructure/service/organization';
+import type { GetInvitationResponse } from '@/services/organization';
 import {
   Card,
   CardContent,

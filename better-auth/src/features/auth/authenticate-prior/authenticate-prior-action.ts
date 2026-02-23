@@ -1,8 +1,8 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
-import type { GeneralAuthResponse } from '@/infrastructure/service/auth';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/security';
+import { getUserService } from '@/services';
+import type { GeneralAuthResponse } from '@/services/auth';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';

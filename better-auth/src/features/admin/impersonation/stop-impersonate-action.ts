@@ -1,6 +1,6 @@
 'use server';
 
-import { getUserService } from '@/infrastructure/service';
+import { getUserService } from '@/services';
 import { COOKIES } from '@/shared/constants';
 import { refresh } from 'next/cache';
 import { cookies } from 'next/headers';

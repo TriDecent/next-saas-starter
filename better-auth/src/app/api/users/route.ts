@@ -1,5 +1,5 @@
-import { getUserService } from '@/infrastructure/service';
 import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/security';
+import { getUserService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { NextResponse, type NextRequest } from 'next/server';
 

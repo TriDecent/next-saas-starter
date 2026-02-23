@@ -1,4 +1,4 @@
-import { CreateInvitationSinglePageForm } from '@/features/organizations/invitations/create-invitation';
+import { CreateInvitationSinglePageForm } from '@/features/invitations';
 import { SectionHeader } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';

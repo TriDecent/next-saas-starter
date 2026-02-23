@@ -1,6 +1,6 @@
 'use server';
 
-import { getAuthService } from '@/infrastructure/service';
+import { getAuthService } from '@/services';
 import {
   Item,
   ItemActions,

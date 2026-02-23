@@ -1,5 +1,4 @@
-import { ResetPasswordCard } from '@/features/auth/reset-password';
-import { UpdatePasswordCard } from '@/features/auth/reset-password/UpdatePasswordCard';
+import { ResetPasswordCard, UpdatePasswordCard } from '@/features/auth';
 import { Loading, SectionHeader } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import { KeyRound } from 'lucide-react';

@@ -1,7 +1,9 @@
-import { AccessControl } from '@/features/organizations/access-control';
-import { MyOrganizations } from '@/features/organizations/my-organizations';
-import { QuickActions } from '@/features/organizations/quick-actions';
-import { getOrgService } from '@/infrastructure/service';
+import {
+  AccessControl,
+  MyOrganizations,
+  QuickActions,
+} from '@/features/organizations';
+import { getOrgService } from '@/services';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';

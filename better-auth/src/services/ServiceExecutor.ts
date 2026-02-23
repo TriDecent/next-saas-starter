@@ -1,4 +1,4 @@
-import { verifySudoToken } from '@/features/auth/authenticate-prior/sudo-mode';
+import { verifySudoToken } from '@/features/auth';
 import type { User } from '@/generated/prisma/client';
 import { hasPermission } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserAction } from '@/lib/casl';

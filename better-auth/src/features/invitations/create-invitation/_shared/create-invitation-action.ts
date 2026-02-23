@@ -1,8 +1,8 @@
 'use server';
 
-import { getOrgService } from '@/infrastructure/service';
-import type { GeneralOrgResponse } from '@/infrastructure/service/organization';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/security';
+import { getOrgService } from '@/services';
+import type { GeneralOrgResponse } from '@/services/organization';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { createInvitationSchema } from './schema';

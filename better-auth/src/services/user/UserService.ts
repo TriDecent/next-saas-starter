@@ -1,4 +1,4 @@
-import { createSudoToken } from '@/features/auth/authenticate-prior/sudo-mode';
+import { createSudoToken } from '@/features/auth';
 import type { Prisma, Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
 import { defineAbilityFor } from '@/lib/casl';

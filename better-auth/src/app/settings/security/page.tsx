@@ -1,11 +1,11 @@
-import { AuthenticatePriorProvider } from '@/features/auth/authenticate-prior';
-import { PasskeysList } from '@/features/settings/security/passkey';
+import { AuthenticatePriorProvider } from '@/features/auth';
 import {
   ChangePasswordCard,
+  PasskeysList,
   RequestPasswordResetCard,
-} from '@/features/settings/security/password';
-import { TwoFactorsCard } from '@/features/settings/security/two-auth-factors';
-import { getUserService } from '@/infrastructure/service';
+  TwoFactorsCard,
+} from '@/features/settings';
+import { getUserService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 
