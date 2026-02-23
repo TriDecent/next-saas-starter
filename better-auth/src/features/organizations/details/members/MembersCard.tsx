@@ -1,4 +1,4 @@
-import { CreateInvitationModal } from '@/features/organizations/invitations/create-invitation';
+import { CreateInvitationModal } from '@/features/invitations/create-invitation';
 import { SkeletonTable } from '@/shared/components';
 import {
   Button,
