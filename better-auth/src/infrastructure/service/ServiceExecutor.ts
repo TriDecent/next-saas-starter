@@ -135,7 +135,7 @@ export class ServiceExecutor implements IServiceExecutor {
     if (!hasRbac)
       return { type: 'error', payload: { message: permissionError } };
 
-    const targetUser = await this._repo.findUnique({
+    const targetUser = await this._repo.model.findUnique({
       where: { id: targetUserId },
     });
     if (!targetUser)
