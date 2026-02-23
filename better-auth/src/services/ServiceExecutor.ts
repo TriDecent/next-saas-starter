@@ -4,7 +4,7 @@ import { hasPermission } from '@/lib/auth';
 import { defineAbilityFor, type CRUD, type UserAction } from '@/lib/casl';
 import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import { type IUserRepository } from '../repositories/user';
+import { type IUserRepository } from '../infrastructure/repositories/user';
 import type { ServiceResponse } from './types';
 
 export interface IServiceExecutor {
