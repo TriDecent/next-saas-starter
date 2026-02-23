@@ -1,6 +1,6 @@
 'use server';
 
-import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/security';
+import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { getUserService } from '@/services';
 import type { GeneralAuthResponse } from '@/services/auth';
 import { COOKIES, ROUTES } from '@/shared/constants';

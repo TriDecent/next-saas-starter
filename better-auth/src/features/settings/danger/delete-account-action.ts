@@ -3,7 +3,7 @@
 import {
   ajExtremeRestrictiveAuthenticated,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getUserService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';

@@ -1,6 +1,6 @@
 'use server';
 
-import { ajEmailSend, handleDeniedInServerAction } from '@/lib/security';
+import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
 import { getAuthService } from '@/services';
 import { request } from '@arcjet/next';
 

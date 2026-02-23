@@ -1,11 +1,11 @@
-import { auth } from '@/lib/auth';
 import {
   ajLaxAnonymous,
   ajLaxAuthenticated,
   ajRestrictiveAnonymous,
   ajSignup,
   respondToDenial,
-} from '@/lib/security';
+} from '@/lib/arcjet';
+import { auth } from '@/lib/auth';
 import { type ArcjetDecision } from '@arcjet/next';
 import { toNextJsHandler } from 'better-auth/next-js';
 import { NextRequest } from 'next/server';

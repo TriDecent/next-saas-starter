@@ -3,7 +3,7 @@
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getUserService } from '@/services';
 import type { GenerateBackUpCodesResponse } from '@/services/user';
 import { ROUTES } from '@/shared/constants';

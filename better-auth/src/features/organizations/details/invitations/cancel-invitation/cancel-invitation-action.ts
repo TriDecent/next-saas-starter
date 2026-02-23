@@ -3,7 +3,7 @@
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getOrgService } from '@/services';
 import { request } from '@arcjet/next';
 import type { Invitation } from 'better-auth/plugins';

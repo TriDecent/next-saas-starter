@@ -1,6 +1,6 @@
 'use server';
 
-import { ajSignup, handleDeniedInServerAction } from '@/lib/security';
+import { ajSignup, handleDeniedInServerAction } from '@/lib/arcjet';
 import { getAuthService } from '@/services';
 import type { SignUpResponse } from '@/services/auth';
 import { signUpSchema } from '@/shared/schema';

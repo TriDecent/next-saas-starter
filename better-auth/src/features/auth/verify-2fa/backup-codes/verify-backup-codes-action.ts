@@ -3,7 +3,7 @@
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getAuthService } from '@/services';
 import type { GeneralAuthResponse } from '@/services/auth';
 import { backupCodeSchema } from '@/shared/schema';

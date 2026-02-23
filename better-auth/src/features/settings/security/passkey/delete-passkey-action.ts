@@ -3,7 +3,7 @@
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getUserService } from '@/services';
 import type { GeneralUserResponse } from '@/services/user';
 import { COOKIES, ROUTES } from '@/shared/constants';

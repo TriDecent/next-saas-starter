@@ -1,4 +1,4 @@
-import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/security';
+import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { getUserService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { NextResponse, type NextRequest } from 'next/server';

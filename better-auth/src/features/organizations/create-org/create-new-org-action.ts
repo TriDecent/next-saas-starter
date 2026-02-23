@@ -3,7 +3,7 @@
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getOrgService } from '@/services';
 import type { GeneralOrgResponse } from '@/services/organization';
 import { ROUTES } from '@/shared/constants';

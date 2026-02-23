@@ -4,7 +4,7 @@ import {
   ajLaxAnonymous,
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getUserService } from '@/services';
 import type { GeneralUserResponse } from '@/services/user';
 import { ROUTES } from '@/shared/constants';

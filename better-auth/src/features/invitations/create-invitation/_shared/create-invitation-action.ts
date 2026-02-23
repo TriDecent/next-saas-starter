@@ -1,6 +1,6 @@
 'use server';
 
-import { ajEmailSend, handleDeniedInServerAction } from '@/lib/security';
+import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
 import { getOrgService } from '@/services';
 import type { GeneralOrgResponse } from '@/services/organization';
 import { ROUTES } from '@/shared/constants';

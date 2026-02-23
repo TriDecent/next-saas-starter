@@ -3,7 +3,7 @@
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
-} from '@/lib/security';
+} from '@/lib/arcjet';
 import { getOrgService } from '@/services';
 import type { RemoveUserInput } from '@/services/organization';
 import { request } from '@arcjet/next';
