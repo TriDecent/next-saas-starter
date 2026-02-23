@@ -3,7 +3,7 @@
 import type { User } from '@/generated/prisma/client';
 import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { useCallback, useState, type ReactNode } from 'react';
-import { AppAbility, defineAbilityFor } from '../ability';
+import { AppAbility, defineAbilityFor } from '../../../lib/casl/ability';
 import { AbilityContext, type AbilityUpdater } from './ability-context';
 
 export function AbilityProvider({

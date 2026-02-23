@@ -1,6 +1,6 @@
 import type { AbilityBuilder } from '@casl/ability';
 import { createContext } from 'react';
-import type { AppAbility } from '../ability';
+import type { AppAbility } from '../../../lib/casl/ability';
 
 export type AbilityUpdater = (
   can: AbilityBuilder<AppAbility>['can'],
