@@ -1,3 +1,5 @@
+'use server';
+
 import { getAuthService } from '@/services';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';

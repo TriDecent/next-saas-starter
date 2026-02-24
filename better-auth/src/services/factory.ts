@@ -1,3 +1,5 @@
+'use server';
+
 import type { Session, User } from '@/generated/prisma/client';
 import { auth, ensureSession } from '@/lib/auth';
 import { headers } from 'next/headers';

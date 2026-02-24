@@ -1,3 +1,5 @@
+'use server';
+
 import { getOrgService, getUserService } from '@/services';
 import { SkeletonForm } from '@/shared/components';
 import {
@@ -19,7 +21,7 @@ import { SelectOrganization } from './SelectOrganization';
 import { SelectRecipient } from './SelectRecipient';
 import { SelectRole } from './SelectRole';
 
-export function CreateInvitationSinglePageForm() {
+export async function CreateInvitationSinglePageForm() {
   return (
     <BaseCreateInvitationForm>
       <div className='grid grid-cols-1 gap-6 md:grid-cols-8'>

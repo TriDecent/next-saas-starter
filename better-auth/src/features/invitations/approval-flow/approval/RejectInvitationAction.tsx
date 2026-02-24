@@ -7,7 +7,7 @@ import type { Invitation } from 'better-auth/plugins';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
-import { handleInvitationApprovalAction } from './handle-invitation-approval-action.ts.js';
+import { handleInvitationApprovalAction } from './handle-invitation-approval-action';
 
 export function RejectInvitationAction({
   invitationId,
