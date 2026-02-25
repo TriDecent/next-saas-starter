@@ -36,12 +36,12 @@ export default function RootLayout({
         <StoreProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
             <Toaster position='top-right' richColors />
+            <div id='modal'></div>
             <PageLayout>
-              <div id='modal'></div>
               <Suspense>
                 <ImpersonationStatus />
               </Suspense>
-              <PageLayout.Header>
+              <PageLayout.Header className='z-30'>
                 <h1 className='text-2xl font-medium tracking-wider'>
                   <Link href='/'>Auth Demo</Link>
                 </h1>

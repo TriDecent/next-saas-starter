@@ -1,10 +1,6 @@
-'use client'
-
+import { cn } from '@/shared/utils';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
-
-import { cn } from '@/shared/utils';
 import { Separator } from './separator';
 
 function ItemGroup({ className, ...props }: React.ComponentProps<'div'>) {
@@ -33,20 +29,16 @@ function ItemSeparator({
 }
 
 const itemVariants = cva(
-  'group/item flex items-center border border-transparent text-sm rounded-md transition-colors [a]:hover:bg-accent/50 [a]:transition-colors duration-100 flex-wrap outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+  'group/item flex items-center border border-transparent text-sm rounded-md transition-colors [a]:hover:bg-accent/50 [a]:transition-colors duration-100 flex-wrap outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] shadow',
   {
     variants: {
       variant: {
-        default: 'bg-transparent',
-        outline: 'border-border',
-        muted: 'bg-muted/50',
-        warning:
-          'bg-yellow-50/30 backdrop-blur-sm border-yellow-200/40 text-yellow-900/90 ' +
-          '[a]:hover:bg-yellow-50/50 focus-visible:border-yellow-300/40 focus-visible:ring-yellow-300/20 ' +
-          'dark:bg-yellow-900/12 dark:border-yellow-800/30 dark:text-yellow-100/90 shadow shadow-black',
+        default: 'bg-transparent hover:bg-accent/30',
+        outline: 'border-border hover:bg-accent/20',
+        muted: 'bg-muted/40 hover:bg-muted/60',
       },
       size: {
-        default: 'p-4 gap-4 ',
+        default: 'p-4 gap-4',
         sm: 'py-3 px-4 gap-2.5',
       },
     },
