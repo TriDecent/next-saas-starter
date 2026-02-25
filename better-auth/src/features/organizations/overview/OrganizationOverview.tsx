@@ -1,7 +1,6 @@
 import type { GetOrgResponse } from '@/services/organization';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -10,7 +9,7 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
   AlertDialogTrigger,
-  Button,
+  buttonVariants,
   Card,
   CardAction,
   CardContent,
@@ -46,9 +45,7 @@ export function OrganizationOverview({ org }: { org: OrgOverviewProps }) {
         </CardDescription>
 
         <CardAction>
-          <DeleteOrgAlert>
-            <DeleteOrgAction organizationId={org.id} />
-          </DeleteOrgAlert>
+          <DeleteOrgAlert orgId={org.id} />
         </CardAction>
       </CardHeader>
 
@@ -69,14 +66,14 @@ export function OrganizationOverview({ org }: { org: OrgOverviewProps }) {
   );
 }
 
-function DeleteOrgAlert({ children }: { children: React.ReactNode }) {
+function DeleteOrgAlert({ orgId }: { orgId: string }) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant={'destructive'} size={'lg'}>
-          <FaTrash />
-          Delete
-        </Button>
+      <AlertDialogTrigger
+        className={buttonVariants({ variant: 'destructive', size: 'lg' })}
+      >
+        <FaTrash />
+        Delete
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -91,9 +88,7 @@ function DeleteOrgAlert({ children }: { children: React.ReactNode }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant={'destructive'} asChild>
-            {children}
-          </AlertDialogAction>
+          <DeleteOrgAction organizationId={orgId} />
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

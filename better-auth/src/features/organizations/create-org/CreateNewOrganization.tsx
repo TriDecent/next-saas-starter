@@ -13,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
   InputGroupAddon,
-  Toaster,
 } from '@/shared/components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useEffect } from 'react';
@@ -56,20 +55,17 @@ function CreateNewOrgForm() {
       toast.success('Organization created successfully!', {
         id: 'create-new-org',
         description: 'Your new organization is now ready to use.',
-        toasterId: 'create-new-org',
       });
     },
     onFormPending: () =>
       toast.loading('Creating organization...', {
         id: 'create-new-org',
         description: 'Please wait while we set things up for you.',
-        toasterId: 'create-new-org',
       }),
     onFormError: error =>
       toast.error('Failed to create organization', {
         id: 'create-new-org',
         description: error.payload.message,
-        toasterId: 'create-new-org',
       }),
   });
   const orgName = useWatch({ control: methods.control, name: 'name' });
@@ -90,7 +86,6 @@ function CreateNewOrgForm() {
       }}
       error={state.type === 'error' ? state.payload.message : undefined}
     >
-      <Toaster id='create-new-org' position='top-right' richColors />
       <FormField
         kind='input'
         id='name'
