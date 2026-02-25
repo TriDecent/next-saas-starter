@@ -33,10 +33,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistSans.className} antialiased`}
       >
-        <div id='modal'></div>
         <StoreProvider>
           <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+            <Toaster position='top-right' richColors />
             <PageLayout>
+              <div id='modal'></div>
               <Suspense>
                 <ImpersonationStatus />
               </Suspense>
@@ -65,7 +66,6 @@ export default function RootLayout({
                 <PageLayout.Footer />
               </Suspense>
             </PageLayout>
-            <Toaster position='top-right' richColors />
           </ThemeProvider>
         </StoreProvider>
       </body>
