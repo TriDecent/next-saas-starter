@@ -1,1 +1,1 @@
-export { DeleteOrgAction } from './DeleteOrgAction';
+export { DeleteOrgItem } from './DeleteOrgItem';
