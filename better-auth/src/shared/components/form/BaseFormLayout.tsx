@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, FieldGroup } from '@/shared/components/ui';
+import { Button, Field, FieldError, FieldGroup } from '@/shared/components/ui';
 import type { ReactNode, RefObject } from 'react';
 import {
   FormProvider,
@@ -34,6 +34,11 @@ export function BaseFormLayout<T extends FieldValues>({
   className,
   shouldRenderSubmitButton = true,
 }: BaseFormLayoutProps<T>) {
+  const combinedErrors = [
+    ...(error ? [{ message: error }] : []),
+    ...(Object.values(methods.formState.errors) as { message: string }[]),
+  ];
+
   return (
     <FormProvider {...methods}>
       <form
@@ -74,8 +79,10 @@ export function BaseFormLayout<T extends FieldValues>({
             </div>
           ) : null}
 
-          {error ? (
-            <p className='text-destructive mt-2 text-center text-sm'>{error}</p>
+          {combinedErrors.length > 0 ? (
+            <Field data-invalid>
+              <FieldError errors={combinedErrors} className='text-center' />
+            </Field>
           ) : null}
         </FieldGroup>
       </form>
