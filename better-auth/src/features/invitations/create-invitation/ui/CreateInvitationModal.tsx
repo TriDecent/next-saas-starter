@@ -6,16 +6,20 @@ import { CreateInvitationSinglePageForm } from '../single-page-form';
 
 export function CreateInvitationModal({
   mode,
+  renderTrigger,
 }: {
   mode: 'single-page' | 'multi-step';
+  renderTrigger?: React.ReactNode;
 }) {
   return (
     <RenderModal
       renderTrigger={
-        <Button className='gap-2 shadow-sm'>
-          <FiMail />
-          Invite
-        </Button>
+        renderTrigger ?? (
+          <Button className='gap-2 shadow-sm'>
+            <FiMail />
+            Invite
+          </Button>
+        )
       }
     >
       {mode === 'multi-step' ? (

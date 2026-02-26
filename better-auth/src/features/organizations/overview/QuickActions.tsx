@@ -1,3 +1,4 @@
+import { CreateInvitationModal } from '@/features/invitations';
 import {
   Button,
   Card,
@@ -16,22 +17,35 @@ export function QuickActions() {
       <CardHeader>
         <CardTitle className='text-sm'>Quick actions</CardTitle>
         <CardDescription className='text-xs'>
-          UI only. Wire actions later.
+          Perform common actions for your organization
         </CardDescription>
       </CardHeader>
 
       <Separator />
 
-      <CardContent className='space-y-3'>
-        <Button className='w-full justify-start' variant='outline'>
-          <FiPlus className='size-4' />
-          Add member
-        </Button>
-        <Button className='w-full justify-start' variant='outline'>
-          <FiMail className='size-4' />
-          Send invitation
-        </Button>
+      <CardContent className='flex flex-col gap-3'>
+        <CreateInvitationModal
+          mode='multi-step'
+          renderTrigger={
+            <Button className='w-full justify-start' variant='outline'>
+              <FiPlus className='size-4' />
+              Add member
+            </Button>
+          }
+        />
+
+        <CreateInvitationModal
+          mode='multi-step'
+          renderTrigger={
+            <Button className='w-full justify-start' variant='outline'>
+              <FiMail className='size-4' />
+              Send invitation
+            </Button>
+          }
+        />
+
         <Separator />
+
         <Button className='w-full justify-start' variant='outline'>
           <FaBuilding className='size-4' />
           Organization settings

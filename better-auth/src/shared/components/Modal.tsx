@@ -47,7 +47,7 @@ export function Modal({ children, onClose, ref }: ModalProps) {
   return createPortal(
     <AnimatePresence>
       {shouldOpen ? (
-        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center overflow-y-scroll'>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -65,7 +65,7 @@ export function Modal({ children, onClose, ref }: ModalProps) {
             animate={Variants.slide.key.visible}
             exit={Variants.slide.key.safelyHidden}
             transition={{ type: 'tween', duration: 0.3, ease: 'easeOut' }}
-            className='relative z-10 mx-auto my-auto w-4/5 max-w-2xl rounded-lg bg-transparent p-4 select-none'
+            className='relative z-10 mx-auto my-auto w-4/5 max-w-2xl bg-transparent p-4 select-none'
           >
             {children}
           </motion.div>
