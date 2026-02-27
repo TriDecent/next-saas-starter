@@ -5,6 +5,7 @@ import { getOrgService } from '@/services';
 import type { GeneralOrgResponse } from '@/services/organization';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
+import { refresh } from 'next/cache';
 import { createInvitationSchema } from './schema';
 
 export type CreateInvitationResponse = GeneralOrgResponse | { type: 'initial' };
@@ -25,5 +26,9 @@ export async function createInvitationAction(
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  return service.createInvitation(parsedResult.data);
+  const response = await service.createInvitation(parsedResult.data);
+
+  refresh();
+
+  return response;
 }
