@@ -15,6 +15,7 @@ import type {
   GetOrgInput,
   GetOrgResponse,
   RemoveUserInput,
+  UpdateOrgInput,
   UpdateRoleInput,
 } from './org-dtos';
 
@@ -41,8 +42,6 @@ export class OrganizationService {
         body: params,
         headers: this.headers,
       });
-
-      return undefined;
     });
   }
 
@@ -79,8 +78,6 @@ export class OrganizationService {
 
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.createInvitation({ body: params, headers: this.headers });
-
-      return undefined;
     });
   }
 
@@ -99,8 +96,6 @@ export class OrganizationService {
         body: { invitationId },
         headers: this.headers,
       });
-
-      return undefined;
     });
   }
 
@@ -110,8 +105,6 @@ export class OrganizationService {
         body: { invitationId },
         headers: this.headers,
       });
-
-      return undefined;
     });
   }
 
@@ -150,16 +143,12 @@ export class OrganizationService {
   updateRole(params: UpdateRoleInput): Promise<GeneralOrgResponse> {
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.updateMemberRole({ body: params, headers: this.headers });
-
-      return undefined;
     });
   }
 
   removeMember(params: RemoveUserInput): Promise<GeneralOrgResponse> {
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.removeMember({ body: params, headers: this.headers });
-
-      return undefined;
     });
   }
 
@@ -169,8 +158,6 @@ export class OrganizationService {
         body: { invitationId },
         headers: this.headers,
       });
-
-      return undefined;
     });
   }
 

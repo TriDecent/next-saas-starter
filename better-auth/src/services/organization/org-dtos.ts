@@ -27,10 +27,7 @@ export type GetOrgResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.getFullOrganization>>,
   { message: string }
 >;
-export type GeneralOrgResponse = ServiceResponse<
-  undefined,
-  { message: string }
->;
+export type GeneralOrgResponse = ServiceResponse<void, { message: string }>;
 
 type ExtractEndpointBody<T> =
   T extends StrictEndpoint<string, infer Req, unknown>

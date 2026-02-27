@@ -4,7 +4,6 @@ import { auth, hasPermission, type UserRole } from '@/lib/auth';
 import { defineAbilityFor } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
 import type { IServiceExecutor } from '../ServiceExecutor';
-import type { ServiceResponse } from '../types';
 import type {
   AuthenticatePriorResponse,
   Enable2FAResponse,
@@ -119,10 +118,9 @@ export class UserService {
     });
   }
 
-  stopImpersonate(): Promise<ServiceResponse<undefined, { message: string }>> {
+  stopImpersonate(): Promise<GeneralUserResponse> {
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.stopImpersonating({ headers: this.headers });
-      return undefined;
     });
   }
 
@@ -205,7 +203,6 @@ export class UserService {
         );
       }
       await Promise.all(promises);
-      return undefined;
     });
   }
 
@@ -221,7 +218,6 @@ export class UserService {
           body: { id: passkeyId },
           headers: this.headers,
         });
-        return undefined;
       }
     );
   }
@@ -242,7 +238,6 @@ export class UserService {
           body: params,
           headers: this.headers,
         });
-        return undefined;
       }
     );
   }
@@ -259,7 +254,6 @@ export class UserService {
           body: { password },
           headers: this.headers,
         });
-        return undefined;
       }
     );
   }

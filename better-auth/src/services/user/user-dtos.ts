@@ -9,10 +9,7 @@ export type AuthenticatePriorResponse = ServiceResponse<
   { sudoToken: string },
   { message: string }
 >;
-export type GeneralUserResponse = ServiceResponse<
-  undefined,
-  { message: string }
->;
+export type GeneralUserResponse = ServiceResponse<void, { message: string }>;
 export type Enable2FAResponse = ServiceResponse<
   {
     totpURI: string;

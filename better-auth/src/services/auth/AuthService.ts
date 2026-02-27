@@ -98,7 +98,6 @@ export class AuthService {
   }): Promise<GeneralAuthResponse> {
     return this.runSafely(async () => {
       await auth.api.requestPasswordReset({ body: { email, redirectTo } });
-      return undefined;
     });
   }
 
@@ -111,7 +110,6 @@ export class AuthService {
         headers: this._headers,
         body: { token, newPassword },
       });
-      return undefined;
     });
   }
 
@@ -127,7 +125,6 @@ export class AuthService {
         headers: this._headers,
         body: { code: formattedCode, trustDevice },
       });
-      return undefined;
     });
   }
 
@@ -151,7 +148,6 @@ export class AuthService {
       await auth.api.sendVerificationEmail({
         body: { email, callbackURL },
       });
-      return undefined;
     });
   }
 
@@ -167,7 +163,6 @@ export class AuthService {
         body: { code, trustDevice },
         headers: this._headers,
       });
-      return undefined;
     });
   }
 

@@ -10,7 +10,4 @@ export type SignUpResponse = ServiceResponse<
   { message: string }
 >;
 
-export type GeneralAuthResponse = ServiceResponse<
-  undefined,
-  { message: string }
->;
+export type GeneralAuthResponse = ServiceResponse<void, { message: string }>;
