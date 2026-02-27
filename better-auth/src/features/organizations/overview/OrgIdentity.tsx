@@ -15,6 +15,7 @@ import { CiEdit } from 'react-icons/ci';
 import { FaBuilding, FaClock } from 'react-icons/fa6';
 import { FiMail, FiUsers } from 'react-icons/fi';
 import { formatDate, Kpi } from '../_shared';
+import { UpdateOrgModal } from '../update-org';
 
 export function OrgIdentity({
   org,
@@ -46,9 +47,13 @@ export function OrgIdentity({
           </ItemContent>
 
           <ItemActions className='ml-auto'>
-            <Button variant='outline' size='sm'>
-              <CiEdit />
-            </Button>
+            <UpdateOrgModal
+              renderTrigger={
+                <Button variant='outline' size='sm'>
+                  <CiEdit />
+                </Button>
+              }
+            />
           </ItemActions>
         </Item>
 
