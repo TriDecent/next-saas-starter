@@ -1,26 +1,19 @@
 'use client';
 
 import type { CreateOrgInput } from '@/services/organization/org-dtos';
-import {
-  BaseFormLayout,
-  FormField,
-  useActionForm,
-} from '@/shared/components/form';
+import { BaseFormLayout, useActionForm } from '@/shared/components/form';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  InputGroupAddon,
 } from '@/shared/components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { startTransition, useEffect } from 'react';
-import { useWatch } from 'react-hook-form';
-import { CgRename } from 'react-icons/cg';
-import { FiLink } from 'react-icons/fi';
+import { startTransition } from 'react';
 import { toast } from 'sonner';
 import { createNewOrg, Response } from './create-new-org-action';
+import { CreateOrgFields } from './CreateOrgFields';
 import { createNewOrgSchema } from './schema';
 
 export function CreateNewOrganization() {
@@ -68,13 +61,6 @@ function CreateNewOrgForm() {
         description: error.payload.message,
       }),
   });
-  const orgName = useWatch({ control: methods.control, name: 'name' });
-
-  useEffect(() => {
-    if (methods.formState.dirtyFields.slug) return;
-
-    methods.setValue('slug', slugify(orgName));
-  }, [methods, orgName]);
 
   return (
     <BaseFormLayout
@@ -86,43 +72,7 @@ function CreateNewOrgForm() {
       }}
       error={state.type === 'error' ? state.payload.message : undefined}
     >
-      <FormField
-        kind='input'
-        id='name'
-        labelText='Name'
-        name='name'
-        autoComplete='organization'
-        addons={
-          <InputGroupAddon>
-            <CgRename />
-          </InputGroupAddon>
-        }
-      />
-
-      <FormField
-        kind='input'
-        id='slug'
-        labelText='Slug'
-        name='slug'
-        addons={
-          <InputGroupAddon>
-            <FiLink />
-          </InputGroupAddon>
-        }
-      />
+      <CreateOrgFields />
     </BaseFormLayout>
   );
-}
-
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
 }
