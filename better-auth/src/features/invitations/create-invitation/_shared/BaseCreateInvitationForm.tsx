@@ -15,10 +15,12 @@ export function BaseCreateInvitationForm({
   children,
   shouldRenderSubmitButton = true,
   renderActions,
+  organizationId,
 }: {
   children: React.ReactNode;
   shouldRenderSubmitButton?: boolean;
   renderActions?: (isPending: boolean) => React.ReactNode;
+  organizationId?: string;
 }) {
   const { methods, animationScope, dispatch, isPending, state } = useActionForm<
     CreateInvitationResponse,
@@ -28,7 +30,11 @@ export function BaseCreateInvitationForm({
     initialState: { type: 'initial' },
     formConfiguration: {
       resolver: zodResolver(createInvitationSchema),
-      defaultValues: { email: '', organizationId: '', role: 'member' },
+      defaultValues: {
+        email: '',
+        organizationId: organizationId ?? '',
+        role: 'member',
+      },
     },
     onFormSuccess: () => {
       toast.success('Invitation sent!', {

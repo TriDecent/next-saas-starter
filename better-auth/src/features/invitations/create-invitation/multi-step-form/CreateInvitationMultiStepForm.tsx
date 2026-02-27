@@ -1,5 +1,6 @@
 'use client';
 
+import { useOrgContext } from '@/features/organizations';
 import { MiniLoader } from '@/shared/components';
 import {
   Button,
@@ -19,6 +20,7 @@ import { InvitationStepHeader } from './InvitationStepHeader';
 import { useInvitationSteps, type Step } from './use-invitation-steps';
 
 export function CreateInvitationMultiStepForm() {
+  const selectedOrg = useOrgContext();
   const [isLast, setIsLast] = useState(false);
 
   const handleChangeStep = useCallback((step: Step) => {
@@ -42,6 +44,7 @@ export function CreateInvitationMultiStepForm() {
               )
             : undefined
         }
+        organizationId={selectedOrg.id}
       >
         <Wrapper onChangeStep={handleChangeStep} />
       </BaseCreateInvitationForm>
