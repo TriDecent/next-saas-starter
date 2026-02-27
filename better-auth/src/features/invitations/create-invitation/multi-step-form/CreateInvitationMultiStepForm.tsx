@@ -10,13 +10,13 @@ import {
   FieldTitle,
 } from '@/shared/components/ui';
 import { useCallback, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { FaArrowRight } from 'react-icons/fa6';
-import { HiOfficeBuilding, HiUser, HiUserGroup } from 'react-icons/hi';
-import { BaseCreateInvitationForm, CreateInvitationSchema } from '../_shared';
+import { BaseCreateInvitationForm } from '../_shared';
+import { INVITATION_STEPS } from './constants';
 import { InvitationStepContent } from './InvitationStepContent';
 import { InvitationStepFooter } from './InvitationStepFooter';
 import { InvitationStepHeader } from './InvitationStepHeader';
+import { useInvitationSteps, type Step } from './use-invitation-steps';
 
 export function CreateInvitationMultiStepForm() {
   const [isLast, setIsLast] = useState(false);
@@ -80,43 +80,6 @@ function Wrapper({ onChangeStep }: { onChangeStep: (step: Step) => void }) {
   );
 }
 
-type Step = { step: number; position: 'first' | 'last' | 'between' };
-
-function useInvitationSteps(onChangeStep: (step: Step) => void) {
-  const { trigger } = useFormContext<CreateInvitationSchema>();
-  const [step, setStep] = useState<0 | 1 | 2>(0);
-
-  const isFirst = step === 0;
-  const isLast = step === 2;
-
-  const next = async () => {
-    const isStepValid = await trigger(INVITATION_STEPS[step].field, {
-      shouldFocus: true,
-    });
-    if (!isStepValid) return;
-
-    const nextStep = Math.min(2, step + 1) as 0 | 1 | 2;
-
-    setStep(nextStep);
-    onChangeStep({
-      step: nextStep,
-      position: nextStep === 0 ? 'first' : nextStep === 2 ? 'last' : 'between',
-    });
-  };
-
-  const back = () => {
-    const prevStep = Math.max(0, step - 1) as 0 | 1 | 2;
-
-    setStep(prevStep);
-    onChangeStep({
-      step: prevStep,
-      position: prevStep === 0 ? 'first' : prevStep === 2 ? 'last' : 'between',
-    });
-  };
-
-  return { step, isFirst, isLast, next, back };
-}
-
 function SubmitButton({ isPending }: { isPending: boolean }) {
   return (
     <Button
@@ -134,24 +97,3 @@ function SubmitButton({ isPending }: { isPending: boolean }) {
     </Button>
   );
 }
-
-const INVITATION_STEPS = [
-  {
-    title: 'Organization',
-    description: 'Confirm the organization to send invitation from.',
-    icon: HiOfficeBuilding,
-    field: 'organizationId',
-  },
-  {
-    title: 'Recipient',
-    description: 'Choose who should receive this invitation.',
-    icon: HiUser,
-    field: 'email',
-  },
-  {
-    title: 'Role',
-    description: 'Set the access level for the invited user.',
-    icon: HiUserGroup,
-    field: 'role',
-  },
-] as const;
