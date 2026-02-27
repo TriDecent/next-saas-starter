@@ -51,8 +51,15 @@ export class OrganizationService {
         body: { organizationId },
         headers: this.headers,
       });
+    });
+  }
 
-      return undefined;
+  updateOrg(params: UpdateOrgInput): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.updateOrganization({
+        body: params,
+        headers: this.headers,
+      });
     });
   }
 
