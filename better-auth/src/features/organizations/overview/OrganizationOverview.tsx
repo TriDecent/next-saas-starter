@@ -9,7 +9,6 @@ import {
 } from '@/shared/components/ui';
 import { GrOverview } from 'react-icons/gr';
 import { OrgIdentity } from './OrgIdentity';
-import { QuickActions } from './QuickActions';
 
 export type OrgOverviewProps = NonNullable<
   Extract<GetOrgResponse, { type: 'success' }>['payload']
@@ -34,7 +33,7 @@ export function OrganizationOverview({ org }: { org: OrgOverviewProps }) {
 
       <Separator />
 
-      <CardContent className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
+      <CardContent>
         <div className='lg:col-span-2'>
           <OrgIdentity
             org={org}
@@ -42,8 +41,6 @@ export function OrganizationOverview({ org }: { org: OrgOverviewProps }) {
             pendingInvitesCount={pendingInvites.length}
           />
         </div>
-
-        <QuickActions />
       </CardContent>
     </Card>
   );

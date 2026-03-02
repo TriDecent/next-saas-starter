@@ -2,6 +2,7 @@ import {
   OrganizationDetails,
   OrganizationOverview,
   OrgContextProvider,
+  OrgQuickActions,
 } from '@/features/organizations';
 import { getOrgService } from '@/services';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
@@ -50,8 +51,17 @@ async function Wrapper({ params }: SlugParams) {
 
   return (
     <OrgContextProvider value={org}>
-      <OrganizationOverview org={org} />
-      <OrganizationDetails org={org} />
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
+        <div className='lg:col-span-2'>
+          <OrganizationOverview org={org} />
+        </div>
+        <div className='lg:sticky lg:top-32 lg:col-start-3'>
+          <OrgQuickActions />
+        </div>
+        <div className='lg:col-span-2'>
+          <OrganizationDetails org={org} />
+        </div>
+      </div>
     </OrgContextProvider>
   );
 }
