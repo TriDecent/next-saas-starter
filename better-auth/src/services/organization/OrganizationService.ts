@@ -16,6 +16,7 @@ import type {
   GetOrgInput,
   GetOrgResponse,
   RemoveUserInput,
+  SetActiveOrgInput,
   UpdateOrgInput,
   UpdateRoleInput,
 } from './org-dtos';
@@ -75,6 +76,15 @@ export class OrganizationService {
     return this._serviceExecutor.runSafely(() =>
       this._repo.listOrganizationsForUser(this.actor.id)
     );
+  }
+
+  setActiveOrg(params: SetActiveOrgInput): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.setActiveOrganization({
+        body: params,
+        headers: this.headers,
+      });
+    });
   }
 
   async createInvitation(

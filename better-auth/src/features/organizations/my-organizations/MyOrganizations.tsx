@@ -8,13 +8,19 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   ItemGroup,
   Separator,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
+import type { Organization } from 'better-auth/plugins';
 import Link from 'next/link';
 import { FaCog, FaLink, FaPlus } from 'react-icons/fa';
 import { CreateNewOrganization } from '../create-org';
+import { ToggleActiveOrg } from '../set-active-org';
 import { EmptyOrganization } from './EmptyOrganization';
 import { OrganizationItem, type OrganizationRow } from './OrganizationItem';
 
@@ -74,19 +80,15 @@ function OrganizationDisplay({
 }: {
   organization: OrganizationRow;
 }) {
-  const settingsHref = `/organizations/${organization.slug}/settings`;
-
   return (
     <OrganizationItem
       organization={organization}
       renderActions={
         <>
-          <Button variant='outline' size='sm' asChild>
-            <Link href={settingsHref} className='gap-2'>
-              <FaCog className='size-4' />
-              Settings
-            </Link>
-          </Button>
+          <SetActiveOrgAction
+            orgId={organization.id}
+            isActive={organization.isActive}
+          />
           <Button variant='outline' size='sm' asChild>
             <Link
               href={`${ROUTES.organizations.href}/${organization.slug}`}
@@ -99,5 +101,30 @@ function OrganizationDisplay({
         </>
       }
     />
+  );
+}
+
+function SetActiveOrgAction({
+  orgId,
+  isActive,
+}: {
+  orgId: Organization['id'];
+  isActive: boolean;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant='outline' size='sm'>
+          <FaCog className='size-4' />
+          Settings
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align='start'>
+        <DropdownMenuItem asChild>
+          <ToggleActiveOrg orgId={orgId} isActive={isActive} />
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
