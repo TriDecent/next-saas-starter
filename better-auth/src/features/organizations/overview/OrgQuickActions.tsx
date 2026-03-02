@@ -9,9 +9,10 @@ import {
   Separator,
 } from '@/shared/components/ui';
 import { FaBuilding } from 'react-icons/fa6';
-import { FiMail, FiPlus } from 'react-icons/fi';
+import { FiMail, FiPenTool, FiPlus } from 'react-icons/fi';
+import { UpdateOrgModal } from '../update-org';
 
-export function QuickActions() {
+export function OrgQuickActions() {
   return (
     <Card>
       <CardHeader>
@@ -24,6 +25,15 @@ export function QuickActions() {
       <Separator />
 
       <CardContent className='flex flex-col gap-3'>
+        <UpdateOrgModal
+          renderTrigger={
+            <Button className='w-full justify-start' variant='outline'>
+              <FiPenTool className='size-4' />
+              Edit organization
+            </Button>
+          }
+        />
+
         <CreateInvitationModal
           mode='multi-step'
           renderTrigger={

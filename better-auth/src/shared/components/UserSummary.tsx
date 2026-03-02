@@ -22,7 +22,7 @@ export function UserSummary({
   contentClassName?: string;
 }) {
   return (
-    <Item className={cn('flex-nowrap p-0', className)}>
+    <Item className={cn('flex-nowrap p-0 shadow-none', className)}>
       <ItemMedia variant='image'>
         <Avatar>
           <AvatarImage src={image ?? undefined} alt={name} />

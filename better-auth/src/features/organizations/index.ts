@@ -2,5 +2,5 @@ export { AccessControl } from './access-control';
 export { OrgContextProvider, useOrgContext } from './context';
 export { OrganizationDetails } from './details';
 export { MyOrganizations, OrganizationItem } from './my-organizations';
-export { OrganizationOverview } from './overview';
+export { OrganizationOverview, OrgQuickActions } from './overview';
 export { QuickActions } from './quick-actions';
