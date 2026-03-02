@@ -1,3 +1,4 @@
+import type { Session } from '@/generated/prisma/client';
 import type {
   IOrganizationRepository,
   OrganizationWithRole,
@@ -22,7 +23,8 @@ import type {
 export class OrganizationService {
   constructor(
     private readonly _serviceExecutor: IServiceExecutor,
-    private readonly _repo: IOrganizationRepository
+    private readonly _repo: IOrganizationRepository,
+    private readonly _currentSession: Session
   ) {}
 
   async createOrg(params: CreateOrgInput): Promise<GeneralOrgResponse> {
@@ -61,6 +63,10 @@ export class OrganizationService {
         headers: this.headers,
       });
     });
+  }
+
+  getActiveOrgId() {
+    return this._currentSession.activeOrganizationId;
   }
 
   listMyOrgs(): Promise<

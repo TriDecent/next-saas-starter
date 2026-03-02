@@ -45,6 +45,7 @@ export const getOrgService = cache(async (callbackUrl: string) => {
 
   return new OrganizationService(
     new ServiceExecutor(actor, new UserRepository(), headersList),
-    new OrganizationRepository()
+    new OrganizationRepository(),
+    session.session as Session
   );
 });
