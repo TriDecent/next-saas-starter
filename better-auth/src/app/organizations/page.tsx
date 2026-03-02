@@ -43,5 +43,14 @@ async function MyOrgsWrapper() {
 
   if (response.type === 'error') throw new Error(response.payload.message);
 
-  return <MyOrganizations organizations={response.payload} />;
+  const activeOrgId = service.getActiveOrgId();
+
+  return (
+    <MyOrganizations
+      organizations={response.payload.map(org => ({
+        ...org,
+        isActive: activeOrgId === org.id,
+      }))}
+    />
+  );
 }

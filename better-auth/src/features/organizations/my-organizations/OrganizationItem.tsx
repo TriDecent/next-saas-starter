@@ -8,7 +8,9 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/shared/components/ui';
+import { cn } from '@/shared/utils';
 import { format } from 'date-fns';
+import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { FaUserFriends } from 'react-icons/fa';
@@ -19,6 +21,7 @@ export type OrganizationRow = Omit<
 > & {
   memberCounts?: number;
   currentUserRole?: string;
+  isActive: boolean;
 };
 
 export function OrganizationItem({
@@ -31,7 +34,12 @@ export function OrganizationItem({
   return (
     <Item
       variant='outline'
-      className='group hover:bg-muted/40 shadow transition-colors duration-300'
+      className={cn(
+        'group shadow transition-colors duration-300',
+        organization.isActive
+          ? 'border-emerald-400 bg-emerald-400/5 hover:bg-emerald-400/10'
+          : 'hover:bg-muted/40'
+      )}
     >
       <ItemMedia
         variant='image'
@@ -54,7 +62,16 @@ export function OrganizationItem({
 
       <ItemContent>
         <ItemTitle className='min-w-0'>
-          <span className='truncate'>{organization.name}</span>
+          <div className='flex items-center gap-2'>
+            <span className='truncate'>{organization.name}</span>
+
+            {organization.isActive ? (
+              <Badge variant={'success'}>
+                <CheckCircle2 />
+                Active
+              </Badge>
+            ) : null}
+          </div>
         </ItemTitle>
 
         <ItemDescription className='flex flex-wrap items-center gap-x-3 gap-y-1'>
@@ -79,7 +96,7 @@ export function OrganizationItem({
             <>
               <span className='hidden sm:inline'>•</span>
 
-              <Badge variant={'outline'} className='text-muted-foreground'>
+              <Badge variant='outline' className='text-muted-foreground'>
                 {organization.currentUserRole}
               </Badge>
             </>
