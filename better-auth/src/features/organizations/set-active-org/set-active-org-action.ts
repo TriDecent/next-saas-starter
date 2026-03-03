@@ -7,7 +7,6 @@ import {
   type SetActiveOrgInput,
 } from '@/services';
 import { request } from '@arcjet/next';
-import { refresh } from 'next/cache';
 
 export async function SetActiveOrgAction(
   input: SetActiveOrgInput,
@@ -21,8 +20,5 @@ export async function SetActiveOrgAction(
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  const response = await service.setActiveOrg(input);
-  refresh();
-
-  return response;
+  return service.setActiveOrg(input);
 }

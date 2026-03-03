@@ -4,6 +4,7 @@ import { MiniLoader } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import { cn } from '@/shared/utils';
 import type { Organization } from 'better-auth/plugins';
+import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useTransition } from 'react';
 import { PiCheckCircleFill } from 'react-icons/pi';
@@ -19,6 +20,7 @@ export function ToggleActiveOrg({
   isActive: boolean;
 } & React.HTMLAttributes<HTMLButtonElement>) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleToggleActiveOrg = () =>
     startTransition(async () => {
@@ -31,10 +33,14 @@ export function ToggleActiveOrg({
         ROUTES.organizations.href
       );
 
-      if (response.type === 'success')
+      if (response.type === 'success') {
         toast.success('Organization set as active', {
           id: 'set-active-org-action',
         });
+        router.refresh();
+
+        return;
+      }
 
       if (response.type === 'error') {
         toast.error('Failed to set active organization', {
