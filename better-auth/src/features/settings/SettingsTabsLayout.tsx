@@ -10,6 +10,7 @@ import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ReactNode } from 'react';
+import { BsCreditCardFill } from 'react-icons/bs';
 import { FaLink } from 'react-icons/fa6';
 import { IoKey, IoPerson, IoShield, IoTrashBin } from 'react-icons/io5';
 
@@ -18,6 +19,10 @@ const SETTINGS_ROUTES = [
   { path: ROUTES.settings.nested.security.href, icon: <IoShield /> },
   { path: ROUTES.settings.nested.sessions.href, icon: <IoKey /> },
   { path: ROUTES.settings.nested.accounts.href, icon: <FaLink /> },
+  {
+    path: ROUTES.settings.nested.subscription.href,
+    icon: <BsCreditCardFill />,
+  },
   { path: ROUTES.settings.nested.danger.href, icon: <IoTrashBin /> },
 ] as const;
 
