@@ -230,8 +230,23 @@ export const ROUTES = {
       danger: defineRoute({
         href: '/settings/danger',
         metadata: {
+          title: 'Danger Zone',
           description:
             'Access advanced account actions, including account deletion and recovery options.',
+        },
+      }),
+      subscription: defineRoute({
+        href: '/settings/subscription',
+        metadata: {
+          title: 'Subscription',
+          description:
+            'Manage your subscription plan, billing information, and upgrade or downgrade your account tier.',
+          openGraph: {
+            title: `Subscription | ${APP_NAME}`,
+            description:
+              'Manage your subscription plan and billing information.',
+            url: `${BASE_URL}/settings/subscription`,
+          },
         },
       }),
     },
