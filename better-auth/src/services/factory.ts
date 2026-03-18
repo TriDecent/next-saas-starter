@@ -1,14 +1,15 @@
 'use server';
 
 import type { Session, User } from '@/generated/prisma/client';
+import { getOrgRepo } from '@/infrastructure/repositories';
 import { auth, ensureSession } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { cache } from 'react';
-import { OrganizationRepository } from '../infrastructure/repositories/organization';
 import { UserRepository } from '../infrastructure/repositories/user';
 import { AuthService } from './auth';
 import { OrganizationService } from './organization';
 import { ServiceExecutor } from './ServiceExecutor';
+import { SubscriptionService } from './subscription';
 import { UserService } from './user';
 
 export const getUserService = cache(async (callbackUrl: string) => {
@@ -45,7 +46,18 @@ export const getOrgService = cache(async (callbackUrl: string) => {
 
   return new OrganizationService(
     new ServiceExecutor(actor, new UserRepository(), headersList),
-    new OrganizationRepository(),
+    getOrgRepo(),
     session.session as Session
+  );
+});
+
+export const getSubscriptionService = cache(async (callbackUrl: string) => {
+  const headersList = await headers();
+  const session = await ensureSession(headersList, callbackUrl);
+
+  const actor = session.user as User;
+
+  return new SubscriptionService(
+    new ServiceExecutor(actor, new UserRepository(), headersList)
   );
 });
