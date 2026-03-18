@@ -1,4 +1,5 @@
 import { passkeyClient } from '@better-auth/passkey/client';
+import { stripeClient } from '@better-auth/stripe/client';
 import {
   adminClient,
   inferAdditionalFields,
@@ -17,6 +18,7 @@ export const authClient = createAuthClient({
     passkeyClient(),
     adminClient(adminPluginConfigs),
     organizationClient(organizationPluginConfigs),
+    stripeClient({ subscription: true }),
   ],
 });
 export const { signIn, signUp, useSession } = createAuthClient();

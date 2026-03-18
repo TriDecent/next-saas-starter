@@ -7,6 +7,7 @@ import {
 } from '@/features/email';
 import { ROUTES } from '@/shared/constants';
 import { passkey } from '@better-auth/passkey';
+import { stripe } from '@better-auth/stripe';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { nextCookies } from 'better-auth/next-js';
@@ -14,6 +15,7 @@ import { admin, organization } from 'better-auth/plugins';
 import { twoFactor } from 'better-auth/plugins/two-factor';
 import { prisma } from '../prisma';
 import { organizationPluginConfigs } from './organization-permissions';
+import { stripeConfigs } from './stripe-configs';
 import { adminPluginConfigs } from './user-permissions';
 
 export const auth = betterAuth({
@@ -28,6 +30,7 @@ export const auth = betterAuth({
     }),
     admin(adminPluginConfigs),
     organization(organizationPluginConfigs),
+    stripe(stripeConfigs),
     nextCookies(),
   ],
   database: prismaAdapter(prisma, {
