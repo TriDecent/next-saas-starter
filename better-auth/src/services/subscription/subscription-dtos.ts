@@ -1,4 +1,5 @@
 import type { auth } from '@/lib/auth';
+import type Stripe from 'stripe';
 import type {
   ExtractEndpointBody,
   ExtractEndpointQuery,
@@ -24,12 +25,15 @@ export type SubscriptionPlan = {
   name: 'standard' | 'pro' | 'enterprise';
   title: string;
   subtitle: string;
-  price: string;
-  caption: string;
   highlighted?: boolean;
   features: string[];
+  prices: { monthly: PriceDetails; annual: PriceDetails };
 };
-
+type PriceDetails = {
+  amount: number;
+  interval: Stripe.Price.Recurring.Interval;
+  currency: string;
+};
 export type GeneralSubscriptionResponse = ServiceResponse<
   void,
   { message: string }

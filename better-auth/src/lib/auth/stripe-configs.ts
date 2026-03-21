@@ -4,17 +4,22 @@ import { stripeClient } from '../stripe';
 export const SUBSCRIPTION_PLAN = {
   standard: {
     name: 'standard',
-    priceId: process.env.STRIPE_STANDARD_SUBSCRIPTION_PRICE_ID!,
+    priceId: process.env.STRIPE_STANDARD_SUBSCRIPTION_MONTHLY_PRICE_ID!,
+    annualDiscountPriceId:
+      process.env.STRIPE_STANDARD_SUBSCRIPTION_YEARLY_PRICE_ID!,
     limits: {},
   },
   pro: {
     name: 'pro',
-    priceId: process.env.STRIPE_PRO_SUBSCRIPTION_PRICE_ID!,
+    priceId: process.env.STRIPE_PRO_SUBSCRIPTION_MONTHLY_PRICE_ID!,
+    annualDiscountPriceId: process.env.STRIPE_PRO_SUBSCRIPTION_YEARLY_PRICE_ID!,
     limits: {},
   },
   enterprise: {
     name: 'enterprise',
-    priceId: process.env.STRIPE_ENTERPRISE_SUBSCRIPTION_PRICE_ID!,
+    priceId: process.env.STRIPE_ENTERPRISE_SUBSCRIPTION_MONTHLY_PRICE_ID!,
+    annualDiscountPriceId:
+      process.env.STRIPE_ENTERPRISE_SUBSCRIPTION_YEARLY_PRICE_ID!,
     limits: {},
   },
 } as const satisfies Record<'standard' | 'pro' | 'enterprise', StripePlan>;
