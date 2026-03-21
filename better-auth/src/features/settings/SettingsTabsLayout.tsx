@@ -38,7 +38,7 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
       }
       className='min-h-screen items-center gap-y-4'
     >
-      <TabsList className='w-full max-w-xl'>
+      <TabsList className='w-full max-w-3xl'>
         {SETTINGS_ROUTES.map(route => (
           <TabsTrigger key={route.path} value={route.path} asChild>
             <Link href={route.path}>{route.icon}</Link>
@@ -52,7 +52,7 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
             ? pathname
             : '/profile'
         }
-        className='mx-auto w-full max-w-xl'
+        className='mx-auto w-full max-w-3xl'
       >
         {children}
       </TabsContent>
