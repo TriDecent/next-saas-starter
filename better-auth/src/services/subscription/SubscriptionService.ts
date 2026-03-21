@@ -59,13 +59,13 @@ export class SubscriptionService {
 
   upgradeSubscription(
     params: UpgradeSubscriptionInput
-  ): Promise<GeneralSubscriptionResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.upgradeSubscription({
+  ): Promise<UpgradeSubscriptionResponse> {
+    return this._serviceExecutor.runSafely(async () =>
+      auth.api.upgradeSubscription({
         body: params,
         headers: this.headers,
-      });
-    });
+      })
+    );
   }
 
   listActiveSubscription(
@@ -76,7 +76,7 @@ export class SubscriptionService {
     );
   }
 
-  private get actor() {
+  public get actor() {
     return this._serviceExecutor.actor;
   }
   private get headers() {

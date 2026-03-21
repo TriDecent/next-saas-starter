@@ -12,6 +12,10 @@ export type ListActiveSubscriptionsInput = ExtractEndpointQuery<
   typeof auth.api.listActiveSubscriptions
 >;
 
+export type UpgradeSubscriptionResponse = ServiceResponse<
+  Awaited<ReturnType<typeof auth.api.upgradeSubscription>>,
+  { message: string }
+>;
 export type ListActiveSubscriptionResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.listActiveSubscriptions>>,
   { message: string }
