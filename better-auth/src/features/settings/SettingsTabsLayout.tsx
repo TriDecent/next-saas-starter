@@ -7,6 +7,7 @@ import {
   TabsTrigger,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
+import { useBreakpoint } from '@/shared/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ReactNode } from 'react';
@@ -28,6 +29,7 @@ const SETTINGS_ROUTES = [
 
 export function SettingsTabsLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const breakpoint = useBreakpoint();
 
   return (
     <Tabs
@@ -36,9 +38,12 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
           ? pathname
           : '/profile'
       }
-      className='min-h-screen items-center gap-y-4'
+      orientation={
+        breakpoint !== 'sm' && breakpoint !== 'md' ? 'vertical' : 'horizontal'
+      }
+      className='min-h-screen items-center gap-y-4 lg:items-start'
     >
-      <TabsList className='w-full max-w-3xl'>
+      <TabsList className='w-full max-w-3xl shadow lg:sticky lg:top-32 lg:order-2 lg:w-fit'>
         {SETTINGS_ROUTES.map(route => (
           <TabsTrigger key={route.path} value={route.path} asChild>
             <Link href={route.path}>{route.icon}</Link>
@@ -46,16 +51,18 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
         ))}
       </TabsList>
 
-      <TabsContent
-        value={
-          SETTINGS_ROUTES.some(route => route.path === pathname)
-            ? pathname
-            : '/profile'
-        }
-        className='mx-auto w-full max-w-3xl'
-      >
-        {children}
-      </TabsContent>
+      <div className='h-full w-full flex-1'>
+        <TabsContent
+          value={
+            SETTINGS_ROUTES.some(route => route.path === pathname)
+              ? pathname
+              : '/profile'
+          }
+          className='mx-auto w-full max-w-3xl lg:order-1'
+        >
+          {children}
+        </TabsContent>
+      </div>
     </Tabs>
   );
 }
