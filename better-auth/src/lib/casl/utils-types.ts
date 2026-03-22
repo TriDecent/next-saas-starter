@@ -19,3 +19,6 @@ type PathValue<T, P extends Paths<T>> = P extends `${infer Key}.${infer Rest}`
 export type StrictPhantom<T, P extends Paths<T>> = {
   [K in P]?: PathValue<T, K>;
 };
+export type AutoStrictPhantom<T> = {
+  [K in Paths<T>]?: PathValue<T, K>;
+};
