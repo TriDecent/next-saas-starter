@@ -4,7 +4,7 @@ import type { IServiceExecutor } from '../ServiceExecutor';
 import type {
   ListActiveSubscriptionResponse,
   ListActiveSubscriptionsInput,
-  SubscriptionPlan,
+  SubscriptionPlanDetails,
   UpgradeSubscriptionInput,
   UpgradeSubscriptionResponse,
 } from './subscription-dtos';
@@ -48,11 +48,11 @@ export class SubscriptionService {
         'Custom onboarding',
       ],
     },
-  ] as const satisfies Omit<SubscriptionPlan, 'prices'>[];
+  ] as const satisfies Omit<SubscriptionPlanDetails, 'prices'>[];
 
   constructor(private readonly _serviceExecutor: IServiceExecutor) {}
 
-  async getSubscriptionPlans(): Promise<SubscriptionPlan[]> {
+  async getSubscriptionPlans(): Promise<SubscriptionPlanDetails[]> {
     return Promise.all(
       this._plans.map(async plan => {
         const [monthlyPrice, annualPrice] = await Promise.all([
@@ -100,7 +100,7 @@ export class SubscriptionService {
   }
 
   listActiveSubscription(
-    params: ListActiveSubscriptionsInput
+    params?: ListActiveSubscriptionsInput
   ): Promise<ListActiveSubscriptionResponse> {
     return this._serviceExecutor.runSafely(() =>
       auth.api.listActiveSubscriptions({ query: params, headers: this.headers })

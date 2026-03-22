@@ -1,4 +1,4 @@
-import type { auth } from '@/lib/auth';
+import type { auth, SubscriptionPlan } from '@/lib/auth';
 import type Stripe from 'stripe';
 import type {
   ExtractEndpointBody,
@@ -21,8 +21,8 @@ export type ListActiveSubscriptionResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.listActiveSubscriptions>>,
   { message: string }
 >;
-export type SubscriptionPlan = {
-  name: 'standard' | 'pro' | 'enterprise';
+export type SubscriptionPlanDetails = {
+  name: SubscriptionPlan;
   title: string;
   subtitle: string;
   highlighted?: boolean;

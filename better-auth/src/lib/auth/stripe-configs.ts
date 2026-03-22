@@ -23,6 +23,8 @@ export const SUBSCRIPTION_PLAN = {
     limits: {},
   },
 } as const satisfies Record<'standard' | 'pro' | 'enterprise', StripePlan>;
+export type SubscriptionPlan =
+  (typeof SUBSCRIPTION_PLAN)[keyof typeof SUBSCRIPTION_PLAN]['name'];
 
 export const stripeConfigs = {
   stripeClient,
