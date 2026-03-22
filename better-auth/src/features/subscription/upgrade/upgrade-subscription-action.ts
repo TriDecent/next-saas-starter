@@ -4,6 +4,7 @@ import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { SUBSCRIPTION_PLAN } from '@/lib/auth';
 import { getSubscriptionService } from '@/services';
 import type { UpgradeSubscriptionResponse } from '@/services/subscription';
+import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import z from 'zod';
 
@@ -23,12 +24,20 @@ export async function upgradeSubscriptionAction(
   if (!parsed.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 
+  const activeSubsResponse = await service.listActiveSubscription();
+  if (activeSubsResponse.type === 'error') return activeSubsResponse;
+
+  const activeSub = activeSubsResponse.payload.at(0);
+
   return service.upgradeSubscription({
     ...parsed.data,
-    successUrl: '',
-    cancelUrl: '',
+    successUrl: ROUTES.settings.nested.subscription.href,
+    cancelUrl: ROUTES.settings.nested.subscription.href,
+    returnUrl: ROUTES.settings.nested.subscription.href,
     scheduleAtPeriodEnd: false,
     disableRedirect: false,
+
+    subscriptionId: activeSub?.stripeSubscriptionId,
   });
 }
 

@@ -18,13 +18,8 @@ const subscribe = (callback: () => void) => {
   return () => window.removeEventListener('resize', callback);
 };
 
-const getClientSnapshot = (): Breakpoint => {
-  return getBreakpoint();
-};
-
-const getServerSnapshot = (): Breakpoint => {
-  return 'sm';
-};
+const getClientSnapshot = () => getBreakpoint();
+const getServerSnapshot = () => 'sm';
 
 export function useBreakpoint() {
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
