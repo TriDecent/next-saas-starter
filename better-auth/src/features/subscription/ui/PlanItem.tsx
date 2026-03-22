@@ -29,92 +29,175 @@ export function PlanItem({
   const monthlyPrice = plan.prices.monthly;
   const annualPrice = plan.prices.annual;
 
+  return (
+    <CardStatusIndicator
+      isSubscribed={isSubscribed}
+      isHighlighted={plan.highlighted}
+    >
+      <PlanStatusIndicator
+        isSubscribed={isSubscribed}
+        isHighlighted={plan.highlighted}
+      />
+
+      <CardHeader>
+        <CardTitle className='text-xl'>{plan.title}</CardTitle>
+        <CardDescription>{plan.subtitle}</CardDescription>
+        <PlanPricing
+          amount={currentPrice.amount}
+          currency={currentPrice.currency}
+          interval={currentPrice.interval}
+        />
+        <PlanPricingHint
+          cycle={cycle}
+          monthlyAmount={monthlyPrice.amount}
+          annualAmount={annualPrice.amount}
+          annualCurrency={annualPrice.currency}
+        />
+      </CardHeader>
+
+      <CardContent className='space-y-3'>
+        <Separator />
+        <PlanFeatures features={plan.features} />
+      </CardContent>
+
+      <CardFooter className='mt-auto'>
+        <SubscribeButton
+          isSubscribed={isSubscribed}
+          isHighlighted={plan.highlighted}
+        >
+          <UpgradeSubscriptionAction
+            options={{ plan: plan.name, annual: cycle === 'annual' }}
+          >
+            {`Choose ${plan.title}`}
+          </UpgradeSubscriptionAction>
+        </SubscribeButton>
+      </CardFooter>
+    </CardStatusIndicator>
+  );
+}
+
+function PlanStatusIndicator({
+  isSubscribed,
+  isHighlighted,
+}: {
+  isSubscribed: boolean;
+  isHighlighted?: boolean;
+}) {
+  return isSubscribed ? (
+    <Badge variant={'success'} className='absolute -top-2 right-4'>
+      Current plan
+    </Badge>
+  ) : isHighlighted ? (
+    <Badge className='absolute -top-2 right-4'>Most popular</Badge>
+  ) : null;
+}
+
+function PlanPricing({
+  amount,
+  currency,
+  interval,
+}: {
+  amount: number;
+  currency: string;
+  interval: string;
+}) {
+  return (
+    <div className='flex items-end gap-1'>
+      <span className='text-3xl leading-none font-bold'>
+        {formatPrice(amount, currency)}
+      </span>
+      <span className='text-muted-foreground text-sm'>/{interval}</span>
+    </div>
+  );
+}
+
+function PlanPricingHint({
+  cycle,
+  monthlyAmount,
+  annualAmount,
+  annualCurrency,
+}: {
+  cycle: BillingCycle;
+  monthlyAmount: number;
+  annualAmount: number;
+  annualCurrency: string;
+}) {
   const annualSavingsPercent =
-    monthlyPrice.amount > 0
-      ? Math.max(
-          0,
-          Math.round(
-            (1 - annualPrice.amount / (monthlyPrice.amount * 12)) * 100
-          )
-        )
+    monthlyAmount > 0
+      ? Math.max(0, Math.round((1 - annualAmount / (monthlyAmount * 12)) * 100))
       : 0;
 
+  return cycle === 'annual' ? (
+    <p className='text-muted-foreground text-xs'>
+      {`~${formatPrice(annualAmount / 12, annualCurrency)}/month, billed yearly`}
+      {annualSavingsPercent > 0 ? ` • Save ${annualSavingsPercent}%` : ''}
+    </p>
+  ) : (
+    <p className='text-muted-foreground text-xs'>
+      {`or ${formatPrice(annualAmount, annualCurrency)}/year`}
+    </p>
+  );
+}
+
+function PlanFeatures({ features }: { features: string[] }) {
+  return (
+    <ul className='space-y-2'>
+      {features.map(feature => (
+        <li key={feature} className='flex items-start gap-2 text-sm'>
+          <Check className='text-primary mt-0.5 size-4 shrink-0' />
+          <span>{feature}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function SubscribeButton({
+  isSubscribed,
+  isHighlighted,
+  children,
+}: {
+  isSubscribed: boolean;
+  isHighlighted?: boolean;
+  children: React.ReactNode;
+}) {
+  return isSubscribed ? (
+    <Button type='button' className='w-full' variant='secondary' disabled>
+      Already subscribed
+    </Button>
+  ) : (
+    <Button
+      type='button'
+      className='w-full'
+      variant={isHighlighted ? 'default' : 'outline'}
+      asChild
+    >
+      {children}
+    </Button>
+  );
+}
+
+function CardStatusIndicator({
+  isSubscribed,
+  isHighlighted,
+  children,
+}: {
+  isSubscribed: boolean;
+  isHighlighted?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <Card
       className={cn(
         'relative border',
         isSubscribed
           ? 'border-emerald-200 shadow-lg shadow-emerald-200 dark:border-emerald-400 dark:shadow-emerald-400'
-          : plan.highlighted
+          : isHighlighted
             ? 'border-primary shadow-primary/20 shadow-lg'
             : 'border-border'
       )}
     >
-      {isSubscribed ? (
-        <Badge variant={'success'} className='absolute -top-2 right-4'>
-          Current plan
-        </Badge>
-      ) : plan.highlighted ? (
-        <Badge className='absolute -top-2 right-4'>Most popular</Badge>
-      ) : null}
-
-      <CardHeader>
-        <CardTitle className='text-xl'>{plan.title}</CardTitle>
-        <CardDescription>{plan.subtitle}</CardDescription>
-
-        <div className='flex items-end gap-1'>
-          <span className='text-3xl leading-none font-bold'>
-            {formatPrice(currentPrice.amount, currentPrice.currency)}
-          </span>
-          <span className='text-muted-foreground text-sm'>
-            /{currentPrice.interval}
-          </span>
-        </div>
-
-        {cycle === 'annual' ? (
-          <p className='text-muted-foreground text-xs'>
-            {`~${formatPrice(annualPrice.amount / 12, annualPrice.currency)}/month, billed yearly`}
-            {annualSavingsPercent > 0 ? ` • Save ${annualSavingsPercent}%` : ''}
-          </p>
-        ) : (
-          <p className='text-muted-foreground text-xs'>
-            {`or ${formatPrice(annualPrice.amount, annualPrice.currency)}/year`}
-          </p>
-        )}
-      </CardHeader>
-
-      <CardContent className='space-y-3'>
-        <Separator />
-        <ul className='space-y-2'>
-          {plan.features.map(feature => (
-            <li key={feature} className='flex items-start gap-2 text-sm'>
-              <Check className='text-primary mt-0.5 size-4 shrink-0' />
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </CardContent>
-
-      <CardFooter className='mt-auto'>
-        {isSubscribed ? (
-          <Button type='button' className='w-full' variant='secondary' disabled>
-            Already subscribed
-          </Button>
-        ) : (
-          <Button
-            type='button'
-            className='w-full'
-            variant={plan.highlighted ? 'default' : 'outline'}
-            asChild
-          >
-            <UpgradeSubscriptionAction
-              options={{ plan: plan.name, annual: cycle === 'annual' }}
-            >
-              {`Choose ${plan.title}`}
-            </UpgradeSubscriptionAction>
-          </Button>
-        )}
-      </CardFooter>
+      {children}
     </Card>
   );
 }
