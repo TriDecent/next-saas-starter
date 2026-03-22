@@ -1,4 +1,4 @@
-import type { SubscriptionPlan } from '@/services/subscription';
+import type { SubscriptionPlanDetails } from '@/services/subscription';
 import {
   Tabs,
   TabsContent,
@@ -7,7 +7,13 @@ import {
 } from '@/shared/components/ui';
 import { PlanItem } from './PlanItem';
 
-export function SubscriptionPlans({ plans }: { plans: SubscriptionPlan[] }) {
+export function SubscriptionPlans({
+  plans,
+  subscribedPlan,
+}: {
+  plans: SubscriptionPlanDetails[];
+  subscribedPlan?: SubscriptionPlanDetails['name'];
+}) {
   const maxAnnualSavingsPercent = getMaxAnnualSavingsPercent(plans);
 
   return (
@@ -35,7 +41,12 @@ export function SubscriptionPlans({ plans }: { plans: SubscriptionPlan[] }) {
           className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'
         >
           {plans.map(plan => (
-            <PlanItem key={plan.name} plan={plan} cycle={cycle.name} />
+            <PlanItem
+              key={plan.name}
+              plan={plan}
+              cycle={cycle.name}
+              isSubscribed={plan.name === subscribedPlan}
+            />
           ))}
         </TabsContent>
       ))}
@@ -48,7 +59,7 @@ const billingCycles = [
   { name: 'annual', title: 'Annual' },
 ] as const;
 
-function getMaxAnnualSavingsPercent(plans: SubscriptionPlan[]) {
+function getMaxAnnualSavingsPercent(plans: SubscriptionPlanDetails[]) {
   return plans.reduce((max, plan) => {
     const monthly = plan.prices.monthly.amount;
     const annual = plan.prices.annual.amount;

@@ -1,4 +1,5 @@
 import { SubscriptionPlans } from '@/features/subscription';
+import type { SubscriptionPlan } from '@/lib/auth';
 import { getSubscriptionService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
@@ -9,9 +10,23 @@ export default async function SubscriptionPage() {
   const service = await getSubscriptionService(
     ROUTES.settings.nested.subscription.href
   );
-  const plans = await service.getSubscriptionPlans();
+  const [plans, activeSubscriptionsResponse] = await Promise.all([
+    service.getSubscriptionPlans(),
+    service.listActiveSubscription(),
+  ]);
 
-  return <SubscriptionPlans plans={plans} />;
+  if (activeSubscriptionsResponse.type === 'error')
+    throw new Error(activeSubscriptionsResponse.payload.message);
+
+  const activeSubscriptions = activeSubscriptionsResponse.payload;
+  const subscribedPlan = activeSubscriptions.at(0)?.plan;
+
+  return (
+    <SubscriptionPlans
+      plans={plans}
+      subscribedPlan={subscribedPlan as SubscriptionPlan | undefined}
+    />
+  );
 }
 
 //  <SectionHeader

@@ -1,4 +1,4 @@
-import type { SubscriptionPlan } from '@/services/subscription';
+import type { SubscriptionPlanDetails } from '@/services/subscription';
 import {
   Badge,
   Button,
@@ -19,9 +19,11 @@ export type BillingCycle = 'monthly' | 'annual';
 export function PlanItem({
   plan,
   cycle,
+  isSubscribed,
 }: {
-  plan: SubscriptionPlan;
+  plan: SubscriptionPlanDetails;
   cycle: BillingCycle;
+  isSubscribed: boolean;
 }) {
   const currentPrice = plan.prices[cycle];
   const monthlyPrice = plan.prices.monthly;
@@ -41,12 +43,18 @@ export function PlanItem({
     <Card
       className={cn(
         'relative border',
-        plan.highlighted
-          ? 'border-primary shadow-primary/20 shadow-lg'
-          : 'border-border'
+        isSubscribed
+          ? 'border-emerald-200 shadow-lg shadow-emerald-200 dark:border-emerald-400 dark:shadow-emerald-400'
+          : plan.highlighted
+            ? 'border-primary shadow-primary/20 shadow-lg'
+            : 'border-border'
       )}
     >
-      {plan.highlighted ? (
+      {isSubscribed ? (
+        <Badge variant={'success'} className='absolute -top-2 right-4'>
+          Current plan
+        </Badge>
+      ) : plan.highlighted ? (
         <Badge className='absolute -top-2 right-4'>Most popular</Badge>
       ) : null}
 
@@ -88,18 +96,24 @@ export function PlanItem({
       </CardContent>
 
       <CardFooter className='mt-auto'>
-        <Button
-          type='button'
-          className='w-full'
-          variant={plan.highlighted ? 'default' : 'outline'}
-          asChild
-        >
-          <UpgradeSubscriptionAction
-            options={{ plan: plan.name, annual: cycle === 'annual' }}
+        {isSubscribed ? (
+          <Button type='button' className='w-full' variant='secondary' disabled>
+            Already subscribed
+          </Button>
+        ) : (
+          <Button
+            type='button'
+            className='w-full'
+            variant={plan.highlighted ? 'default' : 'outline'}
+            asChild
           >
-            {`Choose ${plan.title}`}
-          </UpgradeSubscriptionAction>
-        </Button>
+            <UpgradeSubscriptionAction
+              options={{ plan: plan.name, annual: cycle === 'annual' }}
+            >
+              {`Choose ${plan.title}`}
+            </UpgradeSubscriptionAction>
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
