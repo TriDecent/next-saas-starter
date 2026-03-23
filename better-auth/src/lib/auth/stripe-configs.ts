@@ -7,20 +7,35 @@ export const SUBSCRIPTION_PLAN = {
     priceId: process.env.STRIPE_STANDARD_SUBSCRIPTION_MONTHLY_PRICE_ID!,
     annualDiscountPriceId:
       process.env.STRIPE_STANDARD_SUBSCRIPTION_YEARLY_PRICE_ID!,
-    limits: {},
+    limits: {
+      projects: 1,
+      teamMembers: 1,
+      storageMB: 1024,
+      apiRequests: 1000,
+    },
   },
   pro: {
     name: 'pro',
     priceId: process.env.STRIPE_PRO_SUBSCRIPTION_MONTHLY_PRICE_ID!,
     annualDiscountPriceId: process.env.STRIPE_PRO_SUBSCRIPTION_YEARLY_PRICE_ID!,
-    limits: {},
+    limits: {
+      projects: 10,
+      teamMembers: 5,
+      storageMB: 10240,
+      apiRequests: 50000,
+    },
   },
   enterprise: {
     name: 'enterprise',
     priceId: process.env.STRIPE_ENTERPRISE_SUBSCRIPTION_MONTHLY_PRICE_ID!,
     annualDiscountPriceId:
       process.env.STRIPE_ENTERPRISE_SUBSCRIPTION_YEARLY_PRICE_ID!,
-    limits: {},
+    limits: {
+      projects: 9999,
+      teamMembers: 100,
+      storageMB: 512000,
+      apiRequests: 9999999,
+    },
   },
 } as const satisfies Record<'standard' | 'pro' | 'enterprise', StripePlan>;
 export type SubscriptionPlan =
