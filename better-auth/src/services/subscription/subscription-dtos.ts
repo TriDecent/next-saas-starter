@@ -12,6 +12,9 @@ export type UpgradeSubscriptionInput = ExtractEndpointBody<
 export type ListActiveSubscriptionsInput = ExtractEndpointQuery<
   typeof auth.api.listActiveSubscriptions
 >;
+export type CreateBillingPortalInput = ExtractEndpointBody<
+  typeof auth.api.createBillingPortal
+>;
 
 export type UpgradeSubscriptionResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.upgradeSubscription>>,
@@ -19,6 +22,10 @@ export type UpgradeSubscriptionResponse = ServiceResponse<
 >;
 export type ListActiveSubscriptionResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.listActiveSubscriptions>>,
+  { message: string }
+>;
+export type CreateBillingPortalResponse = ServiceResponse<
+  Awaited<ReturnType<typeof auth.api.createBillingPortal>>,
   { message: string }
 >;
 export type SubscriptionPlanDetails = {

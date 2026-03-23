@@ -2,6 +2,7 @@ import { auth, SUBSCRIPTION_PLAN } from '@/lib/auth';
 import { stripeClient } from '@/lib/stripe';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type {
+  CreateBillingPortalInput,
   ListActiveSubscriptionResponse,
   ListActiveSubscriptionsInput,
   SubscriptionPlanDetails,
@@ -104,6 +105,12 @@ export class SubscriptionService {
   ): Promise<ListActiveSubscriptionResponse> {
     return this._serviceExecutor.runSafely(() =>
       auth.api.listActiveSubscriptions({ query: params, headers: this.headers })
+    );
+  }
+
+  createBillingPortal(params: CreateBillingPortalInput) {
+    return this._serviceExecutor.runSafely(() =>
+      auth.api.createBillingPortal({ body: params, headers: this.headers })
     );
   }
 
