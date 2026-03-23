@@ -5,6 +5,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/shared/components/ui';
+import type Stripe from 'stripe';
 import { PlanItem } from './PlanItem';
 
 export function SubscriptionPlans({
@@ -12,7 +13,10 @@ export function SubscriptionPlans({
   subscribedPlan,
 }: {
   plans: SubscriptionPlanDetails[];
-  subscribedPlan?: SubscriptionPlanDetails['name'];
+  subscribedPlan?: {
+    name: SubscriptionPlanDetails['name'];
+    interval: Stripe.Price.Recurring.Interval;
+  };
 }) {
   const maxAnnualSavingsPercent = getMaxAnnualSavingsPercent(plans);
 
@@ -45,7 +49,12 @@ export function SubscriptionPlans({
               key={plan.name}
               plan={plan}
               cycle={cycle.name}
-              isSubscribed={plan.name === subscribedPlan}
+              isSubscribed={
+                plan.name === subscribedPlan?.name &&
+                (cycle.name === 'annual'
+                  ? plan.prices.annual.interval === subscribedPlan?.interval
+                  : plan.prices.monthly.interval === subscribedPlan?.interval)
+              }
             />
           ))}
         </TabsContent>
