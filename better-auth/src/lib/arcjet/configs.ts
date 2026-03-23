@@ -9,7 +9,15 @@ export const arcjetMode =
 
 export const botSettings = {
   mode: arcjetMode,
-  allow: [],
+  allow: [
+    'CATEGORY:SEARCH_ENGINE',
+    'CATEGORY:GOOGLE',
+    'CATEGORY:MICROSOFT',
+    'CATEGORY:PREVIEW',
+    'CATEGORY:SOCIAL',
+    'CATEGORY:FEEDFETCHER',
+    'CATEGORY:YAHOO',
+  ],
 } as const satisfies BotOptions;
 
 export const restrictiveRateLimitSettings = {
