@@ -17,6 +17,7 @@ export const botSettings = {
     'CATEGORY:SOCIAL',
     'CATEGORY:FEEDFETCHER',
     'CATEGORY:YAHOO',
+    'CATEGORY:WEBHOOK',
   ],
 } as const satisfies BotOptions;
 
