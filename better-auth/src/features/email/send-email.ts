@@ -8,6 +8,26 @@ import {
   type OrganizationInvitationTemplateProps,
 } from './template/OrganizationInvitationTemplate';
 import { PasswordResetTemplate } from './template/PasswordResetTemplate';
+import {
+  SubscriptionCanceledTemplate,
+  type SubscriptionCanceledTemplateProps,
+} from './template/SubscriptionCanceledTemplate';
+import {
+  SubscriptionCompleteTemplate,
+  type SubscriptionCompleteTemplateProps,
+} from './template/SubscriptionCompleteTemplate';
+import {
+  TrialEndTemplate,
+  type TrialEndTemplateProps,
+} from './template/TrialEndTemplate';
+import {
+  TrialExpireTemplate,
+  type TrialExpireTemplateProps,
+} from './template/TrialExpireTemplate';
+import {
+  TrialStartTemplate,
+  type TrialStartTemplateProps,
+} from './template/TrialStartTemplate';
 import { WelcomeTemplate } from './WelcomeTemplate';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -72,6 +92,68 @@ export async function sendOrganizationInvitationEmail(
     [payload.recipientEmail],
     'Invitation to join ' + payload.organizationName,
     OrganizationInvitationTemplate(payload)
+  );
+}
+
+type SubscriptionEmailSendingOptions = Readonly<{
+  to: string;
+  userName?: string;
+}>;
+
+export async function sendSubscriptionCompleteEmail(
+  payload: SubscriptionEmailSendingOptions &
+    Omit<SubscriptionCompleteTemplateProps, 'userName'>
+) {
+  const planName = payload.subscription.plan;
+
+  return sendEmail(
+    [payload.to],
+    `Subscription completed: ${planName}`,
+    SubscriptionCompleteTemplate(payload)
+  );
+}
+
+export async function sendTrialStartEmail(
+  payload: SubscriptionEmailSendingOptions &
+    Omit<TrialStartTemplateProps, 'userName'>
+) {
+  return sendEmail(
+    [payload.to],
+    `Trial started: ${payload.subscription.plan}`,
+    TrialStartTemplate(payload)
+  );
+}
+
+export async function sendTrialEndEmail(
+  payload: SubscriptionEmailSendingOptions &
+    Omit<TrialEndTemplateProps, 'userName'>
+) {
+  return sendEmail(
+    [payload.to],
+    `Trial ending soon: ${payload.subscription.plan}`,
+    TrialEndTemplate(payload)
+  );
+}
+
+export async function sendTrialExpireEmail(
+  payload: SubscriptionEmailSendingOptions &
+    Omit<TrialExpireTemplateProps, 'userName'>
+) {
+  return sendEmail(
+    [payload.to],
+    `Trial expired: ${payload.subscription.plan}`,
+    TrialExpireTemplate(payload)
+  );
+}
+
+export async function sendSubscriptionCanceledEmail(
+  payload: SubscriptionEmailSendingOptions &
+    Omit<SubscriptionCanceledTemplateProps, 'userName'>
+) {
+  return sendEmail(
+    [payload.to],
+    `Subscription canceled: ${payload.data.subscription.plan}`,
+    SubscriptionCanceledTemplate(payload)
   );
 }
 
