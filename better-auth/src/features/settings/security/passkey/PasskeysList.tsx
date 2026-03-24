@@ -3,6 +3,7 @@ import {
   CardAction,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
   Empty,
@@ -50,6 +51,12 @@ function Passkeys({ passkeys }: { passkeys: Passkey[] }) {
           ))}
         </ItemGroup>
       </CardContent>
+
+      <Separator />
+
+      <CardFooter className='text-muted-foreground mx-auto text-xs'>
+        Click any badge to learn more.
+      </CardFooter>
     </Card>
   );
 }

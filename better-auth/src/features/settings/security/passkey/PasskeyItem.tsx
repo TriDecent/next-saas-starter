@@ -1,5 +1,6 @@
 'use client';
 
+import { ToolTipPopover } from '@/shared/components';
 import {
   Badge,
   Button,
@@ -9,9 +10,6 @@ import {
   ItemDescription,
   ItemMedia,
   ItemTitle,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
 } from '@/shared/components/ui';
 import type { Passkey } from '@better-auth/passkey';
 import { formatDistanceToNow } from 'date-fns';
@@ -89,7 +87,7 @@ export function PasskeyItem({ passkey }: { passkey: Passkey }) {
 
 function BackedUpBadge({ isBackedUp }: { isBackedUp: boolean }) {
   return (
-    <ToolTipBadge
+    <ToolTipPopover
       message={
         isBackedUp
           ? 'This passkey is synced across your devices'
@@ -99,13 +97,13 @@ function BackedUpBadge({ isBackedUp }: { isBackedUp: boolean }) {
       <Badge variant='secondary' className='ml-auto'>
         <CheckCircle2 /> {isBackedUp ? 'Synced' : 'Unsynced'}
       </Badge>
-    </ToolTipBadge>
+    </ToolTipPopover>
   );
 }
 
 function DeviceBadge({ deviceType }: { deviceType: Passkey['deviceType'] }) {
   return (
-    <ToolTipBadge
+    <ToolTipPopover
       message={
         deviceType === 'singleDevice'
           ? 'This passkey is bound to a single device and cannot be moved'
@@ -116,24 +114,7 @@ function DeviceBadge({ deviceType }: { deviceType: Passkey['deviceType'] }) {
         {deviceType === 'singleDevice' ? <ShieldCheck /> : <KeyRound />}
         {deviceType === 'singleDevice' ? 'Device Bound' : 'Cross-platform'}
       </Badge>
-    </ToolTipBadge>
-  );
-}
-
-function ToolTipBadge({
-  children,
-  message,
-}: {
-  children: ReactNode;
-  message: string;
-}) {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className='text-xs'>
-        <p>{message}</p>
-      </PopoverContent>
-    </Popover>
+    </ToolTipPopover>
   );
 }
 

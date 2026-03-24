@@ -47,6 +47,10 @@ export function UsersTable(props: {
           )}
         />
       </AlertDialog>
+
+      <div className='text-muted-foreground mx-auto mt-4 w-fit text-xs'>
+        Click the &quot;Banned&quot; badge to learn more.
+      </div>
     </div>
   );
 }

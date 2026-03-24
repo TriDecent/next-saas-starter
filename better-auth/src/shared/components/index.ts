@@ -20,6 +20,7 @@ export { SkeletonTable } from './SkeletonTable';
 export { SkeletonText } from './SkeletonText';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
+export { ToolTipPopover } from './ToolTipPopover';
 export { TotpField } from './TotpField';
 export { TrustDeviceField } from './TrustDeviceField';
 export { UserSummary } from './UserSummary';
