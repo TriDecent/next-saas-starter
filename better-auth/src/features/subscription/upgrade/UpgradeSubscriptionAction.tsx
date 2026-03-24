@@ -1,7 +1,7 @@
 'use client';
 
 import { type Button } from '@/shared/components/ui';
-import { ROUTES } from '@/shared/constants';
+import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
@@ -13,11 +13,12 @@ import {
 export function UpgradeSubscriptionAction({
   options,
   ...props
-}: { options: UpgradeSubscriptionActionInput } & React.ComponentPropsWithoutRef<
-  typeof Button
->) {
+}: {
+  options: UpgradeSubscriptionActionInput;
+} & React.ComponentPropsWithoutRef<typeof Button>) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const { callbackUrl } = useRouteContext();
 
   const handleUpgradeSubscription = () =>
     startTransition(async () => {
@@ -26,10 +27,7 @@ export function UpgradeSubscriptionAction({
         description: 'Upgrading subscription...',
       });
 
-      const response = await upgradeSubscriptionAction(
-        options,
-        ROUTES.settings.nested.subscription.href
-      );
+      const response = await upgradeSubscriptionAction(options, callbackUrl);
 
       if (response.type === 'error') {
         toast.error('Failed to upgrade subscription!', {

@@ -3,6 +3,7 @@ import type { SubscriptionPlan } from '@/lib/auth';
 import { getSubscriptionService } from '@/services';
 import { Badge } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
+import { RouteContextProvider } from '@/shared/context';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = ROUTES.settings.nested.subscription.metadata;
@@ -25,24 +26,32 @@ export default async function SubscriptionPage() {
 
   return (
     <div className='space-y-16'>
-      <section className='space-y-4'>
-        <MySubscriptionsHeader subscriptionCount={activeSubscriptions.length} />
-        <MySubscriptions subscriptions={activeSubscriptions} />
-      </section>
+      <RouteContextProvider
+        value={{
+          callbackUrl: ROUTES.settings.nested.subscription.href,
+        }}
+      >
+        <section className='space-y-4'>
+          <MySubscriptionsHeader
+            subscriptionCount={activeSubscriptions.length}
+          />
+          <MySubscriptions subscriptions={activeSubscriptions} />
+        </section>
 
-      <section>
-        <SubscriptionPlans
-          plans={plans}
-          subscribedPlan={
-            subscribedPlan && cyclePlan
-              ? {
-                  name: subscribedPlan as SubscriptionPlan,
-                  interval: cyclePlan,
-                }
-              : undefined
-          }
-        />
-      </section>
+        <section>
+          <SubscriptionPlans
+            plans={plans}
+            subscribedPlan={
+              subscribedPlan && cyclePlan
+                ? {
+                    name: subscribedPlan as SubscriptionPlan,
+                    interval: cyclePlan,
+                  }
+                : undefined
+            }
+          />
+        </section>
+      </RouteContextProvider>
     </div>
   );
 }
