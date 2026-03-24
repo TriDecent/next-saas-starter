@@ -37,13 +37,31 @@ export function SubscriptionItem({
         />
       </CardContent>
 
-      <CardFooter className='gap-2 pt-0'>
-        <Button type='button' variant='outline' disabled>
-          Manage plan
-        </Button>
-        <Button type='button' variant='ghost' disabled>
-          Open invoices
-        </Button>
+      <Separator />
+
+      <CardFooter className='flex flex-col gap-4'>
+        <div className='flex w-full gap-2'>
+          <Button
+            type='button'
+            variant='outline'
+            disabled
+            className='flex-1 md:flex-none'
+          >
+            Manage plan
+          </Button>
+          <Button
+            type='button'
+            variant='ghost'
+            disabled
+            className='flex-1 md:flex-none'
+          >
+            Open invoices
+          </Button>
+        </div>
+
+        <span className='text-muted-foreground text-xs'>
+          Click the IDs to view the full value.
+        </span>
       </CardFooter>
     </Card>
   );
@@ -70,9 +88,11 @@ function SubscriptionHeader({
         </div>
       </CardTitle>
 
-      <CardDescription>
-        Subscription {compactId(subscription.id)}
-      </CardDescription>
+      <ToolTipPopover message={subscription.id}>
+        <CardDescription className='truncate'>
+          Subscription {subscription.id}
+        </CardDescription>
+      </ToolTipPopover>
     </CardHeader>
   );
 }
@@ -91,10 +111,10 @@ function SubscriptionDetails({
 
   return (
     <dl className='grid grid-cols-1 gap-3 text-sm sm:grid-cols-2'>
-      <InfoRow label='Reference' value={compactId(subscription.referenceId)} />
+      <InfoRow label='Reference' value={subscription.referenceId} />
       <InfoRow
         label='Stripe subscription'
-        value={compactId(subscription.stripeSubscriptionId)}
+        value={subscription.stripeSubscriptionId ?? 'N/A'}
       />
       <InfoRow
         label='Period start'
@@ -107,11 +127,7 @@ function SubscriptionDetails({
       />
       <InfoRow
         label='Seats'
-        value={
-          typeof subscription.seats === 'number'
-            ? String(subscription.seats)
-            : 'N/A'
-        }
+        value={subscription.seats ? subscription.seats.toString() : 'N/A'}
       />
     </dl>
   );
@@ -139,7 +155,11 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className='space-y-1'>
       <dt className='text-muted-foreground text-xs uppercase'>{label}</dt>
-      <dd className='font-medium'>{value}</dd>
+      <dd className='truncate font-medium'>
+        <ToolTipPopover message={value}>
+          <span>{value}</span>
+        </ToolTipPopover>
+      </dd>
     </div>
   );
 }

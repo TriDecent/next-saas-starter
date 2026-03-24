@@ -37,9 +37,3 @@ export function formatDate(date?: Date) {
 export function formatDateRange(start?: Date, end?: Date) {
   return start && end ? 'N/A' : `${formatDate(start)} - ${formatDate(end)}`;
 }
-
-export function compactId(id?: string) {
-  if (!id) return 'N/A';
-
-  return id.length <= 16 ? id : `${id.slice(0, 8)}...${id.slice(-6)}`;
-}
