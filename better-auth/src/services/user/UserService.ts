@@ -9,6 +9,7 @@ import type {
   Enable2FAResponse,
   GeneralUserResponse,
   GenerateBackUpCodesResponse,
+  GetUserByIdResponse,
   GetUsersResponse,
 } from './user-dtos';
 
@@ -40,6 +41,30 @@ export class UserService {
 
   listMySessions() {
     return auth.api.listSessions({ headers: this.headers });
+  }
+
+  async getUserById(id: User['id']): Promise<GetUserByIdResponse> {
+    const canGetUser = await hasPermission(this.actor.id, { user: ['get'] });
+    if (!canGetUser)
+      return {
+        type: 'error',
+        payload: { message: 'You do not have permission to get user details.' },
+      };
+
+    const user = await this.repo.getUserById(id);
+
+    if (!user) return { type: 'success', payload: user };
+
+    const ability = defineAbilityFor(this.actor);
+    if (ability.cannot('read', { ...user, kind: 'User' }))
+      return {
+        type: 'error',
+        payload: {
+          message: 'You do not have permission to get this user details.',
+        },
+      };
+
+    return { type: 'success', payload: user };
   }
 
   async getUsers(

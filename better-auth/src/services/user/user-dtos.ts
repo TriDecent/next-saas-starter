@@ -5,6 +5,10 @@ export type GetUsersResponse = ServiceResponse<
   { users: User[]; total: number },
   { message: string }
 >;
+export type GetUserByIdResponse = ServiceResponse<
+  User | null,
+  { message: string }
+>;
 export type AuthenticatePriorResponse = ServiceResponse<
   { sudoToken: string },
   { message: string }

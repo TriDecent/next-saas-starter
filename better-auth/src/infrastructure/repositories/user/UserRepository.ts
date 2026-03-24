@@ -10,6 +10,8 @@ export interface IUserRepository extends IRepository<typeof prisma.user> {
     orderBy?: Prisma.UserOrderByWithRelationInput[],
     keyword?: string
   ): Promise<{ data: User[]; total: number }>;
+
+  getUserById(id: User['stripeCustomerId']): Promise<User | null>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -46,5 +48,9 @@ export class UserRepository implements IUserRepository {
     ]);
 
     return { data, total };
+  }
+
+  getUserById(id: User['id']): Promise<User | null> {
+    return this._delegate.findUnique({ where: { id } });
   }
 }
