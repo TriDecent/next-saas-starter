@@ -93,11 +93,13 @@ export function defineAbilityFor(actor: AuthSession['user']) {
         $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin}|${APP_ROLES.moderator})$`,
       },
     });
+    can('read', 'User', { id: actor.id });
   }
 
   function defineAbilityForUser() {
     can('read', 'OrganizationWithMembers', {
       members: actor.id,
     });
+    can('read', 'User', { id: actor.id });
   }
 }

@@ -23,12 +23,12 @@ const extendedAdminAc = ac.newRole({
   invitation: ['create'],
 });
 const moderatorAc = ac.newRole({
-  user: ['list', 'ban'],
+  user: ['list', 'ban', 'get'],
   admin: ['access'],
   organization: ['create'],
   invitation: ['create'],
 });
-const extendedUserAc = ac.newRole({ ...userAc.statements });
+const extendedUserAc = ac.newRole({ ...userAc.statements, user: ['get'] });
 
 const ROLES_STATEMENTS = {
   [APP_ROLES['super-admin']]: extendedAdminAc,
