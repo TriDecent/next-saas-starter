@@ -1,7 +1,9 @@
+import { ToolTipPopover } from '@/shared/components';
 import {
   Badge,
   Button,
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -9,9 +11,10 @@ import {
   CardTitle,
   Separator,
 } from '@/shared/components/ui';
+import { IoSettingsOutline } from 'react-icons/io5';
+import { CreateBillingPortalAction } from '../create-billing-portal/CreateBillingPortalAction';
 import type { MySubscription } from '../types';
 import {
-  compactId,
   formatDate,
   formatDateRange,
   getStatusVariant,
@@ -40,25 +43,6 @@ export function SubscriptionItem({
       <Separator />
 
       <CardFooter className='flex flex-col gap-4'>
-        <div className='flex w-full gap-2'>
-          <Button
-            type='button'
-            variant='outline'
-            disabled
-            className='flex-1 md:flex-none'
-          >
-            Manage plan
-          </Button>
-          <Button
-            type='button'
-            variant='ghost'
-            disabled
-            className='flex-1 md:flex-none'
-          >
-            Open invoices
-          </Button>
-        </div>
-
         <span className='text-muted-foreground text-xs'>
           Click the IDs to view the full value.
         </span>
@@ -93,6 +77,21 @@ function SubscriptionHeader({
           Subscription {subscription.id}
         </CardDescription>
       </ToolTipPopover>
+
+      <CardAction>
+        <Button
+          type='button'
+          variant='outline'
+          className='flex-1 md:flex-none'
+          size='sm'
+          asChild
+        >
+          <CreateBillingPortalAction>
+            <IoSettingsOutline />
+            Manage plan
+          </CreateBillingPortalAction>
+        </Button>
+      </CardAction>
     </CardHeader>
   );
 }
