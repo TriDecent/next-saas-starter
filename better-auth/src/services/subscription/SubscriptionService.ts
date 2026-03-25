@@ -1,4 +1,4 @@
-import { auth, SUBSCRIPTION_PLAN } from '@/lib/auth';
+import { auth, SUBSCRIPTION_PLAN, type SubscriptionPlan } from '@/lib/auth';
 import { stripeClient } from '@/lib/stripe';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type {
@@ -129,7 +129,7 @@ export class SubscriptionService {
       return activeSubscriptionsResponse;
 
     const activeSubscriptions = activeSubscriptionsResponse.payload;
-    const planName = activeSubscriptions.at(0)?.plan;
+    const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
     const billingInterval = activeSubscriptions.at(0)?.billingInterval;
 
     return {

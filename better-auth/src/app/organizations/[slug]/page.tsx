@@ -16,12 +16,12 @@ export async function generateMetadata({
   params,
 }: SlugParams): Promise<Metadata> {
   const slug = (await params).slug;
-  const org = await getFullOrg(slug);
+  const { organization } = await getFullOrg(slug);
 
   return {
     ...ROUTES.organizations.nested.slug.metadata,
-    title: `${org.name} Organization`,
-    description: `Details and settings of ${org.name} organization.`,
+    title: `${organization.name} Organization`,
+    description: `Details and settings of ${organization.name} organization.`,
   };
 }
 
@@ -47,19 +47,19 @@ export default function OrgDetailsPage({ params }: SlugParams) {
 
 async function Wrapper({ params }: SlugParams) {
   const slug = (await params).slug;
-  const org = await getFullOrg(slug);
+  const { organization, isActive } = await getFullOrg(slug);
 
   return (
-    <OrgContextProvider value={org}>
+    <OrgContextProvider value={{ ...organization, isActive }}>
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
         <div className='lg:col-span-2'>
-          <OrganizationOverview org={org} />
+          <OrganizationOverview org={organization} />
         </div>
         <div className='lg:sticky lg:top-32 lg:col-start-3'>
           <OrgQuickActions />
         </div>
         <div className='lg:col-span-2'>
-          <OrganizationDetails org={org} />
+          <OrganizationDetails org={organization} />
         </div>
       </div>
     </OrgContextProvider>
@@ -76,5 +76,8 @@ const getFullOrg = cache(async (slug: string) => {
   if (result.type === 'error') throw new Error(result.payload.message);
   if (!result.payload) notFound();
 
-  return result.payload;
+  return {
+    organization: result.payload,
+    isActive: service.getActiveOrgId() === result.payload.id,
+  };
 });

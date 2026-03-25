@@ -1,3 +1,4 @@
+import { MySubscriptions, SubscriptionPlans } from '@/features/subscription';
 import {
   ScrollArea,
   ScrollBar,
@@ -6,6 +7,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/shared/components/ui';
+import { FaCreditCard } from 'react-icons/fa6';
 import {
   HiCircleStack,
   HiEnvelope,
@@ -23,43 +25,85 @@ export type OrganizationDetailsProps = { org: GetFullOrg };
 export function OrganizationDetails({ org }: OrganizationDetailsProps) {
   return (
     <Tabs defaultValue='members' className='w-full'>
-      <ScrollArea className='w-full min-w-2xs rounded-lg shadow'>
+      <ScrollArea className='mb-4 w-full min-w-2xs rounded-lg shadow'>
         <TabsList className='w-full'>
           <ScrollBar orientation='horizontal' />
-          <TabsTrigger value='members'>
-            <HiUsers />
-            Members
-          </TabsTrigger>
-          <TabsTrigger value='invitations'>
-            <HiEnvelope />
-            Invitations
-          </TabsTrigger>
-          <TabsTrigger value='metadata'>
-            <HiCircleStack />
-            Metadata
-          </TabsTrigger>
-          <TabsTrigger value='danger'>
-            <HiExclamationTriangle />
-            Danger
-          </TabsTrigger>
+          {settingsSections.map(section => (
+            <TabsTrigger key={section.value} value={section.value}>
+              {section.label}
+            </TabsTrigger>
+          ))}
         </TabsList>
       </ScrollArea>
 
-      <TabsContent value='members' className='mt-4'>
+      <TabsContent value='members'>
         <MembersCard members={org.members} />
       </TabsContent>
 
-      <TabsContent value='invitations' className='mt-4'>
+      <TabsContent value='invitations'>
         <InvitationsCard invitations={org.invitations} />
       </TabsContent>
 
-      <TabsContent value='metadata' className='mt-4'>
+      <TabsContent value='metadata'>
         <MetadataCard metadata={org.metadata} slug={org.slug} />
       </TabsContent>
 
-      <TabsContent value='danger' className='mt-4'>
+      <TabsContent value='danger'>
         <DeleteOrgItem orgId={org.id} />
+      </TabsContent>
+
+      <TabsContent value='subscription'>
+        <MySubscriptions subscriptions={[]} />
+        <SubscriptionPlans plans={[]} />
       </TabsContent>
     </Tabs>
   );
 }
+
+const settingsSections = [
+  {
+    value: 'members',
+    label: (
+      <>
+        <HiUsers />
+        Members
+      </>
+    ),
+  },
+  {
+    value: 'invitations',
+    label: (
+      <>
+        <HiEnvelope />
+        Invitations
+      </>
+    ),
+  },
+  {
+    value: 'metadata',
+    label: (
+      <>
+        <HiCircleStack />
+        Metadata
+      </>
+    ),
+  },
+  {
+    value: 'subscription',
+    label: (
+      <>
+        <FaCreditCard />
+        Subscription
+      </>
+    ),
+  },
+  {
+    value: 'danger',
+    label: (
+      <>
+        <HiExclamationTriangle />
+        Danger
+      </>
+    ),
+  },
+] as const;

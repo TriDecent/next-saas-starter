@@ -19,8 +19,10 @@ import type { CreateInvitationSchema } from '../_shared/schema';
 
 export function SelectOrganization({
   organizations,
+  activeOrgId,
 }: {
   organizations: OrganizationWithRole[];
+  activeOrgId: string | null;
 }) {
   const { setValue } = useFormContext<CreateInvitationSchema>();
 
@@ -47,7 +49,7 @@ export function SelectOrganization({
               >
                 <FieldContent>
                   <OrganizationItem
-                    organization={org}
+                    organization={{ ...org, isActive: activeOrgId === org.id }}
                     renderActions={
                       <RadioGroupItem
                         value={org.id}

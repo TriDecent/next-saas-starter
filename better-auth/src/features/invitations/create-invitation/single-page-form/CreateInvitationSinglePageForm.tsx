@@ -79,7 +79,12 @@ async function SelectOrgWrapper() {
 
   if (response.type === 'error') throw new Error(response.payload.message);
 
-  return <SelectOrganization organizations={response.payload} />;
+  return (
+    <SelectOrganization
+      organizations={response.payload}
+      activeOrgId={service.getActiveOrgId()}
+    />
+  );
 }
 
 async function SelectRecipientWrapper() {

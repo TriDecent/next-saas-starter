@@ -25,7 +25,7 @@ type SubscriptionOverview = {
   plans: SubscriptionPlanDetails[];
   currentPlan:
     | {
-        name: string;
+        name: SubscriptionPlan;
         billingInterval: Stripe.Price.Recurring.Interval;
       }
     | undefined;
