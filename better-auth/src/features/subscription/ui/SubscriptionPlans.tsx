@@ -10,12 +10,12 @@ import { PlanItem } from './PlanItem';
 
 export function SubscriptionPlans({
   plans,
-  subscribedPlan,
+  currentPlan,
 }: {
   plans: SubscriptionPlanDetails[];
-  subscribedPlan?: {
+  currentPlan?: {
     name: SubscriptionPlanDetails['name'];
-    interval: Stripe.Price.Recurring.Interval;
+    billingInterval: Stripe.Price.Recurring.Interval;
   };
 }) {
   const maxAnnualSavingsPercent = getMaxAnnualSavingsPercent(plans);
@@ -50,10 +50,11 @@ export function SubscriptionPlans({
               plan={plan}
               cycle={cycle.name}
               isSubscribed={
-                plan.name === subscribedPlan?.name &&
+                plan.name === currentPlan?.name &&
                 (cycle.name === 'annual'
-                  ? plan.prices.annual.interval === subscribedPlan?.interval
-                  : plan.prices.monthly.interval === subscribedPlan?.interval)
+                  ? plan.prices.annual.interval === currentPlan?.billingInterval
+                  : plan.prices.monthly.interval ===
+                    currentPlan?.billingInterval)
               }
             />
           ))}

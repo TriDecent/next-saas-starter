@@ -1,5 +1,4 @@
 import { MySubscriptions, SubscriptionPlans } from '@/features/subscription';
-import type { SubscriptionPlan } from '@/lib/auth';
 import { getSubscriptionService } from '@/services';
 import { Badge } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
@@ -12,17 +11,10 @@ export default async function SubscriptionPage() {
   const service = await getSubscriptionService(
     ROUTES.settings.nested.subscription.href
   );
-  const [plans, activeSubscriptionsResponse] = await Promise.all([
-    service.getSubscriptionPlans(),
-    service.listActiveSubscription(),
-  ]);
+  const response = await service.getSubscriptionOverview();
+  if (response.type === 'error') throw new Error(response.payload.message);
 
-  if (activeSubscriptionsResponse.type === 'error')
-    throw new Error(activeSubscriptionsResponse.payload.message);
-
-  const activeSubscriptions = activeSubscriptionsResponse.payload;
-  const subscribedPlan = activeSubscriptions.at(0)?.plan;
-  const cyclePlan = activeSubscriptions.at(0)?.billingInterval;
+  const { activeSubscriptions, plans, currentPlan } = response.payload;
 
   return (
     <div className='space-y-16'>
@@ -39,17 +31,7 @@ export default async function SubscriptionPage() {
         </section>
 
         <section>
-          <SubscriptionPlans
-            plans={plans}
-            subscribedPlan={
-              subscribedPlan && cyclePlan
-                ? {
-                    name: subscribedPlan as SubscriptionPlan,
-                    interval: cyclePlan,
-                  }
-                : undefined
-            }
-          />
+          <SubscriptionPlans plans={plans} currentPlan={currentPlan} />
         </section>
       </RouteContextProvider>
     </div>
