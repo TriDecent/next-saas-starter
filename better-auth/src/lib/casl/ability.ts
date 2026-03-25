@@ -11,10 +11,12 @@ import type {
 import type {
   OrganizationAction,
   OrganizationSubject,
-  OrganizationWithMembersAction,
-  OrganizationWithMembersSubject,
 } from './organization-subject-type';
 import type { RoleAction, RoleSubject } from './role-subject-type';
+import type {
+  SubscriptionAction,
+  SubscriptionSubject,
+} from './subscription-subject-type';
 import type { UserAction, UserSubject } from './user-subject-types';
 
 type Subject =
@@ -22,8 +24,7 @@ type Subject =
   | UserSubject
   | RoleSubject
   | OrganizationSubject
-  | InvitationSubject
-  | OrganizationWithMembersSubject;
+  | InvitationSubject;
 export type CRUD = 'create' | 'read' | 'update' | 'delete';
 type Action = 'manage' | CRUD;
 export type AppAbility = MongoAbility<
@@ -32,7 +33,7 @@ export type AppAbility = MongoAbility<
   | [RoleAction, RoleSubject]
   | [OrganizationAction, OrganizationSubject]
   | [InvitationAction, InvitationSubject]
-  | [OrganizationWithMembersAction, OrganizationWithMembersSubject]
+  | [SubscriptionAction, SubscriptionSubject]
 >;
 
 export function defineAbilityFor(actor: AuthSession['user']) {
@@ -97,9 +98,7 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   }
 
   function defineAbilityForUser() {
-    can('read', 'OrganizationWithMembers', {
-      members: actor.id,
-    });
+    can('read', 'Organization', { members: actor.id });
     can('read', 'User', { id: actor.id });
   }
 }
