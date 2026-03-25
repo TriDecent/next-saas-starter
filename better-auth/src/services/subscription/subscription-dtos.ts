@@ -16,13 +16,30 @@ export type CreateBillingPortalInput = ExtractEndpointBody<
   typeof auth.api.createBillingPortal
 >;
 
+export type GetSubscriptionOverviewResponse = ServiceResponse<
+  SubscriptionOverview,
+  { message: string }
+>;
+type SubscriptionOverview = {
+  activeSubscriptions: ActiveSubscription;
+  plans: SubscriptionPlanDetails[];
+  currentPlan:
+    | {
+        name: string;
+        billingInterval: Stripe.Price.Recurring.Interval;
+      }
+    | undefined;
+};
 export type UpgradeSubscriptionResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.upgradeSubscription>>,
   { message: string }
 >;
 export type ListActiveSubscriptionResponse = ServiceResponse<
-  Awaited<ReturnType<typeof auth.api.listActiveSubscriptions>>,
+  ActiveSubscription,
   { message: string }
+>;
+type ActiveSubscription = Awaited<
+  ReturnType<typeof auth.api.listActiveSubscriptions>
 >;
 export type CreateBillingPortalResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.createBillingPortal>>,

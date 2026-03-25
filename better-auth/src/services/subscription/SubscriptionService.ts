@@ -3,6 +3,7 @@ import { stripeClient } from '@/lib/stripe';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type {
   CreateBillingPortalInput,
+  GetSubscriptionOverviewResponse,
   ListActiveSubscriptionResponse,
   ListActiveSubscriptionsInput,
   SubscriptionPlanDetails,
@@ -112,6 +113,36 @@ export class SubscriptionService {
     return this._serviceExecutor.runSafely(() =>
       auth.api.createBillingPortal({ body: params, headers: this.headers })
     );
+  }
+
+  async getSubscriptionOverview(
+    activeSubscriptionQuery?: Parameters<
+      SubscriptionService['listActiveSubscription']
+    >[number]
+  ): Promise<GetSubscriptionOverviewResponse> {
+    const [plans, activeSubscriptionsResponse] = await Promise.all([
+      this.getSubscriptionPlans(),
+      this.listActiveSubscription(activeSubscriptionQuery),
+    ]);
+
+    if (activeSubscriptionsResponse.type === 'error')
+      return activeSubscriptionsResponse;
+
+    const activeSubscriptions = activeSubscriptionsResponse.payload;
+    const planName = activeSubscriptions.at(0)?.plan;
+    const billingInterval = activeSubscriptions.at(0)?.billingInterval;
+
+    return {
+      type: 'success',
+      payload: {
+        activeSubscriptions,
+        plans,
+        currentPlan:
+          planName && billingInterval
+            ? { name: planName, billingInterval }
+            : undefined,
+      },
+    };
   }
 
   public get actor() {
