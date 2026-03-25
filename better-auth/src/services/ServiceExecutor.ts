@@ -1,7 +1,6 @@
 import { verifySudoToken } from '@/features/auth';
 import type { User } from '@/generated/prisma/client';
 import { hasPermission } from '@/lib/auth';
-import { defineAbilityFor, type CRUD, type UserAction } from '@/lib/casl';
 import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { type IUserRepository } from '../infrastructure/repositories/user';
@@ -26,12 +25,16 @@ export interface IServiceExecutor {
     operation: () => Promise<TSuccess>,
     extraErrorDetails: TError
   ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>>;
-  executeProtectedAction(params: {
-    targetUserId: string;
+  executeProtectedAction<TResource>(params: {
     requiredRbac: Parameters<typeof hasPermission>[1];
-    abacAction: UserAction | CRUD;
-    permissionError: string;
+    rbacError: string;
+    loadResource: () => Promise<
+      ServiceResponse<TResource | null, { message: string }>
+    >;
+    notFoundMessage: string;
+    abacError: string;
     action: () => Promise<unknown>;
+    abacCheck?: (target: TResource) => boolean;
   }): Promise<ServiceResponse<undefined, { message: string }>>;
   getErrorMessage(error: unknown): string;
 
@@ -121,37 +124,37 @@ export class ServiceExecutor implements IServiceExecutor {
         };
   }
 
-  async executeProtectedAction(params: {
-    targetUserId: string;
+  async executeProtectedAction<TResource>(params: {
     requiredRbac: Parameters<typeof hasPermission>[1];
-    abacAction: UserAction | CRUD;
-    permissionError: string;
+    rbacError: string;
+    loadResource: () => Promise<
+      ServiceResponse<TResource | null, { message: string }>
+    >;
+    notFoundMessage: string;
+    abacError: string;
     action: () => Promise<unknown>;
+    abacCheck?: (target: TResource) => boolean;
   }): Promise<ServiceResponse<undefined, { message: string }>> {
-    const { targetUserId, requiredRbac, abacAction, permissionError, action } =
-      params;
+    const {
+      requiredRbac,
+      rbacError,
+      loadResource,
+      abacCheck,
+      abacError,
+      action,
+      notFoundMessage,
+    } = params;
 
     const hasRbac = await hasPermission(this._actor.id, requiredRbac);
-    if (!hasRbac)
-      return { type: 'error', payload: { message: permissionError } };
+    if (!hasRbac) return { type: 'error', payload: { message: rbacError } };
 
-    const targetUser = await this._repo.model.findUnique({
-      where: { id: targetUserId },
-    });
-    if (!targetUser)
-      return { type: 'error', payload: { message: 'User not found.' } };
+    const resource = await loadResource();
+    if (resource.type === 'error') return resource;
+    if (!resource)
+      return { type: 'error', payload: { message: notFoundMessage } };
 
-    const ability = defineAbilityFor(this._actor);
-    if (ability.cannot(abacAction, { ...targetUser, kind: 'User' }))
-      return {
-        type: 'error',
-        payload: {
-          message: `You do not have permission to ${abacAction.replace(
-            '-',
-            ' '
-          )} this user.`,
-        },
-      };
+    if (abacCheck && !abacCheck(resource.payload as TResource))
+      return { type: 'error', payload: { message: abacError } };
 
     return this.runSafely(async () => {
       await action();
