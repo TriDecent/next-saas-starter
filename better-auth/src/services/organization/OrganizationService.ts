@@ -4,8 +4,7 @@ import type {
   OrganizationWithRole,
 } from '@/infrastructure/repositories/organization';
 import { auth, hasPermission } from '@/lib/auth';
-import type { OrganizationWithMembersSubject } from '@/lib/casl';
-import { defineAbilityFor } from '@/lib/casl';
+import { AppPolicy } from '@/lib/casl';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type { ServiceResponse } from '../types';
 import type {
@@ -149,10 +148,9 @@ export class OrganizationService {
       metadata: organization.metadata ?? null,
       logo: organization.logo ?? null,
       kind: 'OrganizationWithMembers',
-    } satisfies OrganizationWithMembersSubject;
+    } as const;
 
-    const ability = defineAbilityFor(this.actor);
-    if (ability.cannot('read', organizationWithMemberIds))
+    if (this._orgPolicy.canRead(organizationWithMemberIds))
       return {
         type: 'error',
         payload: {

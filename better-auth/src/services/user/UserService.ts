@@ -1,7 +1,7 @@
 import { createSudoToken } from '@/features/auth';
 import type { Prisma, Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
-import { defineAbilityFor } from '@/lib/casl';
+import { AppPolicy } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type {
@@ -14,6 +14,9 @@ import type {
 } from './user-dtos';
 
 export class UserService {
+  private readonly _userPolicy = AppPolicy.getUserPolicyFor(this.actor);
+  private readonly _rolePolicy = AppPolicy.getRolePolicyFor(this.actor);
+
   constructor(
     private readonly _serviceExecutor: IServiceExecutor,
     private readonly _currentSession: Session
@@ -326,9 +329,8 @@ export class UserService {
     userId: string;
     roles: UserRole[];
   }): Promise<GeneralUserResponse> {
-    const ability = defineAbilityFor(this.actor);
     for (const role of roles) {
-      if (ability.cannot('assign', { name: role, kind: 'Role' }))
+      if (!this._rolePolicy.canAssign({ name: role }))
         return {
           type: 'error',
           payload: {
