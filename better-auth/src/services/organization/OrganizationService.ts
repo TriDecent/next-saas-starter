@@ -21,6 +21,8 @@ import type {
 } from './org-dtos';
 
 export class OrganizationService {
+  private readonly _orgPolicy = AppPolicy.getOrgPolicyFor(this.actor);
+
   constructor(
     private readonly _serviceExecutor: IServiceExecutor,
     private readonly _repo: IOrganizationRepository,

@@ -58,8 +58,7 @@ export class UserService {
 
     if (!user) return { type: 'success', payload: user };
 
-    const ability = defineAbilityFor(this.actor);
-    if (ability.cannot('read', { ...user, kind: 'User' }))
+    if (!this._userPolicy.canRead(user))
       return {
         type: 'error',
         payload: {
@@ -99,10 +98,12 @@ export class UserService {
 
   toggleBanStatus(userId: User['id'], shouldBan: boolean) {
     return this._serviceExecutor.executeProtectedAction({
-      targetUserId: userId,
       requiredRbac: { user: ['ban'] },
-      abacAction: 'ban-user',
-      permissionError: 'You do not have permission to ban/unban users.',
+      rbacError: 'You do not have permission to ban/unban users.',
+      loadResource: () => this.getUserById(userId),
+      notFoundMessage: 'User not found.',
+      abacCheck: target => this._userPolicy.canBan(target),
+      abacError: 'You do not have permission to ban/unban this user.',
       action: () =>
         shouldBan
           ? auth.api.banUser({ body: { userId }, headers: this.headers })
@@ -112,10 +113,12 @@ export class UserService {
 
   revokeUser(userId: User['id']) {
     return this._serviceExecutor.executeProtectedAction({
-      targetUserId: userId,
       requiredRbac: { session: ['revoke'] },
-      abacAction: 'revoke-user',
-      permissionError: 'You do not have permission to revoke sessions.',
+      rbacError: 'You do not have permission to revoke sessions.',
+      loadResource: () => this.getUserById(userId),
+      notFoundMessage: 'User not found.',
+      abacCheck: target => this._userPolicy.canRevoke(target),
+      abacError: 'You do not have permission to revoke sessions for this user.',
       action: () =>
         auth.api.revokeUserSessions({
           body: { userId },
@@ -126,10 +129,12 @@ export class UserService {
 
   deleteUser(userId: User['id']) {
     return this._serviceExecutor.executeProtectedAction({
-      targetUserId: userId,
       requiredRbac: { user: ['delete'] },
-      abacAction: 'delete',
-      permissionError: 'You do not have permission to delete users.',
+      rbacError: 'You do not have permission to delete users.',
+      loadResource: () => this.getUserById(userId),
+      notFoundMessage: 'User not found.',
+      abacCheck: target => this._userPolicy.canDelete(target),
+      abacError: 'You do not have permission to delete this user.',
       action: () =>
         auth.api.removeUser({ body: { userId }, headers: this.headers }),
     });
@@ -137,10 +142,12 @@ export class UserService {
 
   impersonateUser(userId: User['id']) {
     return this._serviceExecutor.executeProtectedAction({
-      targetUserId: userId,
       requiredRbac: { user: ['impersonate'] },
-      abacAction: 'impersonate-user',
-      permissionError: 'You do not have permission to impersonate users.',
+      rbacError: 'You do not have permission to impersonate users.',
+      loadResource: () => this.getUserById(userId),
+      notFoundMessage: 'User not found.',
+      abacCheck: target => this._userPolicy.canImpersonate(target),
+      abacError: 'You do not have permission to impersonate this user.',
       action: () =>
         auth.api.impersonateUser({ body: { userId }, headers: this.headers }),
     });
@@ -340,10 +347,13 @@ export class UserService {
     }
 
     return this._serviceExecutor.executeProtectedAction({
-      targetUserId: userId,
       requiredRbac: { user: ['set-role'] },
-      abacAction: 'set-role',
-      permissionError: 'You do not have permission to set user roles.',
+      rbacError: 'You do not have permission to set user roles.',
+      loadResource: () => this.getUserById(userId),
+      notFoundMessage: 'User not found.',
+      abacCheck: target => this._userPolicy.canSetRole(target),
+      abacError:
+        'You do not have permission to assign one or more of the specified roles.',
       action: () =>
         auth.api.setRole({
           body: { userId, role: roles },
