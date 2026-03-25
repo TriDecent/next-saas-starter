@@ -4,20 +4,14 @@ import {
   type MongoAbility,
 } from '@casl/ability';
 import { APP_ROLES, type AuthSession } from '../auth';
-import type {
-  InvitationAction,
-  InvitationSubject,
-} from './invitation-subject-type';
-import type {
-  OrganizationAction,
-  OrganizationSubject,
-} from './organization-subject-type';
-import type { RoleAction, RoleSubject } from './role-subject-type';
+import type { InvitationAction, InvitationSubject } from './invitation-policy';
+import type { OrganizationAction, OrganizationSubject } from './org-policy';
+import type { RoleAction, RoleSubject } from './role-policy';
 import type {
   SubscriptionAction,
   SubscriptionSubject,
-} from './subscription-subject-type';
-import type { UserAction, UserSubject } from './user-subject-types';
+} from './subscription-policy';
+import type { UserAction, UserSubject } from './user-policy';
 
 type Subject =
   | 'all'

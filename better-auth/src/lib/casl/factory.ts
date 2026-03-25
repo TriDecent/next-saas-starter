@@ -1,9 +1,13 @@
-import { getOrgPolicyFor } from './organization-subject-type';
-import { getRolePolicyFor } from './role-subject-type';
-import { getUserPolicyFor } from './user-subject-types';
+import { getInvitationPolicyFor } from './invitation-policy';
+import { getOrgPolicyFor } from './org-policy';
+import { getRolePolicyFor } from './role-policy';
+import { getSubscriptionPolicyFor } from './subscription-policy';
+import { getUserPolicyFor } from './user-policy';
 
 export const AppPolicy = {
   getUserPolicyFor,
   getRolePolicyFor,
   getOrgPolicyFor,
+  getInvitationPolicyFor,
+  getSubscriptionPolicyFor,
 } as const;
