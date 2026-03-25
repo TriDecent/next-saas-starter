@@ -82,9 +82,12 @@ export function BackupCodes({ codes }: { codes: readonly string[] }) {
 
 function BackupCodesWarning() {
   return (
-    <Item size={'sm'} variant={'warning'} className=''>
+    <Item
+      size={'sm'}
+      className='rounded-md border border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-200'
+    >
       <ItemMedia>
-        <AlertCircle />
+        <AlertCircle className='text-amber-600 dark:text-amber-400' />
       </ItemMedia>
       <ItemContent>
         <ItemTitle>Backup codes are shown only once</ItemTitle>
