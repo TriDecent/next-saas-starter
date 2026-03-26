@@ -143,7 +143,10 @@ export class ServiceExecutor implements IServiceExecutor {
       required: Parameters<typeof hasPermission>[1];
       error: TError;
     };
-    query: () => Promise<ServiceResponse<TData, TError>>;
+    query: {
+      run: () => Promise<TData>;
+      toErrorPayload: (error: string) => TError;
+    };
     abac?: {
       context?: {
         load: () => Promise<ServiceResponse<TContext, TError>>;
@@ -161,7 +164,9 @@ export class ServiceExecutor implements IServiceExecutor {
     const hasRbac = await hasPermission(this._actor.id, rbac.required);
     if (!hasRbac) return { type: 'error', payload: rbac.error };
 
-    const queryResult = await query();
+    const queryResult = await this.runSafely(query.run, error =>
+      query.toErrorPayload(error)
+    );
     if (queryResult.type === 'error') return queryResult;
     const data = queryResult.payload;
 
@@ -175,10 +180,8 @@ export class ServiceExecutor implements IServiceExecutor {
         return { type: 'error', payload: abac.context.abacError };
     }
 
-    if (abac['no-context']) {
-      if (!abac['no-context'].check(data))
-        return { type: 'error', payload: abac['no-context'].abacError };
-    }
+    if (abac['no-context'] && !abac['no-context'].check(data))
+      return { type: 'error', payload: abac['no-context'].abacError };
 
     return { type: 'success', payload: data };
   }

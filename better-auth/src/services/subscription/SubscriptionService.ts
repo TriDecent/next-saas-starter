@@ -152,30 +152,30 @@ export class SubscriptionService {
           message: 'You do not have permission to view subscription details.',
         },
       },
-      query: async () => {
-        const [plans, activeSubscriptionsResponse] = await Promise.all([
-          this.getSubscriptionPlans(),
-          this.listActiveSubscription(activeSubscriptionQuery),
-        ]);
+      query: {
+        run: async () => {
+          const [plans, activeSubscriptionsResponse] = await Promise.all([
+            this.getSubscriptionPlans(),
+            this.listActiveSubscription(activeSubscriptionQuery),
+          ]);
 
-        if (activeSubscriptionsResponse.type === 'error')
-          return activeSubscriptionsResponse;
+          if (activeSubscriptionsResponse.type === 'error')
+            throw new Error(activeSubscriptionsResponse.payload.message);
 
-        const activeSubscriptions = activeSubscriptionsResponse.payload;
-        const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
-        const billingInterval = activeSubscriptions.at(0)?.billingInterval;
+          const activeSubscriptions = activeSubscriptionsResponse.payload;
+          const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
+          const billingInterval = activeSubscriptions.at(0)?.billingInterval;
 
-        return {
-          type: 'success',
-          payload: {
+          return {
             activeSubscriptions,
             plans,
             currentPlan:
               planName && billingInterval
                 ? { name: planName, billingInterval }
                 : undefined,
-          },
-        };
+          };
+        },
+        toErrorPayload: error => ({ message: error }),
       },
       abac: {
         context: {
