@@ -7,9 +7,10 @@ import { type IUserRepository } from '../infrastructure/repositories/user';
 import type { ServiceResponse } from './types';
 
 export interface IServiceExecutor {
-  runSafely<TSuccess>(
-    operation: () => Promise<TSuccess>
-  ): Promise<ServiceResponse<TSuccess, { message: string }>>;
+  runSafely<TSuccess, TError>(
+    operation: () => Promise<TSuccess>,
+    toErrorPayload: (error: string) => TError
+  ): Promise<ServiceResponse<TSuccess, TError>>;
   runSafelyWithExtraErrorReturn<TSuccess, TError>(
     operation: () => Promise<TSuccess>,
     extraErrorDetails: TError
@@ -78,16 +79,17 @@ export class ServiceExecutor implements IServiceExecutor {
     return this._repo;
   }
 
-  async runSafely<TSuccess>(
-    operation: () => Promise<TSuccess>
-  ): Promise<ServiceResponse<TSuccess, { message: string }>> {
+  async runSafely<TSuccess, TError>(
+    operation: () => Promise<TSuccess>,
+    toErrorPayload: (error: string) => TError
+  ): Promise<ServiceResponse<TSuccess, TError>> {
     try {
       const data = await operation();
       return { type: 'success', payload: data };
     } catch (error) {
       return {
         type: 'error',
-        payload: { message: this.getErrorMessage(error) },
+        payload: toErrorPayload(this.getErrorMessage(error)),
       };
     }
   }
@@ -120,7 +122,7 @@ export class ServiceExecutor implements IServiceExecutor {
       : false;
 
     return isValid
-      ? this.runSafely(operation)
+      ? this.runSafely(operation, error => ({ message: error }))
       : { type: 'error', payload: { message: errorMessage } };
   }
 
@@ -174,7 +176,10 @@ export class ServiceExecutor implements IServiceExecutor {
     if (abacCheck && !abacCheck(resource.payload as TResource))
       return { type: 'error', payload: { message: abacError } };
 
-    return this.runSafely(() => action());
+    return this.runSafely(
+      () => action(),
+      error => ({ message: error })
+    );
   }
 
   async executeProtectedQuery<TData, TError, TContext>(params: {

@@ -163,9 +163,12 @@ export class UserService {
   }
 
   stopImpersonate(): Promise<GeneralUserResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.stopImpersonating({ headers: this.headers });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.stopImpersonating({ headers: this.headers });
+      },
+      error => ({ message: error })
+    );
   }
 
   // deleteAccount handles two cases:
@@ -200,22 +203,25 @@ export class UserService {
     password: string,
     totp?: string
   ): Promise<AuthenticatePriorResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.verifyPassword({
-        body: { password },
-        headers: this.headers,
-      });
-
-      if (this.actor.twoFactorEnabled && totp) {
-        await auth.api.verifyTOTP({
-          body: { code: totp },
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.verifyPassword({
+          body: { password },
           headers: this.headers,
         });
-      }
 
-      const sudoToken = await createSudoToken(this.actor.id);
-      return { sudoToken };
-    });
+        if (this.actor.twoFactorEnabled && totp) {
+          await auth.api.verifyTOTP({
+            body: { code: totp },
+            headers: this.headers,
+          });
+        }
+
+        const sudoToken = await createSudoToken(this.actor.id);
+        return { sudoToken };
+      },
+      error => ({ message: error })
+    );
   }
 
   updateProfile(
@@ -230,24 +236,27 @@ export class UserService {
     },
     callbackURL: string
   ): Promise<GeneralUserResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      const promises = [
-        auth.api.updateUser({
-          body: { name, favoriteNumber },
-          headers: this.headers,
-        }),
-      ];
-
-      if (email !== this.actor.email) {
-        promises.push(
-          auth.api.changeEmail({
-            body: { newEmail: email, callbackURL },
+    return this._serviceExecutor.runSafely(
+      async () => {
+        const promises = [
+          auth.api.updateUser({
+            body: { name, favoriteNumber },
             headers: this.headers,
-          })
-        );
-      }
-      await Promise.all(promises);
-    });
+          }),
+        ];
+
+        if (email !== this.actor.email) {
+          promises.push(
+            auth.api.changeEmail({
+              body: { newEmail: email, callbackURL },
+              headers: this.headers,
+            })
+          );
+        }
+        await Promise.all(promises);
+      },
+      error => ({ message: error })
+    );
   }
 
   deletePasskey(
@@ -323,19 +332,22 @@ export class UserService {
     password: string;
     trustDevice?: boolean;
   }): Promise<GenerateBackUpCodesResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.verifyTOTP({
-        body: { code: totpCode, trustDevice },
-        headers: this.headers,
-      });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.verifyTOTP({
+          body: { code: totpCode, trustDevice },
+          headers: this.headers,
+        });
 
-      const data = await auth.api.generateBackupCodes({
-        body: { password },
-        headers: this.headers,
-      });
+        const data = await auth.api.generateBackupCodes({
+          body: { password },
+          headers: this.headers,
+        });
 
-      return { backupCodes: data.backupCodes };
-    });
+        return { backupCodes: data.backupCodes };
+      },
+      error => ({ message: error })
+    );
   }
 
   async setRole({

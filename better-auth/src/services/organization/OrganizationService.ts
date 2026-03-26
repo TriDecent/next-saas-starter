@@ -41,30 +41,39 @@ export class OrganizationService {
         },
       };
 
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.createOrganization({
-        body: params,
-        headers: this.headers,
-      });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.createOrganization({
+          body: params,
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   deleteOrg(organizationId: string): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.deleteOrganization({
-        body: { organizationId },
-        headers: this.headers,
-      });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.deleteOrganization({
+          body: { organizationId },
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   updateOrg(params: UpdateOrgInput): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.updateOrganization({
-        body: params,
-        headers: this.headers,
-      });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.updateOrganization({
+          body: params,
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   getActiveOrgId() {
@@ -74,18 +83,22 @@ export class OrganizationService {
   listMyOrgs(): Promise<
     ServiceResponse<OrganizationWithRole[], { message: string }>
   > {
-    return this._serviceExecutor.runSafely(() =>
-      this._repo.listOrganizationsForUser(this.actor.id)
+    return this._serviceExecutor.runSafely(
+      () => this._repo.listOrganizationsForUser(this.actor.id),
+      error => ({ message: error })
     );
   }
 
   setActiveOrg(params: SetActiveOrgInput): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.setActiveOrganization({
-        body: params,
-        headers: this.headers,
-      });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.setActiveOrganization({
+          body: params,
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   async createInvitation(
@@ -100,44 +113,60 @@ export class OrganizationService {
         payload: { message: 'You are not authorized to send an invitation' },
       };
 
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.createInvitation({ body: params, headers: this.headers });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.createInvitation({
+          body: params,
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   getInvitation(id: string): Promise<GetInvitationResponse> {
-    return this._serviceExecutor.runSafely(() =>
-      auth.api.getInvitation({
-        query: { id },
-        headers: this.headers,
-      })
+    return this._serviceExecutor.runSafely(
+      () =>
+        auth.api.getInvitation({
+          query: { id },
+          headers: this.headers,
+        }),
+      error => ({ message: error })
     );
   }
 
   acceptInvitation(invitationId: string): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.acceptInvitation({
-        body: { invitationId },
-        headers: this.headers,
-      });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.acceptInvitation({
+          body: { invitationId },
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   rejectInvitation(invitationId: string): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.rejectInvitation({
-        body: { invitationId },
-        headers: this.headers,
-      });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.rejectInvitation({
+          body: { invitationId },
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   async getFullOrganization(params: GetOrgInput): Promise<GetOrgResponse> {
-    const response = await this._serviceExecutor.runSafely(() =>
-      auth.api.getFullOrganization({
-        query: params,
-        headers: this.headers,
-      })
+    const response = await this._serviceExecutor.runSafely(
+      () =>
+        auth.api.getFullOrganization({
+          query: params,
+          headers: this.headers,
+        }),
+      error => ({ message: error })
     );
     if (response.type === 'error') return response;
     const organization = response.payload;
@@ -164,24 +193,36 @@ export class OrganizationService {
   }
 
   updateRole(params: UpdateRoleInput): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.updateMemberRole({ body: params, headers: this.headers });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.updateMemberRole({
+          body: params,
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   removeMember(params: RemoveUserInput): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.removeMember({ body: params, headers: this.headers });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.removeMember({ body: params, headers: this.headers });
+      },
+      error => ({ message: error })
+    );
   }
 
   cancelInvitation(invitationId: string): Promise<GeneralOrgResponse> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.cancelInvitation({
-        body: { invitationId },
-        headers: this.headers,
-      });
-    });
+    return this._serviceExecutor.runSafely(
+      async () => {
+        await auth.api.cancelInvitation({
+          body: { invitationId },
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   get actor() {

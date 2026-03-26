@@ -105,25 +105,34 @@ export class SubscriptionService {
   upgradeSubscription(
     params: UpgradeSubscriptionInput
   ): Promise<UpgradeSubscriptionResponse> {
-    return this._serviceExecutor.runSafely(async () =>
-      auth.api.upgradeSubscription({
-        body: params,
-        headers: this.headers,
-      })
+    return this._serviceExecutor.runSafely(
+      async () =>
+        auth.api.upgradeSubscription({
+          body: params,
+          headers: this.headers,
+        }),
+      error => ({ message: error })
     );
   }
 
   listActiveSubscription(
     params?: ListActiveSubscriptionsInput
   ): Promise<ListActiveSubscriptionResponse> {
-    return this._serviceExecutor.runSafely(() =>
-      auth.api.listActiveSubscriptions({ query: params, headers: this.headers })
+    return this._serviceExecutor.runSafely(
+      () =>
+        auth.api.listActiveSubscriptions({
+          query: params,
+          headers: this.headers,
+        }),
+      error => ({ message: error })
     );
   }
 
   createBillingPortal(params: CreateBillingPortalInput) {
-    return this._serviceExecutor.runSafely(() =>
-      auth.api.createBillingPortal({ body: params, headers: this.headers })
+    return this._serviceExecutor.runSafely(
+      () =>
+        auth.api.createBillingPortal({ body: params, headers: this.headers }),
+      error => ({ message: error })
     );
   }
 
