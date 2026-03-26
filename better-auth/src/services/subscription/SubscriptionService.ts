@@ -134,11 +134,14 @@ export class SubscriptionService {
   ): Promise<GetSubscriptionOverviewResponse> {
     return this._serviceExecutor.executeProtectedQuery<
       SubscriptionOverview,
+      { message: string },
       string[]
     >({
       rbac: {
         required: { subscription: ['get'] },
-        error: 'You do not have permission to view subscription details.',
+        error: {
+          message: 'You do not have permission to view subscription details.',
+        },
       },
       query: async () => {
         const [plans, activeSubscriptionsResponse] = await Promise.all([
@@ -167,8 +170,10 @@ export class SubscriptionService {
       },
       abac: {
         context: {
-          abacError:
-            'You do not have access to view these subscription details.',
+          abacError: {
+            message:
+              'You do not have access to view these subscription details.',
+          },
           load: async () => {
             if (!activeSubscriptionQuery?.referenceId)
               // this case means a personal subscription

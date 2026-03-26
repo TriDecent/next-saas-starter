@@ -36,24 +36,24 @@ export interface IServiceExecutor {
     action: () => Promise<unknown>;
     abacCheck?: (target: TResource) => boolean;
   }): Promise<ServiceResponse<void, { message: string }>>;
-  executeProtectedQuery<TData, TContext>(params: {
+  executeProtectedQuery<TData, TError, TContext>(params: {
     rbac: {
       required: Parameters<typeof hasPermission>[1];
-      error: string;
+      error: TError;
     };
-    query: () => Promise<ServiceResponse<TData, { message: string }>>;
+    query: () => Promise<ServiceResponse<TData, TError>>;
     abac?: {
       context?: {
-        load: () => Promise<ServiceResponse<TContext, { message: string }>>;
+        load: () => Promise<ServiceResponse<TContext, TError>>;
         check: (data: TData, context: TContext) => boolean;
-        abacError: string;
+        abacError: TError;
       };
       ['no-context']?: {
         check: (data: TData) => boolean;
-        abacError: string;
+        abacError: TError;
       };
     };
-  }): Promise<ServiceResponse<TData, { message: string }>>;
+  }): Promise<ServiceResponse<TData, TError>>;
   getErrorMessage(error: unknown): string;
 
   get actor(): User;
@@ -177,27 +177,26 @@ export class ServiceExecutor implements IServiceExecutor {
     return this.runSafely(() => action());
   }
 
-  async executeProtectedQuery<TData, TContext>(params: {
+  async executeProtectedQuery<TData, TError, TContext>(params: {
     rbac: {
       required: Parameters<typeof hasPermission>[1];
-      error: string;
+      error: TError;
     };
-    query: () => Promise<ServiceResponse<TData, { message: string }>>;
+    query: () => Promise<ServiceResponse<TData, TError>>;
     abac?: {
       context?: {
-        load: () => Promise<ServiceResponse<TContext, { message: string }>>;
+        load: () => Promise<ServiceResponse<TContext, TError>>;
         check: (data: TData, context: TContext) => boolean;
-        abacError: string;
+        abacError: TError;
       };
       ['no-context']?: {
         check: (data: TData) => boolean;
-        abacError: string;
+        abacError: TError;
       };
     };
-  }): Promise<ServiceResponse<TData, { message: string }>> {
+  }): Promise<ServiceResponse<TData, TError>> {
     const hasRbac = await hasPermission(this._actor.id, params.rbac.required);
-    if (!hasRbac)
-      return { type: 'error', payload: { message: params.rbac.error } };
+    if (!hasRbac) return { type: 'error', payload: params.rbac.error };
 
     const queryResult = await params.query();
     if (queryResult.type === 'error') return queryResult;
@@ -212,7 +211,7 @@ export class ServiceExecutor implements IServiceExecutor {
       if (!params.abac.context.check(data, contextResult.payload))
         return {
           type: 'error',
-          payload: { message: params.abac.context.abacError },
+          payload: params.abac.context.abacError,
         };
     }
 
@@ -220,7 +219,7 @@ export class ServiceExecutor implements IServiceExecutor {
       if (!params.abac['no-context'].check(data))
         return {
           type: 'error',
-          payload: { message: params.abac['no-context'].abacError },
+          payload: params.abac['no-context'].abacError,
         };
     }
 
