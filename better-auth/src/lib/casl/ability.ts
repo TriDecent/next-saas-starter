@@ -18,7 +18,8 @@ type Subject =
   | UserSubject
   | RoleSubject
   | OrganizationSubject
-  | InvitationSubject;
+  | InvitationSubject
+  | SubscriptionSubject;
 export type CRUD = 'create' | 'read' | 'update' | 'delete';
 type Action = 'manage' | CRUD;
 export type AppAbility = MongoAbility<
@@ -93,6 +94,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
 
   function defineAbilityForUser() {
     can('read', 'Organization', { members: actor.id });
+
     can('read', 'User', { id: actor.id });
+
+    can('read', 'Subscription', { owners: actor.id });
   }
 }
