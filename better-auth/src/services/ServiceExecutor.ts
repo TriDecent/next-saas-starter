@@ -200,32 +200,28 @@ export class ServiceExecutor implements IServiceExecutor {
       };
     };
   }): Promise<ServiceResponse<TData, TError>> {
-    const hasRbac = await hasPermission(this._actor.id, params.rbac.required);
-    if (!hasRbac) return { type: 'error', payload: params.rbac.error };
+    const { rbac, query, abac } = params;
 
-    const queryResult = await params.query();
+    const hasRbac = await hasPermission(this._actor.id, rbac.required);
+    if (!hasRbac) return { type: 'error', payload: rbac.error };
+
+    const queryResult = await query();
     if (queryResult.type === 'error') return queryResult;
     const data = queryResult.payload;
 
-    if (!params.abac) return { type: 'success', payload: data };
+    if (!abac) return { type: 'success', payload: data };
 
-    if (params.abac.context) {
-      const contextResult = await params.abac.context.load();
+    if (abac.context) {
+      const contextResult = await abac.context.load();
       if (contextResult.type === 'error') return contextResult;
 
-      if (!params.abac.context.check(data, contextResult.payload))
-        return {
-          type: 'error',
-          payload: params.abac.context.abacError,
-        };
+      if (!abac.context.check(data, contextResult.payload))
+        return { type: 'error', payload: abac.context.abacError };
     }
 
-    if (params.abac['no-context']) {
-      if (!params.abac['no-context'].check(data))
-        return {
-          type: 'error',
-          payload: params.abac['no-context'].abacError,
-        };
+    if (abac['no-context']) {
+      if (!abac['no-context'].check(data))
+        return { type: 'error', payload: abac['no-context'].abacError };
     }
 
     return { type: 'success', payload: data };
