@@ -11,21 +11,12 @@ export interface IServiceExecutor {
     operation: () => Promise<TSuccess>,
     toErrorPayload: (error: string) => TError
   ): Promise<ServiceResponse<TSuccess, TError>>;
-  runSafelyWithExtraErrorReturn<TSuccess, TError>(
-    operation: () => Promise<TSuccess>,
-    extraErrorDetails: TError
-  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>>;
-  runWithSudo<T>(
+  runWithSudo<TSuccess, TError>(
     token: string | undefined,
-    errorMessage: string,
-    operation: () => Promise<T>
-  ): Promise<ServiceResponse<T, { message: string }>>;
-  runWithSudoWithExtraErrorReturn<TSuccess, TError>(
-    token: string | undefined,
-    errorMessage: string,
+    invalidTokenMessage: string,
     operation: () => Promise<TSuccess>,
-    extraErrorDetails: TError
-  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>>;
+    toErrorPayload: (error: string) => TError
+  ): Promise<ServiceResponse<TSuccess, TError>>;
   executeProtectedAction<TResource>(params: {
     requiredRbac: Parameters<typeof hasPermission>[1];
     rbacError: string;
@@ -94,54 +85,19 @@ export class ServiceExecutor implements IServiceExecutor {
     }
   }
 
-  async runSafelyWithExtraErrorReturn<TSuccess, TError>(
-    operation: () => Promise<TSuccess>,
-    extraErrorDetails: TError
-  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
-    try {
-      const data = await operation();
-      return { type: 'success', payload: data };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message: this.getErrorMessage(error),
-          more: extraErrorDetails,
-        },
-      };
-    }
-  }
-
-  async runWithSudo<T>(
+  async runWithSudo<TSuccess, TError>(
     token: string | undefined,
-    errorMessage: string,
-    operation: () => Promise<T>
-  ): Promise<ServiceResponse<T, { message: string }>> {
+    invalidTokenMessage: string,
+    operation: () => Promise<TSuccess>,
+    toErrorPayload: (error: string) => TError
+  ): Promise<ServiceResponse<TSuccess, TError>> {
     const isValid = token
       ? await verifySudoToken(token, this._actor.id)
       : false;
 
     return isValid
-      ? this.runSafely(operation, error => ({ message: error }))
-      : { type: 'error', payload: { message: errorMessage } };
-  }
-
-  async runWithSudoWithExtraErrorReturn<TSuccess, TError>(
-    token: string | undefined,
-    errorMessage: string,
-    operation: () => Promise<TSuccess>,
-    extraErrorDetails: TError
-  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
-    const isValid = token
-      ? await verifySudoToken(token, this._actor.id)
-      : false;
-
-    return isValid
-      ? this.runSafelyWithExtraErrorReturn(operation, extraErrorDetails)
-      : {
-          type: 'error',
-          payload: { message: errorMessage, more: extraErrorDetails },
-        };
+      ? this.runSafely(operation, error => toErrorPayload(error))
+      : { type: 'error', payload: toErrorPayload(invalidTokenMessage) };
   }
 
   async executeProtectedAction<TResource>(params: {

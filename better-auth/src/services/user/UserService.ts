@@ -271,7 +271,8 @@ export class UserService {
           body: { id: passkeyId },
           headers: this.headers,
         });
-      }
+      },
+      error => ({ message: error })
     );
   }
 
@@ -291,7 +292,8 @@ export class UserService {
           body: params,
           headers: this.headers,
         });
-      }
+      },
+      error => ({ message: error })
     );
   }
 
@@ -307,7 +309,8 @@ export class UserService {
           body: { password },
           headers: this.headers,
         });
-      }
+      },
+      error => ({ message: error })
     );
   }
 
@@ -319,7 +322,8 @@ export class UserService {
         auth.api.enableTwoFactor({
           body: { password },
           headers: this.headers,
-        })
+        }),
+      error => ({ message: error })
     );
   }
 
