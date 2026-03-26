@@ -35,7 +35,25 @@ export interface IServiceExecutor {
     abacError: string;
     action: () => Promise<unknown>;
     abacCheck?: (target: TResource) => boolean;
-  }): Promise<ServiceResponse<undefined, { message: string }>>;
+  }): Promise<ServiceResponse<void, { message: string }>>;
+  executeProtectedQuery<TData, TContext>(params: {
+    rbac: {
+      required: Parameters<typeof hasPermission>[1];
+      error: string;
+    };
+    query: () => Promise<ServiceResponse<TData, { message: string }>>;
+    abac?: {
+      context?: {
+        load: () => Promise<ServiceResponse<TContext, { message: string }>>;
+        check: (data: TData, context: TContext) => boolean;
+        abacError: string;
+      };
+      ['no-context']?: {
+        check: (data: TData) => boolean;
+        abacError: string;
+      };
+    };
+  }): Promise<ServiceResponse<TData, { message: string }>>;
   getErrorMessage(error: unknown): string;
 
   get actor(): User;
@@ -156,10 +174,57 @@ export class ServiceExecutor implements IServiceExecutor {
     if (abacCheck && !abacCheck(resource.payload as TResource))
       return { type: 'error', payload: { message: abacError } };
 
-    return this.runSafely(async () => {
-      await action();
-      return undefined;
-    });
+    return this.runSafely(() => action());
+  }
+
+  async executeProtectedQuery<TData, TContext>(params: {
+    rbac: {
+      required: Parameters<typeof hasPermission>[1];
+      error: string;
+    };
+    query: () => Promise<ServiceResponse<TData, { message: string }>>;
+    abac?: {
+      context?: {
+        load: () => Promise<ServiceResponse<TContext, { message: string }>>;
+        check: (data: TData, context: TContext) => boolean;
+        abacError: string;
+      };
+      ['no-context']?: {
+        check: (data: TData) => boolean;
+        abacError: string;
+      };
+    };
+  }): Promise<ServiceResponse<TData, { message: string }>> {
+    const hasRbac = await hasPermission(this._actor.id, params.rbac.required);
+    if (!hasRbac)
+      return { type: 'error', payload: { message: params.rbac.error } };
+
+    const queryResult = await params.query();
+    if (queryResult.type === 'error') return queryResult;
+    const data = queryResult.payload;
+
+    if (!params.abac) return { type: 'success', payload: data };
+
+    if (params.abac.context) {
+      const contextResult = await params.abac.context.load();
+      if (contextResult.type === 'error') return contextResult;
+
+      if (!params.abac.context.check(data, contextResult.payload))
+        return {
+          type: 'error',
+          payload: { message: params.abac.context.abacError },
+        };
+    }
+
+    if (params.abac['no-context']) {
+      if (!params.abac['no-context'].check(data))
+        return {
+          type: 'error',
+          payload: { message: params.abac['no-context'].abacError },
+        };
+    }
+
+    return { type: 'success', payload: data };
   }
 
   getErrorMessage(error: unknown): string {
