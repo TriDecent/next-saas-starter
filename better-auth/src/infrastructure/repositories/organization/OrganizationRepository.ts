@@ -1,4 +1,4 @@
-import type { User } from '@/generated/prisma/client';
+import type { Organization, User } from '@/generated/prisma/client';
 import type { GlobalOmitConfig } from '@/generated/prisma/internal/prismaNamespace';
 import type { OrganizationDelegate } from '@/generated/prisma/models';
 import { prisma } from '@/lib';
@@ -10,6 +10,7 @@ export interface IOrganizationRepository extends IRepository<
   typeof prisma.organization
 > {
   listOrganizationsForUser(userId: User['id']): Promise<OrganizationWithRole[]>;
+  getAuthorizedUserIdsForOrg(orgId: Organization['id']): Promise<string[]>;
 }
 
 export class OrganizationRepository implements IOrganizationRepository {
@@ -40,5 +41,16 @@ export class OrganizationRepository implements IOrganizationRepository {
       memberCounts: _count.members,
       currentUserRole: members.at(0)?.role ?? '',
     }));
+  }
+
+  async getAuthorizedUserIdsForOrg(
+    orgId: Organization['id']
+  ): Promise<string[]> {
+    const org = await this._delegate.findUnique({
+      where: { id: orgId },
+      select: { members: { select: { id: true } } },
+    });
+
+    return org ? org.members.map(member => member.id) : [];
   }
 }
