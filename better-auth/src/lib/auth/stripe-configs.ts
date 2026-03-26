@@ -86,11 +86,14 @@ export const SUBSCRIPTION_PLAN = {
     freeTrial: sharedFreeTrialConfig,
   },
 } as const satisfies Record<'standard' | 'pro' | 'enterprise', StripePlan>;
+export type SubscriptionPlan =
+  (typeof SUBSCRIPTION_PLAN)[keyof typeof SUBSCRIPTION_PLAN]['name'];
 
 export const stripeConfigs = {
   stripeClient,
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
 
+  organization: { enabled: true },
   createCustomerOnSignUp: true,
   subscription: {
     enabled: true,

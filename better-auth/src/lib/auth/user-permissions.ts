@@ -12,6 +12,7 @@ const statement = {
   admin: ['access'],
   organization: ['create'],
   invitation: ['create'],
+  subscription: ['get'],
 } as const;
 
 const ac = createAccessControl(statement);
@@ -21,14 +22,20 @@ const extendedAdminAc = ac.newRole({
   admin: ['access'],
   organization: ['create'],
   invitation: ['create'],
+  subscription: ['get'],
 });
 const moderatorAc = ac.newRole({
   user: ['list', 'ban', 'get'],
   admin: ['access'],
   organization: ['create'],
   invitation: ['create'],
+  subscription: ['get'],
 });
-const extendedUserAc = ac.newRole({ ...userAc.statements, user: ['get'] });
+const extendedUserAc = ac.newRole({
+  ...userAc.statements,
+  user: ['get'],
+  subscription: ['get'],
+});
 
 const ROLES_STATEMENTS = {
   [APP_ROLES['super-admin']]: extendedAdminAc,
