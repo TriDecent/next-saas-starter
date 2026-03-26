@@ -58,6 +58,10 @@ export const getSubscriptionService = cache(async (callbackUrl: string) => {
   const actor = session.user as User;
 
   return new SubscriptionService(
-    new ServiceExecutor(actor, new UserRepository(), headersList)
+    new ServiceExecutor(actor, new UserRepository(), headersList),
+    {
+      getAuthorizedUserIds: async (referenceId: string) =>
+        getOrgRepo().getAuthorizedUserIdsForOrg(referenceId),
+    }
   );
 });

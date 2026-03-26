@@ -1,4 +1,5 @@
 import { auth, SUBSCRIPTION_PLAN, type SubscriptionPlan } from '@/lib/auth';
+import { AppPolicy } from '@/lib/casl';
 import { stripeClient } from '@/lib/stripe';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type {
@@ -10,6 +11,10 @@ import type {
   UpgradeSubscriptionInput,
   UpgradeSubscriptionResponse,
 } from './subscription-dtos';
+
+interface ISubscriptionOwnerContext {
+  getAuthorizedUserIds(referenceId: string): Promise<string[]>;
+}
 
 export class SubscriptionService {
   private readonly _subscriptionPolicy = AppPolicy.getSubscriptionPolicyFor(
@@ -55,7 +60,10 @@ export class SubscriptionService {
     },
   ] as const satisfies Omit<SubscriptionPlanDetails, 'prices'>[];
 
-  constructor(private readonly _serviceExecutor: IServiceExecutor) {}
+  constructor(
+    private readonly _serviceExecutor: IServiceExecutor,
+    private readonly _ownerContextFetcher: ISubscriptionOwnerContext
+  ) {}
 
   async getSubscriptionPlans(): Promise<SubscriptionPlanDetails[]> {
     return Promise.all(
