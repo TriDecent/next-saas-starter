@@ -33,7 +33,7 @@ export interface IServiceExecutor {
     >;
     notFoundMessage: string;
     abacError: string;
-    action: () => Promise<unknown>;
+    action: () => Promise<void>;
     abacCheck?: (target: TResource) => boolean;
   }): Promise<ServiceResponse<void, { message: string }>>;
   executeProtectedQuery<TData, TError, TContext>(params: {
@@ -150,9 +150,9 @@ export class ServiceExecutor implements IServiceExecutor {
     >;
     notFoundMessage: string;
     abacError: string;
-    action: () => Promise<unknown>;
+    action: () => Promise<void>;
     abacCheck?: (target: TResource) => boolean;
-  }): Promise<ServiceResponse<undefined, { message: string }>> {
+  }): Promise<ServiceResponse<void, { message: string }>> {
     const {
       requiredRbac,
       rbacError,

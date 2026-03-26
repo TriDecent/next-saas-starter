@@ -104,10 +104,13 @@ export class UserService {
       notFoundMessage: 'User not found.',
       abacCheck: target => this._userPolicy.canBan(target),
       abacError: 'You do not have permission to ban/unban this user.',
-      action: () =>
-        shouldBan
-          ? auth.api.banUser({ body: { userId }, headers: this.headers })
-          : auth.api.unbanUser({ body: { userId }, headers: this.headers }),
+      action: async () => {
+        if (shouldBan) {
+          await auth.api.banUser({ body: { userId }, headers: this.headers });
+          return;
+        }
+        await auth.api.unbanUser({ body: { userId }, headers: this.headers });
+      },
     });
   }
 
@@ -119,11 +122,12 @@ export class UserService {
       notFoundMessage: 'User not found.',
       abacCheck: target => this._userPolicy.canRevoke(target),
       abacError: 'You do not have permission to revoke sessions for this user.',
-      action: () =>
-        auth.api.revokeUserSessions({
+      action: async () => {
+        await auth.api.revokeUserSessions({
           body: { userId },
           headers: this.headers,
-        }),
+        });
+      },
     });
   }
 
@@ -135,8 +139,9 @@ export class UserService {
       notFoundMessage: 'User not found.',
       abacCheck: target => this._userPolicy.canDelete(target),
       abacError: 'You do not have permission to delete this user.',
-      action: () =>
-        auth.api.removeUser({ body: { userId }, headers: this.headers }),
+      action: async () => {
+        await auth.api.removeUser({ body: { userId }, headers: this.headers });
+      },
     });
   }
 
@@ -148,8 +153,12 @@ export class UserService {
       notFoundMessage: 'User not found.',
       abacCheck: target => this._userPolicy.canImpersonate(target),
       abacError: 'You do not have permission to impersonate this user.',
-      action: () =>
-        auth.api.impersonateUser({ body: { userId }, headers: this.headers }),
+      action: async () => {
+        await auth.api.impersonateUser({
+          body: { userId },
+          headers: this.headers,
+        });
+      },
     });
   }
 
@@ -354,11 +363,12 @@ export class UserService {
       abacCheck: target => this._userPolicy.canSetRole(target),
       abacError:
         'You do not have permission to assign one or more of the specified roles.',
-      action: () =>
-        auth.api.setRole({
+      action: async () => {
+        await auth.api.setRole({
           body: { userId, role: roles },
           headers: this.headers,
-        }),
+        });
+      },
     });
   }
 
