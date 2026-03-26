@@ -20,7 +20,7 @@ export type GetSubscriptionOverviewResponse = ServiceResponse<
   SubscriptionOverview,
   { message: string }
 >;
-type SubscriptionOverview = {
+export type SubscriptionOverview = {
   activeSubscriptions: ActiveSubscription;
   plans: SubscriptionPlanDetails[];
   currentPlan:

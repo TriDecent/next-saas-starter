@@ -7,6 +7,7 @@ import type {
   GetSubscriptionOverviewResponse,
   ListActiveSubscriptionResponse,
   ListActiveSubscriptionsInput,
+  SubscriptionOverview,
   SubscriptionPlanDetails,
   UpgradeSubscriptionInput,
   UpgradeSubscriptionResponse,
@@ -126,69 +127,77 @@ export class SubscriptionService {
     );
   }
 
-  async getSubscriptionOverview(
+  getSubscriptionOverview(
     activeSubscriptionQuery?: Parameters<
       SubscriptionService['listActiveSubscription']
     >[number]
   ): Promise<GetSubscriptionOverviewResponse> {
-    const [plans, activeSubscriptionsResponse] = await Promise.all([
-      this.getSubscriptionPlans(),
-      this.listActiveSubscription(activeSubscriptionQuery),
-    ]);
-
-    if (activeSubscriptionsResponse.type === 'error')
-      return activeSubscriptionsResponse;
-
-    const activeSubscriptions = activeSubscriptionsResponse.payload;
-    const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
-    const billingInterval = activeSubscriptions.at(0)?.billingInterval;
-
-    const subscriptionQueryResult =
-      await this._serviceExecutor.executeProtectedAction({
-        requiredRbac: { subscription: ['get'] },
-        rbacError: 'You do not have permission to view subscription details.',
-        loadResource: async () => {
-          if (!activeSubscriptionQuery?.referenceId)
-            return { type: 'success', payload: null };
-
-          const authorizedUserIds =
-            await this._ownerContextFetcher.getAuthorizedUserIds(
-              activeSubscriptionQuery.referenceId
-            );
-
-          return { type: 'success', payload: authorizedUserIds };
-        },
-        notFoundMessage: 'Subscription not found.',
-        abacCheck: target => {
-          for (const subscription of activeSubscriptions) {
-            if (
-              !this._subscriptionPolicy.canRead({
-                ...subscription,
-                owners: target,
-              })
-            )
-              return false;
-          }
-          return true;
-        },
-        abacError: 'You do not have access to view this subscription.',
-        action: () => Promise.resolve(undefined),
-      });
-
-    if (subscriptionQueryResult.type === 'error')
-      return subscriptionQueryResult;
-
-    return {
-      type: 'success',
-      payload: {
-        activeSubscriptions,
-        plans,
-        currentPlan:
-          planName && billingInterval
-            ? { name: planName, billingInterval }
-            : undefined,
+    return this._serviceExecutor.executeProtectedQuery<
+      SubscriptionOverview,
+      string[]
+    >({
+      rbac: {
+        required: { subscription: ['get'] },
+        error: 'You do not have permission to view subscription details.',
       },
-    };
+      query: async () => {
+        const [plans, activeSubscriptionsResponse] = await Promise.all([
+          this.getSubscriptionPlans(),
+          this.listActiveSubscription(activeSubscriptionQuery),
+        ]);
+
+        if (activeSubscriptionsResponse.type === 'error')
+          return activeSubscriptionsResponse;
+
+        const activeSubscriptions = activeSubscriptionsResponse.payload;
+        const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
+        const billingInterval = activeSubscriptions.at(0)?.billingInterval;
+
+        return {
+          type: 'success',
+          payload: {
+            activeSubscriptions,
+            plans,
+            currentPlan:
+              planName && billingInterval
+                ? { name: planName, billingInterval }
+                : undefined,
+          },
+        };
+      },
+      abac: {
+        context: {
+          abacError:
+            'You do not have access to view these subscription details.',
+          load: async () => {
+            if (!activeSubscriptionQuery?.referenceId)
+              // this case means a personal subscription
+              // listActiveSubscription will only return the personal subscription for the user
+              //  so we can safely return the user's id as the only authorized user id
+              return { type: 'success', payload: [this.actor.id] };
+
+            const authorizedUserIds =
+              await this._ownerContextFetcher.getAuthorizedUserIds(
+                activeSubscriptionQuery.referenceId
+              );
+
+            return { type: 'success', payload: authorizedUserIds };
+          },
+          check: (data, context) => {
+            for (const subscription of data.activeSubscriptions) {
+              if (
+                !this._subscriptionPolicy.canRead({
+                  ...subscription,
+                  owners: context,
+                })
+              )
+                return false;
+            }
+            return true;
+          },
+        },
+      },
+    });
   }
 
   public get actor() {
