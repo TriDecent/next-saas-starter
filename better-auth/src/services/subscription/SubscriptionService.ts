@@ -12,6 +12,9 @@ import type {
 } from './subscription-dtos';
 
 export class SubscriptionService {
+  private readonly _subscriptionPolicy = AppPolicy.getSubscriptionPolicyFor(
+    this.actor
+  );
   private readonly _plans = [
     {
       name: SUBSCRIPTION_PLAN.standard.name,
@@ -131,6 +134,41 @@ export class SubscriptionService {
     const activeSubscriptions = activeSubscriptionsResponse.payload;
     const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
     const billingInterval = activeSubscriptions.at(0)?.billingInterval;
+
+    const subscriptionQueryResult =
+      await this._serviceExecutor.executeProtectedAction({
+        requiredRbac: { subscription: ['get'] },
+        rbacError: 'You do not have permission to view subscription details.',
+        loadResource: async () => {
+          if (!activeSubscriptionQuery?.referenceId)
+            return { type: 'success', payload: null };
+
+          const authorizedUserIds =
+            await this._ownerContextFetcher.getAuthorizedUserIds(
+              activeSubscriptionQuery.referenceId
+            );
+
+          return { type: 'success', payload: authorizedUserIds };
+        },
+        notFoundMessage: 'Subscription not found.',
+        abacCheck: target => {
+          for (const subscription of activeSubscriptions) {
+            if (
+              !this._subscriptionPolicy.canRead({
+                ...subscription,
+                owners: target,
+              })
+            )
+              return false;
+          }
+          return true;
+        },
+        abacError: 'You do not have access to view this subscription.',
+        action: () => Promise.resolve(undefined),
+      });
+
+    if (subscriptionQueryResult.type === 'error')
+      return subscriptionQueryResult;
 
     return {
       type: 'success',
