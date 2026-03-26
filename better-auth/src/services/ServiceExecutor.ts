@@ -33,10 +33,17 @@ export interface IServiceExecutor {
       required: Parameters<typeof hasPermission>[1];
       error: TError;
     };
-    query: () => Promise<ServiceResponse<TData, TError>>;
+    query: {
+      run: () => Promise<TData>;
+
+      // this field catches error thrown in the `run` function
+      // and transforms it into the specified error payload
+      toErrorPayload: (error: string) => TError;
+    };
     abac?: {
       context?: {
-        load: () => Promise<ServiceResponse<TContext, TError>>;
+        loadContext: () => Promise<TContext>;
+        toContextErrorPayload: (error: string) => TError;
         check: (data: TData, context: TContext) => boolean;
         abacError: TError;
       };
@@ -149,7 +156,8 @@ export class ServiceExecutor implements IServiceExecutor {
     };
     abac?: {
       context?: {
-        load: () => Promise<ServiceResponse<TContext, TError>>;
+        loadContext: () => Promise<TContext>;
+        toContextErrorPayload: (error: string) => TError;
         check: (data: TData, context: TContext) => boolean;
         abacError: TError;
       };
@@ -173,7 +181,10 @@ export class ServiceExecutor implements IServiceExecutor {
     if (!abac) return { type: 'success', payload: data };
 
     if (abac.context) {
-      const contextResult = await abac.context.load();
+      const contextResult = await this.runSafely(
+        abac.context.loadContext,
+        error => abac.context!.toContextErrorPayload(error) // keeps yelling undefined without the non-null assertion, even though the existence of abac.context is already checked in the if condition
+      );
       if (contextResult.type === 'error') return contextResult;
 
       if (!abac.context.check(data, contextResult.payload))

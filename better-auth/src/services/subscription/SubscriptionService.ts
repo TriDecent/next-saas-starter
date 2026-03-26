@@ -183,20 +183,21 @@ export class SubscriptionService {
             message:
               'You do not have access to view these subscription details.',
           },
-          load: async () => {
+          loadContext: async () => {
             if (!activeSubscriptionQuery?.referenceId)
               // this case means a personal subscription
               // listActiveSubscription will only return the personal subscription for the user
               //  so we can safely return the user's id as the only authorized user id
-              return { type: 'success', payload: [this.actor.id] };
+              return [this.actor.id];
 
             const authorizedUserIds =
               await this._ownerContextFetcher.getAuthorizedUserIds(
                 activeSubscriptionQuery.referenceId
               );
 
-            return { type: 'success', payload: authorizedUserIds };
+            return authorizedUserIds;
           },
+          toContextErrorPayload: error => ({ message: error }),
           check: (data, context) => {
             for (const subscription of data.activeSubscriptions) {
               if (
