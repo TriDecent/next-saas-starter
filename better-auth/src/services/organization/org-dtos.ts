@@ -30,8 +30,16 @@ export type GetInvitationResponse = ServiceResponse<
   Awaited<ReturnType<typeof auth.api.getInvitation>>,
   { message: string }
 >;
-export type GetOrgResponse = ServiceResponse<
-  Awaited<ReturnType<typeof auth.api.getFullOrganization>>,
-  { message: string }
+
+export type GetOrgResponse = ServiceResponse<GetOrgSuccess, GetOrgError>;
+export type GetOrgSuccess = Awaited<
+  ReturnType<typeof auth.api.getFullOrganization>
 >;
-export type GeneralOrgResponse = ServiceResponse<void, { message: string }>;
+export type GetOrgError = { message: string };
+
+export type GeneralOrgResponse = ServiceResponse<
+  GeneralOrgSuccess,
+  GeneralOrgError
+>;
+export type GeneralOrgSuccess = void;
+export type GeneralOrgError = { message: string };

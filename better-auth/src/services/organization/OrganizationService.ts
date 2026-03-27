@@ -1,23 +1,27 @@
-import type { Session } from '@/generated/prisma/client';
+import type { Organization, Session } from '@/generated/prisma/client';
 import type {
   IOrganizationRepository,
   OrganizationWithRole,
 } from '@/infrastructure/repositories/organization';
-import { auth, hasPermission } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
 import type { IServiceExecutor } from '../ServiceExecutor';
 import type { ServiceResponse } from '../types';
-import type {
-  CreateInvitationInput,
-  CreateOrgInput,
-  GeneralOrgResponse,
-  GetInvitationResponse,
-  GetOrgInput,
-  GetOrgResponse,
-  RemoveUserInput,
-  SetActiveOrgInput,
-  UpdateOrgInput,
-  UpdateRoleInput,
+import {
+  GetOrgError,
+  type CreateInvitationInput,
+  type CreateOrgInput,
+  type GeneralOrgError,
+  type GeneralOrgResponse,
+  type GeneralOrgSuccess,
+  type GetInvitationResponse,
+  type GetOrgInput,
+  type GetOrgResponse,
+  type GetOrgSuccess,
+  type RemoveUserInput,
+  type SetActiveOrgInput,
+  type UpdateOrgInput,
+  type UpdateRoleInput,
 } from './org-dtos';
 
 export class OrganizationService {
@@ -29,27 +33,25 @@ export class OrganizationService {
     private readonly _currentSession: Session
   ) {}
 
-  async createOrg(params: CreateOrgInput): Promise<GeneralOrgResponse> {
-    const canCreateOrg = await hasPermission(this.actor.id, {
-      organization: ['create'],
-    });
-    if (!canCreateOrg)
-      return {
-        type: 'error',
-        payload: {
-          message: 'You are not authorized to create an organization',
-        },
-      };
-
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.createOrganization({
-          body: params,
-          headers: this.headers,
-        });
+  createOrg(params: CreateOrgInput): Promise<GeneralOrgResponse> {
+    return this._serviceExecutor.executeProtectedAction<
+      GeneralOrgSuccess,
+      GeneralOrgError
+    >({
+      rbac: {
+        required: { organization: ['create'] },
+        error: { message: 'You are not authorized to create an organization' },
       },
-      error => ({ message: error })
-    );
+      action: {
+        run: async () => {
+          await auth.api.createOrganization({
+            body: params,
+            headers: this.headers,
+          });
+        },
+        toErrorPayload: error => ({ message: error }),
+      },
+    });
   }
 
   deleteOrg(organizationId: string): Promise<GeneralOrgResponse> {
@@ -104,24 +106,21 @@ export class OrganizationService {
   async createInvitation(
     params: CreateInvitationInput
   ): Promise<GeneralOrgResponse> {
-    const canCreateInvitation = await hasPermission(this.actor.id, {
-      invitation: ['create'],
-    });
-    if (!canCreateInvitation)
-      return {
-        type: 'error',
-        payload: { message: 'You are not authorized to send an invitation' },
-      };
-
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.createInvitation({
-          body: params,
-          headers: this.headers,
-        });
+    return this._serviceExecutor.executeProtectedAction({
+      rbac: {
+        required: { invitation: ['create'] },
+        error: { message: 'You are not authorized to send an invitation' },
       },
-      error => ({ message: error })
-    );
+      action: {
+        run: async () => {
+          await auth.api.createInvitation({
+            body: params,
+            headers: this.headers,
+          });
+        },
+        toErrorPayload: error => ({ message: error }),
+      },
+    });
   }
 
   getInvitation(id: string): Promise<GetInvitationResponse> {
@@ -160,36 +159,42 @@ export class OrganizationService {
   }
 
   async getFullOrganization(params: GetOrgInput): Promise<GetOrgResponse> {
-    const response = await this._serviceExecutor.runSafely(
-      () =>
-        auth.api.getFullOrganization({
-          query: params,
-          headers: this.headers,
-        }),
-      error => ({ message: error })
-    );
-    if (response.type === 'error') return response;
-    const organization = response.payload;
-
-    if (!organization) return { type: 'success', payload: organization };
-
-    const organizationWithMemberIds = {
-      ...organization,
-      members: organization.members.map(member => member.userId),
-      metadata: organization.metadata ?? null,
-      logo: organization.logo ?? null,
-      kind: 'OrganizationWithMembers',
-    } as const;
-
-    if (this._orgPolicy.canRead(organizationWithMemberIds))
-      return {
-        type: 'error',
-        payload: {
+    return this._serviceExecutor.executeProtectedQuery<
+      GetOrgSuccess,
+      GetOrgError,
+      Organization
+    >({
+      rbac: {
+        required: { organization: ['get'] },
+        error: {
           message: 'You are not authorized to view this organization.',
         },
-      };
-
-    return response;
+      },
+      abac: {
+        ['no-context']: {
+          check: data =>
+            data
+              ? this._orgPolicy.canRead({
+                  ...data,
+                  members: data.members.map(member => member.userId),
+                  metadata: data.metadata,
+                  logo: data.logo ?? null,
+                })
+              : false,
+          abacError: {
+            message: 'You are not authorized to view this organization.',
+          },
+        },
+      },
+      query: {
+        run: () =>
+          auth.api.getFullOrganization({
+            query: params,
+            headers: this.headers,
+          }),
+        toErrorPayload: error => ({ message: error }),
+      },
+    });
   }
 
   updateRole(params: UpdateRoleInput): Promise<GeneralOrgResponse> {

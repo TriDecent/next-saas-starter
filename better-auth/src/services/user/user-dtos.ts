@@ -1,10 +1,9 @@
 import type { User } from '@/generated/prisma/client';
 import type { ServiceResponse } from '../types';
 
-export type GetUsersResponse = ServiceResponse<
-  { users: User[]; total: number },
-  { message: string }
->;
+export type GetUsersResponse = ServiceResponse<GetUsersSuccess, GetUsersError>;
+export type GetUsersSuccess = { users: User[]; total: number };
+export type GetUsersError = { message: string };
 export type GetUserByIdResponse = ServiceResponse<
   User | null,
   { message: string }

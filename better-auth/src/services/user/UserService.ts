@@ -10,7 +10,9 @@ import type {
   GeneralUserResponse,
   GenerateBackUpCodesResponse,
   GetUserByIdResponse,
+  GetUsersError,
   GetUsersResponse,
+  GetUsersSuccess,
 } from './user-dtos';
 
 export class UserService {
@@ -69,31 +71,36 @@ export class UserService {
     return { type: 'success', payload: user };
   }
 
-  async getUsers(
+  getUsers(
     pageIndex: number,
     pageSize: number,
     orderBy?: Prisma.UserOrderByWithRelationInput[],
     keyword?: string
   ): Promise<GetUsersResponse> {
-    const canListUsers = await hasPermission(this.actor.id, {
-      user: ['list'],
+    return this._serviceExecutor.executeProtectedQuery<
+      GetUsersSuccess,
+      GetUsersError,
+      void
+    >({
+      rbac: {
+        required: { user: ['list'] },
+        error: { message: 'You do not have permission to list users.' },
+      },
+      query: {
+        run: async () => {
+          const skip = pageIndex * pageSize;
+          const { data: users, total } = await this.repo.getUsers(
+            skip,
+            pageSize,
+            orderBy,
+            keyword
+          );
+
+          return { users, total };
+        },
+        toErrorPayload: error => ({ message: error }),
+      },
     });
-
-    if (!canListUsers)
-      return {
-        type: 'error',
-        payload: { message: 'You do not have permission to list users.' },
-      };
-
-    const skip = pageIndex * pageSize;
-    const { data, total } = await this.repo.getUsers(
-      skip,
-      pageSize,
-      orderBy,
-      keyword
-    );
-
-    return { type: 'success', payload: { users: data, total } };
   }
 
   toggleBanStatus(
