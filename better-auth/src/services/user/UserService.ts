@@ -96,68 +96,128 @@ export class UserService {
     return { type: 'success', payload: { users: data, total } };
   }
 
-  toggleBanStatus(userId: User['id'], shouldBan: boolean) {
-    return this._serviceExecutor.executeProtectedAction({
-      requiredRbac: { user: ['ban'] },
-      rbacError: 'You do not have permission to ban/unban users.',
-      loadResource: () => this.getUserById(userId),
-      notFoundMessage: 'User not found.',
-      abacCheck: target => this._userPolicy.canBan(target),
-      abacError: 'You do not have permission to ban/unban this user.',
-      action: async () => {
-        if (shouldBan) {
-          await auth.api.banUser({ body: { userId }, headers: this.headers });
-          return;
-        }
-        await auth.api.unbanUser({ body: { userId }, headers: this.headers });
+  toggleBanStatus(
+    userId: User['id'],
+    shouldBan: boolean
+  ): Promise<GeneralUserResponse> {
+    return this._serviceExecutor.executeProtectedAction<
+      User,
+      { message: string }
+    >({
+      rbac: {
+        required: { user: ['ban'] },
+        error: { message: 'You do not have permission to ban/unban users.' },
+      },
+      abac: {
+        context: {
+          loadContext: () => this.retrieveUserOrFail(userId),
+          toContextErrorPayload: error => ({ message: error }),
+          check: target => this._userPolicy.canBan(target),
+          abacError: {
+            message: 'You do not have permission to ban/unban this user.',
+          },
+        },
+      },
+      action: {
+        run: async () => {
+          if (shouldBan) {
+            await auth.api.banUser({ body: { userId }, headers: this.headers });
+            return;
+          }
+          await auth.api.unbanUser({ body: { userId }, headers: this.headers });
+        },
+        toErrorPayload: error => ({ message: error }),
       },
     });
   }
 
-  revokeUser(userId: User['id']) {
-    return this._serviceExecutor.executeProtectedAction({
-      requiredRbac: { session: ['revoke'] },
-      rbacError: 'You do not have permission to revoke sessions.',
-      loadResource: () => this.getUserById(userId),
-      notFoundMessage: 'User not found.',
-      abacCheck: target => this._userPolicy.canRevoke(target),
-      abacError: 'You do not have permission to revoke sessions for this user.',
-      action: async () => {
-        await auth.api.revokeUserSessions({
-          body: { userId },
-          headers: this.headers,
-        });
+  revokeUser(userId: User['id']): Promise<GeneralUserResponse> {
+    return this._serviceExecutor.executeProtectedAction<
+      User,
+      { message: string }
+    >({
+      rbac: {
+        required: { session: ['revoke'] },
+        error: { message: 'You do not have permission to revoke sessions.' },
+      },
+      abac: {
+        context: {
+          loadContext: () => this.retrieveUserOrFail(userId),
+          toContextErrorPayload: error => ({ message: error }),
+          check: target => this._userPolicy.canBan(target),
+          abacError: {
+            message:
+              'You do not have permission to revoke sessions for this user.',
+          },
+        },
+      },
+      action: {
+        run: async () => {
+          await auth.api.revokeUserSessions({
+            body: { userId },
+            headers: this.headers,
+          });
+        },
+        toErrorPayload: error => ({ message: error }),
       },
     });
   }
 
-  deleteUser(userId: User['id']) {
+  deleteUser(userId: User['id']): Promise<GeneralUserResponse> {
     return this._serviceExecutor.executeProtectedAction({
-      requiredRbac: { user: ['delete'] },
-      rbacError: 'You do not have permission to delete users.',
-      loadResource: () => this.getUserById(userId),
-      notFoundMessage: 'User not found.',
-      abacCheck: target => this._userPolicy.canDelete(target),
-      abacError: 'You do not have permission to delete this user.',
-      action: async () => {
-        await auth.api.removeUser({ body: { userId }, headers: this.headers });
+      rbac: {
+        required: { user: ['delete'] },
+        error: { message: 'You do not have permission to delete users.' },
+      },
+      abac: {
+        context: {
+          loadContext: () => this.retrieveUserOrFail(userId),
+          toContextErrorPayload: error => ({ message: error }),
+          check: context => this._userPolicy.canDelete(context),
+          abacError: {
+            message: 'You do not have permission to delete this user.',
+          },
+        },
+      },
+      action: {
+        run: async () => {
+          await auth.api.removeUser({
+            body: { userId },
+            headers: this.headers,
+          });
+        },
+        toErrorPayload: error => ({ message: error }),
       },
     });
   }
 
-  impersonateUser(userId: User['id']) {
-    return this._serviceExecutor.executeProtectedAction({
-      requiredRbac: { user: ['impersonate'] },
-      rbacError: 'You do not have permission to impersonate users.',
-      loadResource: () => this.getUserById(userId),
-      notFoundMessage: 'User not found.',
-      abacCheck: target => this._userPolicy.canImpersonate(target),
-      abacError: 'You do not have permission to impersonate this user.',
-      action: async () => {
-        await auth.api.impersonateUser({
-          body: { userId },
-          headers: this.headers,
-        });
+  impersonateUser(userId: User['id']): Promise<GeneralUserResponse> {
+    return this._serviceExecutor.executeProtectedAction<
+      User,
+      { message: string }
+    >({
+      rbac: {
+        required: { user: ['impersonate'] },
+        error: { message: 'You do not have permission to impersonate users.' },
+      },
+      abac: {
+        context: {
+          loadContext: () => this.retrieveUserOrFail(userId),
+          toContextErrorPayload: error => ({ message: error }),
+          check: target => this._userPolicy.canImpersonate(target),
+          abacError: {
+            message: 'You do not have permission to impersonate this user.',
+          },
+        },
+      },
+      action: {
+        run: async () => {
+          await auth.api.impersonateUser({
+            body: { userId },
+            headers: this.headers,
+          });
+        },
+        toErrorPayload: error => ({ message: error }),
       },
     });
   }
@@ -371,21 +431,43 @@ export class UserService {
         };
     }
 
-    return this._serviceExecutor.executeProtectedAction({
-      requiredRbac: { user: ['set-role'] },
-      rbacError: 'You do not have permission to set user roles.',
-      loadResource: () => this.getUserById(userId),
-      notFoundMessage: 'User not found.',
-      abacCheck: target => this._userPolicy.canSetRole(target),
-      abacError:
-        'You do not have permission to assign one or more of the specified roles.',
-      action: async () => {
-        await auth.api.setRole({
-          body: { userId, role: roles },
-          headers: this.headers,
-        });
+    return this._serviceExecutor.executeProtectedAction<
+      User,
+      { message: string }
+    >({
+      rbac: {
+        required: { user: ['set-role'] },
+        error: { message: 'You do not have permission to set user roles.' },
+      },
+      abac: {
+        context: {
+          loadContext: () => this.retrieveUserOrFail(userId),
+          toContextErrorPayload: error => ({ message: error }),
+          check: target => this._userPolicy.canSetRole(target),
+          abacError: {
+            message: `You do not have permission to assign ${roles.join(', ')} roles.`,
+          },
+        },
+      },
+      action: {
+        run: async () => {
+          await auth.api.setRole({
+            body: { userId, role: roles },
+            headers: this.headers,
+          });
+        },
+        toErrorPayload: error => ({ message: error }),
       },
     });
+  }
+
+  private async retrieveUserOrFail(userId: User['id']): Promise<User> {
+    const response = await this.getUserById(userId);
+
+    if (response.type === 'error') throw new Error(response.payload.message);
+    if (!response.payload) throw new Error('User not found.');
+
+    return response.payload;
   }
 
   private get repo() {

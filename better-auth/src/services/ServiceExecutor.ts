@@ -17,17 +17,31 @@ export interface IServiceExecutor {
     operation: () => Promise<TSuccess>,
     toErrorPayload: (error: string) => TError
   ): Promise<ServiceResponse<TSuccess, TError>>;
-  executeProtectedAction<TResource>(params: {
-    requiredRbac: Parameters<typeof hasPermission>[1];
-    rbacError: string;
-    loadResource: () => Promise<
-      ServiceResponse<TResource | null, { message: string }>
-    >;
-    notFoundMessage: string;
-    abacError: string;
-    action: () => Promise<void>;
-    abacCheck?: (target: TResource) => boolean;
-  }): Promise<ServiceResponse<void, { message: string }>>;
+  executeProtectedAction<TContext, TError>(params: {
+    rbac: {
+      required: Parameters<typeof hasPermission>[1];
+      error: TError;
+    };
+    abac?: {
+      context?: {
+        loadContext: () => Promise<TContext>;
+        toContextErrorPayload: (error: string) => TError;
+        abacError: TError;
+        check: (context: TContext) => boolean;
+      };
+      ['no-context']?: {
+        check: () => boolean;
+        abacError: TError;
+      };
+    };
+    action: {
+      run: () => Promise<void>;
+
+      // this field catches error thrown in the `run` function
+      // and transforms it into the specified error payload
+      toErrorPayload: (error: string) => TError;
+    };
+  }): Promise<ServiceResponse<void, TError>>;
   executeProtectedQuery<TData, TError, TContext>(params: {
     rbac: {
       required: Parameters<typeof hasPermission>[1];
@@ -107,42 +121,50 @@ export class ServiceExecutor implements IServiceExecutor {
       : { type: 'error', payload: toErrorPayload(invalidTokenMessage) };
   }
 
-  async executeProtectedAction<TResource>(params: {
-    requiredRbac: Parameters<typeof hasPermission>[1];
-    rbacError: string;
-    loadResource: () => Promise<
-      ServiceResponse<TResource | null, { message: string }>
-    >;
-    notFoundMessage: string;
-    abacError: string;
-    action: () => Promise<void>;
-    abacCheck?: (target: TResource) => boolean;
-  }): Promise<ServiceResponse<void, { message: string }>> {
-    const {
-      requiredRbac,
-      rbacError,
-      loadResource,
-      abacCheck,
-      abacError,
-      action,
-      notFoundMessage,
-    } = params;
+  async executeProtectedAction<TContext, TError>(params: {
+    rbac: {
+      required: Parameters<typeof hasPermission>[1];
+      error: TError;
+    };
+    abac?: {
+      context?: {
+        loadContext: () => Promise<TContext>;
+        toContextErrorPayload: (error: string) => TError;
+        abacError: TError;
+        check: (context: TContext) => boolean;
+      };
+      ['no-context']?: {
+        check: () => boolean;
+        abacError: TError;
+      };
+    };
+    action: {
+      run: () => Promise<void>;
+      toErrorPayload: (error: string) => TError;
+    };
+  }): Promise<ServiceResponse<void, TError>> {
+    const { rbac, abac, action } = params;
+    const hasRbac = await hasPermission(this._actor.id, rbac.required);
+    if (!hasRbac) return { type: 'error', payload: rbac.error };
 
-    const hasRbac = await hasPermission(this._actor.id, requiredRbac);
-    if (!hasRbac) return { type: 'error', payload: { message: rbacError } };
+    if (!abac)
+      return this.runSafely(action.run, error => action.toErrorPayload(error));
 
-    const resource = await loadResource();
-    if (resource.type === 'error') return resource;
-    if (!resource)
-      return { type: 'error', payload: { message: notFoundMessage } };
+    if (abac['no-context'] && !abac['no-context'].check())
+      return { type: 'error', payload: abac['no-context'].abacError };
 
-    if (abacCheck && !abacCheck(resource.payload as TResource))
-      return { type: 'error', payload: { message: abacError } };
+    if (abac.context) {
+      const contextResponse = await this.runSafely(
+        abac.context.loadContext,
+        error => abac.context!.toContextErrorPayload(error)
+      );
+      if (contextResponse.type === 'error') return contextResponse;
 
-    return this.runSafely(
-      () => action(),
-      error => ({ message: error })
-    );
+      if (!abac.context.check(contextResponse.payload))
+        return { type: 'error', payload: abac.context.abacError };
+    }
+
+    return this.runSafely(action.run, error => action.toErrorPayload(error));
   }
 
   async executeProtectedQuery<TData, TError, TContext>(params: {
