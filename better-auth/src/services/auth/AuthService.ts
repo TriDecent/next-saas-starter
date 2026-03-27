@@ -3,8 +3,7 @@ import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import type { ServiceResponse } from '../types';
+import type { IBaseExecutor } from '../executor';
 import type {
   GeneralAuthResponse,
   SignInResponse,
@@ -13,7 +12,7 @@ import type {
 
 export class AuthService {
   constructor(
-    private readonly _headers: ReadonlyHeaders,
+    private readonly _executor: IBaseExecutor,
     private readonly _actor?: User,
     private readonly _currentSession?: Session
   ) {}
@@ -37,7 +36,7 @@ export class AuthService {
   }): Promise<SignInResponse> {
     try {
       const response = await auth.api.signInEmail({
-        headers: this._headers,
+        headers: this.headers,
         body: { email, password, rememberMe },
       });
 
@@ -68,7 +67,7 @@ export class AuthService {
 
       return {
         type: 'error',
-        payload: { message: this.getErrorMessage(error) },
+        payload: { message: this._executor.getErrorMessage(error) },
       };
     }
   }
@@ -79,14 +78,17 @@ export class AuthService {
     password: string;
     favoriteNumber: number;
   }): Promise<SignUpResponse> {
-    return this.runSafely(async () => {
-      const { user } = await auth.api.signUpEmail({
-        headers: this._headers,
-        body: { ...params, welcomeSent: false },
-      });
+    return this._executor.runSafely(
+      async () => {
+        const { user } = await auth.api.signUpEmail({
+          headers: this.headers,
+          body: { ...params, welcomeSent: false },
+        });
 
-      return { name: user.name, email: user.email };
-    });
+        return { name: user.name, email: user.email };
+      },
+      error => ({ message: error })
+    );
   }
 
   requestResetPassword({
@@ -96,36 +98,45 @@ export class AuthService {
     email: string;
     redirectTo: string;
   }): Promise<GeneralAuthResponse> {
-    return this.runSafely(async () => {
-      await auth.api.requestPasswordReset({ body: { email, redirectTo } });
-    });
+    return this._executor.runSafely(
+      async () => {
+        await auth.api.requestPasswordReset({ body: { email, redirectTo } });
+      },
+      error => ({ message: error })
+    );
   }
 
   resetPassword(
     token: string,
     newPassword: string
   ): Promise<GeneralAuthResponse> {
-    return this.runSafely(async () => {
-      await auth.api.resetPassword({
-        headers: this._headers,
-        body: { token, newPassword },
-      });
-    });
+    return this._executor.runSafely(
+      async () => {
+        await auth.api.resetPassword({
+          headers: this.headers,
+          body: { token, newPassword },
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   verifyBackupCode(
     code: string,
     trustDevice?: boolean
   ): Promise<GeneralAuthResponse> {
-    return this.runSafely(async () => {
-      // Format code: XXXXX-XXXXX
-      const formattedCode = code.slice(0, 5) + '-' + code.slice(5);
+    return this._executor.runSafely(
+      async () => {
+        // Format code: XXXXX-XXXXX
+        const formattedCode = code.slice(0, 5) + '-' + code.slice(5);
 
-      await auth.api.verifyBackupCode({
-        headers: this._headers,
-        body: { code: formattedCode, trustDevice },
-      });
-    });
+        await auth.api.verifyBackupCode({
+          headers: this.headers,
+          body: { code: formattedCode, trustDevice },
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   async sendVerificationEmail({
@@ -144,11 +155,14 @@ export class AuthService {
       };
     }
 
-    return this.runSafely(async () => {
-      await auth.api.sendVerificationEmail({
-        body: { email, callbackURL },
-      });
-    });
+    return this._executor.runSafely(
+      async () => {
+        await auth.api.sendVerificationEmail({
+          body: { email, callbackURL },
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   verifyTOTP({
@@ -158,49 +172,19 @@ export class AuthService {
     code: string;
     trustDevice?: boolean;
   }): Promise<GeneralAuthResponse> {
-    return this.runSafely(async () => {
-      await auth.api.verifyTOTP({
-        body: { code, trustDevice },
-        headers: this._headers,
-      });
-    });
-  }
-
-  private async runSafely<T>(
-    operation: () => Promise<T>
-  ): Promise<ServiceResponse<T, { message: string }>> {
-    try {
-      const data = await operation();
-      return { type: 'success', payload: data };
-    } catch (error) {
-      if (isRedirectError(error)) throw error;
-      return {
-        type: 'error',
-        payload: { message: this.getErrorMessage(error) },
-      };
-    }
-  }
-
-  private async runSafelyWithExtraErrorReturn<TSuccess, TError>(
-    operation: () => Promise<TSuccess>,
-    extraErrorDetails: TError
-  ): Promise<ServiceResponse<TSuccess, { message: string; more: TError }>> {
-    try {
-      const data = await operation();
-      return { type: 'success', payload: data };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: {
-          message: this.getErrorMessage(error),
-          more: extraErrorDetails,
-        },
-      };
-    }
+    return this._executor.runSafely(
+      async () => {
+        await auth.api.verifyTOTP({
+          body: { code, trustDevice },
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
   }
 
   private get2FARedirectUrl(): string {
-    const requestReferer = this._headers.get('referer');
+    const requestReferer = this.headers.get('referer');
     const requestUrl = requestReferer ? new URL(requestReferer) : undefined;
     const hasCallbackUrl = requestUrl?.searchParams.has('callbackUrl');
 
@@ -209,9 +193,7 @@ export class AuthService {
       : ROUTES.auth.nested['verify-2fa'].href;
   }
 
-  private getErrorMessage(error: unknown): string {
-    return error instanceof APIError || error instanceof Error
-      ? error.message
-      : 'Unknown error';
+  private get headers() {
+    return this._executor.headers;
   }
 }
