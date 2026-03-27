@@ -7,8 +7,8 @@ import { headers } from 'next/headers';
 import { cache } from 'react';
 import { UserRepository } from '../infrastructure/repositories/user';
 import { AuthService } from './auth';
+import { AuthenticatedExecutor } from './executor';
 import { OrganizationService } from './organization';
-import { ServiceExecutor } from './ServiceExecutor';
 import { SubscriptionService } from './subscription';
 import { UserService } from './user';
 
@@ -23,7 +23,7 @@ export const getUserService = cache(async (callbackUrl: string) => {
   const currentSession = session.session as Session;
 
   return new UserService(
-    new ServiceExecutor(actor, new UserRepository(), headersList),
+    new AuthenticatedExecutor(actor, new UserRepository(), headersList),
     currentSession
   );
 });
@@ -45,7 +45,7 @@ export const getOrgService = cache(async (callbackUrl: string) => {
   const actor = session.user as User;
 
   return new OrganizationService(
-    new ServiceExecutor(actor, new UserRepository(), headersList),
+    new AuthenticatedExecutor(actor, new UserRepository(), headersList),
     getOrgRepo(),
     session.session as Session
   );
@@ -58,7 +58,7 @@ export const getSubscriptionService = cache(async (callbackUrl: string) => {
   const actor = session.user as User;
 
   return new SubscriptionService(
-    new ServiceExecutor(actor, new UserRepository(), headersList),
+    new AuthenticatedExecutor(actor, new UserRepository(), headersList),
     {
       getAuthorizedUserIds: async (referenceId: string) =>
         getOrgRepo().getAuthorizedUserIdsForOrg(referenceId),

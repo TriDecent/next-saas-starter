@@ -1,7 +1,7 @@
 import { auth, SUBSCRIPTION_PLAN, type SubscriptionPlan } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
 import { stripeClient } from '@/lib/stripe';
-import type { IServiceExecutor } from '../ServiceExecutor';
+import type { IAuthenticatedExecutor } from '../executor';
 import type {
   CreateBillingPortalInput,
   GetSubscriptionOverviewResponse,
@@ -62,7 +62,7 @@ export class SubscriptionService {
   ] as const satisfies Omit<SubscriptionPlanDetails, 'prices'>[];
 
   constructor(
-    private readonly _serviceExecutor: IServiceExecutor,
+    private readonly _serviceExecutor: IAuthenticatedExecutor,
     private readonly _ownerContextFetcher: ISubscriptionOwnerContext
   ) {}
 

@@ -1,16 +1,12 @@
 import { verifySudoToken } from '@/features/auth';
 import type { User } from '@/generated/prisma/client';
+import { type IUserRepository } from '@/infrastructure/repositories';
 import { hasPermission } from '@/lib/auth';
-import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import { type IUserRepository } from '../infrastructure/repositories/user';
-import type { ServiceResponse } from './types';
+import type { ServiceResponse } from '../types';
+import { BaseExecutor, type IBaseExecutor } from './BaseExecutor';
 
-export interface IServiceExecutor {
-  runSafely<TSuccess, TError>(
-    operation: () => Promise<TSuccess>,
-    toErrorPayload: (error: string) => TError
-  ): Promise<ServiceResponse<TSuccess, TError>>;
+export interface IAuthenticatedExecutor extends IBaseExecutor {
   runWithSudo<TSuccess, TError>(
     token: string | undefined,
     invalidTokenMessage: string,
@@ -67,43 +63,24 @@ export interface IServiceExecutor {
       };
     };
   }): Promise<ServiceResponse<TData, TError>>;
-  getErrorMessage(error: unknown): string;
 
   get actor(): User;
-  get headers(): ReadonlyHeaders;
-  get repo(): IUserRepository;
 }
 
-export class ServiceExecutor implements IServiceExecutor {
+export class AuthenticatedExecutor
+  extends BaseExecutor
+  implements IAuthenticatedExecutor
+{
   constructor(
     private readonly _actor: User,
-    private readonly _repo: IUserRepository,
-    private readonly _headers: ReadonlyHeaders
-  ) {}
+    repo: IUserRepository,
+    headers: ReadonlyHeaders
+  ) {
+    super(repo, headers);
+  }
 
   get actor() {
     return this._actor;
-  }
-  get headers() {
-    return this._headers;
-  }
-  get repo() {
-    return this._repo;
-  }
-
-  async runSafely<TSuccess, TError>(
-    operation: () => Promise<TSuccess>,
-    toErrorPayload: (error: string) => TError
-  ): Promise<ServiceResponse<TSuccess, TError>> {
-    try {
-      const data = await operation();
-      return { type: 'success', payload: data };
-    } catch (error) {
-      return {
-        type: 'error',
-        payload: toErrorPayload(this.getErrorMessage(error)),
-      };
-    }
   }
 
   async runWithSudo<TSuccess, TError>(
@@ -217,11 +194,5 @@ export class ServiceExecutor implements IServiceExecutor {
       return { type: 'error', payload: abac['no-context'].abacError };
 
     return { type: 'success', payload: data };
-  }
-
-  getErrorMessage(error: unknown): string {
-    return error instanceof APIError || error instanceof Error
-      ? error.message
-      : 'Unknown error';
   }
 }

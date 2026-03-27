@@ -2,10 +2,10 @@ import type { Organization, Session } from '@/generated/prisma/client';
 import type {
   IOrganizationRepository,
   OrganizationWithRole,
-} from '@/infrastructure/repositories/organization';
+} from '@/infrastructure/repositories';
 import { auth } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
-import type { IServiceExecutor } from '../ServiceExecutor';
+import type { IAuthenticatedExecutor } from '../executor';
 import type { ServiceResponse } from '../types';
 import {
   GetOrgError,
@@ -28,7 +28,7 @@ export class OrganizationService {
   private readonly _orgPolicy = AppPolicy.getOrgPolicyFor(this.actor);
 
   constructor(
-    private readonly _serviceExecutor: IServiceExecutor,
+    private readonly _serviceExecutor: IAuthenticatedExecutor,
     private readonly _repo: IOrganizationRepository,
     private readonly _currentSession: Session
   ) {}

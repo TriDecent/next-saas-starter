@@ -3,7 +3,7 @@ import type { Prisma, Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
-import type { IServiceExecutor } from '../ServiceExecutor';
+import type { IAuthenticatedExecutor } from '../executor';
 import type {
   AuthenticatePriorResponse,
   Enable2FAResponse,
@@ -20,7 +20,7 @@ export class UserService {
   private readonly _rolePolicy = AppPolicy.getRolePolicyFor(this.actor);
 
   constructor(
-    private readonly _serviceExecutor: IServiceExecutor,
+    private readonly _serviceExecutor: IAuthenticatedExecutor,
     private readonly _currentSession: Session
   ) {}
 
