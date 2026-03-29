@@ -134,6 +134,8 @@ model Organization {
   members     Member[]
   invitations Invitation[]
 
+  stripeCustomerId String?
+
   @@unique([slug])
   @@map("organizations")
 }
