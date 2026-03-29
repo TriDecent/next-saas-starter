@@ -1,12 +1,15 @@
 import type { GetOrgResponse } from '@/services/organization';
 import {
+  Badge,
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
   Separator,
 } from '@/shared/components/ui';
+import { FaCircleCheck, FaRegCircleXmark } from 'react-icons/fa6';
 import { GrOverview } from 'react-icons/gr';
 import { OrgIdentity } from './OrgIdentity';
 
@@ -14,7 +17,13 @@ export type OrgOverviewProps = NonNullable<
   Extract<GetOrgResponse, { type: 'success' }>['payload']
 >;
 
-export function OrganizationOverview({ org }: { org: OrgOverviewProps }) {
+export function OrganizationOverview({
+  org,
+  isActive,
+}: {
+  org: OrgOverviewProps;
+  isActive: boolean;
+}) {
   const pendingInvites = org.invitations.filter(
     invitation => invitation.status === 'pending'
   );
@@ -29,6 +38,17 @@ export function OrganizationOverview({ org }: { org: OrgOverviewProps }) {
         <CardDescription>
           Organization details, members, and invitations.
         </CardDescription>
+
+        <CardAction>
+          <Badge variant={isActive ? 'success' : 'outline'}>
+            {isActive ? (
+              <FaCircleCheck className={`${isActive ? 'animate-pulse' : ''}`} />
+            ) : (
+              <FaRegCircleXmark />
+            )}
+            {isActive ? 'Active' : 'Inactive'}
+          </Badge>
+        </CardAction>
       </CardHeader>
 
       <Separator />

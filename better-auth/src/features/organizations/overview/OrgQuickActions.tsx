@@ -12,7 +12,7 @@ import { FaBuilding } from 'react-icons/fa6';
 import { FiMail, FiPenTool, FiPlus } from 'react-icons/fi';
 import { UpdateOrgModal } from '../update-org';
 
-export function OrgQuickActions() {
+export function OrgQuickActions({ render }: { render?: React.ReactNode }) {
   return (
     <Card>
       <CardHeader>
@@ -53,6 +53,8 @@ export function OrgQuickActions() {
             </Button>
           }
         />
+
+        {render}
 
         <Separator />
 
