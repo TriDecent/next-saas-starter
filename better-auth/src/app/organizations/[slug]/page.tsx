@@ -9,6 +9,7 @@ import { getOrgService } from '@/services';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
+import { RouteContextProvider } from '@/shared/context';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { cache, Suspense } from 'react';
@@ -78,7 +79,14 @@ async function Wrapper({ params }: SlugParams) {
           />
         </div>
         <div className='lg:col-span-2'>
-          <OrganizationDetails org={organization} />
+          <RouteContextProvider
+            value={{ callbackUrl: ROUTES.organizations.nested.slug.href }}
+          >
+            <OrganizationDetails
+              org={organization}
+              callbackUrl={ROUTES.organizations.nested.slug.href}
+            />
+          </RouteContextProvider>
         </div>
       </div>
     </OrgContextProvider>
