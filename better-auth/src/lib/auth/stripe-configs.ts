@@ -8,6 +8,7 @@ import {
 import { getUserRepo } from '@/infrastructure/repositories';
 import { type StripeOptions, type StripePlan } from '@better-auth/stripe';
 import { stripeClient } from '../stripe';
+import { hasOrganizationPermission } from './utils';
 
 const sharedFreeTrialConfig: StripePlan['freeTrial'] = {
   days: 14,
@@ -138,6 +139,20 @@ export const stripeConfigs = {
         userName: user.name,
         data: data,
       });
+    },
+
+    authorizeReference: async (data, ctx): Promise<boolean> => {
+      const organizationPermission = await hasOrganizationPermission(
+        {
+          organizationId: data.referenceId,
+          permissions: {
+            'org-subscription': [data.action],
+          },
+        },
+        new Headers(ctx.headers)
+      );
+
+      return organizationPermission;
     },
   },
 } satisfies StripeOptions;
