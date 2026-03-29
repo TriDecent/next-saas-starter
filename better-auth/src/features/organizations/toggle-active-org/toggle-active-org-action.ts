@@ -8,7 +8,7 @@ import {
 } from '@/services';
 import { request } from '@arcjet/next';
 
-export async function SetActiveOrgAction(
+export async function toggleActiveAction(
   input: SetActiveOrgInput,
   callbackUrl: string
 ): Promise<GeneralOrgResponse> {

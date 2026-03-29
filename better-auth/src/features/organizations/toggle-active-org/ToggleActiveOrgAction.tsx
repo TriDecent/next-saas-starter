@@ -7,16 +7,16 @@ import type { Organization } from 'better-auth/plugins';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useTransition } from 'react';
-import { PiCheckCircleFill } from 'react-icons/pi';
+import { PiCheckCircleFill, PiXCircleFill } from 'react-icons/pi';
 import { toast } from 'sonner';
-import { SetActiveOrgAction } from './set-active-org-action';
+import { toggleActiveAction } from './toggle-active-org-action';
 
 export function ToggleActiveOrg({
   orgId,
   isActive,
   ...props
 }: {
-  orgId?: Organization['id'];
+  orgId?: Organization['id'] | null;
   isActive: boolean;
 } & React.HTMLAttributes<HTMLButtonElement>) {
   const [isPending, startTransition] = useTransition();
@@ -24,26 +24,25 @@ export function ToggleActiveOrg({
 
   const handleToggleActiveOrg = () =>
     startTransition(async () => {
-      toast.loading('Setting active organization...', {
+      toast.loading('Updating active organization...', {
         id: 'set-active-org-action',
       });
 
-      const response = await SetActiveOrgAction(
+      const response = await toggleActiveAction(
         { organizationId: orgId },
         ROUTES.organizations.href
       );
 
       if (response.type === 'success') {
-        toast.success('Organization set as active', {
+        toast.success('Active organization status updated', {
           id: 'set-active-org-action',
         });
         router.refresh();
-
         return;
       }
 
       if (response.type === 'error') {
-        toast.error('Failed to set active organization', {
+        toast.error('Failed to update active organization status', {
           id: 'set-active-org-action',
         });
       }
@@ -63,8 +62,8 @@ export function ToggleActiveOrg({
         <MiniLoader />
       ) : (
         <>
-          <PiCheckCircleFill />
-          {isActive ? 'Current Active' : 'Set Active'}
+          {isActive ? <PiXCircleFill /> : <PiCheckCircleFill />}
+          {isActive ? 'Deactivate' : 'Activate'}
         </>
       )}
     </button>
