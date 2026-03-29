@@ -4,4 +4,4 @@ export { OrganizationDetails } from './details';
 export { MyOrganizations, OrganizationItem } from './my-organizations';
 export { OrganizationOverview, OrgQuickActions } from './overview';
 export { QuickActions } from './quick-actions';
-export { ToggleActiveOrg } from './set-active-org';
+export { ToggleActiveOrg } from './toggle-active-org';

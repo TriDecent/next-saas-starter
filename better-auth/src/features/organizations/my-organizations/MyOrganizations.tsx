@@ -20,7 +20,7 @@ import type { Organization } from 'better-auth/plugins';
 import Link from 'next/link';
 import { FaCog, FaLink, FaPlus } from 'react-icons/fa';
 import { CreateNewOrganization } from '../create-org';
-import { ToggleActiveOrg } from '../set-active-org';
+import { ToggleActiveOrg } from '../toggle-active-org';
 import { EmptyOrganization } from './EmptyOrganization';
 import { OrganizationItem, type OrganizationRow } from './OrganizationItem';
 

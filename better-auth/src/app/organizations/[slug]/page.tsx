@@ -3,9 +3,11 @@ import {
   OrganizationOverview,
   OrgContextProvider,
   OrgQuickActions,
+  ToggleActiveOrg,
 } from '@/features/organizations';
 import { getOrgService } from '@/services';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
+import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -53,10 +55,27 @@ async function Wrapper({ params }: SlugParams) {
     <OrgContextProvider value={{ ...organization, isActive }}>
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
         <div className='lg:col-span-2'>
-          <OrganizationOverview org={organization} />
+          <OrganizationOverview org={organization} isActive={isActive} />
         </div>
         <div className='lg:sticky lg:top-32 lg:col-start-3'>
-          <OrgQuickActions />
+          <OrgQuickActions
+            render={
+              <Button
+                className={`justify-start ${
+                  isActive
+                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-400 dark:bg-emerald-950/30 dark:text-emerald-300'
+                    : ''
+                }`}
+                variant='outline'
+                asChild
+              >
+                <ToggleActiveOrg
+                  orgId={!isActive ? organization.id : null}
+                  isActive={isActive}
+                />
+              </Button>
+            }
+          />
         </div>
         <div className='lg:col-span-2'>
           <OrganizationDetails org={organization} />
