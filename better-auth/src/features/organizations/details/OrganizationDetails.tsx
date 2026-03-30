@@ -19,6 +19,7 @@ import {
   HiExclamationTriangle,
   HiUsers,
 } from 'react-icons/hi2';
+import { OrgContextProvider } from '../context';
 import { DeleteOrgItem } from '../delete-org';
 import type { GetFullOrg } from './_shared';
 import { InvitationsCard } from './invitations';
@@ -62,7 +63,7 @@ export async function OrganizationDetails({
 
       <TabsContent value='subscription' className='space-y-8'>
         <Suspense fallback={<Loading />}>
-          <Subscriptions orgId={org.id} callbackUrl={callbackUrl} />
+          <Subscriptions org={org} callbackUrl={callbackUrl} />
         </Suspense>
       </TabsContent>
     </Tabs>
@@ -70,29 +71,28 @@ export async function OrganizationDetails({
 }
 
 async function Subscriptions({
-  orgId,
+  org,
   callbackUrl,
 }: {
-  orgId: string;
+  org: Pick<OrganizationDetailsProps, 'org'>['org'];
   callbackUrl: string;
 }) {
   const service = await getSubscriptionService(callbackUrl);
   const response = await service.getSubscriptionOverview({
     customerType: 'organization',
-    referenceId: orgId,
+    referenceId: org.id,
   });
 
   if (response.type === 'error') throw new Error(response.payload.message);
 
   return (
-    <>
+    <OrgContextProvider value={{ ...org }}>
       <MySubscriptions subscriptions={response.payload.activeSubscriptions} />
       <SubscriptionPlans
         plans={response.payload.plans}
         currentPlan={response.payload.currentPlan}
-        upgradeForId={orgId}
       />
-    </>
+    </OrgContextProvider>
   );
 }
 

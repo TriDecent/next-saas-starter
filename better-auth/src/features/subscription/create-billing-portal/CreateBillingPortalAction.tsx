@@ -1,5 +1,6 @@
 'use client';
 
+import { useOrgContext } from '@/features/organizations';
 import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition, type ComponentPropsWithoutRef } from 'react';
@@ -12,6 +13,7 @@ export function CreateBillingPortalAction({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { callbackUrl } = useRouteContext();
+  const { id: orgId } = useOrgContext();
 
   const handleCreateBillingPortal = () =>
     startTransition(async () => {
@@ -20,7 +22,10 @@ export function CreateBillingPortalAction({
         description: 'You will be redirected shortly.',
       });
 
-      const response = await createBillingPortalAction(callbackUrl);
+      const response = await createBillingPortalAction(
+        { referenceId: orgId },
+        callbackUrl
+      );
 
       if (response.type === 'error') {
         toast.error('Failed to open billing portal!', {
