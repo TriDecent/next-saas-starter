@@ -5,6 +5,7 @@ import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
+import { useEntityReference } from '../context';
 import {
   upgradeSubscriptionAction,
   type UpgradeSubscriptionActionInput,
@@ -19,6 +20,7 @@ export function UpgradeSubscriptionAction({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { callbackUrl } = useRouteContext();
+  const { referenceId } = useEntityReference();
 
   const handleUpgradeSubscription = () =>
     startTransition(async () => {
@@ -27,7 +29,10 @@ export function UpgradeSubscriptionAction({
         description: 'Upgrading subscription...',
       });
 
-      const response = await upgradeSubscriptionAction(options, callbackUrl);
+      const response = await upgradeSubscriptionAction(
+        { ...options, referenceId: options.referenceId ?? referenceId },
+        callbackUrl
+      );
 
       if (response.type === 'error') {
         toast.error('Failed to upgrade subscription!', {
