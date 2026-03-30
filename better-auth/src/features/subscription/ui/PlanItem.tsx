@@ -20,10 +20,12 @@ export function PlanItem({
   plan,
   cycle,
   isSubscribed,
+  upgradeForId,
 }: {
   plan: SubscriptionPlanDetails;
   cycle: BillingCycle;
   isSubscribed: boolean;
+  upgradeForId?: string;
 }) {
   const currentPrice = plan.prices[cycle];
   const monthlyPrice = plan.prices.monthly;
@@ -66,7 +68,11 @@ export function PlanItem({
           isHighlighted={plan.highlighted}
         >
           <UpgradeSubscriptionAction
-            options={{ plan: plan.name, annual: cycle === 'annual' }}
+            options={{
+              plan: plan.name,
+              annual: cycle === 'annual',
+              referenceId: upgradeForId,
+            }}
           >
             {`Choose ${plan.title}`}
           </UpgradeSubscriptionAction>

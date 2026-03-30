@@ -90,6 +90,7 @@ async function Subscriptions({
       <SubscriptionPlans
         plans={response.payload.plans}
         currentPlan={response.payload.currentPlan}
+        upgradeForId={orgId}
       />
     </>
   );

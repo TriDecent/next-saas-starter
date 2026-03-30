@@ -11,12 +11,14 @@ import { PlanItem } from './PlanItem';
 export function SubscriptionPlans({
   plans,
   currentPlan,
+  upgradeForId,
 }: {
   plans: SubscriptionPlanDetails[];
   currentPlan?: {
     name: SubscriptionPlanDetails['name'];
     billingInterval: Stripe.Price.Recurring.Interval;
   };
+  upgradeForId?: string;
 }) {
   const maxAnnualSavingsPercent = getMaxAnnualSavingsPercent(plans);
 
@@ -56,6 +58,7 @@ export function SubscriptionPlans({
                   : plan.prices.monthly.interval ===
                     currentPlan?.billingInterval)
               }
+              upgradeForId={upgradeForId}
             />
           ))}
         </TabsContent>

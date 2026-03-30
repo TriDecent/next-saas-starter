@@ -4,7 +4,6 @@ import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { SUBSCRIPTION_PLAN } from '@/lib/auth';
 import { getSubscriptionService } from '@/services';
 import type { UpgradeSubscriptionResponse } from '@/services/subscription';
-import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import z from 'zod';
 
@@ -24,20 +23,28 @@ export async function upgradeSubscriptionAction(
   if (!parsed.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 
-  const activeSubsResponse = await service.listActiveSubscription();
+  const activeSubsResponse = await service.listActiveSubscription({
+    referenceId: parsed.data.referenceId,
+    customerType: parsed.data.referenceId ? 'organization' : 'user',
+  });
   if (activeSubsResponse.type === 'error') return activeSubsResponse;
 
   const activeSub = activeSubsResponse.payload.at(0);
 
+  console.log(parsed.data);
+
   return service.upgradeSubscription({
     ...parsed.data,
-    successUrl: ROUTES.settings.nested.subscription.href,
-    cancelUrl: ROUTES.settings.nested.subscription.href,
-    returnUrl: ROUTES.settings.nested.subscription.href,
+    successUrl: callbackUrl,
+    cancelUrl: callbackUrl,
+    returnUrl: callbackUrl,
     scheduleAtPeriodEnd: false,
     disableRedirect: false,
 
     subscriptionId: activeSub?.stripeSubscriptionId,
+
+    referenceId: parsed.data.referenceId,
+    customerType: parsed.data.referenceId ? 'organization' : 'user',
   });
 }
 
@@ -48,5 +55,6 @@ const schema = z.object({
     SUBSCRIPTION_PLAN.enterprise.name,
   ]),
   annual: z.boolean(),
+  referenceId: z.string().optional(),
 });
 export type UpgradeSubscriptionActionInput = z.infer<typeof schema>;
