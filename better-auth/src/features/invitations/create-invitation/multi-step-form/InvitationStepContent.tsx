@@ -14,6 +14,7 @@ export function InvitationStepContent({ step }: { step: 0 | 1 | 2 }) {
             ...selectedOrg,
             logo: selectedOrg.logo ?? null,
             metadata: selectedOrg.metadata ?? null,
+            isActive: selectedOrg.isActive ?? false,
           }}
         />
       );
