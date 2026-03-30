@@ -51,6 +51,7 @@ export default function OrgDetailsPage({ params }: SlugParams) {
 async function Wrapper({ params }: SlugParams) {
   const slug = (await params).slug;
   const { organization, isActive } = await getFullOrg(slug);
+  const callbackUrl = `${ROUTES.organizations.href}/${organization.slug}`;
 
   return (
     <OrgContextProvider value={{ ...organization, isActive }}>
@@ -80,12 +81,11 @@ async function Wrapper({ params }: SlugParams) {
         </div>
         <div className='lg:col-span-2'>
           <RouteContextProvider
-            value={{ callbackUrl: ROUTES.organizations.nested.slug.href }}
+            value={{
+              callbackUrl,
+            }}
           >
-            <OrganizationDetails
-              org={organization}
-              callbackUrl={ROUTES.organizations.nested.slug.href}
-            />
+            <OrganizationDetails org={organization} callbackUrl={callbackUrl} />
           </RouteContextProvider>
         </div>
       </div>
