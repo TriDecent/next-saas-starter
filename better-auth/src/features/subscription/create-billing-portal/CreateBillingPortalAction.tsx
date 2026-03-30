@@ -1,19 +1,25 @@
 'use client';
 
-import { useOrgContext } from '@/features/organizations';
 import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition, type ComponentPropsWithoutRef } from 'react';
 import { toast } from 'sonner';
-import { createBillingPortalAction } from './create-billing-portal-action';
+import { useEntityReference } from '../context';
+import {
+  createBillingPortalAction,
+  type CreateBillingPortalActionOptions,
+} from './create-billing-portal-action';
 
 export function CreateBillingPortalAction({
+  options,
   ...props
-}: ComponentPropsWithoutRef<'button'>) {
+}: {
+  options?: CreateBillingPortalActionOptions;
+} & ComponentPropsWithoutRef<'button'>) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { callbackUrl } = useRouteContext();
-  const { id: orgId } = useOrgContext();
+  const { referenceId } = useEntityReference();
 
   const handleCreateBillingPortal = () =>
     startTransition(async () => {
@@ -23,7 +29,7 @@ export function CreateBillingPortalAction({
       });
 
       const response = await createBillingPortalAction(
-        { referenceId: orgId },
+        { referenceId: options?.referenceId ?? referenceId },
         callbackUrl
       );
 

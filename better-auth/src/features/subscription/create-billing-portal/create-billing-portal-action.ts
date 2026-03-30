@@ -34,4 +34,4 @@ export async function createBillingPortalAction(
 const schema = z.object({
   referenceId: z.string().optional(),
 });
-type CreateBillingPortalActionOptions = z.infer<typeof schema>;
+export type CreateBillingPortalActionOptions = z.infer<typeof schema>;
