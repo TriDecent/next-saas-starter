@@ -1,6 +1,10 @@
 'use server';
 
-import { MySubscriptions, SubscriptionPlans } from '@/features/subscription';
+import {
+  EntityReferenceProvider,
+  MySubscriptions,
+  SubscriptionPlans,
+} from '@/features/subscription';
 import { getSubscriptionService } from '@/services';
 import { Loading } from '@/shared/components';
 import {
@@ -19,7 +23,6 @@ import {
   HiExclamationTriangle,
   HiUsers,
 } from 'react-icons/hi2';
-import { OrgContextProvider } from '../context';
 import { DeleteOrgItem } from '../delete-org';
 import type { GetFullOrg } from './_shared';
 import { InvitationsCard } from './invitations';
@@ -63,7 +66,7 @@ export async function OrganizationDetails({
 
       <TabsContent value='subscription' className='space-y-8'>
         <Suspense fallback={<Loading />}>
-          <Subscriptions org={org} callbackUrl={callbackUrl} />
+          <Subscriptions orgId={org.id} callbackUrl={callbackUrl} />
         </Suspense>
       </TabsContent>
     </Tabs>
@@ -71,28 +74,28 @@ export async function OrganizationDetails({
 }
 
 async function Subscriptions({
-  org,
+  orgId,
   callbackUrl,
 }: {
-  org: Pick<OrganizationDetailsProps, 'org'>['org'];
+  orgId: string;
   callbackUrl: string;
 }) {
   const service = await getSubscriptionService(callbackUrl);
   const response = await service.getSubscriptionOverview({
     customerType: 'organization',
-    referenceId: org.id,
+    referenceId: orgId,
   });
 
   if (response.type === 'error') throw new Error(response.payload.message);
 
   return (
-    <OrgContextProvider value={{ ...org }}>
+    <EntityReferenceProvider value={{ referenceId: orgId }}>
       <MySubscriptions subscriptions={response.payload.activeSubscriptions} />
       <SubscriptionPlans
         plans={response.payload.plans}
         currentPlan={response.payload.currentPlan}
       />
-    </OrgContextProvider>
+    </EntityReferenceProvider>
   );
 }
 
