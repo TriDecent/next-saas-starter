@@ -167,7 +167,7 @@ export class OrganizationService {
       rbac: {
         required: { organization: ['get'] },
         error: {
-          message: 'You are not authorized to view this organization.',
+          message: 'You are not authorized to view organization.',
         },
       },
       abac: {
@@ -179,6 +179,7 @@ export class OrganizationService {
                   members: data.members.map(member => member.userId),
                   metadata: data.metadata,
                   logo: data.logo ?? null,
+                  stripeCustomerId: null,
                 })
               : false,
           abacError: {

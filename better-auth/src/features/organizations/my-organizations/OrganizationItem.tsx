@@ -17,7 +17,7 @@ import { FaUserFriends } from 'react-icons/fa';
 
 export type OrganizationRow = Omit<
   OrganizationWithRole,
-  'memberCounts' | 'currentUserRole'
+  'memberCounts' | 'currentUserRole' | 'stripeCustomerId'
 > & {
   memberCounts?: number;
   currentUserRole?: string;
