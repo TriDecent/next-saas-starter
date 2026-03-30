@@ -35,6 +35,7 @@ const extendedUserAc = ac.newRole({
   ...userAc.statements,
   user: ['get'],
   subscription: ['get'],
+  organization: ['get'],
 });
 
 const ROLES_STATEMENTS = {

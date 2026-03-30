@@ -48,9 +48,9 @@ export class OrganizationRepository implements IOrganizationRepository {
   ): Promise<string[]> {
     const org = await this._delegate.findUnique({
       where: { id: orgId },
-      select: { members: { select: { id: true } } },
+      select: { members: { select: { userId: true } } },
     });
 
-    return org ? org.members.map(member => member.id) : [];
+    return org ? org.members.map(member => member.userId) : [];
   }
 }
