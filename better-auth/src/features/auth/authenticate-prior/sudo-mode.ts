@@ -1,11 +1,12 @@
 'use server';
 
+import { ENV } from '@/lib/env';
 import type { User } from 'better-auth';
 import { importJWK, jwtVerify, SignJWT } from 'jose';
 
-const BASE64_PRIVATE_KEY = process.env.SUDO_CLIENT_ACTION_PRIVATE_KEY!;
-const BASE64_PUBLIC_KEY = process.env.SUDO_CLIENT_ACTION_PUBLIC_KEY!;
-const ISSUER = process.env.ISSUER!;
+const BASE64_PRIVATE_KEY = ENV.SUDO_CLIENT_ACTION_PRIVATE_KEY;
+const BASE64_PUBLIC_KEY = ENV.SUDO_CLIENT_ACTION_PUBLIC_KEY;
+const ISSUER = ENV.ISSUER;
 
 const PRIVATE_KEY = await importJWK(
   JSON.parse(Buffer.from(BASE64_PRIVATE_KEY, 'base64').toString('utf-8')),

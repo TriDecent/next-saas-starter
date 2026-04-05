@@ -5,6 +5,7 @@ import {
   sendPasswordResetEmail,
   sendWelcomeEmail,
 } from '@/features/email';
+import { ENV } from '@/lib/env';
 import { ROUTES } from '@/shared/constants';
 import { passkey } from '@better-auth/passkey';
 import { stripe } from '@better-auth/stripe';
@@ -17,12 +18,11 @@ import { prisma } from '../prisma';
 import { organizationPluginConfigs } from './organization-permissions';
 import { stripeConfigs } from './stripe-configs';
 import { adminPluginConfigs } from './user-permissions';
-
 export const auth = betterAuth({
   appName: 'Trí Decent Auth',
   advanced: { cookiePrefix: 'tri-decent' },
   impersonationSessionDuration: 60 * 60,
-  session: { cookieCache: { enabled: true, maxAge: 60 * 5 } },
+  session: { cookieCache: { enabled: false, maxAge: 60 * 5 } },
   plugins: [
     twoFactor(),
     passkey({
@@ -38,13 +38,13 @@ export const auth = betterAuth({
   }),
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: ENV.GITHUB_CLIENT_ID,
+      clientSecret: ENV.GITHUB_CLIENT_SECRET,
       mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
     },
     discord: {
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+      clientId: ENV.DISCORD_CLIENT_ID,
+      clientSecret: ENV.DISCORD_CLIENT_SECRET,
       mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
     },
   },
@@ -109,7 +109,7 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
       sendDeleteAccountVerification: async data => {
-        const safeUrl = `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.settings.nested.danger.href}?token=${data.token}`;
+        const safeUrl = `${ENV.NEXT_PUBLIC_BASE_URL}${ROUTES.settings.nested.danger.href}?token=${data.token}`;
 
         console.log(safeUrl);
 

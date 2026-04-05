@@ -1,5 +1,6 @@
 'use server';
 
+import { ENV } from '@/lib/env';
 import { Resend, type CreateEmailOptions } from 'resend';
 import { DeleteAccountTemplate } from './template/DeleteAccountTemplate';
 import { EmailVerificationTemplate } from './template/EmailVerificationTemplate';
@@ -30,7 +31,7 @@ import {
 } from './template/TrialStartTemplate';
 import { WelcomeTemplate } from './WelcomeTemplate';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(ENV.RESEND_API_KEY);
 
 type EmailSendingOptions = Readonly<{
   to: string;
@@ -163,7 +164,7 @@ function sendEmail(
   content: CreateEmailOptions['react']
 ) {
   return resend.emails.send({
-    from: `Trí Decent ${process.env.RESEND_FROM_EMAIL}`,
+    from: `Trí Decent ${ENV.RESEND_FROM_EMAIL}`,
     to,
     subject,
     react: content,

@@ -1,3 +1,4 @@
+import { ENV } from '@/lib/env';
 import arcjet, {
   detectBot,
   protectSignup,
@@ -14,7 +15,7 @@ import {
   restrictiveRateLimitSettings,
 } from './configs';
 
-const ARCJET_KEY = process.env.ARCJET_KEY!;
+const ARCJET_KEY = ENV.ARCJET_KEY;
 
 // Authenticated users - track by userId only
 const ajAuthenticated = arcjet({

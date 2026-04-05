@@ -4,7 +4,7 @@ import type { NextRequest, ProxyConfig } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export const config: ProxyConfig = {
-  matcher: ['/auth/:path*', '/settings/:path*', '/admin:path*'],
+  matcher: ['/auth/:path*', '/settings/:path*', '/admin/:path*'],
 };
 
 export function proxy(request: NextRequest) {
