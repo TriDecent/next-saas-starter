@@ -2,6 +2,11 @@ import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { getUserService } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { NextResponse, type NextRequest } from 'next/server';
+import z from 'zod';
+
+const DEFAULT_PAGE_INDEX = 0;
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
 
 export async function GET(request: NextRequest) {
   const service = await getUserService(ROUTES.home.href);
@@ -12,17 +17,24 @@ export async function GET(request: NextRequest) {
   });
   if (decision.isDenied()) return respondToDenial(decision);
 
-  const searchParams = request.nextUrl.searchParams;
-  const keyword = searchParams.get('keyword') ?? undefined;
+  const { keyword, pageIndex, pageSize } = querySchema.parse(
+    Object.fromEntries(request.nextUrl.searchParams)
+  );
 
   const result = await service.getUsers(
-    0,
-    20,
+    pageIndex,
+    Math.min(pageSize, MAX_PAGE_SIZE),
     [{ createdAt: 'desc' }],
     keyword
   );
 
-  if (result.type === 'success') return NextResponse.json(result.payload);
-
-  return NextResponse.json(result.payload, { status: 400 });
+  return result.type === 'success'
+    ? NextResponse.json(result.payload)
+    : NextResponse.json(result.payload, { status: 400 });
 }
+
+const querySchema = z.object({
+  keyword: z.string().optional(),
+  pageIndex: z.coerce.number().int().nonnegative().default(DEFAULT_PAGE_INDEX),
+  pageSize: z.coerce.number().positive().default(DEFAULT_PAGE_SIZE),
+});
