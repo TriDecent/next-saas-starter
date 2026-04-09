@@ -43,7 +43,7 @@ export default function RootLayout({
               </Suspense>
               <PageLayout.Header className='z-30'>
                 <h1 className='text-2xl font-medium tracking-wider'>
-                  <Link href='/'>Auth Demo</Link>
+                  <Link href='/'>Identity Hub</Link>
                 </h1>
 
                 <div className='flex items-center gap-2'>

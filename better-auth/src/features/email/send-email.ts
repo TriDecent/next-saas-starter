@@ -61,7 +61,7 @@ export async function sendEmailVerification(
 export async function sendWelcomeEmail(payload: EmailSendingOptions) {
   return sendEmail(
     [payload.to],
-    'Welcome to Auth Demo',
+    'Welcome to Identity Hub',
     WelcomeTemplate(payload)
   );
 }

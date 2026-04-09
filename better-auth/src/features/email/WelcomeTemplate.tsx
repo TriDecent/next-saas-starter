@@ -25,7 +25,7 @@ export function WelcomeTemplate({ userName }: WelcomeTemplateProps) {
             <Section className='p-8 pb-8 text-center'>
               <div style={{ height: '16px' }} />
               <Heading className='text-3xl font-bold'>
-                Welcome to Auth Demo! 🎉
+                Welcome to Identity Hub! 🎉
               </Heading>
               <div style={{ height: '16px' }} />
               <Text className='text-base text-gray-600'>

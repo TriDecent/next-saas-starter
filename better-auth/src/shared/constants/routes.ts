@@ -7,7 +7,7 @@ type Route = {
 };
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-const APP_NAME = 'Auth Demo';
+const APP_NAME = 'Identity Hub';
 const APP_DESCRIPTION =
   'A modern authentication demo built with Better Auth, Next.js, and Prisma. Features email verification, password reset, and social login.';
 
@@ -49,11 +49,11 @@ export const ROUTES = {
     metadata: {
       title: 'Home',
       description:
-        'Experience seamless authentication with Better Auth Demo. Sign in or register easily using email, password, or social login.',
+        'Experience seamless authentication with Identity Hub. Sign in or register easily using email, password, or social login.',
       openGraph: {
         title: `Home | ${APP_NAME}`,
         description:
-          'Experience seamless authentication with Better Auth Demo.',
+          'Experience seamless authentication with Identity Hub.',
         url: BASE_URL,
       },
     },

@@ -12,7 +12,7 @@ export default async function HomePage() {
     <section className='flex min-h-screen flex-col items-center gap-y-8'>
       <SectionHeader
         icon={Sparkles}
-        title='Welcome to Auth Demo'
+        title='Welcome to Identity Hub'
         description='Explore authentication features and security settings'
       />
 
