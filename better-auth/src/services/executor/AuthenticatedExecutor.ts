@@ -18,18 +18,7 @@ export interface IAuthenticatedExecutor extends IBaseExecutor {
       required: Parameters<typeof hasPermission>[1];
       error: TError;
     };
-    abac?: {
-      context?: {
-        loadContext: () => Promise<TContext>;
-        toContextErrorPayload: (error: string) => TError;
-        abacError: TError;
-        check: (context: TContext) => boolean;
-      };
-      ['no-context']?: {
-        check: () => boolean;
-        abacError: TError;
-      };
-    };
+    abac?: AbacAction<TContext, TError>;
     action: {
       run: () => Promise<void>;
 
@@ -50,22 +39,47 @@ export interface IAuthenticatedExecutor extends IBaseExecutor {
       // and transforms it into the specified error payload
       toErrorPayload: (error: string) => TError;
     };
-    abac?: {
-      context?: {
+    abac?: AbacQuery<TContext, TData, TError>;
+  }): Promise<ServiceResponse<TData, TError>>;
+
+  get actor(): User;
+}
+
+type AbacAction<TContext, TError> =
+  | {
+      context: {
+        loadContext: () => Promise<TContext>;
+        toContextErrorPayload: (error: string) => TError;
+        check: (context: TContext) => boolean;
+        abacError: TError;
+      };
+      ['no-context']?: undefined;
+    }
+  | {
+      context?: undefined;
+      ['no-context']: {
+        check: () => boolean;
+        abacError: TError;
+      };
+    };
+
+type AbacQuery<TContext, TData, TError> =
+  | {
+      context: {
         loadContext: () => Promise<TContext>;
         toContextErrorPayload: (error: string) => TError;
         check: (data: TData, context: TContext) => boolean;
         abacError: TError;
       };
-      ['no-context']?: {
+      ['no-context']?: undefined;
+    }
+  | {
+      context?: undefined;
+      ['no-context']: {
         check: (data: TData) => boolean;
         abacError: TError;
       };
     };
-  }): Promise<ServiceResponse<TData, TError>>;
-
-  get actor(): User;
-}
 
 export class AuthenticatedExecutor
   extends BaseExecutor
@@ -94,7 +108,7 @@ export class AuthenticatedExecutor
       : false;
 
     return isValid
-      ? this.runSafely(operation, error => toErrorPayload(error))
+      ? this.runSafely(operation, toErrorPayload)
       : { type: 'error', payload: toErrorPayload(invalidTokenMessage) };
   }
 
@@ -103,18 +117,7 @@ export class AuthenticatedExecutor
       required: Parameters<typeof hasPermission>[1];
       error: TError;
     };
-    abac?: {
-      context?: {
-        loadContext: () => Promise<TContext>;
-        toContextErrorPayload: (error: string) => TError;
-        abacError: TError;
-        check: (context: TContext) => boolean;
-      };
-      ['no-context']?: {
-        check: () => boolean;
-        abacError: TError;
-      };
-    };
+    abac?: AbacAction<TContext, TError>;
     action: {
       run: () => Promise<void>;
       toErrorPayload: (error: string) => TError;
@@ -124,8 +127,7 @@ export class AuthenticatedExecutor
     const hasRbac = await hasPermission(this._actor.id, rbac.required);
     if (!hasRbac) return { type: 'error', payload: rbac.error };
 
-    if (!abac)
-      return this.runSafely(action.run, error => action.toErrorPayload(error));
+    if (!abac) return this.runSafely(action.run, action.toErrorPayload);
 
     if (abac['no-context'] && !abac['no-context'].check())
       return { type: 'error', payload: abac['no-context'].abacError };
@@ -133,7 +135,7 @@ export class AuthenticatedExecutor
     if (abac.context) {
       const contextResponse = await this.runSafely(
         abac.context.loadContext,
-        error => abac.context!.toContextErrorPayload(error)
+        abac.context!.toContextErrorPayload
       );
       if (contextResponse.type === 'error') return contextResponse;
 
@@ -141,7 +143,7 @@ export class AuthenticatedExecutor
         return { type: 'error', payload: abac.context.abacError };
     }
 
-    return this.runSafely(action.run, error => action.toErrorPayload(error));
+    return this.runSafely(action.run, action.toErrorPayload);
   }
 
   async executeProtectedQuery<TData, TError, TContext>(params: {
@@ -153,27 +155,14 @@ export class AuthenticatedExecutor
       run: () => Promise<TData>;
       toErrorPayload: (error: string) => TError;
     };
-    abac?: {
-      context?: {
-        loadContext: () => Promise<TContext>;
-        toContextErrorPayload: (error: string) => TError;
-        check: (data: TData, context: TContext) => boolean;
-        abacError: TError;
-      };
-      ['no-context']?: {
-        check: (data: TData) => boolean;
-        abacError: TError;
-      };
-    };
+    abac?: AbacQuery<TContext, TData, TError>;
   }): Promise<ServiceResponse<TData, TError>> {
     const { rbac, query, abac } = params;
 
     const hasRbac = await hasPermission(this._actor.id, rbac.required);
     if (!hasRbac) return { type: 'error', payload: rbac.error };
 
-    const queryResult = await this.runSafely(query.run, error =>
-      query.toErrorPayload(error)
-    );
+    const queryResult = await this.runSafely(query.run, query.toErrorPayload);
     if (queryResult.type === 'error') return queryResult;
     const data = queryResult.payload;
 
@@ -182,7 +171,7 @@ export class AuthenticatedExecutor
     if (abac.context) {
       const contextResult = await this.runSafely(
         abac.context.loadContext,
-        error => abac.context!.toContextErrorPayload(error) // keeps yelling undefined without the non-null assertion, even though the existence of abac.context is already checked in the if condition
+        abac.context!.toContextErrorPayload // keeps yelling undefined without the non-null assertion, even though the existence of abac.context is already checked in the if condition
       );
       if (contextResult.type === 'error') return contextResult;
 
