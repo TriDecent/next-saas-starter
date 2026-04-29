@@ -1,3 +1,5 @@
+'use client'
+
 import { useSyncExternalStore } from 'react';
 
 type Breakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
