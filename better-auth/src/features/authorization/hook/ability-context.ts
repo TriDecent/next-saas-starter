@@ -1,16 +1,49 @@
-import type { AbilityBuilder } from '@casl/ability';
+import type { User } from '@/generated/prisma/client';
+import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { createContext } from 'react';
-import type { AppAbility } from '../../../lib/casl/ability';
+import { createStore } from 'zustand';
+import { defineAbilityFor, type AppAbility } from '../../../lib/casl/ability';
 
-export type AbilityUpdater = (
+type AbilityUpdater = (
   can: AbilityBuilder<AppAbility>['can'],
   cannot: AbilityBuilder<AppAbility>['cannot']
 ) => void;
 
-export type AbilityContextValue = Readonly<{
+export type AbilityState = Readonly<{
   ability: AppAbility;
-  appendRules: (updater: AbilityUpdater) => void;
-  resetRules: () => void;
+  actions: {
+    appendRules: (updater: AbilityUpdater) => void;
+    resetRules: () => void;
+  };
 }>;
 
-export const AbilityContext = createContext<AbilityContextValue | null>(null);
+export function createAbilityStore(initialUser: User) {
+  const initialAbility = defineAbilityFor(initialUser);
+
+  return createStore<AbilityState>()((set, get) => ({
+    ability: initialAbility,
+    actions: {
+      appendRules: (updater: AbilityUpdater) => {
+        const currentAbility = get().ability;
+
+        const {
+          can,
+          cannot,
+          rules: newRules,
+        } = new AbilityBuilder<AppAbility>(createMongoAbility);
+
+        updater(can, cannot);
+
+        const combinedRules = [...currentAbility.rules, ...newRules];
+
+        set({ ability: createMongoAbility(combinedRules) });
+      },
+      resetRules: () => {
+        set({ ability: defineAbilityFor(initialUser) });
+      },
+    },
+  }));
+}
+
+type AbilityStore = ReturnType<typeof createAbilityStore>;
+export const AbilityContext = createContext<AbilityStore | null>(null);
