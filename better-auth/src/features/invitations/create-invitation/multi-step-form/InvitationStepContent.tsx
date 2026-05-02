@@ -3,7 +3,7 @@
 import { OrganizationItem, useOrgContext } from '@/features/organizations';
 import { SelectRecipientField, SelectRoleField } from '../_shared';
 
-export function InvitationStepContent({ step }: { step: 0 | 1 | 2 }) {
+export function InvitationStepContent({ step }: { step: number }) {
   const selectedOrg = useOrgContext();
 
   switch (step) {
