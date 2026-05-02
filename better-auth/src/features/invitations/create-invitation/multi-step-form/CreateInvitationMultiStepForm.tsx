@@ -10,51 +10,51 @@ import {
   FieldSet,
   FieldTitle,
 } from '@/shared/components/ui';
-import { useCallback, useState } from 'react';
+import { MultiStepProvider, useMultiStepContext } from '@/shared/context';
 import { FaArrowRight } from 'react-icons/fa6';
 import { BaseCreateInvitationForm } from '../_shared';
 import { INVITATION_STEPS } from './constants';
 import { InvitationStepContent } from './InvitationStepContent';
 import { InvitationStepFooter } from './InvitationStepFooter';
 import { InvitationStepHeader } from './InvitationStepHeader';
-import { useInvitationSteps, type Step } from './use-invitation-steps';
+import { useInvitationSteps } from './use-invitation-steps';
 
 export function CreateInvitationMultiStepForm() {
-  const selectedOrg = useOrgContext();
-  const [isLast, setIsLast] = useState(false);
-
-  const handleChangeStep = useCallback((step: Step) => {
-    if (step.position === 'last') {
-      setIsLast(true);
-      return;
-    }
-    setIsLast(false);
-  }, []);
-
   return (
     <Card>
-      <BaseCreateInvitationForm
-        shouldRenderSubmitButton={false}
-        renderActions={
-          isLast
-            ? isPending => (
-                <div className='flex px-6 sm:justify-end'>
-                  <SubmitButton isPending={isPending} />
-                </div>
-              )
-            : undefined
-        }
-        organizationId={selectedOrg.id}
-      >
-        <Wrapper onChangeStep={handleChangeStep} />
-      </BaseCreateInvitationForm>
+      <MultiStepProvider stepCount={INVITATION_STEPS.length}>
+        <MultiStepFormLayout />
+      </MultiStepProvider>
     </Card>
   );
 }
 
-function Wrapper({ onChangeStep }: { onChangeStep: (step: Step) => void }) {
-  const { step, isFirst, isLast, next, back } =
-    useInvitationSteps(onChangeStep);
+function MultiStepFormLayout() {
+  const selectedOrg = useOrgContext();
+  const currentStep = useMultiStepContext(state => state.currentStep);
+  const isLast = currentStep === INVITATION_STEPS.length - 1;
+
+  return (
+    <BaseCreateInvitationForm
+      shouldRenderSubmitButton={false}
+      renderActions={
+        isLast
+          ? isPending => (
+              <div className='flex px-6 sm:justify-end'>
+                <SubmitButton isPending={isPending} />
+              </div>
+            )
+          : undefined
+      }
+      organizationId={selectedOrg.id}
+    >
+      <StepContentRenderer />
+    </BaseCreateInvitationForm>
+  );
+}
+
+function StepContentRenderer() {
+  const { step, isFirst, isLast, next, back } = useInvitationSteps();
   const meta = INVITATION_STEPS[step];
 
   return (
