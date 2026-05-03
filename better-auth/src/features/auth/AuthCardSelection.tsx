@@ -8,15 +8,15 @@ import {
   TabsTrigger,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
-import { useAppSelector } from '@/shared/hooks';
 import { FaPlus, FaSignInAlt } from 'react-icons/fa';
 import { SignInCard } from './sign-in';
 import { SignUpCard } from './sign-up';
+import { useVerificationStore } from './store';
 
 export function AuthCardSelection() {
-  const verificationInfo = useAppSelector(state => state.ui.verificationInfo);
+  const info = useVerificationStore(state => state.verificationInfo);
 
-  return !verificationInfo ? (
+  return !info ? (
     <Tabs defaultValue='signin' className='mx-auto max-w-xl'>
       <TabsList>
         <TabsTrigger value='signin'>
@@ -41,7 +41,7 @@ export function AuthCardSelection() {
     <EmailVerificationCard
       callbackURL={ROUTES.home.href}
       isEmailSent={true}
-      {...verificationInfo}
+      {...info}
     />
   );
 }

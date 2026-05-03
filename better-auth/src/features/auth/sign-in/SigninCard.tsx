@@ -9,13 +9,12 @@ import {
   ButtonGroupSeparator,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
-import { useAppDispatch } from '@/shared/hooks';
-import { uiActions } from '@/store';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Fragment } from 'react';
 import { toast } from 'sonner';
 import { AuthCard } from '../_shared';
+import { useVerificationStore } from '../store';
 import {
   SignInForm,
   type SignInErrorData,
@@ -24,7 +23,9 @@ import {
 import { SignInWithPasskey } from './SignInWithPasskey';
 
 export function SignInCard() {
-  const reduxDispatch = useAppDispatch();
+  const setInfo = useVerificationStore(
+    state => state.actions.setVerificationInfo
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -41,12 +42,10 @@ export function SignInCard() {
   const handleSignInError = (payload: SignInErrorData) => {
     if (payload.status !== 'EMAIL_NOT_VERIFIED') return;
 
-    reduxDispatch(
-      uiActions.toggleEmailVerification({
-        email: payload.email!, // email will be present in this case
-        name: 'User',
-      })
-    );
+    setInfo({
+      email: payload.email!, // email will be present in this case
+      name: 'User',
+    });
   };
 
   return (

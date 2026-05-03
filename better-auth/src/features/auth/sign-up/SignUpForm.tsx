@@ -10,9 +10,7 @@ import {
   FieldSet,
   InputGroupAddon,
 } from '@/shared/components/ui';
-import { useAppDispatch } from '@/shared/hooks';
 import { signUpSchema } from '@/shared/schema';
-import { uiActions } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
 import { FormProvider } from 'react-hook-form';
@@ -21,10 +19,13 @@ import { MdEmail } from 'react-icons/md';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { TbNumber123 } from 'react-icons/tb';
 import { toast } from 'sonner';
+import { useVerificationStore } from '../store';
 import { signUpAction } from './sign-up-action';
 
 export function SignUpForm() {
-  const reduxDispatch = useAppDispatch();
+  const setInfo = useVerificationStore(
+    state => state.actions.setVerificationInfo
+  );
 
   const {
     methods,
@@ -53,12 +54,7 @@ export function SignUpForm() {
         id: 'sign-up-form',
       });
       methods.reset();
-      reduxDispatch(
-        uiActions.toggleEmailVerification({
-          name: state.payload.name,
-          email: state.payload.email,
-        })
-      );
+      setInfo(state.payload);
     },
     onFormError: state => {
       toast.error('Sign up failed', {
