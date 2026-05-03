@@ -36,7 +36,7 @@ export function createAbilityStore(initialUser: User) {
 
         const combinedRules = [...currentAbility.rules, ...newRules];
 
-        set({ ability: createMongoAbility(combinedRules) });
+        set({ ability: createMongoAbility<AppAbility>(combinedRules) });
       },
       resetRules: () => {
         set({ ability: defineAbilityFor(initialUser) });
