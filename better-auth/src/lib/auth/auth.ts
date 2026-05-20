@@ -6,7 +6,7 @@ import {
   sendWelcomeEmail,
 } from '@/features/email';
 import { ENV } from '@/lib/env';
-import { ROUTES } from '@/shared/constants';
+import { COOKIES, ROUTES } from '@/shared/constants';
 import { passkey } from '@better-auth/passkey';
 import { stripe } from '@better-auth/stripe';
 import { betterAuth } from 'better-auth';
@@ -20,7 +20,7 @@ import { stripeConfigs } from './stripe-configs';
 import { adminPluginConfigs } from './user-permissions';
 export const auth = betterAuth({
   appName: 'Trí Decent Auth',
-  advanced: { cookiePrefix: 'tri-decent' },
+  advanced: { cookiePrefix: COOKIES.cookiePrefix },
   impersonationSessionDuration: 60 * 60,
   session: { cookieCache: { enabled: false, maxAge: 60 * 5 } },
   plugins: [
@@ -99,7 +99,7 @@ export const auth = betterAuth({
       enabled: true,
       sendChangeEmailConfirmation: async data => {
         console.log(data.url);
-        await sendChangeEmailVerification({
+        sendChangeEmailVerification({
           to: data.user.email,
           userName: data.user.name,
           verificationUrl: data.url,
@@ -113,7 +113,7 @@ export const auth = betterAuth({
 
         console.log(safeUrl);
 
-        await sendDeleteAccountVerification({
+        sendDeleteAccountVerification({
           to: data.user.email,
           userName: data.user.name,
           verificationUrl: safeUrl,
@@ -134,7 +134,7 @@ export const auth = betterAuth({
               data: { welcomeSent: true },
             });
 
-            await sendWelcomeEmail({ to: user.email, userName: user.name });
+            sendWelcomeEmail({ to: user.email, userName: user.name });
           } catch (error) {
             console.log(error);
           }

@@ -18,7 +18,7 @@ const sharedFreeTrialConfig: StripePlan['freeTrial'] = {
     if (!user) return;
 
     console.log('Trial started for user:', user.email);
-    await sendTrialStartEmail({
+    sendTrialStartEmail({
       to: user.email,
       subscription,
       userName: user.name,
@@ -29,7 +29,7 @@ const sharedFreeTrialConfig: StripePlan['freeTrial'] = {
     if (!user) return;
 
     console.log('Trial ending soon for user:', user.email);
-    await sendTrialEndEmail({
+    sendTrialEndEmail({
       to: user.email,
       subscription,
       userName: user.name,
@@ -40,7 +40,7 @@ const sharedFreeTrialConfig: StripePlan['freeTrial'] = {
     if (!user) return;
 
     console.log('Trial expired for user:', user.email);
-    await sendTrialExpireEmail({
+    sendTrialExpireEmail({
       to: user.email,
       subscription,
       userName: user.name,
