@@ -3,6 +3,7 @@
 import { ORG_ROLES } from '@/lib/auth/constants';
 import { FormField } from '@/shared/components/form';
 import {
+  Field,
   FieldContent,
   FieldLabel,
   Item,
@@ -23,20 +24,26 @@ export function SelectRoleField() {
       <FormField kind='radio-group' name='role' id='role'>
         {({ isDisabled, isError }) =>
           roles.map(role => (
-            <FieldLabel key={role.value} className='w-full rounded-md'>
-              <FieldContent>
-                <RoleDisplay
-                  role={role}
-                  renderActions={
-                    <RadioGroupItem
-                      value={role.value}
-                      disabled={isDisabled}
-                      aria-invalid={isError}
-                    />
-                  }
-                />
-              </FieldContent>
-            </FieldLabel>
+            <Field
+              key={role.value}
+              data-invalid={isError}
+              data-disabled={isDisabled}
+            >
+              <FieldLabel className='w-full rounded-md'>
+                <FieldContent>
+                  <RoleDisplay
+                    role={role}
+                    renderActions={
+                      <RadioGroupItem
+                        value={role.value}
+                        disabled={isDisabled}
+                        aria-invalid={isError}
+                      />
+                    }
+                  />
+                </FieldContent>
+              </FieldLabel>
+            </Field>
           ))
         }
       </FormField>

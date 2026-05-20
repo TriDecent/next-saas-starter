@@ -1,8 +1,10 @@
 'use client';
 
+import type { Organization } from '@/generated/prisma/client';
 import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
 import { FormField } from '@/shared/components/form';
 import {
+  Field,
   FieldContent,
   FieldDescription,
   FieldLabel,
@@ -24,8 +26,6 @@ export function SelectOrganization({
   organizations: OrganizationWithRole[];
   activeOrgId: string | null;
 }) {
-  const { setValue } = useFormContext<CreateInvitationSchema>();
-
   return (
     <FieldSet>
       <FieldLegend className='text-sm font-semibold'>
@@ -42,30 +42,52 @@ export function SelectOrganization({
         <FormField kind='radio-group' id='organizationId' name='organizationId'>
           {({ isError, isDisabled }) =>
             organizations.map(org => (
-              <FieldLabel
+              <OrgField
                 key={org.id}
-                htmlFor={org.id}
-                className='w-full rounded-md'
-              >
-                <FieldContent>
-                  <OrganizationItem
-                    organization={{ ...org, isActive: activeOrgId === org.id }}
-                    renderActions={
-                      <RadioGroupItem
-                        value={org.id}
-                        id={org.id}
-                        aria-invalid={isError}
-                        disabled={isDisabled}
-                        onClick={() => setValue('selectedOrganization', org)}
-                      />
-                    }
-                  />
-                </FieldContent>
-              </FieldLabel>
+                org={{
+                  ...org,
+                  isActive: activeOrgId === org.id,
+                }}
+                isError={isError}
+                isDisabled={isDisabled}
+              />
             ))
           }
         </FormField>
       )}
     </FieldSet>
+  );
+}
+
+function OrgField({
+  org,
+  isError,
+  isDisabled,
+}: {
+  org: Organization & { isActive: boolean };
+  isError: boolean;
+  isDisabled: boolean;
+}) {
+  const { setValue } = useFormContext<CreateInvitationSchema>();
+
+  return (
+    <Field data-invalid={isError} data-disabled={isDisabled}>
+      <FieldLabel htmlFor={org.id} className='w-full rounded-md'>
+        <FieldContent>
+          <OrganizationItem
+            organization={org}
+            renderActions={
+              <RadioGroupItem
+                value={org.id}
+                id={org.id}
+                aria-invalid={isError}
+                disabled={isDisabled}
+                onClick={() => setValue('selectedOrganization', org)}
+              />
+            }
+          />
+        </FieldContent>
+      </FieldLabel>
+    </Field>
   );
 }
