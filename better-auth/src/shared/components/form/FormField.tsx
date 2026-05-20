@@ -4,19 +4,13 @@ import React, {
   type InputHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react';
-import {
-  Controller,
-  useFormContext,
-  type FieldError as FieldErrorType,
-} from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { cn } from '../../utils';
 import {
   Checkbox,
   Combobox,
   ComboboxInput,
   Field,
-  FieldContent,
-  FieldDescription,
   FieldError,
   FieldLabel,
   FieldTitle,
@@ -30,19 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui';
-
-type FieldOrientation = 'vertical' | 'horizontal' | 'responsive';
-
-interface BaseFieldProps {
-  id: string;
-  name: string;
-  labelText: string;
-  labelClassName?: string;
-  description?: React.ReactNode;
-  className?: string;
-  orientation?: FieldOrientation;
-  addons?: React.ReactNode;
-}
+import { FieldWrapper, type BaseFieldProps } from './FieldWrapper';
 
 type InputFieldProps = BaseFieldProps & InputHTMLAttributes<HTMLInputElement>;
 type TextareaFieldProps = BaseFieldProps &
@@ -96,8 +78,8 @@ export function FormField<TItem>(props: FormFieldProps<TItem>) {
       return <ControlledSelectField {...(rest as SelectFieldProps)} />;
     case 'checkbox':
       return <ControlledCheckboxField {...(rest as CheckboxFieldProps)} />;
-    case 'radio':
-      return <ControlledRadioField {...(rest as RadioFieldProps)} />;
+    case 'radio-group':
+      return <ControlledRadioGroupField {...(rest as RadioGroupFieldProps)} />;
     case 'combobox':
       return (
         <ControlledComboboxField<TItem>
@@ -118,7 +100,7 @@ function ControlledInputField({ ...props }: InputFieldProps) {
       name={props.name}
       control={control}
       render={({ field, fieldState }) => (
-        <FieldWrapper
+        <BasicFieldWrapper
           {...props}
           labelText={labelText}
           error={fieldState.error}
@@ -141,7 +123,7 @@ function ControlledInputField({ ...props }: InputFieldProps) {
             />
             {props.addons}
           </InputGroup>
-        </FieldWrapper>
+        </BasicFieldWrapper>
       )}
     />
   );
@@ -156,7 +138,7 @@ function ControlledTextareaField({ ...props }: TextareaFieldProps) {
       name={props.name}
       control={control}
       render={({ field, fieldState }) => (
-        <FieldWrapper
+        <BasicFieldWrapper
           {...props}
           labelText={labelText}
           error={fieldState.error}
@@ -179,7 +161,7 @@ function ControlledTextareaField({ ...props }: TextareaFieldProps) {
             />
             {props.addons}
           </InputGroup>
-        </FieldWrapper>
+        </BasicFieldWrapper>
       )}
     />
   );
@@ -194,10 +176,9 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
       name={props.name}
       control={control}
       render={({ field, fieldState }) => (
-        <FieldWrapper
+        <BasicFieldWrapper
           {...props}
           id={props.id}
-          name={props.name}
           error={fieldState.error}
           labelText={labelText}
           disabled={props.disabled || formState.isSubmitting}
@@ -215,11 +196,7 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
               name={props.name}
               disabled={props.disabled || formState.isSubmitting}
               aria-invalid={fieldState.invalid}
-              className={cn(
-                'w-full',
-                fieldState.invalid ? 'error' : '',
-                props.className
-              )}
+              className={cn('w-full', fieldState.invalid ? 'error' : '')}
             >
               <div className='flex items-center gap-2'>
                 {props.addons}
@@ -229,7 +206,7 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
 
             {props.children}
           </Select>
-        </FieldWrapper>
+        </BasicFieldWrapper>
       )}
     />
   );
@@ -326,7 +303,7 @@ function ControlledRadioGroupField({
           </RadioGroup>
 
           {fieldState.error ? <FieldError errors={[fieldState.error]} /> : null}
-        </Field>
+        </div>
       )}
     />
   );
@@ -346,7 +323,7 @@ function ControlledComboboxField<TItem>(props: ComboboxFieldProps<TItem>) {
           : (field.value ?? null);
 
         return (
-          <FieldWrapper
+          <BasicFieldWrapper
             {...props}
             id={props.id}
             error={fieldState.error}
@@ -368,24 +345,21 @@ function ControlledComboboxField<TItem>(props: ComboboxFieldProps<TItem>) {
                 aria-invalid={fieldState.invalid}
                 placeholder={props.placeholder}
                 autoComplete={props.autoComplete}
-                className={cn(
-                  fieldState.invalid ? 'error' : '',
-                  props.className
-                )}
+                className={cn(fieldState.invalid ? 'error' : '')}
               >
                 {props.addons}
               </ComboboxInput>
 
               {props.children}
             </Combobox>
-          </FieldWrapper>
+          </BasicFieldWrapper>
         );
       }}
     />
   );
 }
 
-function FieldWrapper({
+function BasicFieldWrapper({
   id,
   labelText,
   labelClassName,
@@ -394,28 +368,24 @@ function FieldWrapper({
   orientation = 'responsive',
   disabled,
   children,
-}: BaseFieldProps & {
-  error?: FieldErrorType;
-  disabled: boolean;
-  children: React.ReactNode;
-}) {
+}: React.ComponentPropsWithoutRef<typeof FieldWrapper.Root> &
+  React.ComponentPropsWithoutRef<typeof FieldWrapper.Label> &
+  React.ComponentPropsWithoutRef<typeof FieldWrapper.Content>) {
   return (
-    <Field
+    <FieldWrapper.Root
       orientation={orientation}
-      data-invalid={!!error}
-      data-disabled={disabled}
+      error={error}
+      disabled={disabled}
     >
-      <FieldLabel htmlFor={id} className={cn('max-w-40', labelClassName)}>
-        {labelText}
-      </FieldLabel>
-      <FieldContent>
-        {children}
+      <FieldWrapper.Label
+        id={id}
+        labelText={labelText}
+        labelClassName={labelClassName}
+      />
 
-        {description ? (
-          <FieldDescription>{description}</FieldDescription>
-        ) : null}
-        {error ? <FieldError errors={[error]} /> : null}
-      </FieldContent>
-    </Field>
+      <FieldWrapper.Content description={description} error={error}>
+        {children}
+      </FieldWrapper.Content>
+    </FieldWrapper.Root>
   );
 }
