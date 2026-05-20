@@ -20,7 +20,7 @@ import { HiCog, HiEye, HiStar, HiUserGroup } from 'react-icons/hi';
 export function SelectRoleField() {
   return (
     <ItemGroup className='gap-3'>
-      <FormField kind='radio' name='role' id='role'>
+      <FormField kind='radio-group' name='role' id='role'>
         {({ isDisabled, isError }) =>
           roles.map(role => (
             <FieldLabel key={role.value} className='w-full rounded-md'>

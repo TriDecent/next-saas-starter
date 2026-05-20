@@ -61,7 +61,7 @@ type CheckboxFieldProps = BaseFieldProps &
     variant: 'card' | 'inline';
   };
 
-type RadioFieldProps = Omit<BaseFieldProps, 'labelText'> &
+type RadioGroupFieldProps = Omit<BaseFieldProps, 'labelText'> &
   Omit<React.ComponentPropsWithoutRef<typeof RadioGroup>, 'children'> & {
     children: (state: {
       isError: boolean;
@@ -81,7 +81,7 @@ export type FormFieldProps<TSelectProps = Record<string, unknown>> =
   | ({ kind: 'textarea' } & TextareaFieldProps)
   | ({ kind: 'select' } & SelectFieldProps<TSelectProps>)
   | ({ kind: 'checkbox' } & CheckboxFieldProps)
-  | ({ kind: 'radio' } & RadioFieldProps)
+  | ({ kind: 'radio-group' } & RadioGroupFieldProps)
   | ({ kind: 'combobox' } & ComboboxFieldProps<TSelectProps>);
 
 export function FormField<TItem>(props: FormFieldProps<TItem>) {
@@ -302,7 +302,10 @@ function ControlledCheckboxField({ variant, ...props }: CheckboxFieldProps) {
   );
 }
 
-function ControlledRadioField({ children, ...props }: RadioFieldProps) {
+function ControlledRadioGroupField({
+  children,
+  ...props
+}: RadioGroupFieldProps) {
   const { control, formState } = useFormContext();
 
   return (
@@ -310,7 +313,7 @@ function ControlledRadioField({ children, ...props }: RadioFieldProps) {
       control={control}
       name={props.name}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
+        <div className='space-y-2'>
           <RadioGroup
             {...field}
             onValueChange={field.onChange}

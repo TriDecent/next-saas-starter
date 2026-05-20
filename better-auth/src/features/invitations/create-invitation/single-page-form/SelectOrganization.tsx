@@ -39,7 +39,7 @@ export function SelectOrganization({
       {organizations.length === 0 ? (
         <EmptyOrganization />
       ) : (
-        <FormField kind='radio' id='organizationId' name='organizationId'>
+        <FormField kind='radio-group' id='organizationId' name='organizationId'>
           {({ isError, isDisabled }) =>
             organizations.map(org => (
               <FieldLabel
