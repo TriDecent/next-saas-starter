@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate &amp;&amp; next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "lint": "eslint",
     "ba generate": "pnpm dlx @better-auth/cli generate",
-    "generate": "pnpm dlx prisma generate",
+    "generate": "prisma generate",
     "migrate": "pnpm dlx prisma migrate dev"
   },
   "dependencies": {
