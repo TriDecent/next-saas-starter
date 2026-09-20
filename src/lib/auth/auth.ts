@@ -16,8 +16,10 @@ import { admin, organization } from 'better-auth/plugins';
 import { twoFactor } from 'better-auth/plugins/two-factor';
 import { prisma } from '../prisma';
 import { organizationPluginConfigs } from './organization-permissions';
+import { passKeyOptions } from './passkey-options';
 import { stripeConfigs } from './stripe-configs';
 import { adminPluginConfigs } from './user-permissions';
+
 export const auth = betterAuth({
   appName: 'Trí Decent Auth',
   advanced: { cookiePrefix: COOKIES.cookiePrefix },
@@ -25,9 +27,7 @@ export const auth = betterAuth({
   session: { cookieCache: { enabled: false, maxAge: 60 * 5 } },
   plugins: [
     twoFactor(),
-    passkey({
-      authenticatorSelection: { authenticatorAttachment: 'cross-platform' },
-    }),
+    passkey(passKeyOptions),
     admin(adminPluginConfigs),
     organization(organizationPluginConfigs),
     stripe(stripeConfigs),

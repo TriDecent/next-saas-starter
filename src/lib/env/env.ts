@@ -43,6 +43,11 @@ const envSchema = z.object({
 
   STRIPE_ENTERPRISE_SUBSCRIPTION_MONTHLY_PRICE_ID: z.string().min(1),
   STRIPE_ENTERPRISE_SUBSCRIPTION_YEARLY_PRICE_ID: z.string().min(1),
+
+  // Passkey
+  PASSKEY_RP_ID: z.string().min(1),
+  PASSKEY_RP_NAME: z.string().min(1),
+  PASSKEY_ORIGIN: z.string().min(1),
 });
 
 export const ENV = envSchema.parse(process.env);
