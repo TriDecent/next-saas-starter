@@ -28,6 +28,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const mem = process.memoryUsage();
+  console.log(
+    `📊 RAM Heap Used: ${(mem.heapUsed / 1024 / 1024).toFixed(2)} MB`
+  );
+  console.log(`📊 RAM RSS: ${mem.rss / 1024 / 1024}`);
+
   return (
     <html lang='en' suppressHydrationWarning>
       <body
