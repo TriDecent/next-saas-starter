@@ -1,4 +1,4 @@
-import type { Organization, Session } from '@/generated/prisma/client';
+import type { Session } from '@/generated/prisma/client';
 import type {
   IOrganizationRepository,
   OrganizationWithRole,
@@ -8,7 +8,6 @@ import { AppPolicy } from '@/lib/casl';
 import type { IAuthenticatedExecutor } from '../executor';
 import type { ServiceResponse } from '../types';
 import {
-  GetOrgError,
   type CreateInvitationInput,
   type CreateOrgInput,
   type GeneralOrgError,
@@ -17,7 +16,6 @@ import {
   type GetInvitationResponse,
   type GetOrgInput,
   type GetOrgResponse,
-  type GetOrgSuccess,
   type RemoveUserInput,
   type SetActiveOrgInput,
   type UpdateOrgInput,
@@ -159,43 +157,14 @@ export class OrganizationService {
   }
 
   async getFullOrganization(params: GetOrgInput): Promise<GetOrgResponse> {
-    return this._serviceExecutor.executeProtectedQuery<
-      GetOrgSuccess,
-      GetOrgError,
-      Organization
-    >({
-      rbac: {
-        required: { organization: ['get'] },
-        error: {
-          message: 'You are not authorized to view organization.',
-        },
-      },
-      abac: {
-        ['no-context']: {
-          check: data =>
-            data
-              ? this._orgPolicy.canRead({
-                  ...data,
-                  members: data.members.map(member => member.userId),
-                  metadata: data.metadata,
-                  logo: data.logo ?? null,
-                  stripeCustomerId: null,
-                })
-              : false,
-          abacError: {
-            message: 'You are not authorized to view this organization.',
-          },
-        },
-      },
-      query: {
-        run: () =>
-          auth.api.getFullOrganization({
-            query: params,
-            headers: this.headers,
-          }),
-        toErrorPayload: error => ({ message: error }),
-      },
-    });
+    return this._serviceExecutor.runSafely(
+      async () =>
+        auth.api.getFullOrganization({
+          query: params,
+          headers: this.headers,
+        }),
+      error => ({ message: error })
+    );
   }
 
   updateRole(params: UpdateRoleInput): Promise<GeneralOrgResponse> {

@@ -7,7 +7,6 @@ import type {
   GetSubscriptionOverviewResponse,
   ListActiveSubscriptionResponse,
   ListActiveSubscriptionsInput,
-  SubscriptionOverview,
   SubscriptionPlanDetails,
   UpgradeSubscriptionInput,
   UpgradeSubscriptionResponse,
@@ -141,78 +140,31 @@ export class SubscriptionService {
       SubscriptionService['listActiveSubscription']
     >[number]
   ): Promise<GetSubscriptionOverviewResponse> {
-    return this._serviceExecutor.executeProtectedQuery<
-      SubscriptionOverview,
-      { message: string },
-      string[]
-    >({
-      rbac: {
-        required: { subscription: ['get'] },
-        error: {
-          message: 'You do not have permission to view subscription details.',
-        },
+    return this._serviceExecutor.runSafely(
+      async () => {
+        const [plans, activeSubscriptionsResponse] = await Promise.all([
+          this.getSubscriptionPlans(),
+          this.listActiveSubscription(activeSubscriptionQuery),
+        ]);
+
+        if (activeSubscriptionsResponse.type === 'error')
+          throw new Error(activeSubscriptionsResponse.payload.message);
+
+        const activeSubscriptions = activeSubscriptionsResponse.payload;
+        const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
+        const billingInterval = activeSubscriptions.at(0)?.billingInterval;
+
+        return {
+          activeSubscriptions,
+          plans,
+          currentPlan:
+            planName && billingInterval
+              ? { name: planName, billingInterval }
+              : undefined,
+        };
       },
-      query: {
-        run: async () => {
-          const [plans, activeSubscriptionsResponse] = await Promise.all([
-            this.getSubscriptionPlans(),
-            this.listActiveSubscription(activeSubscriptionQuery),
-          ]);
-
-          if (activeSubscriptionsResponse.type === 'error')
-            throw new Error(activeSubscriptionsResponse.payload.message);
-
-          const activeSubscriptions = activeSubscriptionsResponse.payload;
-          const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
-          const billingInterval = activeSubscriptions.at(0)?.billingInterval;
-
-          return {
-            activeSubscriptions,
-            plans,
-            currentPlan:
-              planName && billingInterval
-                ? { name: planName, billingInterval }
-                : undefined,
-          };
-        },
-        toErrorPayload: error => ({ message: error }),
-      },
-      abac: {
-        context: {
-          abacError: {
-            message:
-              'You do not have access to view these subscription details.',
-          },
-          loadContext: async () => {
-            if (!activeSubscriptionQuery?.referenceId)
-              // this case means a personal subscription
-              // listActiveSubscription will only return the personal subscription for the user
-              //  so we can safely return the user's id as the only authorized user id
-              return [this.actor.id];
-
-            const authorizedUserIds =
-              await this._ownerContextFetcher.getAuthorizedUserIds(
-                activeSubscriptionQuery.referenceId
-              );
-
-            return authorizedUserIds;
-          },
-          toContextErrorPayload: error => ({ message: error }),
-          check: (data, context) => {
-            for (const subscription of data.activeSubscriptions) {
-              if (
-                !this._subscriptionPolicy.canRead({
-                  ...subscription,
-                  owners: context,
-                })
-              )
-                return false;
-            }
-            return true;
-          },
-        },
-      },
-    });
+      error => ({ message: error })
+    );
   }
 
   public get actor() {

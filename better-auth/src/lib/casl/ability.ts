@@ -26,8 +26,8 @@ export type AppAbility = MongoAbility<
   | [Action, Subject]
   | [UserAction, UserSubject]
   | [RoleAction, RoleSubject]
-  | [OrganizationAction, OrganizationSubject]
   | [InvitationAction, InvitationSubject]
+  | [OrganizationAction, OrganizationSubject]
   | [SubscriptionAction, SubscriptionSubject]
 >;
 
@@ -93,10 +93,6 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   }
 
   function defineAbilityForUser() {
-    can('read', 'Organization', { members: actor.id });
-
     can('read', 'User', { id: actor.id });
-
-    can('read', 'Subscription', { owners: actor.id });
   }
 }

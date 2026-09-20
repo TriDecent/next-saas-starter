@@ -10,9 +10,8 @@ import { APP_ROLES } from './constants';
 const statement = {
   ...defaultStatements,
   admin: ['access'],
-  organization: ['create', 'get'],
+  organization: ['create'],
   invitation: ['create'],
-  subscription: ['get'],
 } as const;
 
 const ac = createAccessControl(statement);
@@ -20,22 +19,20 @@ const ac = createAccessControl(statement);
 const extendedAdminAc = ac.newRole({
   ...adminAc.statements,
   admin: ['access'],
-  organization: ['create', 'get'],
   invitation: ['create'],
-  subscription: ['get'],
+
+  organization: ['create'],
 });
 const moderatorAc = ac.newRole({
   user: ['list', 'ban', 'get'],
   admin: ['access'],
-  organization: ['create', 'get'],
   invitation: ['create'],
-  subscription: ['get'],
+
+  organization: ['create'],
 });
 const extendedUserAc = ac.newRole({
   ...userAc.statements,
   user: ['get'],
-  subscription: ['get'],
-  organization: ['get'],
 });
 
 const ROLES_STATEMENTS = {

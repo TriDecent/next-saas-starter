@@ -8,14 +8,8 @@ type SubscriptionWithType = BaseSubscription & { kind: 'Subscription' };
 export type SubscriptionSubject = InferSubjects<SubscriptionWithType>;
 export type SubscriptionAction = '';
 
-type SubscriptionRequiredOwners = Subscription & { owners: string[] };
 export function getSubscriptionPolicyFor(user: AuthSession['user']) {
   const ability = defineAbilityFor(user);
 
-  return {
-    canRead: (subscription?: SubscriptionRequiredOwners) =>
-      subscription
-        ? ability.can('read', { ...subscription, kind: 'Subscription' })
-        : ability.can('read', 'Subscription'),
-  } as const;
+  return {} as const;
 }
