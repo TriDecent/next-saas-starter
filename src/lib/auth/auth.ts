@@ -47,6 +47,16 @@ export const auth = betterAuth({
       clientSecret: ENV.DISCORD_CLIENT_SECRET,
       mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
     },
+    google: {
+      clientId: ENV.GOOGLE_CLIENT_ID,
+      clientSecret: ENV.GOOGLE_CLIENT_SECRET,
+      mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
+    },
+    twitter: {
+      clientId: ENV.X_CLIENT_ID,
+      clientSecret: ENV.X_CLIENT_SECRET,
+      mapProfileToUser: () => ({ welcomeSent: false, favoriteNumber: 0 }),
+    },
   },
   account: { accountLinking: { allowDifferentEmails: true } },
   emailAndPassword: {

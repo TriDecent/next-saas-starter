@@ -1,10 +1,4 @@
-import {
-  FaApple,
-  FaDiscord,
-  FaFacebook,
-  FaGithub,
-  FaGoogle,
-} from 'react-icons/fa6';
+import { FaApple, FaDiscord, FaGithub, FaGoogle, FaX } from 'react-icons/fa6';
 
 export const APP_ROLES = {
   ['super-admin']: 'super-admin',
@@ -24,7 +18,7 @@ export const SUPPORTED_OAUTH_PROVIDERS = [
   { name: 'github', icon: FaGithub },
   { name: 'discord', icon: FaDiscord },
   { name: 'google', icon: FaGoogle },
-  { name: 'facebook', icon: FaFacebook },
+  { name: 'twitter', icon: FaX },
   { name: 'apple', icon: FaApple },
 ] as const;
 
