@@ -1,18 +1,9 @@
 'use client';
 
-import { authClient } from '@/lib/auth/auth-client';
-import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/constants';
-import { ActionButton } from '@/shared/components';
-import {
-  Button,
-  ButtonGroup,
-  ButtonGroupSeparator,
-} from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Fragment } from 'react';
-import { toast } from 'sonner';
 import { AuthCard } from '../_shared';
 import { useVerificationStore } from '../store';
 import {
@@ -21,6 +12,7 @@ import {
   type SignInSuccessData,
 } from './SignInForm';
 import { SignInWithPasskey } from './SignInWithPasskey';
+import { SocialProviders } from './SocialProviders';
 
 export function SignInCard() {
   const setInfo = useVerificationStore(
@@ -66,36 +58,5 @@ export function SignInCard() {
         </Link>
       </Button>
     </AuthCard>
-  );
-}
-
-function SocialProviders() {
-  return (
-    <ButtonGroup className='w-full shadow-md' orientation={'horizontal'}>
-      {SUPPORTED_OAUTH_PROVIDERS.map((provider, index) => (
-        <Fragment key={provider.name}>
-          <ActionButton
-            action={async () => {
-              const { error } = await authClient.signIn.social({
-                provider: provider.name,
-                callbackURL: '/',
-              });
-
-              if (!error) return;
-
-              toast.error(`Sign in failed!`, {
-                description: `${error.message}`,
-              });
-            }}
-            className='flex-1'
-          >
-            <provider.icon />
-          </ActionButton>
-          {index !== SUPPORTED_OAUTH_PROVIDERS.length - 1 ? (
-            <ButtonGroupSeparator orientation='vertical' />
-          ) : null}
-        </Fragment>
-      ))}
-    </ButtonGroup>
   );
 }
