@@ -73,6 +73,7 @@ These concerns are implemented as separate application boundaries while still wo
 - Backup codes
 - WebAuthn passkeys
 - Sensitive-action re-authentication through sudo mode
+- Time-limited sudo sessions with automatic expiration after inactivity
 - Server side authorization checks
 - Arcjet rate limiting and bot protection
 
@@ -284,6 +285,8 @@ Manage Two-Factor Authentication
 Manage Passkeys
 Administrative Operations
 ```
+
+Sudo authorization is time-limited. After successful re-authentication, the elevated authorization remains valid only for a limited period of user activity. If the user remains inactive beyond the configured timeout, the sudo state expires and the user must re-authenticate before performing another sensitive operation.
 
 The security model combines multiple layers:
 
