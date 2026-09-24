@@ -10,7 +10,7 @@ export const COOKIES = {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60,
+      maxAge: 300,
     } satisfies Partial<ResponseCookie>,
   },
   ['admin-session']: { name: `${prefix}.admin_session` },
