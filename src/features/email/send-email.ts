@@ -62,7 +62,7 @@ export async function sendWelcomeEmail(payload: EmailSendingOptions) {
   return sendEmail(
     [payload.to],
     'Welcome to Identity Hub',
-    WelcomeTemplate(payload)
+    WelcomeTemplate({ ...payload, getStartedUrl: ENV.NEXT_PUBLIC_BASE_URL })
   );
 }
 
@@ -164,7 +164,7 @@ function sendEmail(
   content: CreateEmailOptions['react']
 ) {
   return resend.emails.send({
-    from: `Trí Decent ${ENV.RESEND_FROM_EMAIL}`,
+    from: ENV.RESEND_FROM_EMAIL,
     to,
     subject,
     react: content,

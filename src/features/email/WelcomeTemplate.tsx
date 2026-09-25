@@ -13,9 +13,13 @@ import {
 
 interface WelcomeTemplateProps {
   userName: string;
+  getStartedUrl: string;
 }
 
-export function WelcomeTemplate({ userName }: WelcomeTemplateProps) {
+export function WelcomeTemplate({
+  userName,
+  getStartedUrl,
+}: WelcomeTemplateProps) {
   return (
     <Html>
       <Tailwind>
@@ -64,9 +68,7 @@ export function WelcomeTemplate({ userName }: WelcomeTemplateProps) {
 
               <Section className='text-center'>
                 <Button
-                  href={
-                    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-                  }
+                  href={getStartedUrl}
                   className='rounded-md bg-green-600 px-8 py-3 text-lg font-semibold text-white'
                 >
                   Get Started
