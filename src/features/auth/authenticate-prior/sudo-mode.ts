@@ -1,6 +1,7 @@
 'use server';
 
 import { ENV } from '@/lib/env';
+import { COOKIES } from '@/shared/constants';
 import type { User } from 'better-auth';
 import { importJWK, jwtVerify, SignJWT } from 'jose';
 
@@ -26,7 +27,7 @@ export async function createSudoToken(userId: User['id']) {
     .setIssuedAt()
     .setIssuer(ISSUER)
     .setSubject(userId)
-    .setExpirationTime('1m')
+    .setExpirationTime(`${COOKIES['sudo-token'].config.maxAge}S`)
     .sign(PRIVATE_KEY);
 }
 
