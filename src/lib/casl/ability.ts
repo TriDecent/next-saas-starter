@@ -76,9 +76,16 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     cannot('set-role', 'User', {
       role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
     });
+    cannot('set-role', 'User', {
+      email: { $in: PROTECTED_EMAILS },
+    });
 
     cannot('assign', 'Role', {
       name: { $in: [APP_ROLES['super-admin'], APP_ROLES['admin']] },
+    });
+
+    cannot('change-email', 'User', {
+      email: { $in: PROTECTED_EMAILS },
     });
   }
 
@@ -89,10 +96,23 @@ export function defineAbilityFor(actor: AuthSession['user']) {
         $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin}|${APP_ROLES.moderator})$`,
       },
     });
+
     can('read', 'User', { id: actor.id });
+
+    can('change-email', 'User', { id: actor.id });
+    cannot('change-email', 'User', {
+      email: { $in: PROTECTED_EMAILS },
+    });
   }
 
   function defineAbilityForUser() {
     can('read', 'User', { id: actor.id });
+
+    can('change-email', 'User', { id: actor.id });
+    cannot('change-email', 'User', {
+      email: { $in: PROTECTED_EMAILS },
+    });
   }
 }
+
+const PROTECTED_EMAILS = ['sandbox-admin@gmail.com', 'sandbox-user@gmail.com'];

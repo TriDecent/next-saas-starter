@@ -10,7 +10,8 @@ export type UserAction =
   | 'revoke-user'
   | 'impersonate-user'
   | 'delete-account'
-  | 'set-role';
+  | 'set-role'
+  | 'change-email';
 
 export function getUserPolicyFor(actor: AuthSession['user']) {
   const ability = defineAbilityFor(actor);
@@ -44,5 +45,9 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
       user
         ? ability.can('delete', { ...user, kind: 'User' })
         : ability.can('delete', 'User'),
+    canChangeEmail: (user?: BaseUser) =>
+      user
+        ? ability.can('change-email', { ...user, kind: 'User' })
+        : ability.can('change-email', 'User'),
   } as const;
 }
