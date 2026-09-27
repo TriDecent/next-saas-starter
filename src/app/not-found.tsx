@@ -31,7 +31,7 @@ export default function RootNotFound() {
 
         <EmptyContent>
           <div className='flex w-full flex-col gap-3 sm:w-auto sm:flex-row'>
-            <Button asChild size='lg' className='w-full sm:w-auto'>
+            <Button size='lg' className='w-full sm:w-auto'>
               <Link href={ROUTES.home.href}>Go to Home</Link>
             </Button>
           </div>

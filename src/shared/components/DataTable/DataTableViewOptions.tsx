@@ -19,13 +19,15 @@ export function DataTableViewOptions<TData>({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='sm' className='h-8 lg:flex'>
-          <Settings2 />
-          View
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-[150px]'>
+      <DropdownMenuTrigger
+        render={
+          <Button variant='outline' size='sm' className='h-8 lg:flex'>
+            <Settings2 />
+            View
+          </Button>
+        }
+      />
+      <DropdownMenuContent align='end' className='w-37.5'>
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table

@@ -5,14 +5,16 @@ import { FiCopy } from 'react-icons/fi';
 
 export function CopyMemberAction({ member }: { member: Member }) {
   return (
-    <DropdownMenuItem asChild>
-      <CopyText
-        text={JSON.stringify(member)}
-        onSuccess={'Member details copied to clipboard'}
-      >
-        <FiCopy />
-        Copy
-      </CopyText>
-    </DropdownMenuItem>
+    <DropdownMenuItem
+      render={
+        <CopyText
+          text={JSON.stringify(member)}
+          onSuccess={'Member details copied to clipboard'}
+        >
+          <FiCopy />
+          Copy
+        </CopyText>
+      }
+    />
   );
 }

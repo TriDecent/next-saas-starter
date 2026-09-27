@@ -24,8 +24,11 @@ export async function Home() {
       </div>
     </div>
   ) : (
-    <Button variant={'default'} size={'lg'} asChild>
-      <Link href={ROUTES.auth.href}>Sign In / Sign Up</Link>
-    </Button>
+    <Button
+      variant={'default'}
+      size={'lg'}
+      nativeButton={false}
+      render={<Link href={ROUTES.auth.href}>Sign In / Sign Up</Link>}
+    />
   );
 }

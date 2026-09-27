@@ -35,36 +35,36 @@ export function ConnectedAccounts({ accounts }: { accounts: Account[] }) {
               key={supportedProvider.name}
               variant='outline'
               size='sm'
-              asChild
               className='transition-transform hover:scale-105 hover:cursor-pointer active:scale-105'
-            >
-              <SocialActionButton
-                provider={supportedProvider.name}
-                action={isConnected ? 'unlink' : 'link'}
-              >
-                <ItemMedia variant='icon'>
-                  <supportedProvider.icon />
-                </ItemMedia>
+              render={
+                <SocialActionButton
+                  provider={supportedProvider.name}
+                  action={isConnected ? 'unlink' : 'link'}
+                >
+                  <ItemMedia variant='icon'>
+                    <supportedProvider.icon />
+                  </ItemMedia>
 
-                <ItemContent>
-                  <ItemTitle className='capitalize'>
-                    {supportedProvider.name}
-                  </ItemTitle>
-                </ItemContent>
+                  <ItemContent>
+                    <ItemTitle className='capitalize'>
+                      {supportedProvider.name}
+                    </ItemTitle>
+                  </ItemContent>
 
-                {isConnected ? (
-                  <Badge variant={'success'} className='w-30 text-sm'>
-                    <GoVerified />
-                    Connected
-                  </Badge>
-                ) : (
-                  <Badge variant='destructive' className='w-30 text-sm'>
-                    <GoUnverified size={'16'} />
-                    Unconnected
-                  </Badge>
-                )}
-              </SocialActionButton>
-            </Item>
+                  {isConnected ? (
+                    <Badge variant={'success'} className='w-30 text-sm'>
+                      <GoVerified />
+                      Connected
+                    </Badge>
+                  ) : (
+                    <Badge variant='destructive' className='w-30 text-sm'>
+                      <GoUnverified size={'16'} />
+                      Unconnected
+                    </Badge>
+                  )}
+                </SocialActionButton>
+              }
+            />
           );
         })}
       </ItemGroup>

@@ -1,4 +1,4 @@
-import { ConnectedAccounts } from '@/features/settings';
+import { ConnectedAccounts } from '@/features/settings/client';
 import { getUserService } from '@/services';
 import {
   Card,

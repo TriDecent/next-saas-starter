@@ -1,7 +1,7 @@
 'use client';
 
 import { DrawerOpener } from '@/shared/components';
-import { use, useState, type ReactNode } from 'react';
+import { use, useState, type ReactElement, type ReactNode } from 'react';
 import { AuthenticatePriorContext } from './authenticate-prior-context';
 import { AuthenticatePriorActionForm } from './AuthenticatePriorActionForm';
 
@@ -13,7 +13,7 @@ export function AuthenticatePriorAction({
 }: {
   title: string;
   description: string;
-  trigger: ReactNode;
+  trigger: ReactElement;
   children?: ReactNode | ((enteredPassword: string) => ReactNode);
 }) {
   const context = use(AuthenticatePriorContext);

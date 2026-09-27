@@ -1,6 +1,7 @@
 'use client';
 
-import { OrganizationItem, useOrgContext } from '@/features/organizations';
+import { OrganizationItem } from '@/features/organizations';
+import { useOrgContext } from '@/features/organizations/client';
 import { SelectRecipientField, SelectRoleField } from '../_shared/client';
 
 export function InvitationStepContent({ step }: { step: number }) {

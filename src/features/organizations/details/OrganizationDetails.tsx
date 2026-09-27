@@ -1,10 +1,7 @@
 'use server';
 
-import {
-  EntityReferenceProvider,
-  MySubscriptions,
-  SubscriptionPlans,
-} from '@/features/subscription';
+import { MySubscriptions, SubscriptionPlans } from '@/features/subscription';
+import { EntityReferenceProvider } from '@/features/subscription/context/client';
 import { getSubscriptionService } from '@/services';
 import { Loading } from '@/shared/components';
 import {

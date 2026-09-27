@@ -45,9 +45,11 @@ export function NavTrail() {
             return (
               <Fragment key={href}>
                 <BreadcrumbItem>
-                  <BreadcrumbLink asChild>
-                    <Link href={href}>{toUpperCaseFirstLetter(segment)}</Link>
-                  </BreadcrumbLink>
+                  <BreadcrumbLink
+                    render={
+                      <Link href={href}>{toUpperCaseFirstLetter(segment)}</Link>
+                    }
+                  />
                 </BreadcrumbItem>
                 {pathSegments.length !== index + 1 ? (
                   <BreadcrumbSeparator />
@@ -69,9 +71,7 @@ function NavTrailHome() {
   return (
     <>
       <BreadcrumbItem>
-        <BreadcrumbLink asChild>
-          <Link href='/'>Home</Link>
-        </BreadcrumbLink>
+        <BreadcrumbLink render={<Link href='/'>Home</Link>}></BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator />
     </>
@@ -82,9 +82,11 @@ function NavTrailFirst({ segment }: { segment: string }) {
   return (
     <>
       <BreadcrumbItem>
-        <BreadcrumbLink asChild>
-          <Link href={`/${segment}`}>{toUpperCaseFirstLetter(segment)}</Link>
-        </BreadcrumbLink>
+        <BreadcrumbLink
+          render={
+            <Link href={`/${segment}`}>{toUpperCaseFirstLetter(segment)}</Link>
+          }
+        ></BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator />
     </>
@@ -112,11 +114,11 @@ function NavTrailDropdown({
               return (
                 <DropdownMenuItem
                   key={href}
-                  asChild
                   className='hover:cursor-pointer'
-                >
-                  <Link href={href}>{toUpperCaseFirstLetter(segment)}</Link>
-                </DropdownMenuItem>
+                  render={
+                    <Link href={href}>{toUpperCaseFirstLetter(segment)}</Link>
+                  }
+                />
               );
             })}
           </DropdownMenuContent>
@@ -143,9 +145,11 @@ function NavTrailLast({
         return (
           <Fragment key={href}>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={href}>{toUpperCaseFirstLetter(segment)}</Link>
-              </BreadcrumbLink>
+              <BreadcrumbLink
+                render={
+                  <Link href={href}>{toUpperCaseFirstLetter(segment)}</Link>
+                }
+              />
             </BreadcrumbItem>
             {index !== 1 && <BreadcrumbSeparator />}
           </Fragment>

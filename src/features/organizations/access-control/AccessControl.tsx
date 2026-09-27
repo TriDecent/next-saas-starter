@@ -39,11 +39,16 @@ export function AccessControl() {
           </ItemContent>
         </Item>
 
-        <Button variant='outline' className='w-full' asChild>
-          <Link href='/settings/security' className='gap-2'>
-            Review security settings <FaArrowRight className='size-4' />
-          </Link>
-        </Button>
+        <Button
+          variant='outline'
+          className='w-full'
+          nativeButton={false}
+          render={
+            <Link href='/settings/security' className='gap-2'>
+              Review security settings <FaArrowRight className='size-4' />
+            </Link>
+          }
+        />
       </CardContent>
     </Card>
   );

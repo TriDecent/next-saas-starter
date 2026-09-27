@@ -1,3 +1,5 @@
+'use client';
+
 import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior/client';
 import { Button } from '@/shared/components/ui';
 import { IoMdAddCircleOutline } from 'react-icons/io';

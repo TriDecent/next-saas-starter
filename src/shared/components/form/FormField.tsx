@@ -186,7 +186,6 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
             name={props.name}
             onValueChange={field.onChange}
             value={field.value}
-            autoComplete='none'
           >
             <SelectTrigger
               id={props.id}
@@ -315,7 +314,7 @@ function ControlledComboboxField<TItem>(props: ComboboxFieldProps<TItem>) {
       name={props.name}
       control={control}
       render={({ field, fieldState }) => {
-        const selectedValue = items
+        const selectedValue = Array.isArray(items)
           ? (items.find(item => valueAs(item) === field.value) ?? null)
           : (field.value ?? null);
 

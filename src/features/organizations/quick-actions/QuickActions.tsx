@@ -70,24 +70,24 @@ function CreateAnOrgItem() {
 function InvitationsItem() {
   return (
     <Item
-      asChild
       variant='muted'
       className='hover:bg-muted cursor-pointer shadow'
-    >
-      <Link href={ROUTES.invitations.href}>
-        <ItemMedia variant='icon' className='rounded-md'>
-          <FaUsers />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>Invitations</ItemTitle>
-          <ItemDescription>
-            Manage incoming and pending invites.
-          </ItemDescription>
-        </ItemContent>
-        <ItemActions>
-          <FaArrowRight className='text-muted-foreground size-4' />
-        </ItemActions>
-      </Link>
-    </Item>
+      render={
+        <Link href={ROUTES.invitations.href}>
+          <ItemMedia variant='icon' className='rounded-md'>
+            <FaUsers />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>Invitations</ItemTitle>
+            <ItemDescription>
+              Manage incoming and pending invites.
+            </ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <FaArrowRight className='text-muted-foreground size-4' />
+          </ItemActions>
+        </Link>
+      }
+    />
   );
 }

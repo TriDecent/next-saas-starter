@@ -52,11 +52,16 @@ export function SignInCard() {
 
       <SignInForm onSuccess={handleSignInSuccess} onError={handleSignInError} />
 
-      <Button variant={'link'} asChild className='mx-auto w-full underline'>
-        <Link href={ROUTES.auth.nested['reset-password'].href}>
-          Forgot your password?
-        </Link>
-      </Button>
+      <Button
+        variant={'link'}
+        className='mx-auto w-full underline'
+        nativeButton={false}
+        render={
+          <Link href={ROUTES.auth.nested['reset-password'].href}>
+            Forgot your password?
+          </Link>
+        }
+      />
     </AuthCard>
   );
 }

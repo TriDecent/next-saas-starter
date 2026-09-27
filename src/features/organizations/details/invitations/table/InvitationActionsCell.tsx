@@ -20,11 +20,14 @@ export function InvitationActionsCell({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost'>
-          <MoreHorizontal />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        nativeButton={false}
+        render={
+          <Button variant='ghost'>
+            <MoreHorizontal />
+          </Button>
+        }
+      />
 
       <DropdownMenuContent align='end'>
         <DropdownMenuLabel className='flex max-w-52 items-center gap-2 truncate'>

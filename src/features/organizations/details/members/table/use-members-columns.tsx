@@ -14,10 +14,7 @@ const selectColumn = {
   header: ({ table }) => (
     <div className='flex justify-center'>
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected()}
         onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
       />
     </div>

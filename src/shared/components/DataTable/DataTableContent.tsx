@@ -15,7 +15,6 @@ import {
 
 type DataTableContentProps<TData> = {
   table: ReactTable<TData>;
-
   headerClassName?: string;
 };
 

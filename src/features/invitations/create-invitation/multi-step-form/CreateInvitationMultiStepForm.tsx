@@ -1,6 +1,6 @@
 'use client';
 
-import { useOrgContext } from '@/features/organizations';
+import { useOrgContext } from '@/features/organizations/client';
 import { MiniLoader } from '@/shared/components';
 import { Button, Card, CardContent } from '@/shared/components/ui';
 import {

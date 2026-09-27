@@ -19,6 +19,8 @@ export function CopyText({
     <button
       {...props}
       onClick={async e => {
+        props.onClick?.(e);
+
         await navigator.clipboard.writeText(text);
 
         if (typeof onSuccess === 'function') {
@@ -27,7 +29,6 @@ export function CopyText({
         }
 
         toast.success(onSuccess);
-        props.onClick?.(e);
       }}
       className={cn('w-full', props.className)}
     >

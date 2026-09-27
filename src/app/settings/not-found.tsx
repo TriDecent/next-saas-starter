@@ -31,11 +31,16 @@ export default function SettingsNotFound() {
 
         <EmptyContent>
           <div className='flex w-full flex-col gap-3 sm:w-auto sm:flex-row'>
-            <Button asChild size='lg' className='w-full sm:w-auto'>
-              <Link href={ROUTES.settings.nested.profile.href}>
-                Go to profile
-              </Link>
-            </Button>
+            <Button
+              size='lg'
+              className='w-full sm:w-auto'
+              nativeButton={false}
+              render={
+                <Link href={ROUTES.settings.nested.profile.href}>
+                  Go to profile
+                </Link>
+              }
+            />
           </div>
         </EmptyContent>
       </Empty>

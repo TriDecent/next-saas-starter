@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useSyncExternalStore } from 'react';
 
@@ -21,7 +21,7 @@ const subscribe = (callback: () => void) => {
 };
 
 const getClientSnapshot = () => getBreakpoint();
-const getServerSnapshot = () => 'sm';
+const getServerSnapshot = () => 'sm' as const;
 
 export function useBreakpoint() {
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);

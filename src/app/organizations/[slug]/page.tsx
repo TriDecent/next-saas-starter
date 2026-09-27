@@ -1,10 +1,12 @@
 import {
   OrganizationDetails,
   OrganizationOverview,
-  OrgContextProvider,
   OrgQuickActions,
-  ToggleActiveOrg,
 } from '@/features/organizations';
+import {
+  OrgContextProvider,
+  ToggleActiveOrg,
+} from '@/features/organizations/client';
 import { getOrgService } from '@/services';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
 import { Button } from '@/shared/components/ui';
@@ -69,13 +71,13 @@ async function Wrapper({ params }: SlugParams) {
                     : ''
                 }`}
                 variant='outline'
-                asChild
-              >
-                <ToggleActiveOrg
-                  orgId={!isActive ? organization.id : null}
-                  isActive={isActive}
-                />
-              </Button>
+                render={
+                  <ToggleActiveOrg
+                    orgId={!isActive ? organization.id : null}
+                    isActive={isActive}
+                  />
+                }
+              />
             }
           />
         </div>

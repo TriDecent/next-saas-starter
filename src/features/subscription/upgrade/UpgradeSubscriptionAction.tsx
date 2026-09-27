@@ -1,6 +1,6 @@
 'use client';
 
-import { type Button } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui';
 import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
@@ -53,8 +53,8 @@ export function UpgradeSubscriptionAction({
     });
 
   return (
-    <button {...props} onClick={handleUpgradeSubscription} disabled={isPending}>
+    <Button {...props} onClick={handleUpgradeSubscription} disabled={isPending}>
       {props.children}
-    </button>
+    </Button>
   );
 }

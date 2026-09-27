@@ -89,15 +89,20 @@ function OrganizationDisplay({
             orgId={organization.id}
             isActive={organization.isActive}
           />
-          <Button variant='outline' size='sm' asChild>
-            <Link
-              href={`${ROUTES.organizations.href}/${organization.slug}`}
-              className='gap-2'
-            >
-              <FaLink className='size-4' />
-              Open
-            </Link>
-          </Button>
+          <Button
+            variant='outline'
+            size='sm'
+            nativeButton={false}
+            render={
+              <Link
+                href={`${ROUTES.organizations.href}/${organization.slug}`}
+                className='gap-2'
+              >
+                <FaLink className='size-4' />
+                Open
+              </Link>
+            }
+          />
         </>
       }
     />
@@ -113,17 +118,21 @@ function SetActiveOrgAction({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='sm'>
-          <FaCog className='size-4' />
-          Settings
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        nativeButton={false}
+        render={
+          <Button variant='outline' size='sm'>
+            <FaCog className='size-4' />
+            Settings
+          </Button>
+        }
+      />
 
       <DropdownMenuContent align='start'>
-        <DropdownMenuItem asChild>
-          <ToggleActiveOrg orgId={orgId} isActive={isActive} />
-        </DropdownMenuItem>
+        <DropdownMenuItem
+          nativeButton={false}
+          render={<ToggleActiveOrg orgId={orgId} isActive={isActive} />}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

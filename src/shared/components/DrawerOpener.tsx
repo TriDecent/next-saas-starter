@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import {
   Drawer,
   DrawerContent,
@@ -12,7 +12,7 @@ import {
 type DrawerOpenerProps = {
   title: string;
   description: string;
-  trigger: ReactNode;
+  trigger: ReactElement;
   action?: ReactNode;
   children: ReactNode;
 } & ComponentProps<typeof Drawer>;
@@ -20,7 +20,7 @@ type DrawerOpenerProps = {
 export function DrawerOpener(props: DrawerOpenerProps) {
   return (
     <Drawer {...props}>
-      <DrawerTrigger asChild>{props.trigger}</DrawerTrigger>
+      <DrawerTrigger render={props.trigger} />
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{props.title}</DrawerTitle>

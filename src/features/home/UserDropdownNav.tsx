@@ -35,36 +35,42 @@ export function UserDropdownNav({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant='ghost'
-          className={cn(
-            'border-border ring-primary/50 relative size-14 rounded-full border shadow transition-all hover:ring-2',
-            size === 'sm' ? 'size-10' : ''
-          )}
-        >
-          <Avatar className={cn('size-14', size === 'sm' ? 'size-10' : '')}>
-            <AvatarImage src={user.image ?? ''} alt={user.name} />
-            <AvatarFallback
-              className={cn(
-                'text-xl font-bold',
-                size === 'sm' ? 'text-base' : ''
-              )}
-            >
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant='ghost'
+            className={cn(
+              'border-border ring-primary/50 relative size-14 rounded-full border shadow transition-all hover:ring-2',
+              size === 'sm' ? 'size-10' : ''
+            )}
+          />
+        }
+      >
+        <Avatar className={cn('size-14', size === 'sm' ? 'size-10' : '')}>
+          <AvatarImage src={user.image ?? ''} alt={user.name} />
+          <AvatarFallback
+            className={cn(
+              'text-xl font-bold',
+              size === 'sm' ? 'text-base' : ''
+            )}
+          >
+            {getInitials(user.name)}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align={align}>
-        <DropdownMenuLabel>
-          <UserSummary name={user.name} email={user.email} image={user.image} />
-        </DropdownMenuLabel>
-
-        <DropdownMenuSeparator />
-
+      <DropdownMenuContent align={align} className={'w-full'}>
         <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            <UserSummary
+              name={user.name}
+              email={user.email}
+              image={user.image}
+            />
+          </DropdownMenuLabel>
+
+          <DropdownMenuSeparator />
+
           <NavItem href={ROUTES.settings.href}>
             <CgProfile />
             Profile
@@ -88,9 +94,11 @@ export function UserDropdownNav({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild className='cursor-pointer p-0'>
-          <SignOutButton />
-        </DropdownMenuItem>
+        <DropdownMenuItem
+          className='cursor-pointer p-0'
+          nativeButton={false}
+          render={<SignOutButton />}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -104,8 +112,10 @@ function NavItem({
   children: React.ReactNode;
 }) {
   return (
-    <DropdownMenuItem asChild className='cursor-pointer'>
-      <Link href={href}>{children}</Link>
-    </DropdownMenuItem>
+    <DropdownMenuItem
+      className='cursor-pointer'
+      nativeButton={false}
+      render={<Link href={href}>{children}</Link>}
+    />
   );
 }

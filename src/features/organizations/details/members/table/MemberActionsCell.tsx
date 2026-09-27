@@ -34,11 +34,14 @@ export function MemberActionsCell({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost'>
-          <MoreHorizontal />
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        nativeButton={false}
+        render={
+          <Button variant='ghost'>
+            <MoreHorizontal />
+          </Button>
+        }
+      />
 
       <DropdownMenuContent align='end'>
         <DropdownMenuLabel>

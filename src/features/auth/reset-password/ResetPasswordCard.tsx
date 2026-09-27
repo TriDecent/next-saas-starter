@@ -15,9 +15,12 @@ export function ResetPasswordCard() {
 
       <div className='text-muted-foreground flex flex-col items-center gap-2 text-sm md:flex-row md:justify-end'>
         <p>Remember your password?</p>
-        <Button variant={'link'} asChild className='underline'>
-          <Link href={ROUTES.auth.href}>Back to Sign In</Link>
-        </Button>
+        <Button
+          variant={'link'}
+          className='underline'
+          nativeButton={false}
+          render={<Link href={ROUTES.auth.href}>Back to Sign In</Link>}
+        ></Button>
       </div>
     </AuthCard>
   );

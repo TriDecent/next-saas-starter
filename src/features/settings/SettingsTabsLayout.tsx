@@ -33,7 +33,7 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
 
   return (
     <Tabs
-      defaultValue={
+      value={
         SETTINGS_ROUTES.some(route => route.path === pathname)
           ? pathname
           : '/profile'
@@ -41,13 +41,17 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
       orientation={
         breakpoint !== 'sm' && breakpoint !== 'md' ? 'vertical' : 'horizontal'
       }
-      className='min-h-screen items-center gap-y-4 lg:items-start'
+      className='min-h-screen flex-col items-center gap-y-4 lg:flex-row lg:items-start'
     >
-      <TabsList className='w-full max-w-3xl shadow lg:sticky lg:top-32 lg:order-2 lg:w-fit'>
+      <TabsList className='w-full max-w-3xl flex-row shadow lg:sticky lg:top-32 lg:order-2 lg:w-fit lg:flex-col'>
         {SETTINGS_ROUTES.map(route => (
-          <TabsTrigger key={route.path} value={route.path} asChild>
-            <Link href={route.path}>{route.icon}</Link>
-          </TabsTrigger>
+          <TabsTrigger
+            key={route.path}
+            value={route.path}
+            nativeButton={false}
+            className='lg:w-full lg:flex-none lg:justify-start'
+            render={<Link href={route.path}>{route.icon}</Link>}
+          />
         ))}
       </TabsList>
 

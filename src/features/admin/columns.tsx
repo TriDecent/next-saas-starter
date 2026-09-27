@@ -44,10 +44,7 @@ const selectColumn: ColumnDef<User> = {
   id: 'select',
   header: ({ table }) => (
     <Checkbox
-      checked={
-        table.getIsAllPageRowsSelected() ||
-        (table.getIsSomePageRowsSelected() && 'indeterminate')
-      }
+      checked={table.getIsAllPageRowsSelected()}
       onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
       className='mr-2'
     />
@@ -153,14 +150,17 @@ const bannedColumn: ColumnDef<User> = {
     if (isBanned) {
       return (
         <Popover>
-          <PopoverTrigger asChild>
-            <Badge
-              variant='destructive'
-              className='hover:bg-destructive/80 mx-auto flex w-fit cursor-pointer items-center gap-1'
-            >
-              <Ban className='size-3' /> Banned
-            </Badge>
-          </PopoverTrigger>
+          <PopoverTrigger
+            nativeButton={false}
+            render={
+              <Badge
+                variant='destructive'
+                className='hover:bg-destructive/80 mx-auto flex w-fit cursor-pointer items-center gap-1'
+              >
+                <Ban className='size-3' /> Banned
+              </Badge>
+            }
+          />
           <PopoverContent className='p-4' align='start'>
             <div className='space-y-2'>
               <h4 className='text-destructive flex items-center gap-2 leading-none font-medium'>
@@ -215,88 +215,96 @@ const actionsColumn: ColumnDef<User> = {
 
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='size-8 p-0'>
-            <MoreHorizontal className='size-4' />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button variant='ghost' className='size-8 p-0'>
+              <MoreHorizontal className='size-4' />
+            </Button>
+          }
+        />
 
-        <DropdownMenuContent align='end'>
-          <DropdownMenuLabel>
-            <div className='flex items-center gap-2'>
-              <UserSummary {...user} />
-
-              <Badge variant='outline' className='ml-auto uppercase'>
-                <span className='max-w-24 truncate'>{user.role}</span>
-              </Badge>
-            </div>
-          </DropdownMenuLabel>
-
-          <DropdownMenuSeparator />
-
+        <DropdownMenuContent align='end' className={'w-fit'}>
           <DropdownMenuGroup>
-            <DropdownMenuLabel className='text-muted-foreground'>
-              Quick actions
+            <DropdownMenuLabel>
+              <div className='flex items-center gap-2'>
+                <UserSummary {...user} />
+
+                <Badge variant='outline' className='ml-auto uppercase'>
+                  <span className='max-w-24 truncate'>{user.role}</span>
+                </Badge>
+              </div>
             </DropdownMenuLabel>
-            <CopyUserAction user={user} />
-          </DropdownMenuGroup>
 
-          <DropdownMenuSeparator />
+            <DropdownMenuSeparator />
 
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className='text-muted-foreground'>
-              Access & Security
-            </DropdownMenuLabel>
-            <ImpersonateUserAction userId={user.id} />
-            <RevokeUserSessionsAction userId={user.id} />
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <Shield className='size-4' />
-              Role
-            </DropdownMenuSubTrigger>
-
-            <DropdownMenuSubContent>
+            <DropdownMenuGroup>
               <DropdownMenuLabel className='text-muted-foreground'>
-                Set role
+                Quick actions
               </DropdownMenuLabel>
+              <CopyUserAction user={user} />
+            </DropdownMenuGroup>
 
-              <DropdownMenuItem disabled className='opacity-70'>
-                Current
-                <span className='ml-auto max-w-24 overflow-x-clip text-ellipsis uppercase'>
-                  {user.role}
-                </span>
-              </DropdownMenuItem>
+            <DropdownMenuSeparator />
 
-              <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className='text-muted-foreground'>
+                Access & Security
+              </DropdownMenuLabel>
+              <ImpersonateUserAction userId={user.id} />
+              <RevokeUserSessionsAction userId={user.id} />
+            </DropdownMenuGroup>
 
-              <SetRoleActions user={user} />
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
+            <DropdownMenuSeparator />
 
-          <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Shield className='size-4' />
+                Role
+              </DropdownMenuSubTrigger>
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <Ban className='size-4' />
-              Moderation
-            </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className='text-muted-foreground'>
+                    Set role
+                  </DropdownMenuLabel>
 
-            <DropdownMenuSubContent>
-              <BanUserAction userId={user.id} shouldBan={!user.banned} />
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
+                  <DropdownMenuItem disabled className='opacity-70'>
+                    Current
+                    <span className='ml-auto max-w-24 overflow-x-clip text-ellipsis uppercase'>
+                      {user.role}
+                    </span>
+                  </DropdownMenuItem>
 
-          <DropdownMenuSeparator />
+                  <DropdownMenuSeparator />
 
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className='text-muted-foreground'>
-              Danger zone
-            </DropdownMenuLabel>
-            <DeleteUserAction userId={user.id} />
+                  <SetRoleActions user={user} />
+                </DropdownMenuGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Ban className='size-4' />
+                Moderation
+              </DropdownMenuSubTrigger>
+
+              <DropdownMenuSubContent>
+                <DropdownMenuGroup>
+                  <BanUserAction userId={user.id} shouldBan={!user.banned} />
+                </DropdownMenuGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className='text-muted-foreground'>
+                Danger zone
+              </DropdownMenuLabel>
+              <DeleteUserAction userId={user.id} />
+            </DropdownMenuGroup>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -47,11 +47,15 @@ export function ErrorBlock({
       {action ? (
         <EmptyContent>
           {action.type === 'link' ? (
-            <Button asChild className='w-full'>
-              <Link href={action.href} replace>
-                <LinkIcon /> {action.text}
-              </Link>
-            </Button>
+            <Button
+              className='w-full'
+              nativeButton={false}
+              render={
+                <Link href={action.href} replace>
+                  <LinkIcon /> {action.text}
+                </Link>
+              }
+            />
           ) : (
             <Button onClick={action.onClick} className='w-full'>
               {action.text}

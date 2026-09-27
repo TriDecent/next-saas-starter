@@ -5,14 +5,17 @@ import { Copy } from 'lucide-react';
 
 export function CopyUserAction({ user }: { user: User }) {
   return (
-    <DropdownMenuItem asChild>
-      <CopyText
-        onSuccess={'User ID copied to clipboard'}
-        text={JSON.stringify(user)}
-      >
-        <Copy />
-        Copy ID
-      </CopyText>
-    </DropdownMenuItem>
+    <DropdownMenuItem
+      nativeButton={true}
+      render={
+        <CopyText
+          onSuccess={'User ID copied to clipboard'}
+          text={JSON.stringify(user)}
+        >
+          <Copy />
+          Copy ID
+        </CopyText>
+      }
+    />
   );
 }

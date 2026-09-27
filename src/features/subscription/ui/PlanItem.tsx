@@ -173,7 +173,6 @@ function SubscribeButton({
       type='button'
       className='w-full'
       variant={isHighlighted ? 'default' : 'outline'}
-      asChild
     >
       {children}
     </Button>

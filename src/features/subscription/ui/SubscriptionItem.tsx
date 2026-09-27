@@ -84,13 +84,13 @@ function SubscriptionHeader({
           variant='outline'
           className='flex-1 md:flex-none'
           size='sm'
-          asChild
-        >
-          <CreateBillingPortalAction>
-            <IoSettingsOutline />
-            Manage plan
-          </CreateBillingPortalAction>
-        </Button>
+          render={
+            <CreateBillingPortalAction>
+              <IoSettingsOutline />
+              Manage plan
+            </CreateBillingPortalAction>
+          }
+        />
       </CardAction>
     </CardHeader>
   );

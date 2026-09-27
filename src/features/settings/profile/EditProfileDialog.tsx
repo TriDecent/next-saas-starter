@@ -24,10 +24,10 @@ export function EditProfileDialog({ user }: { user: AuthSession['user'] }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant={'outline'}>Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[500px]'>
+      <DialogTrigger
+        render={<Button variant={'outline'}>Edit Profile</Button>}
+      />
+      <DialogContent className='sm:max-w-125'>
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
           <DialogDescription>
