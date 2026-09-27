@@ -1,6 +1,6 @@
 'use cache';
 
-import { SettingsTabsLayout } from '@/features/settings';
+import { SettingsTabsLayout } from '@/features/settings/client';
 import { Loading, SectionHeader } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import { Settings } from 'lucide-react';

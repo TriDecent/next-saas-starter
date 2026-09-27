@@ -1,8 +1,9 @@
 'use client';
 
 import { authClient } from '@/lib/auth/auth-client';
-import { FormField, useShakeError } from '@/shared/components/form';
-import { Button, Field, FieldGroup } from '@/shared/components/ui';
+import { FormField, useShakeError } from '@/shared/components/form/client';
+import { Button } from '@/shared/components/ui';
+import { Field, FieldGroup } from '@/shared/components/ui/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';

@@ -2,15 +2,14 @@
 
 import type { AuthSession } from '@/lib/auth';
 import { MiniLoader } from '@/shared/components';
-import { FormField, useActionForm } from '@/shared/components/form';
+import { FormField, useActionForm } from '@/shared/components/form/client';
+import { Button, InputGroupAddon } from '@/shared/components/ui';
 import {
-  Button,
   Field,
   FieldGroup,
   FieldLegend,
   FieldSet,
-  InputGroupAddon,
-} from '@/shared/components/ui';
+} from '@/shared/components/ui/client';
 import { updateProfileSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';

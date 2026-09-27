@@ -12,7 +12,7 @@ import {
 } from '@/shared/components/ui';
 import { cn } from '@/shared/utils';
 import { Check } from 'lucide-react';
-import { UpgradeSubscriptionAction } from '../upgrade';
+import { UpgradeSubscriptionAction } from '../upgrade/client';
 
 export type BillingCycle = 'monthly' | 'annual';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal, type ModalHandle } from '@/shared/components';
+import { Modal, type ModalHandle } from '@/shared/components/client';
 import { useRef } from 'react';
 
 export function RenderModal({

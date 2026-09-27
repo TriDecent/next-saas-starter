@@ -2,17 +2,15 @@
 
 import { useOrgContext } from '@/features/organizations';
 import { MiniLoader } from '@/shared/components';
+import { Button, Card, CardContent } from '@/shared/components/ui';
 import {
-  Button,
-  Card,
-  CardContent,
   FieldDescription,
   FieldSet,
   FieldTitle,
-} from '@/shared/components/ui';
+} from '@/shared/components/ui/client';
 import { MultiStepProvider, useMultiStepContext } from '@/shared/context';
 import { FaArrowRight } from 'react-icons/fa6';
-import { BaseCreateInvitationForm } from '../_shared';
+import { BaseCreateInvitationForm } from '../_shared/client';
 import { INVITATION_STEPS } from './constants';
 import { InvitationStepContent } from './InvitationStepContent';
 import { InvitationStepFooter } from './InvitationStepFooter';

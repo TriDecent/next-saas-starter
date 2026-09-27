@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '@/shared/components/DataTable';
+import { DataTable } from '@/shared/components/DataTable/client';
 import type { GetFullOrg } from '../../_shared';
 import { useMembersColumns } from './use-members-columns';
 

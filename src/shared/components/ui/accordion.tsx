@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/shared/utils';
 import { ChevronDownIcon } from 'lucide-react';
 import { Accordion as AccordionPrimitive } from 'radix-ui';

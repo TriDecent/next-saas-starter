@@ -1,6 +1,6 @@
 'use client';
 
-import { SendEmailButton } from '@/shared/components';
+import { SendEmailButton } from '@/shared/components/client';
 import type { ComponentProps } from 'react';
 import { toast } from 'sonner';
 import { sendEmailVerificationAction } from './send-email-verification-action';

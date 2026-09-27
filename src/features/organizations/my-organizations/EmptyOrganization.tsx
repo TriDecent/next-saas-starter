@@ -1,4 +1,4 @@
-import { RenderModal } from '@/shared/components';
+import { RenderModal } from '@/shared/components/client';
 import {
   Button,
   Empty,
@@ -9,7 +9,7 @@ import {
   EmptyTitle,
 } from '@/shared/components/ui';
 import { FaBuilding, FaPlus } from 'react-icons/fa';
-import { CreateNewOrganization } from '../create-org';
+import { CreateNewOrganization } from '../create-org/client';
 
 export function EmptyOrganization() {
   return (

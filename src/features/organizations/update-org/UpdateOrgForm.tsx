@@ -1,6 +1,6 @@
 'use client';
 
-import { BaseFormLayout, useActionForm } from '@/shared/components/form';
+import { BaseFormLayout, useActionForm } from '@/shared/components/form/client';
 import { ROUTES } from '@/shared/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Organization } from 'better-auth/plugins';
@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
 import { toast } from 'sonner';
 import { orgSchema, type OrgSchema } from '../_shared';
-import { CreateOrgFields } from '../create-org';
+import { CreateOrgFields } from '../create-org/client';
 import type { Response } from './update-org-action';
 import { updateOrgAction } from './update-org-action';
 

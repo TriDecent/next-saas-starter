@@ -1,4 +1,4 @@
-import { CopyText } from '@/shared/components';
+import { CopyText } from '@/shared/components/client';
 import { DropdownMenuItem } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { Invitation } from 'better-auth/plugins';

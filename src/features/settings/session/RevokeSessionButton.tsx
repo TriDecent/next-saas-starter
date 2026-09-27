@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionButton } from '@/shared/components';
+import { ActionButton } from '@/shared/components/client';
 import type { Session } from 'better-auth';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';

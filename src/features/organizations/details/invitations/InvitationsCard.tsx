@@ -16,7 +16,7 @@ import {
 } from '@/shared/components/ui';
 import type { Invitation } from 'better-auth/plugins';
 import { FiMail } from 'react-icons/fi';
-import { InvitationsTable } from './table';
+import { InvitationsTable } from './table/client';
 
 export function InvitationsCard({
   invitations,

@@ -9,7 +9,7 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { FaPlus, FaSignInAlt } from 'react-icons/fa';
-import { SignInCard } from './sign-in';
+import { SignInCard } from './sign-in/client';
 import { SignUpCard } from './sign-up';
 import { useVerificationStore } from './store';
 

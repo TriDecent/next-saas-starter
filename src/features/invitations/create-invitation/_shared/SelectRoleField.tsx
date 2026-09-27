@@ -1,11 +1,8 @@
 'use client';
 
 import { ORG_ROLES } from '@/lib/auth/constants';
-import { FormField } from '@/shared/components/form';
+import { FormField } from '@/shared/components/form/client';
 import {
-  Field,
-  FieldContent,
-  FieldLabel,
   Item,
   ItemActions,
   ItemContent,
@@ -16,6 +13,7 @@ import {
   ItemTitle,
   RadioGroupItem,
 } from '@/shared/components/ui';
+import { Field, FieldContent, FieldLabel } from '@/shared/components/ui/client';
 import { HiCog, HiEye, HiStar, HiUserGroup } from 'react-icons/hi';
 
 export function SelectRoleField() {

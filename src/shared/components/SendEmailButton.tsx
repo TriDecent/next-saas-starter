@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionButton } from '@/shared/components';
+import { ActionButton } from '@/shared/components/client';
 import { useEffect, useState, type ComponentProps } from 'react';
 
 const RESEND_INTERVAL = 30;

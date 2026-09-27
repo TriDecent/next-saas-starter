@@ -2,8 +2,8 @@ import {
   FieldDescription,
   FieldLegend,
   FieldSet,
-} from '@/shared/components/ui';
-import { SelectRoleField } from '../_shared';
+} from '@/shared/components/ui/client';
+import { SelectRoleField } from '../_shared/client';
 
 export function SelectRole() {
   return (

@@ -1,15 +1,14 @@
 'use client';
 
 import { MiniLoader, TrustDeviceField } from '@/shared/components';
-import { FormField, useActionForm } from '@/shared/components/form';
+import { FormField, useActionForm } from '@/shared/components/form/client';
+import { Button, InputGroupAddon } from '@/shared/components/ui';
 import {
-  Button,
   Field,
   FieldGroup,
   FieldLegend,
   FieldSet,
-  InputGroupAddon,
-} from '@/shared/components/ui';
+} from '@/shared/components/ui/client';
 import { signInSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';

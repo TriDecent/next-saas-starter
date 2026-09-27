@@ -3,8 +3,8 @@ import {
   FieldDescription,
   FieldLegend,
   FieldSet,
-} from '@/shared/components/ui';
-import { SelectRecipientField } from '../_shared';
+} from '@/shared/components/ui/client';
+import { SelectRecipientField } from '../_shared/client';
 
 export function SelectRecipient({ recipients }: { recipients: User[] }) {
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import type { CreateOrgInput } from '@/services';
-import { FormField } from '@/shared/components/form';
+import { FormField } from '@/shared/components/form/client';
 import { InputGroupAddon } from '@/shared/components/ui';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';

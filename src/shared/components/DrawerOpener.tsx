@@ -7,7 +7,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from './ui';
+} from './ui/client';
 
 type DrawerOpenerProps = {
   title: string;

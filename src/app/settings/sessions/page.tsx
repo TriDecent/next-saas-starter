@@ -1,4 +1,4 @@
-import { SessionsList } from '@/features/settings';
+import { SessionsList } from '@/features/settings/client';
 import { getUserService } from '@/services';
 import {
   Card,

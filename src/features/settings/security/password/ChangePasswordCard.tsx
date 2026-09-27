@@ -1,6 +1,6 @@
 'use client';
 
-import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior';
+import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior/client';
 import {
   Button,
   Card,
@@ -12,12 +12,13 @@ import {
   ScrollArea,
   ScrollBar,
 } from '@/shared/components/ui';
+import { cn } from '@/shared/utils';
 import { KeyRound } from 'lucide-react';
 import { ChangePasswordForm } from './ChangePasswordForm';
 
-export function ChangePasswordCard() {
+export function ChangePasswordCard({ className }: { className?: string }) {
   return (
-    <Card>
+    <Card className={cn(className)}>
       <CardHeader>
         <CardTitle>Change Password</CardTitle>
         <CardDescription>
@@ -30,7 +31,7 @@ export function ChangePasswordCard() {
             title='Change Password'
             description='Enter your new password below. You will be signed out from other devices if selected.'
             trigger={
-              <Button className='w-full sm:w-auto'>
+              <Button className='w-full'>
                 <KeyRound className='h-4 w-4' />
                 Change Password
               </Button>

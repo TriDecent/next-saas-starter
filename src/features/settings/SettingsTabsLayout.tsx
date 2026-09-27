@@ -7,7 +7,7 @@ import {
   TabsTrigger,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
-import { useBreakpoint } from '@/shared/hooks';
+import { useBreakpoint } from '@/shared/hooks/client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { type ReactNode } from 'react';

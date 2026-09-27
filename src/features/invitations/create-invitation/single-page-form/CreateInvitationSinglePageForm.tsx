@@ -8,15 +8,15 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  FieldGroup,
-  FieldSeparator,
   Separator,
 } from '@/shared/components/ui';
+
+import { FieldGroup, FieldSeparator } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
 import { Suspense } from 'react';
 import { FaUserPlus } from 'react-icons/fa';
 import { InvitationSummary } from '../../summary';
-import { BaseCreateInvitationForm } from '../_shared';
+import { BaseCreateInvitationForm } from '../_shared/client';
 import { SelectOrganization } from './SelectOrganization';
 import { SelectRecipient } from './SelectRecipient';
 import { SelectRole } from './SelectRole';

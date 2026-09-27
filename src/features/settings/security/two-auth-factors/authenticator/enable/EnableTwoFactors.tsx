@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { VscDebugContinue } from 'react-icons/vsc';
 import QRCode from 'react-qr-code';
-import { BackupCodes } from '../../backup-code';
+import { BackupCodes } from '../../backup-code/client';
 import { VerifyTotp } from '../verify-totp';
 import type { enableTwoFactorsAction } from './enable-two-factors-action';
 import { EnableTwoFactorsButton } from './EnableTwoFactorsButton';

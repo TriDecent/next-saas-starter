@@ -1,7 +1,7 @@
 'use client';
 
 import { Variants } from '@/shared/animation';
-import { useScrollDirection } from '@/shared/hooks';
+import { useScrollDirection } from '@/shared/hooks/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 

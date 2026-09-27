@@ -2,7 +2,7 @@
 
 import type { User } from '@/generated/prisma/client';
 import { MiniLoader } from '@/shared/components';
-import { FormField } from '@/shared/components/form';
+import { FormField } from '@/shared/components/form/client';
 import {
   ComboboxCollection,
   ComboboxContent,
@@ -14,7 +14,7 @@ import {
   ComboboxSeparator,
   InputGroupAddon,
 } from '@/shared/components/ui';
-import { useDebounce } from '@/shared/hooks';
+import { useDebounce } from '@/shared/hooks/client';
 import { useGetUsersQuery } from '@/store/user-api';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';

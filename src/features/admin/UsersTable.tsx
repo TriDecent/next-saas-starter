@@ -1,10 +1,8 @@
 'use client';
 
 import type { User } from '@/generated/prisma/client';
-import {
-  DataTable,
-  type DataTableServerProps,
-} from '@/shared/components/DataTable';
+import { type DataTableServerProps } from '@/shared/components/DataTable';
+import { DataTable } from '@/shared/components/DataTable/client';
 import {
   AlertDialog,
   Button,

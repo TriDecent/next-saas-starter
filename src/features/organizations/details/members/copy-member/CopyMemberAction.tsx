@@ -1,4 +1,4 @@
-import { CopyText } from '@/shared/components';
+import { CopyText } from '@/shared/components/client';
 import { DropdownMenuItem } from '@/shared/components/ui';
 import type { Member } from 'better-auth/plugins';
 import { FiCopy } from 'react-icons/fi';

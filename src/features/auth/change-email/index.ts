@@ -1,0 +1,1 @@
+export { ChangeEmailCard } from './ChangeEmailCard';

@@ -10,7 +10,7 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from '@/shared/components/ui';
+} from '@/shared/components/ui/client';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Controller, useFormContext } from 'react-hook-form';
 

@@ -6,7 +6,7 @@ import type { Invitation } from 'better-auth/plugins';
 import { startTransition } from 'react';
 import { FaArrowRotateLeft } from 'react-icons/fa6';
 import { toast } from 'sonner';
-import { useOrgContext } from '../../../context';
+import { useOrgContext } from '../../../context/client';
 import { cancelInvitationAction } from './cancel-invitation-action';
 
 export function CancelInvitationAction({

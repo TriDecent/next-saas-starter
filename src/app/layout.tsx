@@ -1,15 +1,14 @@
 import { ImpersonationStatus } from '@/features/admin';
 import { RenderUserDropdownNav } from '@/features/home';
+import { AvatarSkeleton, PageLayout } from '@/shared/components';
 import {
-  AvatarSkeleton,
   NavTrail,
-  PageLayout,
   ThemeProvider,
   ThemeToggle,
-} from '@/shared/components';
-import { Toaster } from '@/shared/components/ui';
+} from '@/shared/components/client';
+import { Toaster } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
-import { StoreProvider } from '@/shared/provider';
+import { StoreProvider } from '@/shared/provider/client';
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import Link from 'next/link';

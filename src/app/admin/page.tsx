@@ -1,4 +1,4 @@
-import { UsersTable } from '@/features/admin';
+import { UsersTable } from '@/features/admin/client';
 import { getUserService } from '@/services';
 import { Loading, SectionHeader } from '@/shared/components';
 import {

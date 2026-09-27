@@ -1,6 +1,6 @@
 'use cache';
 
-import { AuthCardSelection } from '@/features/auth';
+import { AuthCardSelection } from '@/features/auth/client';
 import { MiniLoader, SectionHeader } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';

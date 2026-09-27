@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTable } from '@/shared/components/DataTable';
+import { DataTable } from '@/shared/components/DataTable/client';
 import type { Invitation } from 'better-auth/plugins';
 import { useInvitationsColumns } from './use-invitations-columns';
 

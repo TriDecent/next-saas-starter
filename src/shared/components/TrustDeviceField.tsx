@@ -1,4 +1,4 @@
-import { FormField } from '@/shared/components/form';
+import { FormField } from '@/shared/components/form/client';
 import { VscWorkspaceTrusted } from 'react-icons/vsc';
 
 export function TrustDeviceField({ isPending }: { isPending: boolean }) {

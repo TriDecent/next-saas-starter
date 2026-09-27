@@ -6,7 +6,7 @@ import {
   FieldDescription,
   FieldError,
   FieldLabel,
-} from '../ui';
+} from '../ui/client';
 
 type FieldOrientation = 'vertical' | 'horizontal' | 'responsive';
 

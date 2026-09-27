@@ -1,6 +1,6 @@
 'use client';
 
-import { BaseFormLayout, useActionForm } from '@/shared/components/form';
+import { BaseFormLayout, useActionForm } from '@/shared/components/form/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { startTransition } from 'react';
 import { FaArrowRight } from 'react-icons/fa';

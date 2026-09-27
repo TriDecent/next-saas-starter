@@ -1,4 +1,4 @@
-import { RenderModal } from '@/shared/components';
+import { RenderModal } from '@/shared/components/client';
 import type React from 'react';
 import { UpdateOrgCard } from './UpdateOrgCard';
 

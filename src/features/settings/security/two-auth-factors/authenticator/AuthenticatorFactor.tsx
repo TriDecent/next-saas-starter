@@ -3,7 +3,7 @@
 import {
   AuthenticatePriorAction,
   AuthenticatePriorContext,
-} from '@/features/auth/authenticate-prior';
+} from '@/features/auth/authenticate-prior/client';
 import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
 import { Key } from 'lucide-react';
 import { use, type ReactNode } from 'react';

@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Field, FieldError, FieldGroup } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui';
+import { Field, FieldError, FieldGroup } from '@/shared/components/ui/client';
 import type { ReactNode, RefObject } from 'react';
 import {
   FormProvider,

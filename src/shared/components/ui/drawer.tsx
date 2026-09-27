@@ -1,32 +1,13 @@
 'use client';
 
+import { cn } from 'cn';
 import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
-import { cn } from '@/shared/utils';
-
 function Drawer({
-  onOpenChange,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
-  const handleOpenChange = React.useCallback(
-    (open: boolean) => {
-      if (open && typeof document !== 'undefined') {
-        try {
-          (document.activeElement as HTMLElement | null)?.blur();
-        } catch {}
-      }
-      onOpenChange?.(open);
-    },
-    [onOpenChange]
-  );
-  return (
-    <DrawerPrimitive.Root
-      data-slot='drawer'
-      {...props}
-      onOpenChange={handleOpenChange}
-    />
-  );
+  return <DrawerPrimitive.Root data-slot='drawer' {...props} />;
 }
 
 function DrawerTrigger({
@@ -55,7 +36,7 @@ function DrawerOverlay({
     <DrawerPrimitive.Overlay
       data-slot='drawer-overlay'
       className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+        'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
         className
       )}
       {...props}

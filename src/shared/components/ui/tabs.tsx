@@ -1,7 +1,5 @@
 // ** This file contains UI fixes for the line variant in vertical orientation. Be careful when updating.
 
-'use client';
-
 import { cn } from '@/shared/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Tabs as TabsPrimitive } from 'radix-ui';

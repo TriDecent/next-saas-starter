@@ -1,4 +1,4 @@
-import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior';
+import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior/client';
 import { Button } from '@/shared/components/ui';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { AddPasskeyForm } from './AddPasskeyForm';

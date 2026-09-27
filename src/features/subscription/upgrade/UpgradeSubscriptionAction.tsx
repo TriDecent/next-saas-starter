@@ -5,7 +5,7 @@ import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
-import { useEntityReference } from '../context';
+import { useEntityReference } from '../context/client';
 import {
   upgradeSubscriptionAction,
   type UpgradeSubscriptionActionInput,

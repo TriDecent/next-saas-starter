@@ -19,7 +19,7 @@ import {
 import { Suspense } from 'react';
 import { FiPlus, FiUsers } from 'react-icons/fi';
 import type { OrganizationDetailsProps } from '../OrganizationDetails';
-import { MembersTable } from './table';
+import { MembersTable } from './table/client';
 
 export function MembersCard({
   members,

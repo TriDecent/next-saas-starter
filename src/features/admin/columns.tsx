@@ -33,11 +33,11 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useMemo } from 'react';
-import { BanUserAction } from './ban-user';
+import { BanUserAction } from './ban-user/client';
 import { CopyUserAction } from './copy-user';
-import { DeleteUserAction } from './delete-user';
-import { ImpersonateUserAction } from './impersonation';
-import { RevokeUserSessionsAction } from './revoke-sessions';
+import { DeleteUserAction } from './delete-user/client';
+import { ImpersonateUserAction } from './impersonation/client';
+import { RevokeUserSessionsAction } from './revoke-sessions/client';
 import { SetRoleActions } from './set-role';
 
 const selectColumn: ColumnDef<User> = {

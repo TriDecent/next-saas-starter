@@ -17,10 +17,10 @@ import { ROUTES } from '@/shared/constants';
 import type { CellContext } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { TbArrowsExchange2 } from 'react-icons/tb';
-import { useOrgContext } from '../../../context';
+import { useOrgContext } from '../../../context/client';
 import { type GetFullOrg } from '../../_shared';
 import { CopyMemberAction } from '../copy-member';
-import { RemoveMemberAction } from '../remove-user';
+import { RemoveMemberAction } from '../remove-user/client';
 import { UpdateRolesActions } from '../set-role';
 
 export function MemberActionsCell({

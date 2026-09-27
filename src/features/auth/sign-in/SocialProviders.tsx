@@ -2,7 +2,7 @@
 
 import { authClient } from '@/lib/auth/auth-client';
 import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/constants';
-import { ActionButton } from '@/shared/components';
+import { ActionButton } from '@/shared/components/client';
 import { ButtonGroup, ButtonGroupSeparator } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { useSearchParams } from 'next/navigation';

@@ -1,6 +1,6 @@
 'use client';
 
-import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior';
+import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior/client';
 import { Button } from '@/shared/components/ui';
 import { Trash2 } from 'lucide-react';
 import { useCallback, useTransition } from 'react';

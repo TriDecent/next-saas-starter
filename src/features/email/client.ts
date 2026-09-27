@@ -1,0 +1,1 @@
+export { SendVerificationEmailButton } from './SendVerificationEmailButton';

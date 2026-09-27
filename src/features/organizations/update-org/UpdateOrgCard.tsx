@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/components/ui';
-import { useOrgContext } from '../context';
+import { useOrgContext } from '../context/client';
 import { UpdateOrgForm } from './UpdateOrgForm';
 
 export function UpdateOrgCard() {

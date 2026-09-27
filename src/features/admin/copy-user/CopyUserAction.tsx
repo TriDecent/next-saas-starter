@@ -1,5 +1,5 @@
 import type { User } from '@/generated/prisma/client';
-import { CopyText } from '@/shared/components';
+import { CopyText } from '@/shared/components/client';
 import { DropdownMenuItem } from '@/shared/components/ui';
 import { Copy } from 'lucide-react';
 

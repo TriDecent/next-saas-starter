@@ -326,6 +326,28 @@ export class UserService {
     );
   }
 
+  changeEmail(
+    { newEmail, callbackURL }: { newEmail: string; callbackURL: string },
+    sudoToken?: string
+  ): Promise<GeneralUserResponse> {
+    return this._serviceExecutor.runWithSudo(
+      sudoToken,
+      'You must re-authenticate to change your email address.',
+      async () => {
+        if (!this._userPolicy.canChangeEmail(this.actor))
+          throw new Error(
+            'You do not have permission to change your email address.'
+          );
+
+        await auth.api.changeEmail({
+          body: { newEmail, callbackURL },
+          headers: this.headers,
+        });
+      },
+      error => ({ message: error })
+    );
+  }
+
   deletePasskey(
     passkeyId: string,
     sudoToken?: string

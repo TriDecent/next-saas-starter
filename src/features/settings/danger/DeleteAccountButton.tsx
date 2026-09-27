@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionButton } from '@/shared/components';
+import { ActionButton } from '@/shared/components/client';
 import { toast } from 'sonner';
 import { deleteAccountAction } from './delete-account-action';
 

@@ -10,7 +10,7 @@ import {
 import type { Invitation } from 'better-auth/plugins';
 import { MoreHorizontal } from 'lucide-react';
 import { MdEmail } from 'react-icons/md';
-import { CancelInvitationAction } from '../cancel-invitation';
+import { CancelInvitationAction } from '../cancel-invitation/client';
 import { CopyInviteLinkAction } from '../copy-invite-link';
 
 export function InvitationActionsCell({

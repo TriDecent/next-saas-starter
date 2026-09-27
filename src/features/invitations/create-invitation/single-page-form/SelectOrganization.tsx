@@ -2,7 +2,8 @@
 
 import type { Organization } from '@/generated/prisma/client';
 import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
-import { FormField } from '@/shared/components/form';
+import { FormField } from '@/shared/components/form/client';
+import { RadioGroupItem } from '@/shared/components/ui';
 import {
   Field,
   FieldContent,
@@ -10,8 +11,7 @@ import {
   FieldLabel,
   FieldLegend,
   FieldSet,
-  RadioGroupItem,
-} from '@/shared/components/ui';
+} from '@/shared/components/ui/client';
 import { useFormContext } from 'react-hook-form';
 import {
   EmptyOrganization,

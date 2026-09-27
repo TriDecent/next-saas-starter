@@ -1,11 +1,8 @@
 'use client';
 
-import {
-  AuthFormLayout,
-  TotpField,
-  TrustDeviceField,
-} from '@/shared/components';
-import { useActionForm } from '@/shared/components/form';
+import { TrustDeviceField } from '@/shared/components';
+import { AuthFormLayout, TotpField } from '@/shared/components/client';
+import { useActionForm } from '@/shared/components/form/client';
 import { totpAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';

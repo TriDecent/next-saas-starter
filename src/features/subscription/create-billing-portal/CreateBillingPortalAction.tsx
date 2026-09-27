@@ -4,7 +4,7 @@ import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition, type ComponentPropsWithoutRef } from 'react';
 import { toast } from 'sonner';
-import { useEntityReference } from '../context';
+import { useEntityReference } from '../context/client';
 import {
   createBillingPortalAction,
   type CreateBillingPortalActionOptions,

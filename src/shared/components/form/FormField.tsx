@@ -10,10 +10,6 @@ import {
   Checkbox,
   Combobox,
   ComboboxInput,
-  Field,
-  FieldError,
-  FieldLabel,
-  FieldTitle,
   InputGroup,
   InputGroupInput,
   InputGroupTextarea,
@@ -24,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui';
+import { Field, FieldError, FieldLabel, FieldTitle } from '../ui/client';
 import { FieldWrapper, type BaseFieldProps } from './FieldWrapper';
 
 type InputFieldProps = BaseFieldProps & InputHTMLAttributes<HTMLInputElement>;

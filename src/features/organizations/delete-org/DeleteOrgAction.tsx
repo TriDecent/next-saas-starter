@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { PiTrashSimpleFill } from 'react-icons/pi';
 import { toast } from 'sonner';
-import { useOrgContext } from '../context';
+import { useOrgContext } from '../context/client';
 import { deleteOrgAction } from './delete-org-action';
 
 export function DeleteOrgAction({
