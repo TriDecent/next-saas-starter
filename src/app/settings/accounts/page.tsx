@@ -1,5 +1,6 @@
 import { ConnectedAccounts } from '@/features/settings/client';
 import { getUserService } from '@/services';
+import { Loading } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export async function generateMetadata(): Promise<Metadata> {
   const user = (await getUserService(ROUTES.settings.nested.accounts.href))
@@ -23,6 +25,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AccountsPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <AccountsContent />
+    </Suspense>
+  );
+}
+
+async function AccountsContent() {
   const service = await getUserService(ROUTES.settings.nested.accounts.href);
   const accounts = await service.listMyAccounts();
 

@@ -1,5 +1,6 @@
 import { DeleteAccountFlow } from '@/features/settings';
 import { ensureSession } from '@/lib/auth';
+import { Loading } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -18,6 +19,7 @@ import { ROUTES } from '@/shared/constants';
 import { AlertTriangle, Trash2 } from 'lucide-react';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
+import { Suspense } from 'react';
 import z from 'zod';
 
 export const metadata: Metadata = ROUTES.settings.nested.danger.metadata;
@@ -25,6 +27,18 @@ export const metadata: Metadata = ROUTES.settings.nested.danger.metadata;
 const searchParamsSchema = z.object({ token: z.string().optional() });
 
 export default async function DangerPage({
+  searchParams,
+}: {
+  searchParams: Promise<unknown>;
+}) {
+  return (
+    <Suspense fallback={<Loading />}>
+      <DangerContent searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function DangerContent({
   searchParams,
 }: {
   searchParams: Promise<unknown>;

@@ -1,13 +1,15 @@
 import { AuthenticatePriorProvider } from '@/features/auth';
 import {
-  ChangePasswordCard,
   PasskeysList,
   RequestPasswordResetCard,
   TwoFactorsCard,
 } from '@/features/settings';
+import { ChangePasswordCard } from '@/features/settings/security/password/client';
 import { getUserService } from '@/services';
+import { Loading } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export async function generateMetadata(): Promise<Metadata> {
   const user = (await getUserService(ROUTES.settings.nested.security.href))
@@ -20,6 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SecurityPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <SecurityContent />
+    </Suspense>
+  );
+}
+
+async function SecurityContent() {
   const service = await getUserService(ROUTES.settings.nested.security.href);
 
   const [accounts, passkeys] = await Promise.all([
