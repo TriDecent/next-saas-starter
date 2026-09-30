@@ -91,6 +91,7 @@ export function EditProfileForm({ user }: { user: AuthSession['user'] }) {
                   </InputGroupAddon>
                 </>
               }
+              autoComplete='name webauthn'
             />
 
             <FormField
@@ -108,6 +109,7 @@ export function EditProfileForm({ user }: { user: AuthSession['user'] }) {
                   </InputGroupAddon>
                 </>
               }
+              autoComplete='email webauthn'
             />
 
             <FormField
@@ -124,6 +126,7 @@ export function EditProfileForm({ user }: { user: AuthSession['user'] }) {
                 </>
               }
               disabled={isPending}
+              autoComplete=''
             />
           </FieldGroup>
 
@@ -136,7 +139,11 @@ export function EditProfileForm({ user }: { user: AuthSession['user'] }) {
             >
               Cancel
             </Button>
-            <Button disabled={isPending} className='order-1 md:order-2'>
+            <Button
+              disabled={isPending}
+              type='submit'
+              className='order-1 md:order-2'
+            >
               {isPending ? (
                 <MiniLoader />
               ) : (

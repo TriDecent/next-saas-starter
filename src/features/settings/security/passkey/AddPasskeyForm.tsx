@@ -68,7 +68,7 @@ export function AddPasskeyForm() {
           />
 
           <Field>
-            <Button disabled={methods.formState.isSubmitting}>
+            <Button type='submit' disabled={methods.formState.isSubmitting}>
               Add Passkey
             </Button>
           </Field>

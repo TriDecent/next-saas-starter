@@ -39,7 +39,7 @@ export function AuthFormLayout<T extends FieldValues>({
         onSubmit={methods.handleSubmit(onSubmit)}
         className={className}
       >
-        <FieldGroup className='mx-auto max-w-xl px-4 pb-8'>
+        <FieldGroup className='mx-auto max-w-xl'>
           {children}
 
           <Button

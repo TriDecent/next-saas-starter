@@ -40,9 +40,7 @@ export function ChangePasswordCard({ className }: { className?: string }) {
             {enteredPassword => (
               <ScrollArea className='h-96 pb-12'>
                 <ScrollBar />
-                <div
-                  className={`mx-auto flex max-w-xl flex-col gap-y-8 px-4 pt-2 pb-12`}
-                >
+                <div className={`mx-auto flex max-w-xl flex-col gap-y-8 pb-12`}>
                   <ChangePasswordForm currentPassword={enteredPassword} />
                 </div>
               </ScrollArea>

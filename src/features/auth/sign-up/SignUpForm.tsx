@@ -181,7 +181,11 @@ export function SignUpForm() {
             >
               Cancel
             </Button>
-            <Button disabled={isPending} className='order-1 md:order-2'>
+            <Button
+              type='submit'
+              disabled={isPending}
+              className='order-1 md:order-2'
+            >
               {isPending ? (
                 <MiniLoader />
               ) : (
