@@ -2,6 +2,7 @@ export { ActionButton } from './ActionButton';
 export { AuthFormLayout } from './AuthFormLayout';
 export { BackupCodeField } from './BackupCodeField';
 export { CopyText } from './CopyText';
+export { DrawerOpener } from './DrawerOpener';
 export { Modal, type ModalHandle } from './Modal';
 export { NavTrail } from './NavTrail';
 export { RenderModal } from './RenderModal';

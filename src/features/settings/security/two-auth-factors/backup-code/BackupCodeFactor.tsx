@@ -1,6 +1,6 @@
 'use client';
 
-import { DrawerOpener } from '@/shared/components';
+import { DrawerOpener } from '@/shared/components/client';
 import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
 import { FileText } from 'lucide-react';
 import { useState } from 'react';

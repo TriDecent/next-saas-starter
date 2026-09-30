@@ -1,6 +1,6 @@
 'use client';
 
-import { DrawerOpener } from '@/shared/components';
+import { DrawerOpener } from '@/shared/components/client';
 import { use, useState, type ReactElement, type ReactNode } from 'react';
 import { AuthenticatePriorContext } from './authenticate-prior-context';
 import { AuthenticatePriorActionForm } from './AuthenticatePriorActionForm';

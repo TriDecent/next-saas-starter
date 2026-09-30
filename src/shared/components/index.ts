@@ -1,5 +1,4 @@
 export { AvatarSkeleton } from './AvatarSkeleton';
-export { DrawerOpener } from './DrawerOpener';
 export { ErrorBlock } from './ErrorBlock';
 export { Loading } from './Loading';
 export { MiniLoader } from './MiniLoading';

@@ -1,4 +1,7 @@
+'use client';
+
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
+import { useBreakpoint } from '../hooks/use-break-point';
 import {
   Drawer,
   DrawerContent,
@@ -18,8 +21,14 @@ type DrawerOpenerProps = {
 } & ComponentProps<typeof Drawer>;
 
 export function DrawerOpener(props: DrawerOpenerProps) {
+  const breakpoint = useBreakpoint();
+
   return (
-    <Drawer {...props}>
+    <Drawer
+      {...props}
+      showSwipeHandle={true}
+      swipeDirection={breakpoint === 'sm' ? 'down' : 'right'}
+    >
       <DrawerTrigger render={props.trigger} />
       <DrawerContent>
         <DrawerHeader>
@@ -27,7 +36,7 @@ export function DrawerOpener(props: DrawerOpenerProps) {
           <DrawerDescription>{props.description}</DrawerDescription>
         </DrawerHeader>
 
-        {props.children}
+        <div className='flex-1 overflow-y-auto p-4'>{props.children}</div>
 
         {props.action ? <DrawerFooter>{props.action}</DrawerFooter> : null}
       </DrawerContent>
