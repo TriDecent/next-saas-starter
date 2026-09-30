@@ -433,19 +433,18 @@ src/
 
 ### Live Demo
 
-> Add the deployed application URL here.
+> <https://saas.tridecent.me/>
 
 ### Test Accounts
 
-Dedicated demo accounts can be provided for reviewers to explore different permission levels.
+The project provides two sandbox accounts for reviewers to test different permission levels.
 
-| Account | Purpose |
-| --- | --- |
-| **Admin** | User management and administrative features |
-| **Organization Owner** | Organization, members, invitations, and billing |
-| **Organization Member** | Standard organization-level access |
+| Account        | Email                     | Password           | Purpose                                                                          |
+| ---------      | ------------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| **Admin**      | `sandbox-admin@gmail.com` | `Admin123@`        | User management, role management, impersonation và các administrative features   |
+| **Moderator**  | `sandbox-user@gmail.com`  | `User123@`         | Standard user features, account security, organization và subscription workflows |
 
-> Never commit real production credentials to the repository. Use dedicated demo accounts with non-sensitive data.
+> **Note:** These accounts are provided exclusively for demonstration and testing purposes. They contain no sensitive personal data and must not be used for production purposes.
 
 ---
 
