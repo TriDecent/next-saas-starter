@@ -1,5 +1,6 @@
 import { SessionsList } from '@/features/settings/client';
 import { getUserService } from '@/services';
+import { Loading } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -9,6 +10,7 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export async function generateMetadata(): Promise<Metadata> {
   const user = (await getUserService(ROUTES.settings.nested.sessions.href))
@@ -21,6 +23,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SessionsPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <SessionsContent />
+    </Suspense>
+  );
+}
+
+async function SessionsContent() {
   const service = await getUserService(ROUTES.settings.nested.sessions.href);
   const sessions = await service.listMySessions();
 
