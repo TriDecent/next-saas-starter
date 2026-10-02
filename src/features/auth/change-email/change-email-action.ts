@@ -3,8 +3,7 @@
 import {
   ajEmailSend,
   ajLaxAuthenticated,
-  ajRestrictiveAuthenticated,
-  handleDeniedInServerAction,
+  handleDeniedInServerAction
 } from '@/lib/arcjet';
 import { getUserService, type GeneralUserResponse } from '@/services';
 import { request } from '@arcjet/next';
@@ -27,7 +26,7 @@ export async function changeEmailFormAction(
   ]);
 
   const decision = await ajLaxAuthenticated.protect(req, {
-    action: ' change-email',
+    action: 'sa-change-email',
     userId: service.actor.id,
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
@@ -38,14 +37,6 @@ export async function changeEmailFormAction(
 
   const { newEmail } = parsed.data;
 
-  const emailSendDecision = await ajEmailSend.protect(req, {
-    action: `change-email-${newEmail}`,
-    emailId: newEmail,
-    requested: 1,
-  });
-  if (emailSendDecision.isDenied())
-    handleDeniedInServerAction(emailSendDecision);
-
   return changeEmailAction({ newEmail }, callbackURL);
 }
 
@@ -53,14 +44,18 @@ export async function changeEmailAction(
   { newEmail }: ChangeEmailParams,
   callbackURL: string
 ): Promise<GeneralUserResponse> {
-  const service = await getUserService(callbackURL);
+  const [req, service] = await Promise.all([
+    request(),
+    getUserService(callbackURL),
+  ]);
 
-  const req = await request();
-  const inputDecision = await ajRestrictiveAuthenticated.protect(req, {
-    action: 'sa-change-email',
-    userId: service.actor.id,
+  const emailSendDecision = await ajEmailSend.protect(req, {
+    action: `sa-change-email-${newEmail}`,
+    emailId: newEmail,
+    requested: 1,
   });
-  if (inputDecision.isDenied()) handleDeniedInServerAction(inputDecision);
+  if (emailSendDecision.isDenied())
+    handleDeniedInServerAction(emailSendDecision);
 
   return service.changeEmail({ newEmail, callbackURL });
 }
