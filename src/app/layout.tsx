@@ -1,5 +1,6 @@
 import { ImpersonationStatus } from '@/features/admin';
 import { RenderUserDropdownNav } from '@/features/home';
+import { QueryProvider } from '@/lib/tanstack-query/client';
 import { AvatarSkeleton, PageLayout } from '@/shared/components';
 import {
   NavTrail,
@@ -40,41 +41,43 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistSans.className} relative antialiased`}
       >
         <StoreProvider>
-          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-            <TooltipProvider>
-              <Toaster position='top-right' richColors />
-              <div id='modal'></div>
-              <PageLayout>
-                <Suspense>
-                  <ImpersonationStatus />
-                </Suspense>
-                <PageLayout.Header className='z-30'>
-                  <h1 className='text-2xl font-medium tracking-wider'>
-                    <Link href='/'>Identity Hub</Link>
-                  </h1>
+          <QueryProvider>
+            <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+              <TooltipProvider>
+                <Toaster position='top-right' richColors />
+                <div id='modal'></div>
+                <PageLayout>
+                  <Suspense>
+                    <ImpersonationStatus />
+                  </Suspense>
+                  <PageLayout.Header className='z-30'>
+                    <h1 className='text-2xl font-medium tracking-wider'>
+                      <Link href='/'>Identity Hub</Link>
+                    </h1>
 
-                  <div className='flex items-center gap-2'>
-                    <ThemeToggle />
+                    <div className='flex items-center gap-2'>
+                      <ThemeToggle />
 
-                    <Suspense fallback={<AvatarSkeleton />}>
-                      <RenderUserDropdownNav />
-                    </Suspense>
-                  </div>
-                </PageLayout.Header>
-                <PageLayout.Main>
-                  <div className='mb-6'>
-                    <Suspense>
-                      <NavTrail />
-                    </Suspense>
-                  </div>
-                  {children}
-                </PageLayout.Main>
-                <Suspense>
-                  <PageLayout.Footer />
-                </Suspense>
-              </PageLayout>
-            </TooltipProvider>
-          </ThemeProvider>
+                      <Suspense fallback={<AvatarSkeleton />}>
+                        <RenderUserDropdownNav />
+                      </Suspense>
+                    </div>
+                  </PageLayout.Header>
+                  <PageLayout.Main>
+                    <div className='mb-6'>
+                      <Suspense>
+                        <NavTrail />
+                      </Suspense>
+                    </div>
+                    {children}
+                  </PageLayout.Main>
+                  <Suspense>
+                    <PageLayout.Footer />
+                  </Suspense>
+                </PageLayout>
+              </TooltipProvider>
+            </ThemeProvider>
+          </QueryProvider>
         </StoreProvider>
       </body>
     </html>
