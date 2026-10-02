@@ -54,7 +54,9 @@ export function SessionsList({
       ) : (
         <Item variant='default'>
           <ItemContent className='text-center'>
-            <ItemDescription>No other active sessions found</ItemDescription>
+            <ItemDescription className='text-center'>
+              No other active sessions found
+            </ItemDescription>
           </ItemContent>
         </Item>
       )}
