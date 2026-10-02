@@ -1,8 +1,9 @@
 import type { User } from '@/generated/prisma/client';
+import type { Pagination } from '@/shared/utils';
 import type { ServiceResponse } from '../types';
 
 export type GetUsersResponse = ServiceResponse<GetUsersSuccess, GetUsersError>;
-export type GetUsersSuccess = { users: User[]; total: number };
+export type GetUsersSuccess = { users: User[]; pagination: Pagination };
 export type GetUsersError = { message: string };
 export type GetUserByIdResponse = ServiceResponse<
   User | null,

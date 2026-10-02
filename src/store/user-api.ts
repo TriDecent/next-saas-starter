@@ -1,4 +1,4 @@
-import { userSchema } from '@/shared/schema';
+import { UserSchema } from '@/shared/schema';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import z from 'zod';
 
@@ -6,7 +6,7 @@ type UserQuery = { keyword: string };
 
 const getUsersSchema = z.object({
   users: z.array(
-    userSchema.extend({
+    UserSchema.extend({
       createdAt: z.string(),
       updatedAt: z.string(),
       banExpires: z.string().nullable(),

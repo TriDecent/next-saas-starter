@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const userSchema = z.object({
+export const UserSchema = z.object({
   email: z.string(),
   role: z.string(),
   name: z.string(),
@@ -17,4 +17,4 @@ export const userSchema = z.object({
   banExpires: z.date().nullable(),
 });
 
-export type UserSchema = z.infer<typeof userSchema>;
+export type UserSchemaType = z.infer<typeof UserSchema>;

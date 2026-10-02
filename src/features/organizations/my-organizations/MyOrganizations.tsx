@@ -119,7 +119,6 @@ function SetActiveOrgAction({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        nativeButton={false}
         render={
           <Button variant='outline' size='sm'>
             <FaCog className='size-4' />
@@ -130,7 +129,6 @@ function SetActiveOrgAction({
 
       <DropdownMenuContent align='start'>
         <DropdownMenuItem
-          nativeButton={false}
           render={<ToggleActiveOrg orgId={orgId} isActive={isActive} />}
         />
       </DropdownMenuContent>

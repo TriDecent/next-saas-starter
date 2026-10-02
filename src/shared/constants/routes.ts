@@ -52,8 +52,7 @@ export const ROUTES = {
         'Experience seamless authentication with Identity Hub. Sign in or register easily using email, password, or social login.',
       openGraph: {
         title: `Home | ${APP_NAME}`,
-        description:
-          'Experience seamless authentication with Identity Hub.',
+        description: 'Experience seamless authentication with Identity Hub.',
         url: BASE_URL,
       },
     },
@@ -284,6 +283,9 @@ export const ROUTES = {
       },
     },
   }),
+  api: {
+    users: { href: '/api/users' },
+  },
 } as const;
 
 function defineRoute<T extends Route>(route: T): T {

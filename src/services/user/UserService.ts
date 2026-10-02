@@ -3,6 +3,7 @@ import type { Prisma, Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
+import { buildPagination } from '@/shared/utils';
 import type { IAuthenticatedExecutor } from '../executor';
 import type {
   AuthenticatePriorResponse,
@@ -72,8 +73,8 @@ export class UserService {
   }
 
   getUsers(
-    pageIndex: number,
-    pageSize: number,
+    page: number,
+    limit: number,
     orderBy?: Prisma.UserOrderByWithRelationInput[],
     keyword?: string
   ): Promise<GetUsersResponse> {
@@ -88,15 +89,22 @@ export class UserService {
       },
       query: {
         run: async () => {
-          const skip = pageIndex * pageSize;
+          const offset = (page - 1) * limit;
           const { data: users, total } = await this.repo.getUsers(
-            skip,
-            pageSize,
+            offset,
+            limit,
             orderBy,
             keyword
           );
 
-          return { users, total };
+          return {
+            users,
+            pagination: buildPagination({
+              currentPage: page,
+              limit,
+              totalItems: total,
+            }),
+          };
         },
         toErrorPayload: error => ({ message: error }),
       },

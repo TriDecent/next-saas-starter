@@ -1,5 +1,5 @@
 import { ORG_ROLES } from '@/lib/auth/constants';
-import { userSchema } from '@/shared/schema';
+import { UserSchema } from '@/shared/schema';
 import { z } from 'zod';
 
 export const createInvitationSchema = z.object({
@@ -20,7 +20,7 @@ export const createInvitationSchema = z.object({
     })
     .optional(),
 
-  selectedRecipient: userSchema.optional(),
+  selectedRecipient: UserSchema.optional(),
 });
 
 export type CreateInvitationSchema = z.infer<typeof createInvitationSchema>;
