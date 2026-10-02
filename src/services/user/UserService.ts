@@ -291,36 +291,19 @@ export class UserService {
     );
   }
 
-  updateProfile(
-    {
-      email,
-      name,
-      favoriteNumber,
-    }: {
-      email: string;
-      name: string;
-      favoriteNumber: number;
-    },
-    callbackURL: string
-  ): Promise<GeneralUserResponse> {
+  updateProfile({
+    name,
+    favoriteNumber,
+  }: {
+    name: string;
+    favoriteNumber: number;
+  }): Promise<GeneralUserResponse> {
     return this._serviceExecutor.runSafely(
       async () => {
-        const promises = [
-          auth.api.updateUser({
-            body: { name, favoriteNumber },
-            headers: this.headers,
-          }),
-        ];
-
-        if (email !== this.actor.email) {
-          promises.push(
-            auth.api.changeEmail({
-              body: { newEmail: email, callbackURL },
-              headers: this.headers,
-            })
-          );
-        }
-        await Promise.all(promises);
+        await auth.api.updateUser({
+          body: { name, favoriteNumber },
+          headers: this.headers,
+        });
       },
       error => ({ message: error })
     );
