@@ -1,4 +1,5 @@
 import { AuthenticatePriorProvider } from '@/features/auth';
+import { ChangeEmailCard } from '@/features/auth/change-email';
 import {
   PasskeysList,
   RequestPasswordResetCard,
@@ -46,7 +47,13 @@ async function SecurityContent() {
     <div className='space-y-8'>
       <AuthenticatePriorProvider user={service.actor}>
         <TwoFactorsCard isEnabled={!!service.actor.twoFactorEnabled} />
-        <ChangePasswordCard />
+        <div className='flex flex-col gap-x-4 gap-y-8 sm:flex-row'>
+          <ChangePasswordCard className='flex-1' />
+          <ChangeEmailCard
+            callbackURL={ROUTES.settings.nested.security.href}
+            className='flex-1'
+          />
+        </div>
         <PasskeysList passkeys={passkeys} />
       </AuthenticatePriorProvider>
     </div>
