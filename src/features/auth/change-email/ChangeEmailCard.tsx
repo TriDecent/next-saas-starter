@@ -13,13 +13,7 @@ import { Suspense } from 'react';
 import { MdEmail } from 'react-icons/md';
 import { ChangeEmailForm } from './ChangeEmailForm';
 
-export function ChangeEmailCard({
-  callbackURL,
-  className,
-}: {
-  callbackURL: string;
-  className?: string;
-}) {
+export function ChangeEmailCard({ className }: { className?: string }) {
   return (
     <Card className={cn(className)}>
       <CardHeader>
@@ -40,7 +34,7 @@ export function ChangeEmailCard({
                 </Button>
               }
             >
-              <ChangeEmailForm callbackURL={callbackURL} />
+              <ChangeEmailForm />
             </AuthenticatePriorAction>
           </Suspense>
         </CardAction>

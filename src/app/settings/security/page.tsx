@@ -49,10 +49,7 @@ async function SecurityContent() {
         <TwoFactorsCard isEnabled={!!service.actor.twoFactorEnabled} />
         <div className='flex flex-col gap-x-4 gap-y-8 sm:flex-row'>
           <ChangePasswordCard className='flex-1' />
-          <ChangeEmailCard
-            callbackURL={ROUTES.settings.nested.security.href}
-            className='flex-1'
-          />
+          <ChangeEmailCard className='flex-1' />
         </div>
         <PasskeysList passkeys={passkeys} />
       </AuthenticatePriorProvider>

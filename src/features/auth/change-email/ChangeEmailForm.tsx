@@ -6,13 +6,14 @@ import {
   useActionForm,
 } from '@/shared/components/form/client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { usePathname } from 'next/navigation';
 import { startTransition } from 'react';
 import { toast } from 'sonner';
 import z from 'zod';
 import { changeEmailFormAction } from './change-email-action';
 
-export function ChangeEmailForm({ callbackURL }: { callbackURL: string }) {
-  const changeEmailAction = changeEmailFormAction.bind(null, callbackURL);
+export function ChangeEmailForm() {
+  const changeEmailAction = changeEmailFormAction.bind(null, usePathname());
 
   const { methods, animationScope, dispatch, isPending, state } = useActionForm(
     {
