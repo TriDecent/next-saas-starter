@@ -1,5 +1,5 @@
 import { createSudoToken } from '@/features/auth';
-import type { Prisma, Session, User } from '@/generated/prisma/client';
+import type { Session, User } from '@/generated/prisma/client';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
@@ -12,6 +12,7 @@ import type {
   GenerateBackUpCodesResponse,
   GetUserByIdResponse,
   GetUsersError,
+  GetUsersParams,
   GetUsersResponse,
   GetUsersSuccess,
 } from './user-dtos';
@@ -72,12 +73,12 @@ export class UserService {
     return { type: 'success', payload: user };
   }
 
-  getUsers(
-    page: number,
-    limit: number,
-    orderBy?: Prisma.UserOrderByWithRelationInput[],
-    keyword?: string
-  ): Promise<GetUsersResponse> {
+  getUsers({
+    page,
+    limit,
+    orderBy,
+    keyword,
+  }: GetUsersParams): Promise<GetUsersResponse> {
     return this._serviceExecutor.executeProtectedQuery<
       GetUsersSuccess,
       GetUsersError,

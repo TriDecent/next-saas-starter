@@ -10,7 +10,6 @@ import {
 import { TooltipProvider } from '@/shared/components/ui';
 import { Toaster } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
-import { StoreProvider } from '@/shared/provider/client';
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import Link from 'next/link';
@@ -40,45 +39,43 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistSans.className} relative antialiased`}
       >
-        <StoreProvider>
-          <QueryProvider>
-            <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-              <TooltipProvider>
-                <Toaster position='top-right' richColors />
-                <div id='modal'></div>
-                <PageLayout>
-                  <Suspense>
-                    <ImpersonationStatus />
-                  </Suspense>
-                  <PageLayout.Header className='z-30'>
-                    <h1 className='text-2xl font-medium tracking-wider'>
-                      <Link href='/'>Identity Hub</Link>
-                    </h1>
+        <QueryProvider>
+          <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+            <TooltipProvider>
+              <Toaster position='top-right' richColors />
+              <div id='modal'></div>
+              <PageLayout>
+                <Suspense>
+                  <ImpersonationStatus />
+                </Suspense>
+                <PageLayout.Header className='z-30'>
+                  <h1 className='text-2xl font-medium tracking-wider'>
+                    <Link href='/'>Identity Hub</Link>
+                  </h1>
 
-                    <div className='flex items-center gap-2'>
-                      <ThemeToggle />
+                  <div className='flex items-center gap-2'>
+                    <ThemeToggle />
 
-                      <Suspense fallback={<AvatarSkeleton />}>
-                        <RenderUserDropdownNav />
-                      </Suspense>
-                    </div>
-                  </PageLayout.Header>
-                  <PageLayout.Main>
-                    <div className='mb-6'>
-                      <Suspense>
-                        <NavTrail />
-                      </Suspense>
-                    </div>
-                    {children}
-                  </PageLayout.Main>
-                  <Suspense>
-                    <PageLayout.Footer />
-                  </Suspense>
-                </PageLayout>
-              </TooltipProvider>
-            </ThemeProvider>
-          </QueryProvider>
-        </StoreProvider>
+                    <Suspense fallback={<AvatarSkeleton />}>
+                      <RenderUserDropdownNav />
+                    </Suspense>
+                  </div>
+                </PageLayout.Header>
+                <PageLayout.Main>
+                  <div className='mb-6'>
+                    <Suspense>
+                      <NavTrail />
+                    </Suspense>
+                  </div>
+                  {children}
+                </PageLayout.Main>
+                <Suspense>
+                  <PageLayout.Footer />
+                </Suspense>
+              </PageLayout>
+            </TooltipProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

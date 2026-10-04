@@ -1,5 +1,6 @@
 'use client';
 
+import { getUsersQueryOptions } from '@/features/user';
 import type { User } from '@/generated/prisma/client';
 import { MiniLoader } from '@/shared/components';
 import { FormField } from '@/shared/components/form/client';
@@ -15,32 +16,19 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/client';
-import { useGetUsersQuery } from '@/store/user-api';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FaEnvelope } from 'react-icons/fa';
 import type { CreateInvitationSchema } from './schema';
 
-export function SelectRecipientField({ recipients }: { recipients: User[] }) {
+export function SelectRecipientField() {
   const { setValue } = useFormContext<CreateInvitationSchema>();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm);
-  const { users, isFetching, isError } = useGetUsersQuery(
-    { keyword: debouncedSearch },
-    {
-      selectFromResult: ({ data, isFetching, isError }) => ({
-        isFetching,
-        isError,
-        users:
-          data?.users.map(user => ({
-            ...user,
-            createdAt: new Date(user.createdAt),
-            updatedAt: new Date(user.updatedAt),
-            banExpires: user.banExpires ? new Date(user.banExpires) : null,
-          })) ?? recipients,
-      }),
-    }
-  );
+  const { data, isError, isPending } = useQuery({
+    ...getUsersQueryOptions({ keyword: debouncedSearch, page: 1, limit: 20 }),
+  });
 
   return (
     <FormField<User>
@@ -56,15 +44,14 @@ export function SelectRecipientField({ recipients }: { recipients: User[] }) {
         </InputGroupAddon>
       }
       autoComplete='email'
-      items={users}
+      items={data?.users}
       itemToStringLabel={user => user.email}
       valueAs={user => user.email}
       onInputValueChange={setSearchTerm}
     >
       <ComboboxContent>
         <RecipientSearchList
-          usersCount={users.length}
-          isFetching={isFetching}
+          isFetching={isPending}
           isError={isError}
           onSelect={user => setValue('selectedRecipient', user)}
         />
@@ -74,14 +61,12 @@ export function SelectRecipientField({ recipients }: { recipients: User[] }) {
 }
 
 type RecipientSearchListProps = {
-  usersCount: number;
   isFetching: boolean;
   isError: boolean;
   onSelect: (user: User) => void;
 };
 
 function RecipientSearchList({
-  usersCount,
   isFetching,
   isError,
   onSelect,
@@ -103,28 +88,27 @@ function RecipientSearchList({
   return (
     <>
       <ComboboxEmpty>No emails found.</ComboboxEmpty>
-      {usersCount > 0 ? (
-        <ComboboxList>
-          <ComboboxGroup>
-            <ComboboxLabel>Users</ComboboxLabel>
-            <ComboboxSeparator />
-            <ComboboxCollection>
-              {(user: User) => (
-                <ComboboxItem
-                  key={user.id}
-                  value={user}
-                  onClick={() => onSelect(user)}
-                >
-                  <RecipientDisplay email={user.email} role={user.role} />
-                </ComboboxItem>
-              )}
-            </ComboboxCollection>
-            <div className='text-muted-foreground mx-auto w-fit py-2 text-xs'>
-              Type to search more
-            </div>
-          </ComboboxGroup>
-        </ComboboxList>
-      ) : null}
+
+      <ComboboxList>
+        <ComboboxGroup>
+          <ComboboxLabel>Users</ComboboxLabel>
+          <ComboboxSeparator />
+          <ComboboxCollection>
+            {(user: User) => (
+              <ComboboxItem
+                key={user.id}
+                value={user}
+                onClick={() => onSelect(user)}
+              >
+                <RecipientDisplay email={user.email} role={user.role} />
+              </ComboboxItem>
+            )}
+          </ComboboxCollection>
+          <div className='text-muted-foreground mx-auto w-fit py-2 text-xs'>
+            Type to search more
+          </div>
+        </ComboboxGroup>
+      </ComboboxList>
     </>
   );
 }

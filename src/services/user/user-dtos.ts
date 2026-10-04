@@ -1,7 +1,13 @@
-import type { User } from '@/generated/prisma/client';
+import type { Prisma, User } from '@/generated/prisma/client';
 import type { Pagination } from '@/shared/utils';
 import type { ServiceResponse } from '../types';
 
+export type GetUsersParams = {
+  page: number;
+  limit: number;
+  orderBy?: Prisma.UserOrderByWithRelationInput[];
+  keyword?: string;
+};
 export type GetUsersResponse = ServiceResponse<GetUsersSuccess, GetUsersError>;
 export type GetUsersSuccess = { users: User[]; pagination: Pagination };
 export type GetUsersError = { message: string };

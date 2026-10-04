@@ -1,4 +1,3 @@
-import type { User } from '@/generated/prisma/client';
 import {
   FieldDescription,
   FieldLegend,
@@ -6,7 +5,7 @@ import {
 } from '@/shared/components/ui/client';
 import { SelectRecipientField } from '../_shared/client';
 
-export function SelectRecipient({ recipients }: { recipients: User[] }) {
+export function SelectRecipient() {
   return (
     <FieldSet>
       <FieldLegend>2) Recipient</FieldLegend>
@@ -14,7 +13,7 @@ export function SelectRecipient({ recipients }: { recipients: User[] }) {
         Enter the email address of the person you want to invite.
       </FieldDescription>
 
-      <SelectRecipientField recipients={recipients} />
+      <SelectRecipientField />
     </FieldSet>
   );
 }

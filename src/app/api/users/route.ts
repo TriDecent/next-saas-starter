@@ -4,7 +4,7 @@ import { ROUTES } from '@/shared/constants';
 import { NextResponse, type NextRequest } from 'next/server';
 import z from 'zod';
 
-const DEFAULT_PAGE = 0;
+const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
@@ -32,12 +32,12 @@ export async function GET(
 
   const { keyword, page, limit } = parsedResult.data;
 
-  const result = await service.getUsers(
+  const result = await service.getUsers({
     page,
     limit,
-    [{ name: 'asc' }],
-    keyword
-  );
+    orderBy: [{ email: 'asc' }],
+    keyword,
+  });
 
   return result.type === 'success'
     ? NextResponse.json(result.payload)

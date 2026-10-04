@@ -21,7 +21,7 @@ export function InvitationStepContent({ step }: { step: number }) {
       );
 
     case 1:
-      return <SelectRecipientField recipients={[]} />;
+      return <SelectRecipientField />;
 
     case 2:
       return <SelectRoleField />;
