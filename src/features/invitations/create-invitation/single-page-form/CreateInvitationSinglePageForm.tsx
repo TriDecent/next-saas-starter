@@ -11,8 +11,11 @@ import {
   Separator,
 } from '@/shared/components/ui';
 
+import { getUsersQueryOptions } from '@/features/user';
+import { getQueryClient } from '@/lib/tanstack-query';
 import { FieldGroup, FieldSeparator } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { FaUserPlus } from 'react-icons/fa';
 import { InvitationSummary } from '../../summary';
@@ -88,15 +91,25 @@ async function SelectOrgWrapper() {
 }
 
 async function SelectRecipientWrapper() {
-  const service = await getUserService(ROUTES.organizations.href);
+  const service = await getUserService(ROUTES.invitations.href);
   // * This implementation is not scalable.
   // *It fetches a hard-coded limit of the first 100 users,
   // * which will break with larger datasets.
   // * Consider implementing a client side combobox component with RTK query
   // * instead of fetching all users upfront.
-  const response = await service.getUsers(0, 100);
+  const response = await service.getUsers({ page: 1, limit: 20 });
 
   if (response.type === 'error') throw new Error(response.payload.message);
 
-  return <SelectRecipient recipients={response.payload.users} />;
+  const queryClient = getQueryClient();
+  queryClient.setQueryData(
+    getUsersQueryOptions({ page: 1, limit: 20 }).queryKey,
+    response.payload
+  );
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <SelectRecipient />
+    </HydrationBoundary>
+  );
 }

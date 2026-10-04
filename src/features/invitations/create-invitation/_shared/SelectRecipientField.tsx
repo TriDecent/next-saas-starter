@@ -27,7 +27,11 @@ export function SelectRecipientField() {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm);
   const { data, isError, isPending } = useQuery({
-    ...getUsersQueryOptions({ keyword: debouncedSearch, page: 1, limit: 20 }),
+    ...getUsersQueryOptions({
+      keyword: debouncedSearch ? debouncedSearch : undefined,
+      page: 1,
+      limit: 20,
+    }),
   });
 
   return (

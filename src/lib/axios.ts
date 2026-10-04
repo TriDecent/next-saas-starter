@@ -3,7 +3,7 @@ import { lazySingleton } from './utils';
 
 export const apiClient = lazySingleton(() =>
   axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     timeout: 10000,
   })
 );
