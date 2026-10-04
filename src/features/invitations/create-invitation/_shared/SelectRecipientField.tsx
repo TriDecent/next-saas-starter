@@ -49,6 +49,7 @@ export function SelectRecipientField() {
       }
       autoComplete='email'
       items={data?.users}
+      inputValue={searchTerm}
       itemToStringLabel={user => user.email}
       valueAs={user => user.email}
       onInputValueChange={setSearchTerm}
@@ -57,7 +58,10 @@ export function SelectRecipientField() {
         <RecipientSearchList
           isFetching={isPending}
           isError={isError}
-          onSelect={user => setValue('selectedRecipient', user)}
+          onSelect={user => {
+            setValue('selectedRecipient', user);
+            setSearchTerm(user.email);
+          }}
         />
       </ComboboxContent>
     </FormField>
