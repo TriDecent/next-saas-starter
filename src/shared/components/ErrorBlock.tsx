@@ -1,65 +1,52 @@
+import { AlertCircle, LinkIcon } from 'lucide-react';
+import Link from 'next/link';
 import {
+  Button,
   Empty,
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/shared/components/ui';
-import { Button } from '@/shared/components/ui/button';
-import { AlertCircle, LinkIcon } from 'lucide-react';
-import Link from 'next/link';
+} from './ui';
 
-interface ErrorBlockProps {
-  message: string;
+export type ErrorBlockProps = {
+  message?: string;
   title?: string;
   action?:
-    | {
-        type: 'link';
-        href: string;
-        text: string;
-      }
-    | {
-        type: 'button';
-        onClick: () => void;
-        text: string;
-      };
-}
+    | { type: 'link'; href: string; text: string }
+    | { type: 'button'; onClick: () => void; text: string };
+};
 
 export function ErrorBlock({
-  message: error,
+  message = 'An unexpected error has occurred',
   title = 'Oops! Something went wrong',
   action,
 }: ErrorBlockProps) {
   return (
-    <Empty className='max-w-md border'>
+    <Empty className='border'>
+      <EmptyMedia>
+        <AlertCircle className='text-destructive h-10 w-10' />
+      </EmptyMedia>
       <EmptyHeader>
-        <EmptyMedia
-          variant='icon'
-          className='bg-destructive/10 text-destructive'
-        >
-          <AlertCircle className='size-6' />
-        </EmptyMedia>
         <EmptyTitle>{title}</EmptyTitle>
-        <EmptyDescription>{error}</EmptyDescription>
+        <EmptyDescription>{message}</EmptyDescription>
       </EmptyHeader>
 
       {action ? (
         <EmptyContent>
           {action.type === 'link' ? (
             <Button
-              className='w-full'
               nativeButton={false}
               render={
-                <Link href={action.href} replace>
-                  <LinkIcon /> {action.text}
+                <Link href={action.href}>
+                  <LinkIcon className='mr-2 size-4' />
+                  {action.text}
                 </Link>
               }
             />
           ) : (
-            <Button onClick={action.onClick} className='w-full'>
-              {action.text}
-            </Button>
+            <Button onClick={action.onClick}>{action.text}</Button>
           )}
         </EmptyContent>
       ) : null}
