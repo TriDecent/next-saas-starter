@@ -21,7 +21,6 @@ export function InvitationActionsCell({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        nativeButton={false}
         render={
           <Button variant='ghost'>
             <MoreHorizontal />

@@ -35,7 +35,6 @@ export function MemberActionsCell({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        nativeButton={false}
         render={
           <Button variant='ghost'>
             <MoreHorizontal />

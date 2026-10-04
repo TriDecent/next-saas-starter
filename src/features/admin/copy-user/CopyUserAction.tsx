@@ -6,7 +6,6 @@ import { Copy } from 'lucide-react';
 export function CopyUserAction({ user }: { user: User }) {
   return (
     <DropdownMenuItem
-      nativeButton={true}
       render={
         <CopyText
           onSuccess={'User ID copied to clipboard'}
