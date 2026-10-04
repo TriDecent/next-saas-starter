@@ -15,6 +15,7 @@ import { getUsersQueryOptions } from '@/features/user';
 import { getQueryClient } from '@/lib/tanstack-query';
 import { FieldGroup, FieldSeparator } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
+import { PAGINATION_DEFAULTS } from '@/shared/utils';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { FaUserPlus } from 'react-icons/fa';
@@ -103,7 +104,10 @@ async function SelectRecipientWrapper() {
 
   const queryClient = getQueryClient();
   queryClient.setQueryData(
-    getUsersQueryOptions({ page: 1, limit: 20 }).queryKey,
+    getUsersQueryOptions({
+      page: PAGINATION_DEFAULTS.page,
+      limit: PAGINATION_DEFAULTS.limit,
+    }).queryKey,
     response.payload
   );
 

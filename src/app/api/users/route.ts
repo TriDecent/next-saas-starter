@@ -1,12 +1,9 @@
 import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { getUserService, type GetUsersResponse } from '@/services';
 import { ROUTES } from '@/shared/constants';
+import { PAGINATION_DEFAULTS } from '@/shared/utils';
 import { NextResponse, type NextRequest } from 'next/server';
 import z from 'zod';
-
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = 20;
-const MAX_LIMIT = 100;
 
 export async function GET(
   request: NextRequest
@@ -46,10 +43,19 @@ export async function GET(
 
 const QuerySchema = z.object({
   keyword: z.string().optional(),
-  page: z.coerce.number().pipe(z.int().positive()).default(DEFAULT_PAGE),
+  page: z.coerce
+    .number()
+    .pipe(z.int().positive())
+    .default(PAGINATION_DEFAULTS.page),
   limit: z.coerce
     .number()
     .pipe(z.int().positive())
-    .pipe(z.transform(value => (value > MAX_LIMIT ? MAX_LIMIT : value)))
-    .default(DEFAULT_LIMIT),
+    .pipe(
+      z.transform(value =>
+        value > PAGINATION_DEFAULTS.maxLimit
+          ? PAGINATION_DEFAULTS.maxLimit
+          : value
+      )
+    )
+    .default(PAGINATION_DEFAULTS.limit),
 });

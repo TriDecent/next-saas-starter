@@ -16,6 +16,7 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/client';
+import { PAGINATION_DEFAULTS } from '@/shared/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -29,8 +30,8 @@ export function SelectRecipientField() {
   const { data, isError, isPending } = useQuery({
     ...getUsersQueryOptions({
       keyword: debouncedSearch ? debouncedSearch : undefined,
-      page: 1,
-      limit: 20,
+      page: PAGINATION_DEFAULTS.page,
+      limit: PAGINATION_DEFAULTS.limit,
     }),
   });
 
