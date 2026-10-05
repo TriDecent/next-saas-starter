@@ -1,10 +1,11 @@
 'use client';
 
-import { getUsersQueryOptions } from '@/features/user';
+import { getUsersInfiniteQueryOptions } from '@/features/user/api/user-query-options';
 import type { User } from '@/generated/prisma/client';
 import { MiniLoader } from '@/shared/components';
 import { FormField } from '@/shared/components/form/client';
 import {
+  Button,
   ComboboxCollection,
   ComboboxContent,
   ComboboxEmpty,
@@ -17,8 +18,9 @@ import {
 } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/client';
 import { PAGINATION_DEFAULTS } from '@/shared/utils';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { ArrowDown } from 'lucide-react';
+import { useState, type ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FaEnvelope } from 'react-icons/fa';
 import type { CreateInvitationSchema } from './schema';
@@ -27,13 +29,15 @@ export function SelectRecipientField() {
   const { setValue } = useFormContext<CreateInvitationSchema>();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm);
-  const { data, isError, isPending } = useQuery({
-    ...getUsersQueryOptions({
-      keyword: debouncedSearch ? debouncedSearch : undefined,
-      page: PAGINATION_DEFAULTS.page,
-      limit: PAGINATION_DEFAULTS.limit,
-    }),
-  });
+  const { data, isError, isPending, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      ...getUsersInfiniteQueryOptions({
+        keyword: debouncedSearch ? debouncedSearch : undefined, // avoid '??' to prevent caching an empty string.
+        limit: PAGINATION_DEFAULTS.limit,
+      }),
+    });
+
+  const users = data?.pages.flatMap(page => page.users);
 
   return (
     <FormField<User>
@@ -49,10 +53,10 @@ export function SelectRecipientField() {
         </InputGroupAddon>
       }
       autoComplete='email'
-      items={data?.users}
+      items={users}
       inputValue={searchTerm}
       itemToStringLabel={user => user.email}
-      valueAs={user => user.email}
+      valueAs={user => user.email} // this value is submitted with the form
       onInputValueChange={setSearchTerm}
     >
       <ComboboxContent>
@@ -64,8 +68,28 @@ export function SelectRecipientField() {
             setSearchTerm(user.email);
           }}
         />
+
+        <div className='text-muted-foreground mx-auto w-fit py-2 text-xs'>
+          Type to search or click to load more
+        </div>
+
+        <LoadMoreButton
+          disabled={
+            isFetchingNextPage || !data?.pages.at(-1)?.pagination.hasNextPage
+          }
+          onClick={() => fetchNextPage()}
+          className='mx-auto mb-3 block animate-pulse disabled:animate-none'
+        />
       </ComboboxContent>
     </FormField>
+  );
+}
+
+function LoadMoreButton(props: ComponentProps<typeof Button>) {
+  return (
+    <Button {...props}>
+      <ArrowDown />
+    </Button>
   );
 }
 
@@ -95,30 +119,28 @@ function RecipientSearchList({
     );
 
   return (
-    <>
-      <ComboboxEmpty>No emails found.</ComboboxEmpty>
+    <ComboboxList>
+      <ComboboxGroup>
+        <ComboboxLabel>Users</ComboboxLabel>
+        <ComboboxSeparator />
 
-      <ComboboxList>
-        <ComboboxGroup>
-          <ComboboxLabel>Users</ComboboxLabel>
-          <ComboboxSeparator />
-          <ComboboxCollection>
-            {(user: User) => (
-              <ComboboxItem
-                key={user.id}
-                value={user}
-                onClick={() => onSelect(user)}
-              >
-                <RecipientDisplay email={user.email} role={user.role} />
-              </ComboboxItem>
-            )}
-          </ComboboxCollection>
-          <div className='text-muted-foreground mx-auto w-fit py-2 text-xs'>
-            Type to search more
-          </div>
-        </ComboboxGroup>
-      </ComboboxList>
-    </>
+        <ComboboxEmpty>No emails found.</ComboboxEmpty>
+
+        <ComboboxCollection>
+          {(user: User) => (
+            <ComboboxItem
+              key={user.id}
+              value={user}
+              onClick={() => onSelect(user)}
+            >
+              <RecipientDisplay email={user.email} role={user.role} />
+            </ComboboxItem>
+          )}
+        </ComboboxCollection>
+
+        <ComboboxSeparator />
+      </ComboboxGroup>
+    </ComboboxList>
   );
 }
 

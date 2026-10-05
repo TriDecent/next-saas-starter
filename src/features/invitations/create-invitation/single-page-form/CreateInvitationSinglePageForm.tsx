@@ -1,5 +1,7 @@
 'use server';
 
+import { getUsersInfiniteQueryOptions } from '@/features/user';
+import { getQueryClient } from '@/lib/tanstack-query';
 import { getOrgService, getUserService } from '@/services';
 import { SkeletonForm } from '@/shared/components';
 import {
@@ -10,9 +12,6 @@ import {
   CardTitle,
   Separator,
 } from '@/shared/components/ui';
-
-import { getUsersQueryOptions } from '@/features/user';
-import { getQueryClient } from '@/lib/tanstack-query';
 import { FieldGroup, FieldSeparator } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
 import { PAGINATION_DEFAULTS } from '@/shared/utils';
@@ -93,22 +92,20 @@ async function SelectOrgWrapper() {
 
 async function SelectRecipientWrapper() {
   const service = await getUserService(ROUTES.invitations.href);
-  // * This implementation is not scalable.
-  // *It fetches a hard-coded limit of the first 100 users,
-  // * which will break with larger datasets.
-  // * Consider implementing a client side combobox component with RTK query
-  // * instead of fetching all users upfront.
-  const response = await service.getUsers({ page: 1, limit: 20 });
+  const response = await service.getUsers({
+    page: PAGINATION_DEFAULTS.page,
+    limit: PAGINATION_DEFAULTS.limit,
+    orderBy: [{ email: 'asc' }],
+  });
 
   if (response.type === 'error') throw new Error(response.payload.message);
 
   const queryClient = getQueryClient();
   queryClient.setQueryData(
-    getUsersQueryOptions({
-      page: PAGINATION_DEFAULTS.page,
+    getUsersInfiniteQueryOptions({
       limit: PAGINATION_DEFAULTS.limit,
     }).queryKey,
-    response.payload
+    { pages: [response.payload], pageParams: [PAGINATION_DEFAULTS.page] }
   );
 
   return (

@@ -1,7 +1,8 @@
 import { apiClient } from '@/lib/client';
 import type { GetUsersParams } from '@/services';
 import { ROUTES } from '@/shared/constants';
-import { queryOptions } from '@tanstack/react-query';
+import { PAGINATION_DEFAULTS } from '@/shared/utils';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { GetUsersSchema } from '../user-schema';
 import { USER_QUERY_KEYS } from './user-keys';
 
@@ -9,6 +10,29 @@ export function getUsersQueryOptions(params?: GetUsersParams) {
   return queryOptions({
     queryKey: USER_QUERY_KEYS.list(params),
     queryFn: () => fetchUsers(params),
+  });
+}
+
+export function getUsersInfiniteQueryOptions(
+  params?: Omit<GetUsersParams, 'page'>
+) {
+  return infiniteQueryOptions({
+    queryKey: USER_QUERY_KEYS.infinite(params),
+    queryFn: ({ pageParam }) =>
+      fetchUsers({
+        ...params,
+        page: pageParam,
+        limit: params?.limit ?? PAGINATION_DEFAULTS.limit,
+      }),
+    initialPageParam: Number(PAGINATION_DEFAULTS.page),
+    getNextPageParam: lastPage =>
+      lastPage.pagination.hasNextPage
+        ? lastPage.pagination.currentPage + 1
+        : undefined,
+    getPreviousPageParam: firstPage =>
+      firstPage.pagination.currentPage > 1
+        ? firstPage.pagination.currentPage - 1
+        : undefined,
   });
 }
 

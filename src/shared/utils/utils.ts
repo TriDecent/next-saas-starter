@@ -39,7 +39,7 @@ export function buildPagination({
   } as const;
 }
 export const PAGINATION_DEFAULTS = {
-  page: 0,
-  limit: 20,
+  page: 1,
+  limit: 5,
   maxLimit: 100,
-};
+} as const;
