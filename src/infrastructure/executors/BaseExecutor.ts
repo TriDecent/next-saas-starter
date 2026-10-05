@@ -1,7 +1,7 @@
 import { type IUserRepository } from '@/infrastructure/repositories';
+import type { ServiceResponse } from '@/shared/types';
 import { APIError } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import type { ServiceResponse } from '../types';
 
 export interface IBaseExecutor {
   runSafely<TSuccess, TError>(

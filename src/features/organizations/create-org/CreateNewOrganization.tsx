@@ -1,6 +1,6 @@
 'use client';
 
-import type { CreateOrgInput } from '@/services/organization/org-dtos';
+import type { CreateOrgInput } from '@/features/organizations/server';
 import { BaseFormLayout, useActionForm } from '@/shared/components/form/client';
 import {
   Card,

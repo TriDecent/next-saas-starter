@@ -1,11 +1,11 @@
 'use server';
 
+import type { SignInResponse } from '@/features/auth/server';
+import { getAuthService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getAuthService } from '@/services';
-import type { SignInResponse } from '@/services/auth';
 import { signInSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 

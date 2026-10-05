@@ -1,10 +1,10 @@
 import type { auth, SubscriptionPlan } from '@/lib/auth';
-import type Stripe from 'stripe';
 import type {
   ExtractEndpointBody,
   ExtractEndpointQuery,
   ServiceResponse,
-} from '../types';
+} from '@/shared/types';
+import type Stripe from 'stripe';
 
 export type UpgradeSubscriptionInput = ExtractEndpointBody<
   typeof auth.api.upgradeSubscription

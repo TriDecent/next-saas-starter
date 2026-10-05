@@ -1,9 +1,9 @@
 import type { Session, User } from '@/generated/prisma/client';
+import type { IBaseExecutor } from '@/infrastructure/executors';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import type { IBaseExecutor } from '../executor';
 import type {
   GeneralAuthResponse,
   SignInResponse,

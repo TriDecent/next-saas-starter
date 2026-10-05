@@ -1,11 +1,11 @@
 'use server';
 
+import type { GeneralAuthResponse } from '@/features/auth/server';
+import { getAuthService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getAuthService } from '@/services';
-import type { GeneralAuthResponse } from '@/services/auth';
 import { backupCodeSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 

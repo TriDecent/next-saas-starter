@@ -1,11 +1,11 @@
 'use server';
 
+import type { GeneralUserResponse } from '@/features/user/server';
+import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getUserService } from '@/services';
-import type { GeneralUserResponse } from '@/services/user';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { cookies } from 'next/headers';

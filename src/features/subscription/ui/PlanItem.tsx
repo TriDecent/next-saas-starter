@@ -1,4 +1,4 @@
-import type { SubscriptionPlanDetails } from '@/services/subscription';
+import type { SubscriptionPlanDetails } from '@/features/subscription/server';
 import {
   Badge,
   Button,

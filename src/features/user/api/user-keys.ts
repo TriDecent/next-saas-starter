@@ -1,4 +1,4 @@
-import type { GetUsersParams } from '@/services';
+import type { GetUsersParams } from '@/features/user/server';
 
 export const USER_QUERY_KEYS = {
   all: ['users'] as const,

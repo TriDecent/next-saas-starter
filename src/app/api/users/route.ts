@@ -1,5 +1,6 @@
+import type { GetUsersResponse } from '@/features/user/server';
+import { getUserService } from '@/infrastructure/composition/factory';
 import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
-import { getUserService, type GetUsersResponse } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { PAGINATION_DEFAULTS } from '@/shared/utils';
 import { NextResponse, type NextRequest } from 'next/server';

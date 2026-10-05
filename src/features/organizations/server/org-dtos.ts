@@ -3,7 +3,7 @@ import type {
   ExtractEndpointBody,
   ExtractEndpointQuery,
   ServiceResponse,
-} from '../types';
+} from '@/shared/types';
 
 export type CreateOrgInput = ExtractEndpointBody<
   typeof auth.api.createOrganization

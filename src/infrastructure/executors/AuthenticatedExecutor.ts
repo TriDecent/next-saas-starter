@@ -2,8 +2,8 @@ import { verifySudoToken } from '@/features/auth';
 import type { User } from '@/generated/prisma/client';
 import { type IUserRepository } from '@/infrastructure/repositories';
 import { hasPermission } from '@/lib/auth';
+import type { ServiceResponse } from '@/shared/types';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
-import type { ServiceResponse } from '../types';
 import { BaseExecutor, type IBaseExecutor } from './BaseExecutor';
 
 export interface IAuthenticatedExecutor extends IBaseExecutor {

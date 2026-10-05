@@ -1,8 +1,8 @@
 'use server';
 
+import type { SignUpResponse } from '@/features/auth/server';
+import { getAuthService } from '@/infrastructure/composition/factory';
 import { ajSignup, handleDeniedInServerAction } from '@/lib/arcjet';
-import { getAuthService } from '@/services';
-import type { SignUpResponse } from '@/services/auth';
 import { signUpSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 

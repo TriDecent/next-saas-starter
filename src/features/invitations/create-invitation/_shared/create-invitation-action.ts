@@ -1,8 +1,8 @@
 'use server';
 
+import type { GeneralOrgResponse } from '@/features/organizations/server';
+import { getOrgService } from '@/infrastructure/composition/factory';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
-import { getOrgService } from '@/services';
-import type { GeneralOrgResponse } from '@/services/organization';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { refresh } from 'next/cache';

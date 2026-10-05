@@ -2,7 +2,7 @@
 
 import { MySubscriptions, SubscriptionPlans } from '@/features/subscription';
 import { EntityReferenceProvider } from '@/features/subscription/context/client';
-import { getSubscriptionService } from '@/services';
+import { getSubscriptionService } from '@/infrastructure/composition/factory';
 import { Loading } from '@/shared/components';
 import {
   ScrollArea,

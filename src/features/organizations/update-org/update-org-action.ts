@@ -1,10 +1,11 @@
 'use server';
 
+import type { GeneralOrgResponse } from '@/features/organizations/server';
+import { getOrgService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getOrgService, type GeneralOrgResponse } from '@/services';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { orgSchema } from '../_shared';

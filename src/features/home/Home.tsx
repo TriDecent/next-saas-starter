@@ -1,6 +1,6 @@
 'use server';
 
-import { getAuthService } from '@/services';
+import { getAuthService } from '@/infrastructure/composition/factory';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';

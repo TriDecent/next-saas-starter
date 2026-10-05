@@ -1,6 +1,6 @@
 'use client';
 
-import type { CreateOrgInput } from '@/services';
+import type { CreateOrgInput } from '@/features/organizations/server';
 import { FormField } from '@/shared/components/form/client';
 import { InputGroupAddon } from '@/shared/components/ui';
 import { useEffect } from 'react';

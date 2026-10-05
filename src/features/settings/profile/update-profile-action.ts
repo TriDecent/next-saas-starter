@@ -1,11 +1,11 @@
 'use server';
 
+import type { GeneralUserResponse } from '@/features/user/server';
+import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
-  handleDeniedInServerAction
+  handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getUserService } from '@/services';
-import type { GeneralUserResponse } from '@/services/user';
 import { updateProfileSchema, type UpdateProfileInput } from '@/shared/schema';
 import { request } from '@arcjet/next';
 

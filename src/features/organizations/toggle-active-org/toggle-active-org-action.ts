@@ -1,11 +1,11 @@
 'use server';
 
+import type {
+  GeneralOrgResponse,
+  SetActiveOrgInput,
+} from '@/features/organizations/server';
+import { getOrgService } from '@/infrastructure/composition/factory';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
-import {
-  getOrgService,
-  type GeneralOrgResponse,
-  type SetActiveOrgInput,
-} from '@/services';
 import { request } from '@arcjet/next';
 
 export async function toggleActiveAction(

@@ -1,11 +1,11 @@
 'use server';
 
+import type { GenerateBackUpCodesResponse } from '@/features/user/server';
+import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getUserService } from '@/services';
-import type { GenerateBackUpCodesResponse } from '@/services/user';
 import { ROUTES } from '@/shared/constants';
 import { twoFAAuthSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';

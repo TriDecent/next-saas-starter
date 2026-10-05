@@ -1,11 +1,12 @@
 'use server';
 
+import type { GeneralUserResponse } from '@/features/user/server';
+import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajEmailSend,
   ajLaxAuthenticated,
-  handleDeniedInServerAction
+  handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getUserService, type GeneralUserResponse } from '@/services';
 import { request } from '@arcjet/next';
 import z from 'zod';
 

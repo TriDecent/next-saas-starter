@@ -1,9 +1,9 @@
 'use server';
 
+import type { UpgradeSubscriptionResponse } from '@/features/subscription/server';
+import { getSubscriptionService } from '@/infrastructure/composition/factory';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { SUBSCRIPTION_PLAN } from '@/lib/auth';
-import { getSubscriptionService } from '@/services';
-import type { UpgradeSubscriptionResponse } from '@/services/subscription';
 import { request } from '@arcjet/next';
 import z from 'zod';
 

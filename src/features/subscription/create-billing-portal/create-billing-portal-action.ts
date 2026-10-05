@@ -1,8 +1,8 @@
 'use server';
 
+import type { CreateBillingPortalResponse } from '@/features/subscription/server';
+import { getSubscriptionService } from '@/infrastructure/composition/factory';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
-import { getSubscriptionService } from '@/services';
-import type { CreateBillingPortalResponse } from '@/services/subscription';
 import { request } from '@arcjet/next';
 import z from 'zod';
 

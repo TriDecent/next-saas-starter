@@ -1,5 +1,5 @@
 import { ProfileCard } from '@/features/settings';
-import { getUserService } from '@/services';
+import { getUserService } from '@/infrastructure/composition/factory';
 import { Loading } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';

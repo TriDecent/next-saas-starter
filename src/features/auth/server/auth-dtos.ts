@@ -1,4 +1,4 @@
-import type { ServiceResponse } from '../types';
+import type { ServiceResponse } from '@/shared/types';
 
 export type SignInResponse = ServiceResponse<
   { redirect?: string },

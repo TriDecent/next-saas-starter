@@ -7,7 +7,7 @@ import {
   OrgContextProvider,
   ToggleActiveOrg,
 } from '@/features/organizations/client';
-import { getOrgService } from '@/services';
+import { getOrgService } from '@/infrastructure/composition/factory';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';

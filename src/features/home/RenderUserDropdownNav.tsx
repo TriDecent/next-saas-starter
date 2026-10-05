@@ -1,6 +1,6 @@
 'use server';
 
-import { getAuthService } from '@/services';
+import { getAuthService } from '@/infrastructure/composition/factory';
 import { UserDropdownNav } from './UserDropdownNav';
 
 export async function RenderUserDropdownNav() {

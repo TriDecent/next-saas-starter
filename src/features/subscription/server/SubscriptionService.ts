@@ -1,7 +1,7 @@
+import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import { auth, SUBSCRIPTION_PLAN, type SubscriptionPlan } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
 import { stripeClient } from '@/lib/stripe';
-import type { IAuthenticatedExecutor } from '../executor';
 import type {
   CreateBillingPortalInput,
   GetSubscriptionOverviewResponse,

@@ -1,11 +1,11 @@
 'use server';
 
+import type { RemoveUserInput } from '@/features/organizations/server';
+import { getOrgService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { getOrgService } from '@/services';
-import type { RemoveUserInput } from '@/services/organization';
 import { request } from '@arcjet/next';
 
 export async function removeMemberAction(

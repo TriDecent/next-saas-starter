@@ -1,8 +1,8 @@
 'use server';
 
 import type { User } from '@/generated/prisma/client';
-import { getUserService } from '@/services';
-import type { GeneralUserResponse } from '@/services/user';
+import { getUserService } from '@/infrastructure/composition/factory';
+import type { GeneralUserResponse } from '@/features/user/server';
 
 export async function revokeUserSessionsAction(
   userId: User['id'],

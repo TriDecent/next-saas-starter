@@ -1,4 +1,4 @@
-import type { ListActiveSubscriptionResponse } from '@/services/subscription';
+import type { ListActiveSubscriptionResponse } from '@/features/subscription/server';
 
 type Subscription = Extract<
   ListActiveSubscriptionResponse,

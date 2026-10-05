@@ -3,7 +3,7 @@ import {
   MyOrganizations,
   QuickActions,
 } from '@/features/organizations';
-import { getOrgService } from '@/services';
+import { getOrgService } from '@/infrastructure/composition/factory';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';

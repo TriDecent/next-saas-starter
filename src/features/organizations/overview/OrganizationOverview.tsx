@@ -1,4 +1,4 @@
-import type { GetOrgResponse } from '@/services/organization';
+import type { GetOrgResponse } from '@/features/organizations/server';
 import {
   Badge,
   Card,

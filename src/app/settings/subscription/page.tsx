@@ -1,5 +1,5 @@
 import { MySubscriptions, SubscriptionPlans } from '@/features/subscription';
-import { getSubscriptionService } from '@/services';
+import { getSubscriptionService } from '@/infrastructure/composition/factory';
 import { Badge } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import { RouteContextProvider } from '@/shared/context';

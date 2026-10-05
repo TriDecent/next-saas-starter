@@ -2,15 +2,15 @@
 
 import type { Session, User } from '@/generated/prisma/client';
 import { getOrgRepo, getUserRepo } from '@/infrastructure/repositories';
+import { AuthenticatedExecutor, BaseExecutor } from '@/infrastructure/executors';
 import { auth, ensureSession } from '@/lib/auth';
+import { UserRepository } from '@/infrastructure/repositories/user';
 import { headers } from 'next/headers';
 import { cache } from 'react';
-import { UserRepository } from '../infrastructure/repositories/user';
-import { AuthService } from './auth';
-import { AuthenticatedExecutor, BaseExecutor } from './executor';
-import { OrganizationService } from './organization';
-import { SubscriptionService } from './subscription';
-import { UserService } from './user';
+import { AuthService } from '@/features/auth/server';
+import { OrganizationService } from '@/features/organizations/server';
+import { SubscriptionService } from '@/features/subscription/server';
+import { UserService } from '@/features/user/server';
 
 export const getUserService = cache(async (callbackUrl: string) => {
   const headersList = await headers();

@@ -1,7 +1,7 @@
 'use server';
 
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
-import { getAuthService } from '@/services';
+import { getAuthService } from '@/infrastructure/composition/factory';
 import { request } from '@arcjet/next';
 
 export async function sendEmailVerificationAction(

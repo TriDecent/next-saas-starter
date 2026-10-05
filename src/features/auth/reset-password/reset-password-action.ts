@@ -1,8 +1,8 @@
 'use server';
 
+import type { GeneralAuthResponse } from '@/features/auth/server';
+import { getAuthService } from '@/infrastructure/composition/factory';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
-import { getAuthService } from '@/services';
-import type { GeneralAuthResponse } from '@/services/auth';
 import { ROUTES } from '@/shared/constants';
 import { resetPasswordSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';

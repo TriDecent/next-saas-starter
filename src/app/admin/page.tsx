@@ -1,5 +1,5 @@
 import { UsersTable } from '@/features/admin/client';
-import { getUserService } from '@/services';
+import { getUserService } from '@/infrastructure/composition/factory';
 import { Loading, SectionHeader } from '@/shared/components';
 import {
   createSortingState,

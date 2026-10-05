@@ -1,6 +1,6 @@
 import type { Prisma, User } from '@/generated/prisma/client';
+import type { ServiceResponse } from '@/shared/types';
 import type { Pagination } from '@/shared/utils';
-import type { ServiceResponse } from '../types';
 
 export type GetUsersParams = {
   page: number;

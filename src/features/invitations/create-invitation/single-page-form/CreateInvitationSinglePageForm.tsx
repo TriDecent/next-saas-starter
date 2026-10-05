@@ -1,8 +1,11 @@
 'use server';
 
 import { getUsersInfiniteQueryOptions } from '@/features/user';
+import {
+  getOrgService,
+  getUserService,
+} from '@/infrastructure/composition/factory';
 import { getQueryClient } from '@/lib/tanstack-query';
-import { getOrgService, getUserService } from '@/services';
 import { SkeletonForm } from '@/shared/components';
 import {
   Card,

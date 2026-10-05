@@ -1,5 +1,5 @@
 import { SessionsList } from '@/features/settings/client';
-import { getUserService } from '@/services';
+import { getUserService } from '@/infrastructure/composition/factory';
 import { Loading } from '@/shared/components';
 import {
   Card,

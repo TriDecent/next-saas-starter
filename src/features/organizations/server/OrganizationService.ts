@@ -1,12 +1,12 @@
 import type { Session } from '@/generated/prisma/client';
+import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import type {
   IOrganizationRepository,
   OrganizationWithRole,
 } from '@/infrastructure/repositories';
 import { auth } from '@/lib/auth';
 import { AppPolicy } from '@/lib/casl';
-import type { IAuthenticatedExecutor } from '../executor';
-import type { ServiceResponse } from '../types';
+import type { ServiceResponse } from '@/shared/types';
 import {
   type CreateInvitationInput,
   type CreateOrgInput,
