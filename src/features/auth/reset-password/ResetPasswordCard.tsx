@@ -1,7 +1,7 @@
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import Link from 'next/link';
-import { AuthCard } from '../_shared';
+import { AuthCard } from '../components';
 import { ResetPasswordForm } from './ResetPasswordForm';
 
 export function ResetPasswordCard() {

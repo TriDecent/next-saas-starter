@@ -9,11 +9,11 @@ import {
   ItemTitle,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/utils';
-import { format } from 'date-fns';
 import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import type React from 'react';
 import { FaUserFriends } from 'react-icons/fa';
+import { formatDate } from '../utils';
 
 export type OrganizationRow = Omit<
   OrganizationWithRole,
@@ -107,10 +107,6 @@ export function OrganizationItem({
       <ItemActions className='ml-auto'>{renderActions}</ItemActions>
     </Item>
   );
-}
-
-function formatDate(date: Date) {
-  return format(date, 'MMM dd, yyyy');
 }
 
 function initials(name: string) {

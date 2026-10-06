@@ -12,8 +12,9 @@ import type { Member, Organization } from 'better-auth/plugins';
 import { CiEdit } from 'react-icons/ci';
 import { FaBuilding, FaClock } from 'react-icons/fa6';
 import { FiMail, FiUsers } from 'react-icons/fi';
-import { formatDate, Kpi } from '../_shared';
+import { Kpi } from '../components';
 import { UpdateOrgModal } from '../update-org';
+import { formatDate } from '../utils';
 
 export function OrgIdentity({
   org,

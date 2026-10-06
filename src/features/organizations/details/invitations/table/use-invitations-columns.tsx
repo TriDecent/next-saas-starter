@@ -1,12 +1,12 @@
 'use client';
 
+import { formatDate } from '@/features/organizations/utils';
 import { DataTableColumnHeader } from '@/shared/components/DataTable';
 import { Badge, Checkbox } from '@/shared/components/ui';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Invitation } from 'better-auth/plugins';
 import { Clock, Mail, Users } from 'lucide-react';
 import { useMemo } from 'react';
-import { formatDate } from '../../../_shared';
 import { InvitationActionsCell } from './InvitationActionsCell';
 
 const selectColumn = {

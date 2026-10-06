@@ -1,7 +1,7 @@
 'use client';
 
 import { DataTable } from '@/shared/components/DataTable/client';
-import type { GetFullOrg } from '../../_shared';
+import type { GetFullOrg } from '../../types';
 import { useMembersColumns } from './use-members-columns';
 
 export function MembersTable({ members }: { members: GetFullOrg['members'] }) {

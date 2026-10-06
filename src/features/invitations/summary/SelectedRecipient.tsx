@@ -9,10 +9,10 @@ import {
 } from '@/shared/components/ui';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { FaEnvelope } from 'react-icons/fa6';
-import type { CreateInvitationSchema } from '../create-invitation';
+import { CreateInvitationSchemaType } from '../create-invitation';
 
 export function SelectedRecipient() {
-  const { control } = useFormContext<CreateInvitationSchema>();
+  const { control } = useFormContext<CreateInvitationSchemaType>();
   const recipient = useWatch({
     control,
     name: 'selectedRecipient',

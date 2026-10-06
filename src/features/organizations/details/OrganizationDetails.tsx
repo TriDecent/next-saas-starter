@@ -21,10 +21,10 @@ import {
   HiUsers,
 } from 'react-icons/hi2';
 import { DeleteOrgItem } from '../delete-org';
-import type { GetFullOrg } from './_shared';
 import { InvitationsCard } from './invitations';
 import { MembersCard } from './members';
 import { MetadataCard } from './metadata';
+import type { GetFullOrg } from './types';
 
 export type OrganizationDetailsProps = { org: GetFullOrg; callbackUrl: string };
 

@@ -1,4 +1,4 @@
-import { AuthCard } from '../_shared';
+import { AuthCard } from '../components';
 import { SignUpForm } from './SignUpForm';
 
 export function SignUpCard() {
