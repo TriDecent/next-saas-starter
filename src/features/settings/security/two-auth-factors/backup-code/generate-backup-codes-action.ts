@@ -1,5 +1,6 @@
 'use server';
 
+import { TwoFAAuthSchema } from '@/features/auth/schema';
 import type { GenerateBackUpCodesResponse } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
@@ -7,7 +8,6 @@ import {
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
-import { twoFAAuthSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 
 type Response = GenerateBackUpCodesResponse | { type: 'initial' };
@@ -21,7 +21,7 @@ export async function generateBackupCodesAction(
     request(),
   ]);
 
-  const parsedInput = twoFAAuthSchema.safeParse(input);
+  const parsedInput = TwoFAAuthSchema.safeParse(input);
   if (!parsedInput.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 

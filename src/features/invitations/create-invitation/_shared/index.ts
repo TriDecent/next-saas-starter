@@ -1,1 +1,1 @@
-export * from './schema';
+export type { CreateInvitationSchemaType } from '../schema';

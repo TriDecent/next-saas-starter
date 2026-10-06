@@ -1,9 +1,9 @@
 'use client';
 
+import { BackupCodeSchema } from '@/features/auth/schema';
 import { TrustDeviceField } from '@/shared/components';
 import { AuthFormLayout, BackupCodeField } from '@/shared/components/client';
 import { useActionForm } from '@/shared/components/form/client';
-import { backupCodeSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
@@ -26,7 +26,7 @@ export function VerifyBackupCodesForm({
       action: verifyBackupCodesAction,
       initialState: { type: 'initial' },
       formConfiguration: {
-        resolver: zodResolver(backupCodeSchema),
+        resolver: zodResolver(BackupCodeSchema),
         mode: 'onTouched',
         defaultValues: { code: '', trustDevice: false },
       },
@@ -57,7 +57,7 @@ export function VerifyBackupCodesForm({
     }
   );
 
-  const handleSubmit: SubmitHandler<z.infer<typeof backupCodeSchema>> =
+  const handleSubmit: SubmitHandler<z.infer<typeof BackupCodeSchema>> =
     useCallback(
       data => {
         startTransition(() => dispatch(data));

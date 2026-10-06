@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  UpdatePasswordSchema,
+  type UpdatePasswordSchemaType,
+} from '@/features/auth/schema';
 import { MiniLoader } from '@/shared/components';
 import { FormField, useActionForm } from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
@@ -10,10 +14,6 @@ import {
   FieldSet,
 } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
-import {
-  updatePasswordSchema,
-  type UpdatePasswordInput,
-} from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { startTransition, useCallback } from 'react';
@@ -35,7 +35,7 @@ export function UpdatePasswordForm({ token }: { token: string }) {
     action: updatePasswordAction,
     initialState: { type: 'initial' },
     formConfiguration: {
-      resolver: zodResolver(updatePasswordSchema),
+      resolver: zodResolver(UpdatePasswordSchema),
       defaultValues: { password: '', confirmPassword: '', token },
       mode: 'onTouched',
     },
@@ -62,14 +62,15 @@ export function UpdatePasswordForm({ token }: { token: string }) {
     },
   });
 
-  const handleOnValidSubmit: SubmitHandler<UpdatePasswordInput> = useCallback(
-    data => {
-      startTransition(() => {
-        formDispatch(data);
-      });
-    },
-    [formDispatch]
-  );
+  const handleOnValidSubmit: SubmitHandler<UpdatePasswordSchemaType> =
+    useCallback(
+      data => {
+        startTransition(() => {
+          formDispatch(data);
+        });
+      },
+      [formDispatch]
+    );
 
   return (
     <FormProvider {...methods}>

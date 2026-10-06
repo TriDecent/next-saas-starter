@@ -1,5 +1,6 @@
 'use client';
 
+import { SignInSchema } from '@/features/auth/schema';
 import { MiniLoader, TrustDeviceField } from '@/shared/components';
 import { FormField, useActionForm } from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
@@ -9,7 +10,6 @@ import {
   FieldLegend,
   FieldSet,
 } from '@/shared/components/ui/client';
-import { signInSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
 import { FormProvider } from 'react-hook-form';
@@ -45,7 +45,7 @@ export function SignInForm({
     action: signInAction,
     initialState: { type: 'initial' },
     formConfiguration: {
-      resolver: zodResolver(signInSchema),
+      resolver: zodResolver(SignInSchema),
       defaultValues: { email: '', password: '', trustDevice: false },
       mode: 'onTouched',
     },

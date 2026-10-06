@@ -3,7 +3,7 @@ import { apiClient } from '@/lib/client';
 import { ROUTES } from '@/shared/constants';
 import { PAGINATION_DEFAULTS } from '@/shared/utils';
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { GetUsersSchema } from '../user-schema';
+import { GetUsersSchema } from './schema';
 import { USER_QUERY_KEYS } from './user-keys';
 
 export function getUsersQueryOptions(params?: GetUsersParams) {

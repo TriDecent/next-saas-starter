@@ -1,5 +1,5 @@
-import { UserSchema } from '@/shared/schema';
-import z from 'zod';
+import { UserSchema } from '@/features/user/schema';
+import { z } from 'zod';
 
 export const GetUsersSchema = z.object({
   users: z.array(UserSchema),

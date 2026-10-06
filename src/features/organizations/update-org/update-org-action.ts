@@ -8,7 +8,7 @@ import {
 } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
-import { orgSchema } from '../_shared';
+import { OrgSchema } from '../schema';
 
 export type Response = GeneralOrgResponse | { type: 'initial' };
 
@@ -18,7 +18,7 @@ export async function updateOrgAction(
 ): Promise<Response> {
   const service = await getOrgService(ROUTES.organizations.href);
 
-  const parsedResult = orgSchema.safeParse(input);
+  const parsedResult = OrgSchema.safeParse(input);
   if (!parsedResult.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 

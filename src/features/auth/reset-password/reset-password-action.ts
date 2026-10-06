@@ -1,10 +1,10 @@
 'use server';
 
+import { ResetPasswordSchema } from '@/features/auth/schema';
 import type { GeneralAuthResponse } from '@/features/auth/server';
 import { getAuthService } from '@/infrastructure/composition/factory';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
-import { resetPasswordSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 
 type Response = GeneralAuthResponse | { type: 'initial' };
@@ -13,7 +13,7 @@ export async function resetPasswordAction(
   state: Response,
   input: unknown
 ): Promise<Response> {
-  const parsedResult = resetPasswordSchema.safeParse(input);
+  const parsedResult = ResetPasswordSchema.safeParse(input);
 
   if (!parsedResult.success)
     return { type: 'error', payload: { message: 'Invalid input data' } };

@@ -1,5 +1,6 @@
 'use server';
 
+import { ChangePasswordSchema } from '@/features/auth/schema';
 import type { GeneralUserResponse } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
@@ -7,7 +8,6 @@ import {
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
 import { COOKIES, ROUTES } from '@/shared/constants';
-import { changePasswordSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 import { cookies } from 'next/headers';
 
@@ -20,7 +20,7 @@ export async function changePasswordAction(
   const [cookiesList, reqList] = await Promise.all([cookies(), request()]);
   const service = await getUserService(ROUTES.settings.nested.security.href);
 
-  const parsedResult = changePasswordSchema.safeParse(input);
+  const parsedResult = ChangePasswordSchema.safeParse(input);
 
   if (!parsedResult.success)
     return { type: 'error', payload: { message: 'Invalid input data' } };

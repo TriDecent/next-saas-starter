@@ -8,7 +8,7 @@ import {
 } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
-import { createNewOrgSchema } from './schema';
+import { CreateNewOrgSchema } from './schema';
 
 export type Response = GeneralOrgResponse | { type: 'initial' };
 export async function createNewOrg(
@@ -20,7 +20,7 @@ export async function createNewOrg(
     request(),
   ]);
 
-  const parsedResult = createNewOrgSchema.safeParse(input);
+  const parsedResult = CreateNewOrgSchema.safeParse(input);
   if (!parsedResult.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 

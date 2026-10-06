@@ -7,8 +7,8 @@ import type { Organization } from 'better-auth/plugins';
 import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
 import { toast } from 'sonner';
-import { orgSchema, type OrgSchema } from '../_shared';
 import { CreateOrgFields } from '../create-org/client';
+import { OrgSchema, type OrgSchemaType } from '../schema';
 import type { Response } from './update-org-action';
 import { updateOrgAction } from './update-org-action';
 
@@ -16,12 +16,12 @@ export function UpdateOrgForm({ id }: { id: Organization['id'] }) {
   const router = useRouter();
   const { isPending, animationScope, dispatch, methods, state } = useActionForm<
     Response,
-    OrgSchema
+    OrgSchemaType
   >({
     action: updateOrgAction,
     initialState: { type: 'initial' },
     formConfiguration: {
-      resolver: zodResolver(orgSchema),
+      resolver: zodResolver(OrgSchema),
       mode: 'onTouched',
       defaultValues: { id, name: '', slug: '' },
     },

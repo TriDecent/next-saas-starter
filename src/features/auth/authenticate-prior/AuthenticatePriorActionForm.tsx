@@ -1,9 +1,9 @@
 'use client';
 
+import { BasicAuthSchema, TwoFAAuthSchema } from '@/features/auth/schema';
 import { PasswordField } from '@/shared/components';
 import { AuthFormLayout, TotpField } from '@/shared/components/client';
 import { useActionForm } from '@/shared/components/form/client';
-import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
@@ -26,7 +26,7 @@ export function AuthenticatePriorActionForm({
       initialState: { type: 'initial' },
       formConfiguration: {
         resolver: zodResolver(
-          mode === 'with-2fa' ? twoFAAuthSchema : basicAuthSchema
+          mode === 'with-2fa' ? TwoFAAuthSchema : BasicAuthSchema
         ),
         mode: 'onTouched',
         defaultValues:
@@ -62,7 +62,7 @@ export function AuthenticatePriorActionForm({
     }
   );
 
-  const handleSubmit: SubmitHandler<z.infer<typeof basicAuthSchema>> =
+  const handleSubmit: SubmitHandler<z.infer<typeof BasicAuthSchema>> =
     useCallback(
       data => {
         startTransition(() => dispatch(data));

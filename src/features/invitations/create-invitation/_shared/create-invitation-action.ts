@@ -6,7 +6,7 @@ import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { refresh } from 'next/cache';
-import { createInvitationSchema } from './schema';
+import { CreateInvitationSchema } from '../schema';
 
 export type CreateInvitationResponse = GeneralOrgResponse | { type: 'initial' };
 export async function createInvitationAction(
@@ -15,7 +15,7 @@ export async function createInvitationAction(
 ): Promise<CreateInvitationResponse> {
   const service = await getOrgService(ROUTES.invitations.href);
 
-  const parsedResult = createInvitationSchema.safeParse(input);
+  const parsedResult = CreateInvitationSchema.safeParse(input);
   if (!parsedResult.success)
     return { type: 'error', payload: { message: 'Invalid input data' } };
 

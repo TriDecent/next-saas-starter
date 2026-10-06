@@ -1,12 +1,15 @@
 'use server';
 
+import {
+  UpdateProfileSchema,
+  type UpdateProfile,
+} from '@/features/user/schema';
 import type { GeneralUserResponse } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import { updateProfileSchema, type UpdateProfileInput } from '@/shared/schema';
 import { request } from '@arcjet/next';
 
 export type UpdateProfileResponse = GeneralUserResponse | { type: 'initial' };
@@ -16,7 +19,7 @@ export async function updateProfileFormAction(
   state: UpdateProfileResponse,
   input: unknown
 ): Promise<UpdateProfileResponse> {
-  const parsedResult = updateProfileSchema.safeParse(input);
+  const parsedResult = UpdateProfileSchema.safeParse(input);
 
   if (!parsedResult.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
@@ -27,7 +30,7 @@ export async function updateProfileFormAction(
 }
 
 export async function updateProfileAction(
-  profileData: UpdateProfileInput,
+  profileData: UpdateProfile,
   callbackURL: string
 ) {
   const [req, service] = await Promise.all([

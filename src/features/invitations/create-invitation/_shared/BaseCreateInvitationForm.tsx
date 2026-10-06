@@ -5,11 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { startTransition } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { toast } from 'sonner';
-import {
-  createInvitationAction,
-  CreateInvitationResponse,
-} from './create-invitation-action';
-import { createInvitationSchema, type CreateInvitationSchema } from './schema';
+import { CreateInvitationSchema } from '../schema';
+import { createInvitationAction } from './create-invitation-action';
 
 export function BaseCreateInvitationForm({
   children,
@@ -22,38 +19,37 @@ export function BaseCreateInvitationForm({
   renderActions?: (isPending: boolean) => React.ReactNode;
   organizationId?: string;
 }) {
-  const { methods, animationScope, dispatch, isPending, state } = useActionForm<
-    CreateInvitationResponse,
-    CreateInvitationSchema
-  >({
-    action: createInvitationAction,
-    initialState: { type: 'initial' },
-    formConfiguration: {
-      resolver: zodResolver(createInvitationSchema),
-      defaultValues: {
-        email: '',
-        organizationId: organizationId ?? '',
-        role: 'member',
+  const { methods, animationScope, dispatch, isPending, state } = useActionForm(
+    {
+      action: createInvitationAction,
+      initialState: { type: 'initial' },
+      formConfiguration: {
+        resolver: zodResolver(CreateInvitationSchema),
+        defaultValues: {
+          email: '',
+          organizationId: organizationId ?? '',
+          role: 'member',
+        },
       },
-    },
-    onFormSuccess: () => {
-      toast.success('Invitation sent!', {
-        description: 'The invitation has been sent successfully.',
-        id: 'create-invitation',
-      });
-      methods.reset();
-    },
-    onFormError: error =>
-      toast.error('Error', {
-        description: error.payload.message,
-        id: 'create-invitation',
-      }),
-    onFormPending: () =>
-      toast.loading('Sending invitation...', {
-        description: 'This may take a few seconds.',
-        id: 'create-invitation',
-      }),
-  });
+      onFormSuccess: () => {
+        toast.success('Invitation sent!', {
+          description: 'The invitation has been sent successfully.',
+          id: 'create-invitation',
+        });
+        methods.reset();
+      },
+      onFormError: error =>
+        toast.error('Error', {
+          description: error.payload.message,
+          id: 'create-invitation',
+        }),
+      onFormPending: () =>
+        toast.loading('Sending invitation...', {
+          description: 'This may take a few seconds.',
+          id: 'create-invitation',
+        }),
+    }
+  );
 
   return (
     <BaseFormLayout

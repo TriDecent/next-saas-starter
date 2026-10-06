@@ -1,8 +1,8 @@
+import { UserSchema } from '@/features/user/schema';
 import { ORG_ROLES } from '@/lib/auth/constants';
-import { UserSchema } from '@/shared/schema';
 import { z } from 'zod';
 
-export const createInvitationSchema = z.object({
+export const CreateInvitationSchema = z.object({
   organizationId: z.string().nonempty(),
   email: z.email(),
   teamId: z.union([z.string(), z.array(z.string())]).optional(),
@@ -15,7 +15,7 @@ export const createInvitationSchema = z.object({
       id: z.string(),
       slug: z.string(),
       logo: z.string().nullable(),
-      createdAt: z.date(),
+      createdAt: z.coerce.date(),
       metadata: z.string().nullable(),
     })
     .optional(),
@@ -23,4 +23,4 @@ export const createInvitationSchema = z.object({
   selectedRecipient: UserSchema.optional(),
 });
 
-export type CreateInvitationSchema = z.infer<typeof createInvitationSchema>;
+export type CreateInvitationSchemaType = z.infer<typeof CreateInvitationSchema>;

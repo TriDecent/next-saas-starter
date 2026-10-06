@@ -1,9 +1,9 @@
 'use client';
 
+import { TotpAuthSchema } from '@/features/auth/schema';
 import { TrustDeviceField } from '@/shared/components';
 import { AuthFormLayout, TotpField } from '@/shared/components/client';
 import { useActionForm } from '@/shared/components/form/client';
-import { totpAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
@@ -26,7 +26,7 @@ export function VerifyTotpForm({
       action: verifyTotpAction,
       initialState: { type: 'initial' },
       formConfiguration: {
-        resolver: zodResolver(totpAuthSchema),
+        resolver: zodResolver(TotpAuthSchema),
         mode: 'onTouched',
         defaultValues: { code: '', trustDevice: false },
       },
@@ -56,7 +56,7 @@ export function VerifyTotpForm({
     }
   );
 
-  const handleSubmit: SubmitHandler<z.infer<typeof totpAuthSchema>> =
+  const handleSubmit: SubmitHandler<z.infer<typeof TotpAuthSchema>> =
     useCallback(
       data => {
         startTransition(() => dispatch(data));

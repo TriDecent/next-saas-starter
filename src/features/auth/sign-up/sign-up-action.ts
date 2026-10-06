@@ -1,9 +1,9 @@
 'use server';
 
+import { SignUpSchema } from '@/features/auth/schema';
 import type { SignUpResponse } from '@/features/auth/server';
 import { getAuthService } from '@/infrastructure/composition/factory';
 import { ajSignup, handleDeniedInServerAction } from '@/lib/arcjet';
-import { signUpSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 
 type SignUpState = SignUpResponse | { type: 'initial' };
@@ -12,7 +12,7 @@ export async function signUpAction(
   state: SignUpState,
   input: unknown
 ): Promise<SignUpState> {
-  const parsedResult = signUpSchema.safeParse(input);
+  const parsedResult = SignUpSchema.safeParse(input);
 
   if (!parsedResult.success)
     return {

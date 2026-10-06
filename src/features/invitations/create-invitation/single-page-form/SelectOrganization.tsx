@@ -17,7 +17,7 @@ import {
   EmptyOrganization,
   OrganizationItem,
 } from '../../../organizations/my-organizations';
-import type { CreateInvitationSchema } from '../_shared/schema';
+import type { CreateInvitationSchemaType } from '../schema';
 
 export function SelectOrganization({
   organizations,
@@ -68,7 +68,7 @@ function OrgField({
   isError: boolean;
   isDisabled: boolean;
 }) {
-  const { setValue } = useFormContext<CreateInvitationSchema>();
+  const { setValue } = useFormContext<CreateInvitationSchemaType>();
 
   return (
     <Field data-invalid={isError} data-disabled={isDisabled}>

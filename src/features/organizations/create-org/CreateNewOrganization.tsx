@@ -14,7 +14,7 @@ import { startTransition } from 'react';
 import { toast } from 'sonner';
 import { createNewOrg, Response } from './create-new-org-action';
 import { CreateOrgFields } from './CreateOrgFields';
-import { createNewOrgSchema } from './schema';
+import { CreateNewOrgSchema } from './schema';
 
 export function CreateNewOrganization() {
   return (
@@ -39,7 +39,7 @@ function CreateNewOrgForm() {
     action: createNewOrg,
     initialState: { type: 'initial' },
     formConfiguration: {
-      resolver: zodResolver(createNewOrgSchema),
+      resolver: zodResolver(CreateNewOrgSchema),
       mode: 'onTouched',
       defaultValues: { name: '', slug: '' },
     },

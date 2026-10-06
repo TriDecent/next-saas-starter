@@ -1,5 +1,6 @@
 'use client';
 
+import { UpdateProfileSchema } from '@/features/user/schema';
 import type { AuthSession } from '@/lib/auth';
 import {
   BaseFormLayout,
@@ -12,7 +13,6 @@ import {
   FieldLegend,
   FieldSet,
 } from '@/shared/components/ui/client';
-import { updateProfileSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePathname, useRouter } from 'next/navigation';
 import { startTransition } from 'react';
@@ -35,7 +35,7 @@ export function EditProfileForm({ user }: { user: AuthSession['user'] }) {
     action: updateProfileAction,
     initialState: { type: 'initial' },
     formConfiguration: {
-      resolver: zodResolver(updateProfileSchema),
+      resolver: zodResolver(UpdateProfileSchema),
       defaultValues: {
         favoriteNumber: user.favoriteNumber,
         name: user.name,

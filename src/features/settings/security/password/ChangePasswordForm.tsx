@@ -1,5 +1,6 @@
 'use client';
 
+import { ChangePasswordSchema } from '@/features/auth/schema';
 import { MiniLoader } from '@/shared/components';
 import { FormField, useActionForm } from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
@@ -9,7 +10,6 @@ import {
   FieldLegend,
   FieldSet,
 } from '@/shared/components/ui/client';
-import { changePasswordSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
 import { FormProvider } from 'react-hook-form';
@@ -33,7 +33,7 @@ export function ChangePasswordForm({
     action: changePasswordAction,
     initialState: { type: 'initial' },
     formConfiguration: {
-      resolver: zodResolver(changePasswordSchema),
+      resolver: zodResolver(ChangePasswordSchema),
       defaultValues: {
         confirmPassword: '',
         currentPassword,

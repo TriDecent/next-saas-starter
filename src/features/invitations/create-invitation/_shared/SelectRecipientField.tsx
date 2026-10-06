@@ -23,10 +23,10 @@ import { ArrowDown } from 'lucide-react';
 import { useState, type ComponentProps } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { FaEnvelope } from 'react-icons/fa';
-import type { CreateInvitationSchema } from './schema';
+import type { CreateInvitationSchemaType } from '../schema';
 
 export function SelectRecipientField() {
-  const { setValue } = useFormContext<CreateInvitationSchema>();
+  const { setValue } = useFormContext<CreateInvitationSchemaType>();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm);
   const { data, isError, isPending, isFetchingNextPage, fetchNextPage } =

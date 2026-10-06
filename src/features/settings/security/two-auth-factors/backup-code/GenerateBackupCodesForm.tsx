@@ -1,9 +1,9 @@
 'use client';
 
+import { TwoFAAuthSchema } from '@/features/auth/schema';
 import { PasswordField } from '@/shared/components';
 import { AuthFormLayout, TotpField } from '@/shared/components/client';
 import { useActionForm } from '@/shared/components/form/client';
-import { twoFAAuthSchema } from '@/shared/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition, useCallback } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
@@ -26,7 +26,7 @@ export function GenerateBackupCodesForm({
       action: generateBackupCodesAction,
       initialState: { type: 'initial' },
       formConfiguration: {
-        resolver: zodResolver(twoFAAuthSchema),
+        resolver: zodResolver(TwoFAAuthSchema),
         mode: 'onTouched',
         defaultValues: { code: '', password: '', trustDevice: false },
       },
@@ -58,7 +58,7 @@ export function GenerateBackupCodesForm({
     }
   );
 
-  const handleSubmit: SubmitHandler<z.infer<typeof twoFAAuthSchema>> =
+  const handleSubmit: SubmitHandler<z.infer<typeof TwoFAAuthSchema>> =
     useCallback(
       data => {
         startTransition(() => dispatch(data));

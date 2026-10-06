@@ -1,10 +1,10 @@
 'use server';
 
-import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
-import { getUserService } from '@/infrastructure/composition/factory';
+import { BasicAuthSchema, TwoFAAuthSchema } from '@/features/auth/schema';
 import type { GeneralAuthResponse } from '@/features/auth/server';
+import { getUserService } from '@/infrastructure/composition/factory';
+import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { COOKIES, ROUTES } from '@/shared/constants';
-import { basicAuthSchema, twoFAAuthSchema } from '@/shared/schema';
 import { request } from '@arcjet/next';
 import { cookies } from 'next/headers';
 
@@ -19,8 +19,8 @@ export async function authenticatePriorAction(
   const service = await getUserService(ROUTES.settings.nested.security.href);
 
   const schema = service.actor.twoFactorEnabled
-    ? twoFAAuthSchema
-    : basicAuthSchema;
+    ? TwoFAAuthSchema
+    : BasicAuthSchema;
 
   const parsedInput = schema.safeParse(input);
 

@@ -1,22 +1,22 @@
 import type { CreateOrgInput } from '@/features/organizations/server';
 import { z } from 'zod';
 
-export const orgSchema = z.object({
+export const OrgSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(2).max(50),
   slug: z
     .string()
     .min(2)
     .max(50)
-    .transform(v => v.toLowerCase())
-    .refine(v => /^[a-z0-9-]+$/.test(v), {
+    .transform(value => value.toLowerCase())
+    .refine(value => /^[a-z0-9-]+$/.test(value), {
       error:
         'Slug can only contain lowercase letters, numbers, and hyphens (-)',
     })
-    .refine(v => !v.startsWith('-') && !v.endsWith('-'), {
+    .refine(value => !value.startsWith('-') && !value.endsWith('-'), {
       error: 'Slug cannot start or end with a hyphen (-)',
     })
-    .refine(v => !v.includes('--'), {
+    .refine(value => !value.includes('--'), {
       error: 'Slug cannot contain consecutive hyphens (--)',
     }),
   logo: z.url().optional(),
@@ -24,4 +24,4 @@ export const orgSchema = z.object({
   keepCurrentActiveOrganization: z.boolean().optional(),
 }) satisfies z.ZodType<CreateOrgInput>;
 
-export type OrgSchema = z.infer<typeof orgSchema>;
+export type OrgSchemaType = z.infer<typeof OrgSchema>;

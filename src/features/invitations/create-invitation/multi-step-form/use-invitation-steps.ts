@@ -3,11 +3,11 @@
 import { useMultiStepContext } from '@/shared/context';
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { CreateInvitationSchema } from '../_shared';
+import { CreateInvitationSchemaType } from '../schema';
 import { INVITATION_STEPS } from './constants';
 
 export function useInvitationSteps() {
-  const { trigger } = useFormContext<CreateInvitationSchema>();
+  const { trigger } = useFormContext<CreateInvitationSchemaType>();
   const currentStep = useMultiStepContext(state => state.currentStep);
   const { next: moveNext, back } = useMultiStepContext(state => state.actions);
 
