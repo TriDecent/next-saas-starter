@@ -94,6 +94,8 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     cannot('change-email', 'User', {
       email: { $in: PROTECTED_EMAILS },
     });
+
+    cannot('change-password', 'User', { email: { $in: PROTECTED_EMAILS } });
   }
 
   function defineAbilityForModerator() {
@@ -110,6 +112,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     cannot('change-email', 'User', {
       email: { $in: PROTECTED_EMAILS },
     });
+
+    can('change-password', 'User', { id: actor.id });
+    cannot('change-password', 'User', { email: { $in: PROTECTED_EMAILS } });
   }
 
   function defineAbilityForUser() {
@@ -119,6 +124,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     cannot('change-email', 'User', {
       email: { $in: PROTECTED_EMAILS },
     });
+
+    can('change-password', 'User', { id: actor.id });
+    cannot('change-password', 'User', { email: { $in: PROTECTED_EMAILS } });
   }
 }
 

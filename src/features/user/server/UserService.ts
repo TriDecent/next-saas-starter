@@ -329,7 +329,7 @@ export class UserService {
       async () => {
         if (!this._userPolicy.canChangeEmail(this.actor))
           throw new Error(
-            'You do not have permission to change your email address.'
+            'You do not have permission to change this email address.'
           );
 
         await auth.api.changeEmail({
@@ -370,6 +370,9 @@ export class UserService {
       sudoToken,
       'Please re-authenticate to change your password.',
       async () => {
+        if (!this._userPolicy.canChangePassword(this.actor))
+          throw new Error('You do not have permission to change the password.');
+
         await auth.api.changePassword({
           body: params,
           headers: this.headers,

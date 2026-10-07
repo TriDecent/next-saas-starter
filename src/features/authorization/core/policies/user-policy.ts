@@ -11,7 +11,8 @@ export type UserAction =
   | 'impersonate-user'
   | 'delete-account'
   | 'set-role'
-  | 'change-email';
+  | 'change-email'
+  | 'change-password';
 
 export function getUserPolicyFor(actor: AuthSession['user']) {
   const ability = defineAbilityFor(actor);
@@ -49,5 +50,9 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
       user
         ? ability.can('change-email', { ...user, kind: 'User' })
         : ability.can('change-email', 'User'),
+    canChangePassword: (user?: BaseUser) =>
+      user
+        ? ability.can('change-password', { ...user, kind: 'User' })
+        : ability.can('change-password', 'User'),
   } as const;
 }
