@@ -1,7 +1,7 @@
 import type { Invitation } from '@/generated/prisma/client';
 import type { InferSubjects } from '@casl/ability';
-import type { AuthSession } from '../auth';
-import { defineAbilityFor } from './ability';
+import type { AuthSession } from '../../../../lib/auth';
+import { defineAbilityFor } from '../ability';
 
 type InvitationWithType = Invitation & { kind: 'Invitation' };
 export type InvitationSubject = InferSubjects<InvitationWithType>;

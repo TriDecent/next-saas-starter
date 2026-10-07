@@ -1,6 +1,6 @@
 import type { InferSubjects } from '@casl/ability';
-import type { AuthSession } from '../auth';
-import { defineAbilityFor } from './ability';
+import type { AuthSession } from '../../../../lib/auth';
+import { defineAbilityFor } from '../ability';
 
 type BaseUser = AuthSession['user'];
 type UserWithType = BaseUser & { kind: 'User' };

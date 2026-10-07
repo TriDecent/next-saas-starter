@@ -2,7 +2,7 @@ import type { User } from '@/generated/prisma/client';
 import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { createContext } from 'react';
 import { createStore } from 'zustand';
-import { defineAbilityFor, type AppAbility } from '../../../lib/casl/ability';
+import { defineAbilityFor, type AppAbility } from '../core/ability';
 
 type AbilityUpdater = (
   can: AbilityBuilder<AppAbility>['can'],

@@ -1,7 +1,7 @@
 import { Subscription } from '@better-auth/stripe';
 import type { InferSubjects } from '@casl/ability';
-import type { AuthSession } from '../auth';
-import { defineAbilityFor } from './ability';
+import type { AuthSession } from '../../../../lib/auth';
+import { defineAbilityFor } from '../ability';
 
 type BaseSubscription = Subscription & { owners?: string[] };
 type SubscriptionWithType = BaseSubscription & { kind: 'Subscription' };

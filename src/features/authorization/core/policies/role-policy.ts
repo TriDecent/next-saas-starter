@@ -1,6 +1,6 @@
 import type { InferSubjects } from '@casl/ability';
-import type { AppRole, AuthSession } from '../auth';
-import { defineAbilityFor } from './ability';
+import type { AppRole, AuthSession } from '../../../../lib/auth';
+import { defineAbilityFor } from '../ability';
 
 type BaseRole = { name: AppRole };
 type RoleWithType = BaseRole & { kind: 'Role' };

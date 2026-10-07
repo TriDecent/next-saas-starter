@@ -1,3 +1,4 @@
+import { AppPolicy } from '@/features/authorization/core';
 import type { Session } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import type {
@@ -5,7 +6,6 @@ import type {
   OrganizationWithRole,
 } from '@/infrastructure/repositories';
 import { auth } from '@/lib/auth';
-import { AppPolicy } from '@/lib/casl';
 import type { ServiceResponse } from '@/shared/types';
 import {
   type CreateInvitationInput,

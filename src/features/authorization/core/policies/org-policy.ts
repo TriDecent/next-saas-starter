@@ -1,6 +1,6 @@
 import type { Organization } from '@/generated/prisma/client';
 import type { InferSubjects } from '@casl/ability';
-import type { AuthSession } from '../auth';
+import type { AuthSession } from '../../../../lib/auth';
 
 type BaseOrg = Organization & { members?: string[] };
 type OrganizationWithType = BaseOrg & {

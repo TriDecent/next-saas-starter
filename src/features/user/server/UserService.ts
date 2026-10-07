@@ -1,8 +1,8 @@
 import { createSudoToken } from '@/features/auth';
+import { AppPolicy } from '@/features/authorization/core';
 import type { Session, User } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import { auth, hasPermission, type UserRole } from '@/lib/auth';
-import { AppPolicy } from '@/lib/casl';
 import { ROUTES } from '@/shared/constants';
 import { buildPagination } from '@/shared/utils';
 import type {
