@@ -29,26 +29,28 @@ export function InvitationActionsCell({
       />
 
       <DropdownMenuContent align='end'>
-        <DropdownMenuLabel className='flex max-w-52 items-center gap-2 truncate'>
-          <MdEmail /> {invitation.email}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuLabel className='text-muted-foreground text-xs'>
-            Actions
+          <DropdownMenuLabel className='flex max-w-52 items-center gap-2 truncate'>
+            <MdEmail /> {invitation.email}
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-muted-foreground text-xs'>
+              Actions
+            </DropdownMenuLabel>
 
-          <CopyInviteLinkAction invitation={invitation} />
-        </DropdownMenuGroup>
+            <CopyInviteLinkAction invitation={invitation} />
+          </DropdownMenuGroup>
 
-        <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className='text-destructive text-xs font-semibold'>
-            Danger zone
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-destructive text-xs font-semibold'>
+              Danger zone
+            </DropdownMenuLabel>
 
-          <CancelInvitationAction invitationId={invitation.id} />
+            <CancelInvitationAction invitationId={invitation.id} />
+          </DropdownMenuGroup>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

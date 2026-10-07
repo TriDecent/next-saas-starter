@@ -71,6 +71,7 @@ async function Wrapper({ params }: SlugParams) {
                     : ''
                 }`}
                 variant='outline'
+                nativeButton={true}
                 render={
                   <ToggleActiveOrg
                     orgId={!isActive ? organization.id : null}

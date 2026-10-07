@@ -27,7 +27,12 @@ export function DataTableContent<TData>({
     <ScrollArea className='relative h-96 lg:h-144 xl:h-192'>
       <div className='**:data-[slot=table-container]:overflow-visible'>
         <Table className='select-none'>
-          <TableHeader className={cn(`sticky top-0 z-10`, headerClassName)}>
+          <TableHeader
+            className={cn(
+              `sticky top-0 z-10 backdrop-blur-sm`,
+              headerClassName
+            )}
+          >
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (

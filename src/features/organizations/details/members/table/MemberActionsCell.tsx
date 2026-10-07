@@ -43,50 +43,52 @@ export function MemberActionsCell({
       />
 
       <DropdownMenuContent align='end'>
-        <DropdownMenuLabel>
-          <UserSummary
-            name={user.name}
-            email={user.email}
-            image={user.image ?? null}
-            className='p-0'
-            contentClassName='items-start'
-          />
-        </DropdownMenuLabel>
-
-        <DropdownMenuSeparator />
-
         <DropdownMenuGroup>
-          <DropdownMenuLabel className='text-muted-foreground text-xs'>
-            Actions
+          <DropdownMenuLabel>
+            <UserSummary
+              name={user.name}
+              email={user.email}
+              image={user.image ?? null}
+              className='p-0'
+              contentClassName='items-start'
+            />
           </DropdownMenuLabel>
 
-          <CopyMemberAction member={member} />
+          <DropdownMenuSeparator />
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <TbArrowsExchange2 />
-              Role
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <UpdateRolesActions member={member} callbackUrl={callbackUrl} />
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-muted-foreground text-xs'>
+              Actions
+            </DropdownMenuLabel>
 
-        <DropdownMenuSeparator />
+            <CopyMemberAction member={member} />
 
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className='text-destructive text-xs font-bold'>
-            Danger zone
-          </DropdownMenuLabel>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <TbArrowsExchange2 />
+                Role
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <UpdateRolesActions member={member} callbackUrl={callbackUrl} />
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </DropdownMenuGroup>
 
-          <RemoveMemberAction
-            payload={{
-              memberIdOrEmail: member.id,
-              organizationId: member.organizationId,
-            }}
-            callbackUrl={callbackUrl}
-          />
+          <DropdownMenuSeparator />
+
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className='text-destructive text-xs font-bold'>
+              Danger zone
+            </DropdownMenuLabel>
+
+            <RemoveMemberAction
+              payload={{
+                memberIdOrEmail: member.id,
+                organizationId: member.organizationId,
+              }}
+              callbackUrl={callbackUrl}
+            />
+          </DropdownMenuGroup>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

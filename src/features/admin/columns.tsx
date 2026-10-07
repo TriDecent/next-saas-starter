@@ -155,7 +155,7 @@ const bannedColumn: ColumnDef<User> = {
             render={
               <Badge
                 variant='destructive'
-                className='hover:bg-destructive/80 mx-auto flex w-fit cursor-pointer items-center gap-1'
+                className='hover:bg-destructive/15 mx-auto flex w-fit cursor-pointer items-center gap-1'
               >
                 <Ban className='size-3' /> Banned
               </Badge>

@@ -13,6 +13,7 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -53,23 +54,25 @@ export function DataTableColumnHeader<TData, TValue>({
           }
         />
         <DropdownMenuContent align='start'>
-          <DropdownMenuLabel>Sort in</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => column.toggleSorting(false, true)}>
-            <ArrowUp />
-            Ascending
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleSorting(true, true)}>
-            <ArrowDown />
-            Descending
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => column.clearSorting()}>
-            <RotateCcwIcon /> Reset
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-            <EyeOff />
-            Hide
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Sort in</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => column.toggleSorting(false, true)}>
+              <ArrowUp />
+              Ascending
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => column.toggleSorting(true, true)}>
+              <ArrowDown />
+              Descending
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => column.clearSorting()}>
+              <RotateCcwIcon /> Reset
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+              <EyeOff />
+              Hide
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
