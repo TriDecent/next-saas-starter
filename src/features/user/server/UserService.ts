@@ -1,8 +1,9 @@
 import { createSudoToken } from '@/features/auth';
+import type { AppRole } from '@/features/authorization';
 import { AppPolicy } from '@/features/authorization/core';
 import type { Session, User } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
-import { auth, hasPermission, type UserRole } from '@/lib/auth';
+import { auth, hasPermission } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { buildPagination } from '@/shared/utils';
 import type {
@@ -440,7 +441,7 @@ export class UserService {
     roles,
   }: {
     userId: string;
-    roles: UserRole[];
+    roles: AppRole[];
   }): Promise<GeneralUserResponse> {
     for (const role of roles) {
       if (!this._rolePolicy.canAssign({ name: role }))

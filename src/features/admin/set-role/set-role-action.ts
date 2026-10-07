@@ -1,14 +1,14 @@
 'use server';
 
-import type { UserRole } from '@/lib/auth';
-import { getUserService } from '@/infrastructure/composition/factory';
+import type { AppRole } from '@/features/authorization';
 import type { GeneralUserResponse } from '@/features/user/server';
+import { getUserService } from '@/infrastructure/composition/factory';
 import { refresh } from 'next/cache';
 
 export async function setRoleAction(
   params: {
     userId: string;
-    roles: UserRole[];
+    roles: AppRole[];
   },
   callbackURL: string
 ): Promise<GeneralUserResponse> {

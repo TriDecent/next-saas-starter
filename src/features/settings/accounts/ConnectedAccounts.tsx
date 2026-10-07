@@ -1,6 +1,6 @@
 'use client';
 
-import { SUPPORTED_OAUTH_PROVIDERS } from '@/lib/auth/constants';
+import { OAUTH_PROVIDERS } from '@/features/auth/oauth/providers';
 import {
   Badge,
   Item,
@@ -25,7 +25,7 @@ export function ConnectedAccounts({ accounts }: { accounts: Account[] }) {
         Connected Accounts
       </h3>
       <ItemGroup className='space-y-4'>
-        {SUPPORTED_OAUTH_PROVIDERS.map(supportedProvider => {
+        {OAUTH_PROVIDERS.map(supportedProvider => {
           const isConnected = accounts.some(
             account => account.providerId === supportedProvider.name
           );

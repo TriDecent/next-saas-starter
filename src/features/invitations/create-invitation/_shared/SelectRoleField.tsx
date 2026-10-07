@@ -1,6 +1,6 @@
 'use client';
 
-import { ORG_ROLES } from '@/lib/auth/constants';
+import { ORG_ROLES } from '@/features/authorization';
 import { FormField } from '@/shared/components/form/client';
 import {
   Item,

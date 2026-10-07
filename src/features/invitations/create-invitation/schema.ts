@@ -1,5 +1,5 @@
+import { ORG_ROLES } from '@/features/authorization';
 import { UserSchema } from '@/features/user/schema';
-import { ORG_ROLES } from '@/lib/auth/constants';
 import { z } from 'zod';
 
 export const CreateInvitationSchema = z.object({

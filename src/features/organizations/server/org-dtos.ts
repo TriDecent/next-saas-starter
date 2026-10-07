@@ -1,4 +1,5 @@
-import type { auth, OrganizationRole } from '@/lib/auth';
+import type { OrganizationRole } from '@/features/authorization';
+import type { auth } from '@/lib/auth';
 import type {
   ExtractEndpointBody,
   ExtractEndpointQuery,

@@ -1,4 +1,4 @@
-import { ORG_ROLES } from '@/lib/auth/constants';
+import { ORG_ROLES } from '@/features/authorization';
 import type { Member } from 'better-auth/plugins';
 import { UpdateRoleAction } from './UpdateRoleAction';
 

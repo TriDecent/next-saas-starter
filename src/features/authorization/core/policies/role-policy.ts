@@ -1,5 +1,6 @@
+import type { AuthSession } from '@/lib/auth';
 import type { InferSubjects } from '@casl/ability';
-import type { AppRole, AuthSession } from '../../../../lib/auth';
+import type { AppRole } from '../../constants';
 import { defineAbilityFor } from '../ability';
 
 type BaseRole = { name: AppRole };

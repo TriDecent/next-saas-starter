@@ -1,3 +1,4 @@
+import { APP_ROLES } from '@/features/authorization';
 import type { admin } from 'better-auth/plugins';
 import { createAccessControl } from 'better-auth/plugins/access';
 import {
@@ -5,7 +6,6 @@ import {
   defaultStatements,
   userAc,
 } from 'better-auth/plugins/admin/access';
-import { APP_ROLES } from './constants';
 
 const statement = {
   ...defaultStatements,

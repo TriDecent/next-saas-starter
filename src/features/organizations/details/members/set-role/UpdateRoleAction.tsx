@@ -1,8 +1,8 @@
 'use client';
 
 import type { User } from '@/generated/prisma/client';
-import { ORG_ROLES } from '@/lib/auth/constants';
-import type { OrganizationRole } from '@/lib/auth/types';
+
+import { ORG_ROLES, type OrganizationRole } from '@/features/authorization';
 import { DropdownMenuCheckboxItem } from '@/shared/components/ui';
 import type { Organization } from 'better-auth/plugins';
 import { useTransition } from 'react';

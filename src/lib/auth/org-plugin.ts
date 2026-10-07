@@ -1,3 +1,4 @@
+import { ORG_ROLES } from '@/features/authorization';
 import { sendOrganizationInvitationEmail } from '@/features/email';
 import { ROUTES } from '@/shared/constants';
 import { createAccessControl, type organization } from 'better-auth/plugins';
@@ -7,7 +8,6 @@ import {
   memberAc,
   ownerAc,
 } from 'better-auth/plugins/organization/access';
-import { ORG_ROLES } from './constants';
 
 const statements = {
   ...defaultStatements,

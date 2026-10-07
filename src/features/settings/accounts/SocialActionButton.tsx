@@ -1,14 +1,14 @@
 'use client';
 
+import type { OAuthProviderName } from '@/features/auth/oauth/providers';
 import { authClient } from '@/lib/auth/auth-client';
-import type { Provider } from '@/lib/auth/constants';
 import { MiniLoader } from '@/shared/components';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTransition, type ComponentProps } from 'react';
 import { toast } from 'sonner';
 
 type SocialActionButtonProps = {
-  provider: Provider;
+  provider: OAuthProviderName;
   action: 'link' | 'unlink';
 } & ComponentProps<'button'>;
 

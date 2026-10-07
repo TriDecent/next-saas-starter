@@ -1,11 +1,11 @@
 'use server';
 
+import type { OrganizationRole } from '@/features/authorization';
 import { getOrgService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
-import type { OrganizationRole } from '@/lib/auth';
 import { request } from '@arcjet/next';
 import type { Member, Organization } from 'better-auth/plugins';
 import { refresh } from 'next/cache';

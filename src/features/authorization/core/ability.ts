@@ -1,9 +1,10 @@
+import { type AuthSession } from '@/lib/auth';
 import {
   AbilityBuilder,
   createMongoAbility,
   type MongoAbility,
 } from '@casl/ability';
-import { APP_ROLES, type AuthSession } from '../../../lib/auth';
+import { APP_ROLES } from '../constants';
 import type {
   InvitationAction,
   InvitationSubject,
