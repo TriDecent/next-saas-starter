@@ -43,18 +43,18 @@ async function AdminWrapper({
     tableSearchParamsSchema.parse(unknownQueries);
 
   const userService = await getUserService(ROUTES.admin.href);
-  const { type, payload } = await userService.getUsers(
-    tablePageIndex,
-    tablePageSize,
-    tableSort,
-    tableSearch
-  );
+  const { type, payload } = await userService.getUsers({
+    page: tablePageIndex + 1,
+    limit: tablePageSize,
+    orderBy: tableSort,
+    keyword: tableSearch,
+  });
   if (type === 'error') notFound();
 
   return (
     <UsersTable
       users={payload.users}
-      total={payload.total}
+      total={payload.pagination.totalItems}
       paginationState={{ pageIndex: tablePageIndex, pageSize: tablePageSize }}
       sortingState={tableSort ? createSortingState(tableSort) : []}
       globalFilter={tableSearch ?? ''}
