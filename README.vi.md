@@ -1,5 +1,7 @@
 # Identity Hub
 
+**[English](README.md) · [Tiếng Việt](README.vi.md)**
+
 > Nền tảng SaaS về identity và access management được xây dựng với Next.js, Better Auth, Prisma, PostgreSQL và Stripe.
 
 Identity Hub là một portfolio project tập trung vào việc xây dựng các thành phần hạ tầng thường xuất hiện trong một ứng dụng SaaS, bao gồm authentication, authorization, multi-tenancy, security và subscription billing.
@@ -16,6 +18,15 @@ Project không chỉ dừng ở authentication cơ bản mà kết hợp nhiều
 [![pnpm](https://img.shields.io/badge/pnpm-11.17.0-F69220?style=flat-square\&logo=pnpm)](https://pnpm.io/)
 
 **[Live Demo](#demo)** · **[Architecture](#architecture)** · **[Getting Started](#getting-started)**
+
+---
+
+## Demo Accounts
+
+| Account        | Email                     | Password           | Purpose                                                                          |
+| ---------      | ------------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| **Admin**      | `sandbox-admin@gmail.com` | `Admin123@`        | User management, role management, impersonation and administrative features      |
+| **Moderator**  | `sandbox-user@gmail.com`  | `User123@`         | Standard user features, account security, organization and subscription workflows|
 
 ---
 

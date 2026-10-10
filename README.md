@@ -1,5 +1,7 @@
 # Identity Hub
 
+**[English](README.md) · [Tiếng Việt](README.vi.md)**
+
 > A SaaS identity and access foundation built with Next.js, Better Auth, Prisma, PostgreSQL, and Stripe.
 
 Identity Hub is a portfolio project focused on building the authentication, authorization, multi tenancy, security, and subscription infrastructure commonly required by a SaaS application.
@@ -16,6 +18,15 @@ The project goes beyond basic authentication by combining multiple authenticatio
 [![pnpm](https://img.shields.io/badge/pnpm-11.17.0-F69220?style=flat-square&logo=pnpm)](https://pnpm.io/)
 
 **[Live Demo](#demo)** · **[Architecture](#architecture)** · **[Getting Started](#getting-started)**
+
+---
+
+## Demo Accounts
+
+| Account        | Email                     | Password           | Purpose                                                                          |
+| ---------      | ------------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| **Admin**      | `sandbox-admin@gmail.com` | `Admin123@`        | User management, role management, impersonation and administrative features      |
+| **Moderator**  | `sandbox-user@gmail.com`  | `User123@`         | Standard user features, account security, organization and subscription workflows|
 
 ---
 
@@ -441,8 +452,8 @@ The project provides two sandbox accounts for reviewers to test different permis
 
 | Account        | Email                     | Password           | Purpose                                                                          |
 | ---------      | ------------------------- | ------------------ | -------------------------------------------------------------------------------- |
-| **Admin**      | `sandbox-admin@gmail.com` | `Admin123@`        | User management, role management, impersonation và các administrative features   |
-| **Moderator**  | `sandbox-user@gmail.com`  | `User123@`         | Standard user features, account security, organization và subscription workflows |
+| **Admin**      | `sandbox-admin@gmail.com` | `Admin123@`        | User management, role management, impersonation and administrative features      |
+| **Moderator**  | `sandbox-user@gmail.com`  | `User123@`         | Standard user features, account security, organization and subscription workflows|
 
 > **Note:** These accounts are provided exclusively for demonstration and testing purposes. They contain no sensitive personal data and must not be used for production purposes.
 
