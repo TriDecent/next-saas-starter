@@ -67,7 +67,7 @@ export class UserRepository implements IUserRepository {
       const users: User[] = await prisma.user.findMany({
         take: batchSize,
         skip: cursorId ? 1 : 0,
-        cursor: { id: cursorId },
+        cursor: cursorId ? { id: cursorId } : undefined,
         orderBy: { id: 'asc' },
       });
       if (users.length === 0) break;
