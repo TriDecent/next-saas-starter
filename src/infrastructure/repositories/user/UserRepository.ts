@@ -12,6 +12,8 @@ export interface IUserRepository extends IRepository<typeof prisma.user> {
   ): Promise<{ data: User[]; total: number }>;
 
   getUserById(id: User['stripeCustomerId']): Promise<User | null>;
+
+  iterateUsers({ batchSize }: { batchSize: number }): AsyncGenerator<User>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -52,5 +54,27 @@ export class UserRepository implements IUserRepository {
 
   getUserById(id: User['id']): Promise<User | null> {
     return this._delegate.findUnique({ where: { id } });
+  }
+
+  async *iterateUsers({
+    batchSize,
+  }: {
+    batchSize: number;
+  }): AsyncGenerator<User> {
+    let cursorId: string | undefined = undefined;
+
+    while (true) {
+      const users: User[] = await prisma.user.findMany({
+        take: batchSize,
+        skip: cursorId ? 1 : 0,
+        cursor: { id: cursorId },
+        orderBy: { id: 'asc' },
+      });
+      if (users.length === 0) break;
+
+      for (const user of users) yield user;
+
+      cursorId = users.at(-1)?.id;
+    }
   }
 }
