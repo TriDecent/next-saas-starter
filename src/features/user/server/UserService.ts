@@ -75,12 +75,11 @@ export class UserService {
   }
 
   async *getUsersForDownloads(): AsyncGenerator<User> {
-    if (!this._userPolicy.canDownloadUsers(this.actor))
+    if (!this._userPolicy.canDownloadUsers())
       // ! This is intentional; we'll let the outer pipeline catch the error
       throw new Error('You do not have permission to download users.');
 
-    const batchSize = 10;
-
+    const batchSize = 100;
     for await (const user of this.repo.iterateUsers({ batchSize })) yield user;
   }
 
