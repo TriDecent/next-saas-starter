@@ -1,12 +1,20 @@
+import type { User } from '@/generated/prisma/client';
 import { getUserService } from '@/infrastructure/composition/factory';
+import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
 import { NextResponse, type NextRequest } from 'next/server';
+import { createGzip } from 'node:zlib';
 import { pipeline } from 'stream/promises';
-import { createGzip } from 'zlib';
 import z from 'zod';
 
 export async function GET(request: NextRequest) {
   const service = await getUserService(ROUTES.home.href);
+
+  const decision = await ajRestrictiveAuthenticated.protect(request, {
+    action: 'download-users',
+    userId: service.actor.id,
+  });
+  if (decision.isDenied()) return respondToDenial(decision);
 
   const parsedResult = QuerySchema.safeParse(
     Object.fromEntries(request.nextUrl.searchParams.entries())
@@ -21,11 +29,31 @@ export async function GET(request: NextRequest) {
 
   const { type } = parsedResult.data;
 
+  const { readable } = createUsersExportStream({
+    source: service.getUsersForDownloads(), // Call this method on `service` to preserve its `this` context; if passing it as a reference, bind it to `service`
+    type,
+  });
+
+  return new NextResponse(readable, {
+    headers: {
+      'Content-Type': 'application/gzip',
+      'Content-Disposition': `attachment; filename="users-export.${type}.gz"`,
+    },
+  });
+}
+
+function createUsersExportStream({
+  source,
+  type,
+}: {
+  source: AsyncGenerator<User>;
+  type: QueryType['type'];
+}) {
   const { readable, writable } = new TransformStream();
   const { signal, abort } = new AbortController();
 
   pipeline(
-    service.getUsersForDownloads(), // Call this method on `service` to preserve its `this` context; if passing it as a reference, bind it to `service`
+    source,
     type === 'txt'
       ? convertObjectToJsonLines
       : type === 'csv'
@@ -39,12 +67,7 @@ export async function GET(request: NextRequest) {
     abort();
   });
 
-  return new NextResponse(readable, {
-    headers: {
-      'Content-Type': 'application/gzip',
-      'Content-Disposition': `attachment; filename="users.${type}.gz"`,
-    },
-  });
+  return { readable };
 }
 
 const NEW_LINE = '\n';
@@ -105,3 +128,4 @@ async function* convertObjectToJsonArray<T>(
 const QuerySchema = z.object({
   type: z.literal(['json', 'txt', 'csv']),
 });
+export type QueryType = z.infer<typeof QuerySchema>;
