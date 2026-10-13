@@ -1,57 +1,16 @@
 import type { User } from '@/generated/prisma/client';
-import { getUserService } from '@/infrastructure/composition/factory';
-import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
-import { ROUTES } from '@/shared/constants';
+
 import { ZipArchive } from 'archiver';
-import { NextResponse, type NextRequest } from 'next/server';
 import { PassThrough, Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
-import z from 'zod';
+import type { ExportType } from './schema';
 
-export async function GET(request: NextRequest) {
-  const service = await getUserService(ROUTES.home.href);
-
-  const decision = await ajRestrictiveAuthenticated.protect(request, {
-    action: 'download-users',
-    userId: service.actor.id,
-  });
-  if (decision.isDenied()) return respondToDenial(decision);
-
-  const parsedResult = QuerySchema.safeParse(
-    Object.fromEntries(request.nextUrl.searchParams.entries())
-  );
-  if (!parsedResult.success)
-    return NextResponse.json(
-      {
-        message: 'Invalid query parameters',
-      },
-      { status: 400 }
-    );
-
-  const { type } = parsedResult.data;
-
-  const { readable } = createUsersExportStream({
-    source: service.getUsersForDownloads(), // Call this method on `service` to preserve its `this` context; if passing it as a reference, bind it to `service`
-    type,
-  });
-
-  return new NextResponse(
-    readable as ReadableStream, // ? Ts still reports an error, even though this should be correct
-    {
-      headers: {
-        'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="users-export.zip"`,
-      },
-    }
-  );
-}
-
-function createUsersExportStream({
+export function createUsersExportStream({
   source,
   type,
 }: {
   source: AsyncGenerator<User>;
-  type: QueryType['type'];
+  type: ExportType['type'];
 }) {
   const controller = new AbortController(); // avoid losing the "this" context
   const { signal } = controller;
@@ -141,8 +100,3 @@ async function* convertObjectToJsonArray<T>(
 
   yield ']';
 }
-
-const QuerySchema = z.object({
-  type: z.literal(['json', 'txt', 'csv']),
-});
-export type QueryType = z.infer<typeof QuerySchema>;
