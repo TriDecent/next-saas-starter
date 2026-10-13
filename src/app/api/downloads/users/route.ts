@@ -4,7 +4,8 @@ import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
 import { ZipArchive } from 'archiver';
 import { NextResponse, type NextRequest } from 'next/server';
-import { Readable } from 'node:stream';
+import { PassThrough, Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import z from 'zod';
 
 export async function GET(request: NextRequest) {
@@ -63,21 +64,20 @@ function createUsersExportStream({
           ? convertObjectToCsv
           : convertObjectToJsonArray;
 
-    for await (const chunk of transformFn(source)) {
-      signal.throwIfAborted();
-      yield chunk;
-    }
+    yield* transformFn(source);
   }
 
   const zip = new ZipArchive({ zlib: { level: 9 } });
-  const userStream = Readable.from(transformDataStream());
+  const entryStream = new PassThrough();
 
   zip.on('error', () => controller.abort());
   zip.on('close', () => controller.abort());
 
-  userStream.on('error', error => zip.destroy(error));
+  zip.append(entryStream, { name: `users-export.${type}` });
 
-  zip.append(userStream, { name: `users-export.${type}` });
+  pipeline(transformDataStream, entryStream, { signal }).catch(error => {
+    zip.destroy(error); // keep the "this" context, passing "zip.destroy" directly would lose it.
+  });
 
   zip.finalize().catch(error => {
     zip.destroy(error);
