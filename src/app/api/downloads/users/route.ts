@@ -2,9 +2,9 @@ import type { User } from '@/generated/prisma/client';
 import { getUserService } from '@/infrastructure/composition/factory';
 import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
+import { ZipArchive } from 'archiver';
 import { NextResponse, type NextRequest } from 'next/server';
-import { createGzip } from 'node:zlib';
-import { pipeline } from 'stream/promises';
+import { Readable } from 'node:stream';
 import z from 'zod';
 
 export async function GET(request: NextRequest) {
@@ -34,12 +34,15 @@ export async function GET(request: NextRequest) {
     type,
   });
 
-  return new NextResponse(readable, {
-    headers: {
-      'Content-Type': 'application/gzip',
-      'Content-Disposition': `attachment; filename="users-export.${type}.gz"`,
-    },
-  });
+  return new NextResponse(
+    readable as ReadableStream, // ? Ts still reports an error, even though this should be correct
+    {
+      headers: {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="users-export.zip"`,
+      },
+    }
+  );
 }
 
 function createUsersExportStream({
@@ -49,25 +52,39 @@ function createUsersExportStream({
   source: AsyncGenerator<User>;
   type: QueryType['type'];
 }) {
-  const { readable, writable } = new TransformStream();
-  const { signal, abort } = new AbortController();
+  const controller = new AbortController(); // avoid losing the "this" context
+  const { signal } = controller;
 
-  pipeline(
-    source,
-    type === 'txt'
-      ? convertObjectToJsonLines
-      : type === 'csv'
-        ? convertObjectToCsv
-        : convertObjectToJsonArray,
-    createGzip(),
-    writable,
-    { signal }
-  ).catch(error => {
-    console.log('An error from download users pipeline', error);
-    abort();
+  async function* transformDataStream() {
+    const transformFn =
+      type === 'txt'
+        ? convertObjectToJsonLines
+        : type === 'csv'
+          ? convertObjectToCsv
+          : convertObjectToJsonArray;
+
+    for await (const chunk of transformFn(source)) {
+      signal.throwIfAborted();
+      yield chunk;
+    }
+  }
+
+  const zip = new ZipArchive({ zlib: { level: 9 } });
+  const userStream = Readable.from(transformDataStream());
+
+  zip.on('error', () => controller.abort());
+  zip.on('close', () => controller.abort());
+
+  userStream.on('error', error => zip.destroy(error));
+
+  zip.append(userStream, { name: `users-export.${type}` });
+
+  zip.finalize().catch(error => {
+    zip.destroy(error);
+    controller.abort();
   });
 
-  return { readable };
+  return { readable: Readable.toWeb(zip) };
 }
 
 const NEW_LINE = '\n';

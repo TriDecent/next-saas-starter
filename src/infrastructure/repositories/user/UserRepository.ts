@@ -72,7 +72,7 @@ export class UserRepository implements IUserRepository {
       });
       if (users.length === 0) break;
 
-      for (const user of users) yield user;
+      yield* users;
 
       cursorId = users.at(-1)?.id;
     }

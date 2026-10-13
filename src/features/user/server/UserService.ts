@@ -80,7 +80,8 @@ export class UserService {
       throw new Error('You do not have permission to download users.');
 
     const batchSize = 100;
-    for await (const user of this.repo.iterateUsers({ batchSize })) yield user;
+
+    yield* this.repo.iterateUsers({ batchSize });
   }
 
   getUsers({
