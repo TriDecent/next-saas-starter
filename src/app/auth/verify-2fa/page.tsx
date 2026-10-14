@@ -1,6 +1,7 @@
 'use cache';
 
-import { VerifyAuthenticator, VerifyBackupCodes } from '@/features/auth';
+import { VerifyAuthenticator } from '@/features/auth/verify-2fa/authenticator/client';
+import { VerifyBackupCodes } from '@/features/auth/verify-2fa/backup-codes/client';
 import { MiniLoader, SectionHeader } from '@/shared/components';
 import {
   Card,

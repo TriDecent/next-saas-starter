@@ -1,3 +1,4 @@
+import type { ExportType } from '@/features/user/export';
 import { Metadata } from 'next';
 
 type Route = {
@@ -285,6 +286,11 @@ export const ROUTES = {
   }),
   api: {
     users: { href: '/api/users' },
+    export: {
+      users: {
+        href: ({ type }: ExportType) => `/api/export/users?type=${type}`,
+      },
+    },
   },
 } as const;
 

@@ -1,4 +1,5 @@
 import { UsersTable } from '@/features/admin/client';
+import { ExportUsersButton } from '@/features/user/export';
 import { getUserService } from '@/infrastructure/composition/factory';
 import { Loading, SectionHeader } from '@/shared/components';
 import {
@@ -25,6 +26,11 @@ export default async function AdminPage({
         title={'Admin Panel'}
         description='Manage users and their preferences here'
       />
+
+      <div className='ml-auto w-fit'>
+        <ExportUsersButton />
+      </div>
+
       <Suspense fallback={<Loading />}>
         <AdminWrapper searchParams={searchParams} />
       </Suspense>
