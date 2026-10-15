@@ -25,8 +25,8 @@ The project goes beyond basic authentication by combining multiple authenticatio
 
 | Account        | Email                     | Password           | Purpose                                                                          |
 | ---------      | ------------------------- | ------------------ | -------------------------------------------------------------------------------- |
-| **Admin**      | `sandbox-admin@gmail.com` | `Admin123@`        | User management, role management, impersonation and administrative features      |
-| **Moderator**  | `sandbox-user@gmail.com`  | `User123@`         | Standard user features, account security, organization and subscription workflows|
+| **Admin**      | `sandbox-admin@gmail.com` | `Test123@`         | User management, role management, impersonation and administrative features      |
+| **Moderator**  | `sandbox-user@gmail.com`  | `Test123@`         | Standard user features, account security, organization and subscription workflows|
 
 ---
 

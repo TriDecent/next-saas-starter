@@ -72,7 +72,7 @@ function SubscriptionHeader({
         </div>
       </CardTitle>
 
-      <ToolTipPopover message={subscription.id}>
+      <ToolTipPopover nativeButton={false} message={subscription.id}>
         <CardDescription className='truncate'>
           Subscription {subscription.id}
         </CardDescription>
@@ -155,7 +155,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
     <div className='space-y-1'>
       <dt className='text-muted-foreground text-xs uppercase'>{label}</dt>
       <dd className='truncate font-medium'>
-        <ToolTipPopover message={value}>
+        <ToolTipPopover nativeButton={false} message={value}>
           <span>{value}</span>
         </ToolTipPopover>
       </dd>

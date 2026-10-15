@@ -93,6 +93,7 @@ function BackedUpBadge({ isBackedUp }: { isBackedUp: boolean }) {
           ? 'This passkey is synced across your devices'
           : 'This passkey is stored only on this device'
       }
+      nativeButton={false}
     >
       <Badge variant='secondary' className='ml-auto'>
         <CheckCircle2 /> {isBackedUp ? 'Synced' : 'Unsynced'}

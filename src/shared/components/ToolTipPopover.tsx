@@ -3,18 +3,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/shared/components/ui';
-import type { ReactElement } from 'react';
+import type { ComponentProps, ReactElement } from 'react';
 
 export function ToolTipPopover({
   children,
   message,
+  ...props
 }: {
   children: ReactElement;
   message: string;
-}) {
+} & ComponentProps<typeof PopoverTrigger>) {
   return (
     <Popover>
-      <PopoverTrigger render={children} />
+      <PopoverTrigger {...props} render={children} />
       <PopoverContent className='text-xs'>
         <p>{message}</p>
       </PopoverContent>

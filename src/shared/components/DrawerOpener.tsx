@@ -27,7 +27,7 @@ export function DrawerOpener(props: DrawerOpenerProps) {
     <Drawer
       {...props}
       showSwipeHandle={true}
-      swipeDirection={breakpoint === 'sm' ? 'down' : 'right'}
+      swipeDirection={breakpoint === 'sm' ? 'down' : 'left'}
     >
       <DrawerTrigger render={props.trigger} />
       <DrawerContent>
