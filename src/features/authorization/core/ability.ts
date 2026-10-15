@@ -83,19 +83,13 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     cannot('set-role', 'User', {
       role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
     });
-    cannot('set-role', 'User', {
-      email: { $in: PROTECTED_EMAILS },
-    });
 
     cannot('assign', 'Role', {
       name: { $in: [APP_ROLES['super-admin'], APP_ROLES['admin']] },
     });
 
-    cannot('change-email', 'User', {
-      email: { $in: PROTECTED_EMAILS },
-    });
-
-    cannot('change-password', 'User', { email: { $in: PROTECTED_EMAILS } });
+    if (!PROTECTED_EMAILS.includes(actor.email)) return;
+    defineExclusiveAbilityForProtectedEmails();
   }
 
   function defineAbilityForModerator() {
@@ -108,13 +102,12 @@ export function defineAbilityFor(actor: AuthSession['user']) {
 
     can('read', 'User', { id: actor.id });
 
-    can('change-email', 'User', { id: actor.id });
-    cannot('change-email', 'User', {
-      email: { $in: PROTECTED_EMAILS },
-    });
+    can('change-email', 'User');
+    can('change-password', 'User');
+    can('enable-2fa', 'User');
 
-    can('change-password', 'User', { id: actor.id });
-    cannot('change-password', 'User', { email: { $in: PROTECTED_EMAILS } });
+    if (!PROTECTED_EMAILS.includes(actor.email)) return;
+    defineExclusiveAbilityForProtectedEmails();
   }
 
   function defineAbilityForUser() {

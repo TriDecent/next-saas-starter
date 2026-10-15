@@ -47,17 +47,9 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
       user
         ? ability.can('delete', { ...user, kind: 'User' })
         : ability.can('delete', 'User'),
-    canChangeEmail: (user?: BaseUser) =>
-      user
-        ? ability.can('change-email', { ...user, kind: 'User' })
-        : ability.can('change-email', 'User'),
-    canChangePassword: (user?: BaseUser) =>
-      user
-        ? ability.can('change-password', { ...user, kind: 'User' })
-        : ability.can('change-password', 'User'),
-    canDownloadUsers: (user?: BaseUser) =>
-      user
-        ? ability.can('download-users', { ...user, kind: 'User' })
-        : ability.can('download-users', 'User'),
+    canChangeEmail: () => ability.can('change-email', 'User'),
+    canChangePassword: () => ability.can('change-password', 'User'),
+    canDownloadUsers: () => ability.can('download-users', 'User'),
+    canEnable2FA: () => ability.can('enable-2fa', 'User'),
   } as const;
 }
