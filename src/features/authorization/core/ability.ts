@@ -113,13 +113,20 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   function defineAbilityForUser() {
     can('read', 'User', { id: actor.id });
 
-    can('change-email', 'User', { id: actor.id });
-    cannot('change-email', 'User', {
-      email: { $in: PROTECTED_EMAILS },
-    });
+    can('change-email', 'User');
+    can('change-password', 'User');
+    can('enable-2fa', 'User');
 
-    can('change-password', 'User', { id: actor.id });
-    cannot('change-password', 'User', { email: { $in: PROTECTED_EMAILS } });
+    if (!PROTECTED_EMAILS.includes(actor.email)) return;
+    defineExclusiveAbilityForProtectedEmails();
+  }
+
+  function defineExclusiveAbilityForProtectedEmails() {
+    cannot('change-email', 'User');
+    cannot('change-password', 'User');
+    cannot('enable-2fa', 'User');
+    cannot('set-role', 'User', { email: { $in: PROTECTED_EMAILS } });
+    cannot('ban-user', 'User', { email: { $in: PROTECTED_EMAILS } });
   }
 }
 

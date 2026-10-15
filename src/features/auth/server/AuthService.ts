@@ -1,3 +1,4 @@
+import { AppPolicy } from '@/features/authorization/core';
 import type { Session, User } from '@/generated/prisma/client';
 import type { IBaseExecutor } from '@/infrastructure/executors';
 import { auth } from '@/lib/auth';
@@ -174,6 +175,11 @@ export class AuthService {
   }): Promise<GeneralAuthResponse> {
     return this._executor.runSafely(
       async () => {
+        // actor shouldn't be undefined here,
+        // because this method is only called after the user has signed in and is authenticated
+        if (!AppPolicy.getUserPolicyFor(this._actor!).canEnable2FA())
+          throw new Error('You do not have permission to enable 2FA.');
+
         await auth.api.verifyTOTP({
           body: { code, trustDevice },
           headers: this.headers,

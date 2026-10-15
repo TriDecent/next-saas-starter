@@ -13,7 +13,8 @@ export type UserAction =
   | 'set-role'
   | 'change-email'
   | 'change-password'
-  | 'download-users';
+  | 'download-users'
+  | 'enable-2fa';
 
 export function getUserPolicyFor(actor: AuthSession['user']) {
   const ability = defineAbilityFor(actor);
