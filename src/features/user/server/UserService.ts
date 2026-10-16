@@ -74,10 +74,10 @@ export class UserService {
     return { type: 'success', payload: user };
   }
 
-  async *getUsersForDownloads(): AsyncGenerator<User> {
-    if (!this._userPolicy.canDownloadUsers())
+  async *getUsersForExport(): AsyncGenerator<User> {
+    if (!this._userPolicy.canExportUsers())
       // ! This is intentional; we'll let the outer pipeline catch the error
-      throw new Error('You do not have permission to download users.');
+      throw new Error('You do not have permission to export users.');
 
     const batchSize = 100;
 

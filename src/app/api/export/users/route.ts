@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const service = await getUserService(ROUTES.home.href);
 
   const decision = await ajRestrictiveAuthenticated.protect(request, {
-    action: 'download-users',
+    action: 'export-users',
     userId: service.actor.id,
   });
   if (decision.isDenied()) return respondToDenial(decision);
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   const { type } = parsedResult.data;
 
   const { readable } = createUsersExportStream({
-    source: service.getUsersForDownloads(), // Call this method on `service` to preserve its `this` context; if passing it as a reference, bind it to `service`
+    source: service.getUsersForExport(), // Call this method on `service` to preserve its `this` context; if passing it as a reference, bind it to `service`
     type,
   });
 

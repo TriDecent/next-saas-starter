@@ -64,7 +64,7 @@ export class UserRepository implements IUserRepository {
     let cursorId: string | undefined = undefined;
 
     while (true) {
-      const users: User[] = await prisma.user.findMany({
+      const users: User[] = await this._delegate.findMany({
         take: batchSize,
         skip: cursorId ? 1 : 0,
         cursor: cursorId ? { id: cursorId } : undefined,

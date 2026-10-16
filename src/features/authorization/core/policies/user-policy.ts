@@ -13,7 +13,7 @@ export type UserAction =
   | 'set-role'
   | 'change-email'
   | 'change-password'
-  | 'download-users'
+  | 'export-users'
   | 'enable-2fa';
 
 export function getUserPolicyFor(actor: AuthSession['user']) {
@@ -50,7 +50,7 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
         : ability.can('delete', 'User'),
     canChangeEmail: () => ability.can('change-email', 'User'),
     canChangePassword: () => ability.can('change-password', 'User'),
-    canDownloadUsers: () => ability.can('download-users', 'User'),
+    canExportUsers: () => ability.can('export-users', 'User'),
     canEnable2FA: () => ability.can('enable-2fa', 'User'),
   } as const;
 }

@@ -2,19 +2,23 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { type AuthenticatePriorContextType } from './authenticate-prior-context';
+import { useShallow } from 'zustand/react/shallow';
+import { useAuthenticatePrior } from './context/use-authenticate-prior';
 
-export function SudoTokenExpiryHandler({
-  value,
-}: {
-  value: AuthenticatePriorContextType;
-}) {
+export function SudoTokenExpiryHandler() {
+  const { doesSudoTokenExist, sudoTokenExpiresAt } = useAuthenticatePrior(
+    useShallow(state => ({
+      doesSudoTokenExist: state.doesSudoTokenExist,
+      sudoTokenExpiresAt: state.sudoTokenExpiresAt,
+    }))
+  );
+
   const router = useRouter();
 
   useEffect(() => {
-    if (!value.doesSudoTokenExist || !value.sudoTokenExpiresAt) return;
+    if (!doesSudoTokenExist || !sudoTokenExpiresAt) return;
 
-    const timeUntilExpiry = value.sudoTokenExpiresAt - Date.now();
+    const timeUntilExpiry = sudoTokenExpiresAt - Date.now();
 
     if (timeUntilExpiry <= 0) {
       router.refresh();
@@ -26,7 +30,7 @@ export function SudoTokenExpiryHandler({
     }, timeUntilExpiry);
 
     return () => clearTimeout(timeoutId);
-  }, [router, value.doesSudoTokenExist, value.sudoTokenExpiresAt]);
+  }, [router, doesSudoTokenExist, sudoTokenExpiresAt]);
 
   return null;
 }

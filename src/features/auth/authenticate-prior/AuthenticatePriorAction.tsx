@@ -1,9 +1,10 @@
 'use client';
 
 import { DrawerOpener } from '@/shared/components/client';
-import { use, useState, type ReactElement, type ReactNode } from 'react';
-import { AuthenticatePriorContext } from './authenticate-prior-context';
+import { useEffect, type ReactElement, type ReactNode } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { AuthenticatePriorActionForm } from './AuthenticatePriorActionForm';
+import { useAuthenticatePrior } from './context/use-authenticate-prior';
 
 export function AuthenticatePriorAction({
   title,
@@ -16,31 +17,40 @@ export function AuthenticatePriorAction({
   trigger: ReactElement;
   children?: ReactNode | ((enteredPassword: string) => ReactNode);
 }) {
-  const context = use(AuthenticatePriorContext);
-  if (!context)
-    throw new Error(
-      'AuthenticatePriorAction must be used within AuthenticatePriorProvider'
+  const { doesSudoTokenExist, is2FAEnabled, enteredPassword } =
+    useAuthenticatePrior(
+      useShallow(state => ({
+        doesSudoTokenExist: state.doesSudoTokenExist,
+        is2FAEnabled: state.is2FAEnabled,
+        enteredPassword: state.enteredPassword,
+      }))
     );
-  const [enteredPassword, setEnteredPassword] = useState<string | null>(null);
+  const setEnteredPassword = useAuthenticatePrior(
+    state => state.action.setEnteredPassword
+  );
+
+  useEffect(() => {
+    console.log(enteredPassword);
+  }, [enteredPassword]);
 
   return (
     <DrawerOpener
-      title={context.doesSudoTokenExist ? title : 'Authentication Required'}
+      title={doesSudoTokenExist ? title : 'Authentication Required'}
       description={
-        context.doesSudoTokenExist
+        doesSudoTokenExist
           ? description
           : 'Please verify your identity before continuing with this action.'
       }
       trigger={trigger}
     >
-      <div className={context.doesSudoTokenExist ? 'hidden' : 'block'}>
+      <div className={doesSudoTokenExist ? 'hidden' : 'block'}>
         <AuthenticatePriorActionForm
           onAuthenticated={setEnteredPassword}
-          mode={context.is2FAEnabled ? 'with-2fa' : 'no-2fa'}
+          mode={is2FAEnabled ? 'with-2fa' : 'no-2fa'}
         />
       </div>
 
-      {context.doesSudoTokenExist
+      {doesSudoTokenExist
         ? typeof children === 'function'
           ? enteredPassword
             ? children(enteredPassword)

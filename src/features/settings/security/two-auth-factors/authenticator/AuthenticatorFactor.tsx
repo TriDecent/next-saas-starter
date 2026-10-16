@@ -1,12 +1,10 @@
 'use client';
 
-import {
-  AuthenticatePriorAction,
-  AuthenticatePriorContext,
-} from '@/features/auth/authenticate-prior/client';
+import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior/client';
+import { useAuthenticatePrior } from '@/features/auth/authenticate-prior/context/use-authenticate-prior';
 import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
 import { Key } from 'lucide-react';
-import { use, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { GiShield, GiShieldDisabled } from 'react-icons/gi';
 import { IoIosSettings } from 'react-icons/io';
 import { FactorItem } from '../_shared/FactorItem';
@@ -14,12 +12,7 @@ import { DisableTwoFactors } from './disable/DisableTwoFactors';
 import { EnableTwoFactors } from './enable/EnableTwoFactors';
 
 export function AuthenticatorFactor() {
-  const context = use(AuthenticatePriorContext);
-  if (!context)
-    throw new Error(
-      'AuthenticatePriorAction must be used within AuthenticatePriorProvider'
-    );
-  const { is2FAEnabled } = context;
+  const is2FAEnabled = useAuthenticatePrior(state => state.is2FAEnabled);
 
   return (
     <FactorItem
