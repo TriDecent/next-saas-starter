@@ -1,4 +1,4 @@
-import { AuthenticatePriorProvider } from '@/features/auth';
+import { AuthenticatePriorServerBoundary } from '@/features/auth';
 import { ChangeEmailCard } from '@/features/auth/change-email';
 import {
   PasskeysList,
@@ -45,14 +45,14 @@ async function SecurityContent() {
     <RequestPasswordResetCard email={service.actor.email} />
   ) : (
     <div className='space-y-8'>
-      <AuthenticatePriorProvider user={service.actor}>
+      <AuthenticatePriorServerBoundary user={service.actor}>
         <TwoFactorsCard isEnabled={!!service.actor.twoFactorEnabled} />
         <div className='flex flex-col gap-x-4 gap-y-8 sm:flex-row'>
           <ChangePasswordCard className='flex-1' />
           <ChangeEmailCard className='flex-1' />
         </div>
         <PasskeysList passkeys={passkeys} />
-      </AuthenticatePriorProvider>
+      </AuthenticatePriorServerBoundary>
     </div>
   );
 }

@@ -1,3 +1,3 @@
 export { authenticatePriorAction } from './authenticate-prior-action';
-export { AuthenticatePriorProvider } from './AuthenticatePriorProvider';
+export { AuthenticatePriorServerBoundary } from './AuthenticatePriorServerBoundary';
 export { createSudoToken, verifySudoToken } from './sudo-mode';

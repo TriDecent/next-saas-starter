@@ -9,7 +9,7 @@ import {
 } from './authenticate-prior-context';
 import { useAuthenticatePrior } from './use-authenticate-prior';
 
-export function AuthenticatePriorClientProvider({
+export function AuthenticatePriorProvider({
   value,
   children,
 }: {

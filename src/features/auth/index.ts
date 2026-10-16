@@ -1,5 +1,5 @@
 export {
-  AuthenticatePriorProvider,
+  AuthenticatePriorServerBoundary,
   createSudoToken,
   verifySudoToken,
 } from './authenticate-prior';

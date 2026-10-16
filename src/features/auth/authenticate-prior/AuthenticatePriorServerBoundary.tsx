@@ -4,10 +4,10 @@ import type { User } from '@/generated/prisma/client';
 import { COOKIES } from '@/shared/constants';
 import { cookies } from 'next/headers';
 import { type ReactNode } from 'react';
-import { AuthenticatePriorClientProvider } from './context/AuthenticatePriorClientProvider';
+import { AuthenticatePriorProvider } from './context/AuthenticatePriorProvider';
 import { verifySudoToken } from './sudo-mode';
 
-export async function AuthenticatePriorProvider({
+export async function AuthenticatePriorServerBoundary({
   user,
   children,
 }: {
@@ -31,8 +31,8 @@ export async function AuthenticatePriorProvider({
   };
 
   return (
-    <AuthenticatePriorClientProvider value={value}>
+    <AuthenticatePriorProvider value={value}>
       {children}
-    </AuthenticatePriorClientProvider>
+    </AuthenticatePriorProvider>
   );
 }
