@@ -9,8 +9,6 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  ScrollArea,
-  ScrollBar,
 } from '@/shared/components/ui';
 import { cn } from '@/shared/utils';
 import { KeyRound } from 'lucide-react';
@@ -38,12 +36,7 @@ export function ChangePasswordCard({ className }: { className?: string }) {
             }
           >
             {enteredPassword => (
-              <ScrollArea className='h-96 pb-12'>
-                <ScrollBar />
-                <div className={`mx-auto flex max-w-xl flex-col gap-y-8 pb-12`}>
-                  <ChangePasswordForm currentPassword={enteredPassword} />
-                </div>
-              </ScrollArea>
+              <ChangePasswordForm currentPassword={enteredPassword} />
             )}
           </AuthenticatePriorAction>
         </CardAction>

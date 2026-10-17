@@ -83,7 +83,6 @@ export function DataTableContent<TData>({
         </Table>
       </div>
       <ScrollBar orientation='horizontal' />
-      <ScrollBar orientation='vertical' />
     </ScrollArea>
   );
 }

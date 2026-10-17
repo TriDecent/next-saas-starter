@@ -2,7 +2,7 @@
 
 import { AuthenticatePriorAction } from '@/features/auth/authenticate-prior/client';
 import { useAuthenticatePrior } from '@/features/auth/authenticate-prior/context/use-authenticate-prior';
-import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
+import { Button, ScrollArea } from '@/shared/components/ui';
 import { Key } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { GiShield, GiShieldDisabled } from 'react-icons/gi';
@@ -47,17 +47,15 @@ export function AuthenticatorFactor() {
           </Button>
         }
       >
-        {!is2FAEnabled
-          ? currentPassword => (
-              <Wrapper>
-                <EnableTwoFactors password={currentPassword} />
-              </Wrapper>
-            )
-          : currentPassword => (
-              <Wrapper>
-                <DisableTwoFactors password={currentPassword} />
-              </Wrapper>
-            )}
+        {currentPassword =>
+          is2FAEnabled ? (
+            <DisableTwoFactors password={currentPassword} />
+          ) : (
+            <Wrapper>
+              <EnableTwoFactors password={currentPassword} />
+            </Wrapper>
+          )
+        }
       </AuthenticatePriorAction>
 
       <Button variant='outline' className='min-w-24'>
@@ -70,8 +68,7 @@ export function AuthenticatorFactor() {
 
 function Wrapper({ children }: { children: ReactNode }) {
   return (
-    <ScrollArea className='h-80'>
-      <ScrollBar />
+    <ScrollArea className='h-80 mask-b-from-70% mask-b-to-100%'>
       <div className={`mx-auto flex max-w-xl flex-col gap-y-8 px-4 pt-2 pb-12`}>
         {children}
       </div>

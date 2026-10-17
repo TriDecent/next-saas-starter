@@ -34,15 +34,18 @@ export async function OrganizationDetails({
 }: OrganizationDetailsProps) {
   return (
     <Tabs defaultValue='members' className='w-full'>
-      <ScrollArea className='mb-4 w-full min-w-2xs rounded-lg shadow'>
-        <TabsList className='w-full'>
-          <ScrollBar orientation='horizontal' />
+      <ScrollArea
+        className='mb-4 w-full min-w-2xs rounded-lg shadow'
+        hideVerticalScrollbar
+      >
+        <TabsList className='w-max min-w-full'>
           {settingsSections.map(section => (
             <TabsTrigger key={section.value} value={section.value}>
               {section.label}
             </TabsTrigger>
           ))}
         </TabsList>
+        <ScrollBar orientation='horizontal' />
       </ScrollArea>
 
       <TabsContent value='members'>

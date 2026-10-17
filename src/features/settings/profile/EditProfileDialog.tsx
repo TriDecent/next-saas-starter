@@ -12,8 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  ScrollArea,
-  ScrollBar,
   Separator,
 } from '@/shared/components/ui';
 import { useState } from 'react';
@@ -46,10 +44,7 @@ export function EditProfileDialog({ user }: { user: AuthSession['user'] }) {
 
         <Separator />
 
-        <ScrollArea className='max-h-96'>
-          <ScrollBar />
-          <EditProfileForm user={user} />
-        </ScrollArea>
+        <EditProfileForm user={user} />
       </DialogContent>
     </Dialog>
   );

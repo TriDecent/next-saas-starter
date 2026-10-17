@@ -1,7 +1,7 @@
 'use client';
 
 import { DrawerOpener } from '@/shared/components/client';
-import { useEffect, type ReactElement, type ReactNode } from 'react';
+import { type ReactElement, type ReactNode } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { AuthenticatePriorActionForm } from './AuthenticatePriorActionForm';
 import { useAuthenticatePrior } from './context/use-authenticate-prior';
@@ -29,10 +29,6 @@ export function AuthenticatePriorAction({
     state => state.action.setEnteredPassword
   );
 
-  useEffect(() => {
-    console.log(enteredPassword);
-  }, [enteredPassword]);
-
   return (
     <DrawerOpener
       title={doesSudoTokenExist ? title : 'Authentication Required'}
@@ -43,12 +39,14 @@ export function AuthenticatePriorAction({
       }
       trigger={trigger}
     >
-      <div className={doesSudoTokenExist ? 'hidden' : 'block'}>
-        <AuthenticatePriorActionForm
-          onAuthenticated={setEnteredPassword}
-          mode={is2FAEnabled ? 'with-2fa' : 'no-2fa'}
-        />
-      </div>
+      {!doesSudoTokenExist ? (
+        <div>
+          <AuthenticatePriorActionForm
+            onAuthenticated={setEnteredPassword}
+            mode={is2FAEnabled ? 'with-2fa' : 'no-2fa'}
+          />
+        </div>
+      ) : null}
 
       {doesSudoTokenExist
         ? typeof children === 'function'

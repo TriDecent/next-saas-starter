@@ -1,11 +1,16 @@
 import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react/scroll-area';
 import { cn } from 'cn';
 
+type ScrollAreaProps = ScrollAreaPrimitive.Root.Props & {
+  hideVerticalScrollbar?: boolean;
+};
+
 function ScrollArea({
   className,
   children,
+  hideVerticalScrollbar = false,
   ...props
-}: ScrollAreaPrimitive.Root.Props) {
+}: ScrollAreaProps) {
   return (
     <ScrollAreaPrimitive.Root
       data-slot='scroll-area'
@@ -18,7 +23,7 @@ function ScrollArea({
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
-      <ScrollBar />
+      {!hideVerticalScrollbar ? <ScrollBar /> : null}
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
   );
@@ -42,7 +47,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.Thumb
         data-slot='scroll-area-thumb'
-        className='bg-border relative flex-1 rounded-full'
+        className='bg-foreground/10 relative flex-1 rounded-full'
       />
     </ScrollAreaPrimitive.Scrollbar>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { DrawerOpener } from '@/shared/components/client';
-import { Button, ScrollArea, ScrollBar } from '@/shared/components/ui';
+import { Button, ScrollArea } from '@/shared/components/ui';
 import { FileText } from 'lucide-react';
 import { useState } from 'react';
 import { HiMiniArrowPathRoundedSquare } from 'react-icons/hi2';
@@ -40,7 +40,6 @@ export function BackupCodeFactor() {
       >
         {backupCodes ? (
           <ScrollArea className='mx-auto h-80 max-w-xl px-4 pb-8'>
-            <ScrollBar />
             <BackupCodes codes={backupCodes} />
           </ScrollArea>
         ) : (
