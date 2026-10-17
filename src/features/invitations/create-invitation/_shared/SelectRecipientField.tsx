@@ -17,7 +17,7 @@ import {
   InputGroupAddon,
 } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/client';
-import { PAGINATION_DEFAULTS } from '@/shared/utils';
+import { PAGINATION_DEFAULTS } from '@/shared/pagination';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ArrowDown } from 'lucide-react';
 import { useState, type ComponentProps } from 'react';

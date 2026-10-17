@@ -6,6 +6,7 @@ import { FiCopy } from 'react-icons/fi';
 export function CopyMemberAction({ member }: { member: Member }) {
   return (
     <DropdownMenuItem
+      nativeButton={true}
       render={
         <CopyText
           text={JSON.stringify(member)}

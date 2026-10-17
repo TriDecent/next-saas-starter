@@ -17,7 +17,7 @@ import {
 } from '@/shared/components/ui';
 import { FieldGroup, FieldSeparator } from '@/shared/components/ui/client';
 import { ROUTES } from '@/shared/constants';
-import { PAGINATION_DEFAULTS } from '@/shared/utils';
+import { PAGINATION_DEFAULTS } from '@/shared/pagination';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { FaUserPlus } from 'react-icons/fa';

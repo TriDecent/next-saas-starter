@@ -1,7 +1,7 @@
 import type { GetUsersParams } from '@/features/user/server';
 import { apiClient } from '@/lib/client';
 import { ROUTES } from '@/shared/constants';
-import { PAGINATION_DEFAULTS } from '@/shared/utils';
+import { PAGINATION_DEFAULTS } from '@/shared/pagination';
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { GetUsersSchema } from './schema';
 import { USER_QUERY_KEYS } from './user-keys';

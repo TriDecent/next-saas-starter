@@ -5,7 +5,7 @@ import type { Session, User } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import { auth, hasPermission } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
-import { buildPagination } from '@/shared/utils';
+import { buildPagination } from '@/shared/pagination';
 import type {
   AuthenticatePriorResponse,
   Enable2FAResponse,

@@ -2,9 +2,8 @@ import type { GetUsersResponse } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
-import { PAGINATION_DEFAULTS } from '@/shared/utils';
+import { QuerySchema } from '@/shared/pagination';
 import { NextResponse, type NextRequest } from 'next/server';
-import z from 'zod';
 
 export async function GET(
   request: NextRequest
@@ -41,22 +40,3 @@ export async function GET(
     ? NextResponse.json(result.payload)
     : NextResponse.json(result.payload, { status: 400 });
 }
-
-const QuerySchema = z.object({
-  keyword: z.string().optional(),
-  page: z.coerce
-    .number()
-    .pipe(z.int().positive())
-    .default(PAGINATION_DEFAULTS.page),
-  limit: z.coerce
-    .number()
-    .pipe(z.int().positive())
-    .pipe(
-      z.transform(value =>
-        value > PAGINATION_DEFAULTS.maxLimit
-          ? PAGINATION_DEFAULTS.maxLimit
-          : value
-      )
-    )
-    .default(PAGINATION_DEFAULTS.limit),
-});
