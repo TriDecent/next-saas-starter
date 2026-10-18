@@ -1,18 +1,18 @@
 'use server';
 
 import { ResetPasswordSchema } from '@/features/auth/schema';
-import type { GeneralAuthResponse } from '@/features/auth/server';
 import { getAuthService } from '@/infrastructure/composition/factory';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 
-type Response = GeneralAuthResponse | { type: 'initial' };
+type ResetPasswordState = ActionState<void, { message: string }>;
 
 export async function resetPasswordAction(
-  state: Response,
+  state: ResetPasswordState,
   input: unknown
-): Promise<Response> {
+): Promise<ResetPasswordState> {
   const parsedResult = ResetPasswordSchema.safeParse(input);
 
   if (!parsedResult.success)

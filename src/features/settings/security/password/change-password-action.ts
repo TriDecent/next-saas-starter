@@ -1,22 +1,22 @@
 'use server';
 
 import { ChangePasswordSchema } from '@/features/auth/schema';
-import type { GeneralUserResponse } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/use-action-form';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { cookies } from 'next/headers';
 
-type ChangePasswordResponse = GeneralUserResponse | { type: 'initial' };
+type ChangePasswordState = ActionState<void, { message: string }>;
 
 export async function changePasswordAction(
-  state: ChangePasswordResponse,
+  state: ChangePasswordState,
   input: unknown
-): Promise<ChangePasswordResponse> {
+): Promise<ChangePasswordState> {
   const [cookiesList, reqList] = await Promise.all([cookies(), request()]);
   const service = await getUserService(ROUTES.settings.nested.security.href);
 

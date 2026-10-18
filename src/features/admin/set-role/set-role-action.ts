@@ -1,7 +1,7 @@
 'use server';
 
 import type { AppRole } from '@/features/authorization';
-import type { GeneralUserResponse } from '@/features/user/server';
+import type { UserMutationResult } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import { refresh } from 'next/cache';
 
@@ -11,7 +11,7 @@ export async function setRoleAction(
     roles: AppRole[];
   },
   callbackURL: string
-): Promise<GeneralUserResponse> {
+): Promise<UserMutationResult> {
   const service = await getUserService(callbackURL);
   const response = await service.setRole(params);
   refresh();

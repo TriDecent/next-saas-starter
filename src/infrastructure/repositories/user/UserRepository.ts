@@ -1,9 +1,8 @@
 import type { Prisma, User } from '@/generated/prisma/client';
 import { prisma } from '@/lib';
 import type { DefaultArgs } from '@prisma/client/runtime/client';
-import { IRepository } from '../IRepository';
 
-export interface IUserRepository extends IRepository<typeof prisma.user> {
+export interface IUserRepository {
   getUsers(
     skip: number,
     take: number,
@@ -11,7 +10,7 @@ export interface IUserRepository extends IRepository<typeof prisma.user> {
     keyword?: string
   ): Promise<{ data: User[]; total: number }>;
 
-  getUserById(id: User['stripeCustomerId']): Promise<User | null>;
+  getUserById(id: User['id']): Promise<User | null>;
 
   iterateUsers({ batchSize }: { batchSize: number }): AsyncGenerator<User>;
 }

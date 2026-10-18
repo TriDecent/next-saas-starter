@@ -1,7 +1,7 @@
-import type { ListActiveSubscriptionResponse } from '@/features/subscription/server';
+import type { ListActiveSubscriptionsResult } from '@/features/subscription/server';
 
 type Subscription = Extract<
-  ListActiveSubscriptionResponse,
+  ListActiveSubscriptionsResult,
   { type: 'success' }
 >['payload'];
 export type MySubscription = Subscription[number];

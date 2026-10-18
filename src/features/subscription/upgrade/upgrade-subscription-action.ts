@@ -1,6 +1,6 @@
 'use server';
 
-import type { UpgradeSubscriptionResponse } from '@/features/subscription/server';
+import type { UpgradeSubscriptionResult } from '@/features/subscription/server';
 import { getSubscriptionService } from '@/infrastructure/composition/factory';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { SUBSCRIPTION_PLAN } from '@/lib/auth';
@@ -10,7 +10,7 @@ import z from 'zod';
 export async function upgradeSubscriptionAction(
   input: UpgradeSubscriptionActionInput,
   callbackUrl: string
-): Promise<UpgradeSubscriptionResponse> {
+): Promise<UpgradeSubscriptionResult> {
   const service = await getSubscriptionService(callbackUrl);
 
   const decision = await ajLaxAuthenticated.protect(await request(), {
@@ -23,7 +23,7 @@ export async function upgradeSubscriptionAction(
   if (!parsed.success)
     return { type: 'error', payload: { message: 'Invalid input' } };
 
-  const activeSubsResponse = await service.listActiveSubscription({
+  const activeSubsResponse = await service.listActiveSubscriptions({
     referenceId: parsed.data.referenceId,
     customerType: parsed.data.referenceId ? 'organization' : 'user',
   });

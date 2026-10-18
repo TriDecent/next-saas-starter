@@ -3,20 +3,20 @@ import type { Session } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import type {
   IOrganizationRepository,
-  OrganizationWithRole,
+  OrgMembershipSummary,
 } from '@/infrastructure/repositories';
 import { auth } from '@/lib/auth';
 import { buildPagination } from '@/shared/pagination';
-import type { ServiceResponse } from '@/shared/types';
+import type { ServiceResult } from '@/shared/types';
 import {
   type CreateInvitationInput,
   type CreateOrgInput,
   type GeneralOrgError,
-  type GeneralOrgResponse,
   type GeneralOrgSuccess,
-  type GetFullOrgResponse,
-  type GetInvitationResponse,
+  type GetInvitationResult,
+  type GetOrgDetailsResult,
   type GetOrgInput,
+  type OrgMutationResult,
   type RemoveUserInput,
   type SetActiveOrgInput,
   type UpdateOrgInput,
@@ -32,7 +32,7 @@ export class OrganizationService {
     private readonly _currentSession: Session
   ) {}
 
-  createOrg(params: CreateOrgInput): Promise<GeneralOrgResponse> {
+  createOrg(params: CreateOrgInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.executeProtectedAction<
       GeneralOrgSuccess,
       GeneralOrgError
@@ -53,7 +53,7 @@ export class OrganizationService {
     });
   }
 
-  deleteOrg(organizationId: string): Promise<GeneralOrgResponse> {
+  deleteOrg(organizationId: string): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.deleteOrganization({
@@ -65,7 +65,7 @@ export class OrganizationService {
     );
   }
 
-  updateOrg(params: UpdateOrgInput): Promise<GeneralOrgResponse> {
+  updateOrg(params: UpdateOrgInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.updateOrganization({
@@ -82,7 +82,7 @@ export class OrganizationService {
   }
 
   listMyOrgs(): Promise<
-    ServiceResponse<OrganizationWithRole[], { message: string }>
+    ServiceResult<OrgMembershipSummary[], { message: string }>
   > {
     return this._serviceExecutor.runSafely(
       () => this._repo.listOrganizationsForUser(this.actor.id),
@@ -90,7 +90,7 @@ export class OrganizationService {
     );
   }
 
-  toggleOrgStatus(params: SetActiveOrgInput): Promise<GeneralOrgResponse> {
+  toggleOrgStatus(params: SetActiveOrgInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         const currentActiveOrgId = this.getActiveOrgId();
@@ -109,7 +109,7 @@ export class OrganizationService {
 
   async createInvitation(
     params: CreateInvitationInput
-  ): Promise<GeneralOrgResponse> {
+  ): Promise<OrgMutationResult> {
     return this._serviceExecutor.executeProtectedAction({
       rbac: {
         required: { invitation: ['create'] },
@@ -127,7 +127,7 @@ export class OrganizationService {
     });
   }
 
-  getInvitation(id: string): Promise<GetInvitationResponse> {
+  getInvitation(id: string): Promise<GetInvitationResult> {
     return this._serviceExecutor.runSafely(
       () =>
         auth.api.getInvitation({
@@ -138,7 +138,7 @@ export class OrganizationService {
     );
   }
 
-  acceptInvitation(invitationId: string): Promise<GeneralOrgResponse> {
+  acceptInvitation(invitationId: string): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.acceptInvitation({
@@ -150,7 +150,7 @@ export class OrganizationService {
     );
   }
 
-  rejectInvitation(invitationId: string): Promise<GeneralOrgResponse> {
+  rejectInvitation(invitationId: string): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.rejectInvitation({
@@ -162,7 +162,7 @@ export class OrganizationService {
     );
   }
 
-  getFullOrg({
+  getOrgDetails({
     id,
     slug,
     memberQuery: {
@@ -175,13 +175,13 @@ export class OrganizationService {
       limit: invitationLimit,
       keyword: invitationKeyword,
     },
-  }: GetOrgInput): Promise<GetFullOrgResponse> {
+  }: GetOrgInput): Promise<GetOrgDetailsResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         const memberOffset = (memberPage - 1) * memberLimit;
         const invitationOffset = (invitationPage - 1) * invitationLimit;
 
-        const data = await this._repo.getFullOrg({
+        const data = await this._repo.getOrgDetails({
           id,
           slug,
           memberQuery: {
@@ -222,7 +222,7 @@ export class OrganizationService {
     );
   }
 
-  updateRole(params: UpdateRoleInput): Promise<GeneralOrgResponse> {
+  updateRole(params: UpdateRoleInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.updateMemberRole({
@@ -234,7 +234,7 @@ export class OrganizationService {
     );
   }
 
-  removeMember(params: RemoveUserInput): Promise<GeneralOrgResponse> {
+  removeMember(params: RemoveUserInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.removeMember({ body: params, headers: this.headers });
@@ -243,7 +243,7 @@ export class OrganizationService {
     );
   }
 
-  cancelInvitation(invitationId: string): Promise<GeneralOrgResponse> {
+  cancelInvitation(invitationId: string): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.cancelInvitation({

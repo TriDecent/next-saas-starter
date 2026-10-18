@@ -3,15 +3,16 @@ import type { GlobalOmitConfig } from '@/generated/prisma/internal/prismaNamespa
 import type { OrganizationDelegate } from '@/generated/prisma/models';
 import { prisma } from '@/lib';
 import type { DefaultArgs } from '@prisma/client/runtime/client';
-import { IRepository } from '../IRepository';
-import type { FullOrg, GetFullOrgInput, OrganizationWithRole } from './types';
+import type {
+  OrgDetails,
+  OrgDetailsQuery,
+  OrgMembershipSummary,
+} from './types';
 
-export interface IOrganizationRepository extends IRepository<
-  typeof prisma.organization
-> {
-  listOrganizationsForUser(userId: User['id']): Promise<OrganizationWithRole[]>;
+export interface IOrganizationRepository {
+  listOrganizationsForUser(userId: User['id']): Promise<OrgMembershipSummary[]>;
   getAuthorizedUserIdsForOrg(orgId: Organization['id']): Promise<string[]>;
-  getFullOrg(params: GetFullOrgInput): Promise<FullOrg | null>;
+  getOrgDetails(params: OrgDetailsQuery): Promise<OrgDetails | null>;
 }
 
 export class OrganizationRepository implements IOrganizationRepository {
@@ -28,7 +29,7 @@ export class OrganizationRepository implements IOrganizationRepository {
 
   async listOrganizationsForUser(
     userId: User['id']
-  ): Promise<OrganizationWithRole[]> {
+  ): Promise<OrgMembershipSummary[]> {
     const orgs = await this._delegate.findMany({
       where: { members: { some: { userId } } },
       include: {
@@ -55,7 +56,7 @@ export class OrganizationRepository implements IOrganizationRepository {
     return org ? org.members.map(member => member.userId) : [];
   }
 
-  async getFullOrg({
+  async getOrgDetails({
     id,
     slug,
     memberQuery: { skip: memberSkip, take: memberTake, keyword: memberKeyword },
@@ -64,7 +65,7 @@ export class OrganizationRepository implements IOrganizationRepository {
       take: invitationTake,
       keyword: invitationKeyword,
     },
-  }: GetFullOrgInput): Promise<FullOrg | null> {
+  }: OrgDetailsQuery): Promise<OrgDetails | null> {
     const memberWhere: Prisma.MemberWhereInput | undefined = memberKeyword
       ? {
           user: {

@@ -1,6 +1,6 @@
 'use server';
 
-import type { CreateBillingPortalResponse } from '@/features/subscription/server';
+import type { CreateBillingPortalResult } from '@/features/subscription/server';
 import { getSubscriptionService } from '@/infrastructure/composition/factory';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { request } from '@arcjet/next';
@@ -9,7 +9,7 @@ import z from 'zod';
 export async function createBillingPortalAction(
   options: CreateBillingPortalActionOptions,
   callbackUrl: string
-): Promise<CreateBillingPortalResponse> {
+): Promise<CreateBillingPortalResult> {
   const service = await getSubscriptionService(callbackUrl);
 
   const decision = await ajLaxAuthenticated.protect(await request(), {

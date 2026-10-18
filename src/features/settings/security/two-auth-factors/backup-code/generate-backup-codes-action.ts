@@ -1,21 +1,25 @@
 'use server';
 
 import { TwoFAAuthSchema } from '@/features/auth/schema';
-import type { GenerateBackUpCodesResponse } from '@/features/user/server';
+import type { GenerateBackUpCodesResult } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 
-type Response = GenerateBackUpCodesResponse | { type: 'initial' };
+type GenerateBackupCodesState = ActionState<
+  Extract<GenerateBackUpCodesResult, { type: 'success' }>['payload'],
+  Extract<GenerateBackUpCodesResult, { type: 'error' }>['payload']
+>;
 
 export async function generateBackupCodesAction(
-  state: Response,
+  state: GenerateBackupCodesState,
   input: unknown
-): Promise<Response> {
+): Promise<GenerateBackupCodesState> {
   const [service, req] = await Promise.all([
     getUserService(ROUTES.settings.nested.security.href),
     request(),

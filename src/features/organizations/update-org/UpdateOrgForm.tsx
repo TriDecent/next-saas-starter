@@ -9,13 +9,13 @@ import { startTransition } from 'react';
 import { toast } from 'sonner';
 import { CreateOrgFields } from '../create-org/client';
 import { OrgSchema, type OrgSchemaType } from '../schema';
-import type { Response } from './update-org-action';
+import type { UpdateOrganizationState } from './update-org-action';
 import { updateOrgAction } from './update-org-action';
 
 export function UpdateOrgForm({ id }: { id: Organization['id'] }) {
   const router = useRouter();
   const { isPending, animationScope, dispatch, methods, state } = useActionForm<
-    Response,
+    UpdateOrganizationState,
     OrgSchemaType
   >({
     action: updateOrgAction,

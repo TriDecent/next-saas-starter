@@ -49,7 +49,7 @@ async function AdminWrapper({
     tableSearchParamsSchema.parse(unknownQueries);
 
   const userService = await getUserService(ROUTES.admin.href);
-  const { type, payload } = await userService.getUsers({
+  const { type, payload } = await userService.listUsers({
     page: tablePageIndex + 1,
     limit: tablePageSize,
     orderBy: tableSort,

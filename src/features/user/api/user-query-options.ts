@@ -1,4 +1,4 @@
-import type { GetUsersParams } from '@/features/user/server';
+import type { ListUsersQuery } from '@/features/user/server';
 import { apiClient } from '@/lib/client';
 import { ROUTES } from '@/shared/constants';
 import { PAGINATION_DEFAULTS } from '@/shared/pagination';
@@ -6,7 +6,7 @@ import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import { GetUsersSchema } from './schema';
 import { USER_QUERY_KEYS } from './user-keys';
 
-export function getUsersQueryOptions(params?: GetUsersParams) {
+export function getUsersQueryOptions(params?: ListUsersQuery) {
   return queryOptions({
     queryKey: USER_QUERY_KEYS.list(params),
     queryFn: () => fetchUsers(params),
@@ -14,7 +14,7 @@ export function getUsersQueryOptions(params?: GetUsersParams) {
 }
 
 export function getUsersInfiniteQueryOptions(
-  params?: Omit<GetUsersParams, 'page'>
+  params?: Omit<ListUsersQuery, 'page'>
 ) {
   return infiniteQueryOptions({
     queryKey: USER_QUERY_KEYS.infinite(params),
@@ -36,7 +36,7 @@ export function getUsersInfiniteQueryOptions(
   });
 }
 
-async function fetchUsers(params?: GetUsersParams) {
+async function fetchUsers(params?: ListUsersQuery) {
   const searchParams = params
     ? new URLSearchParams(
         params.keyword

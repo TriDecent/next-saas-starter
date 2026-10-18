@@ -1,19 +1,22 @@
 'use server';
 
 import { BasicAuthSchema, TwoFAAuthSchema } from '@/features/auth/schema';
-import type { GeneralAuthResponse } from '@/features/auth/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { COOKIES, ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { cookies } from 'next/headers';
 
-type Response = GeneralAuthResponse | { type: 'initial' };
+type AuthenticatePriorState = ActionState<
+  { sudoToken: string } | undefined,
+  { message: string }
+>;
 
 export async function authenticatePriorAction(
-  state: Response,
+  state: AuthenticatePriorState,
   input: unknown
-): Promise<Response> {
+): Promise<AuthenticatePriorState> {
   const [req, cookiesList] = await Promise.all([request(), cookies()]);
 
   const service = await getUserService(ROUTES.settings.nested.security.href);

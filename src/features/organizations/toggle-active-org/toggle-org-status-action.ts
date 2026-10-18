@@ -1,7 +1,7 @@
 'use server';
 
 import type {
-  GeneralOrgResponse,
+  OrgMutationResult,
   SetActiveOrgInput,
 } from '@/features/organizations/server';
 import { getOrgService } from '@/infrastructure/composition/factory';
@@ -11,7 +11,7 @@ import { request } from '@arcjet/next';
 export async function toggleOrgStatus(
   input: SetActiveOrgInput,
   callbackUrl: string
-): Promise<GeneralOrgResponse> {
+): Promise<OrgMutationResult> {
   const service = await getOrgService(callbackUrl);
 
   const decision = await ajLaxAuthenticated.protect(await request(), {

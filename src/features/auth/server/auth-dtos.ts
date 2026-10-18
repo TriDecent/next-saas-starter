@@ -1,13 +1,13 @@
-import type { ServiceResponse } from '@/shared/types';
+import type { ServiceResult } from '@/shared/types';
 
-export type SignInResponse = ServiceResponse<
+export type SignInResult = ServiceResult<
   { redirect?: string },
   { status?: 'EMAIL_NOT_VERIFIED'; email?: string; message: string }
 >;
 
-export type SignUpResponse = ServiceResponse<
+export type SignUpResult = ServiceResult<
   { name: string; email: string },
   { message: string }
 >;
 
-export type GeneralAuthResponse = ServiceResponse<void, { message: string }>;
+export type AuthMutationResult = ServiceResult<void, { message: string }>;

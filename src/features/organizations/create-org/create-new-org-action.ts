@@ -1,20 +1,20 @@
 'use server';
 
-import type { GeneralOrgResponse } from '@/features/organizations/server';
 import { getOrgService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { CreateNewOrgSchema } from './schema';
 
-export type Response = GeneralOrgResponse | { type: 'initial' };
+export type CreateOrganizationState = ActionState<void, { message: string }>;
 export async function createNewOrg(
-  state: Response,
+  state: CreateOrganizationState,
   input: unknown
-): Promise<Response> {
+): Promise<CreateOrganizationState> {
   const [service, req] = await Promise.all([
     getOrgService(ROUTES.organizations.href),
     request(),

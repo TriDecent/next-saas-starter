@@ -4,21 +4,21 @@ import {
   UpdateProfileSchema,
   type UpdateProfile,
 } from '@/features/user/schema';
-import type { GeneralUserResponse } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { request } from '@arcjet/next';
 
-export type UpdateProfileResponse = GeneralUserResponse | { type: 'initial' };
+export type UpdateProfileState = ActionState<void, { message: string }>;
 
 export async function updateProfileFormAction(
   callbackURL: string,
-  state: UpdateProfileResponse,
+  state: UpdateProfileState,
   input: unknown
-): Promise<UpdateProfileResponse> {
+): Promise<UpdateProfileState> {
   const parsedResult = UpdateProfileSchema.safeParse(input);
 
   if (!parsedResult.success)

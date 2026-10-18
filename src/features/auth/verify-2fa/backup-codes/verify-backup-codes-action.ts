@@ -1,20 +1,20 @@
 'use server';
 
 import { BackupCodeSchema } from '@/features/auth/schema';
-import type { GeneralAuthResponse } from '@/features/auth/server';
 import { getAuthService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { request } from '@arcjet/next';
 
-type Response = GeneralAuthResponse | { type: 'initial' };
+type VerifyBackupCodesState = ActionState<void, { message: string }>;
 
 export async function verifyBackupCodesAction(
-  state: Response,
+  state: VerifyBackupCodesState,
   input: unknown
-): Promise<Response> {
+): Promise<VerifyBackupCodesState> {
   const parsedInput = BackupCodeSchema.safeParse(input);
   if (!parsedInput.success)
     return { type: 'error', payload: { message: 'Invalid input' } };

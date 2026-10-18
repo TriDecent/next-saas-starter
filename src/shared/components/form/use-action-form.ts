@@ -1,17 +1,16 @@
 'use client';
 
+import type { ServiceResult } from '@/shared/types';
 import { useActionState, useEffect, useEffectEvent, useRef } from 'react';
 import { useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
 import { useShakeError } from './use-shake-error';
 
-type ActionResponse<TSuccess, TError> = Readonly<
-  | { type: 'success'; payload: TSuccess }
-  | { type: 'error'; payload: TError }
-  | { type: 'initial' }
->;
+export type ActionState<TData, TError> =
+  | ServiceResult<TData, TError>
+  | { type: 'initial' };
 
 export function useActionForm<
-  TResponse extends ActionResponse<unknown, unknown>,
+  TResponse extends ActionState<unknown, unknown>,
   TPayload extends FieldValues,
 >(params: {
   formConfiguration: UseFormProps<TPayload>;

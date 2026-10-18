@@ -1,4 +1,4 @@
-import type { GetFullOrgResponse } from '@/features/organizations/server';
+import type { GetOrgDetailsResult } from '@/features/organizations/server';
 import {
   Badge,
   Card,
@@ -14,7 +14,7 @@ import { GrOverview } from 'react-icons/gr';
 import { OrgIdentity } from './OrgIdentity';
 
 export type OrgOverviewProps = Extract<
-  GetFullOrgResponse,
+  GetOrgDetailsResult,
   { type: 'success' }
 >['payload'];
 

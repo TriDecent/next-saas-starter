@@ -1,4 +1,4 @@
-import type { GetUsersResponse } from '@/features/user/server';
+import type { ListUsersResult } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import { ajRestrictiveAuthenticated, respondToDenial } from '@/lib/arcjet';
 import { ROUTES } from '@/shared/constants';
@@ -7,7 +7,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 export async function GET(
   request: NextRequest
-): Promise<NextResponse<GetUsersResponse> | NextResponse> {
+): Promise<NextResponse<ListUsersResult> | NextResponse> {
   const service = await getUserService(ROUTES.home.href);
 
   const decision = await ajRestrictiveAuthenticated.protect(request, {
@@ -29,7 +29,7 @@ export async function GET(
 
   const { keyword, page, limit } = parsedResult.data;
 
-  const result = await service.getUsers({
+  const result = await service.listUsers({
     page,
     limit,
     orderBy: [{ email: 'asc' }],

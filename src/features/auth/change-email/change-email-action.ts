@@ -1,12 +1,13 @@
 'use server';
 
-import type { GeneralUserResponse } from '@/features/user/server';
+import type { UserMutationResult } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajEmailSend,
   ajLaxAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { request } from '@arcjet/next';
 import z from 'zod';
 
@@ -14,7 +15,7 @@ type ChangeEmailParams = {
   newEmail: string;
 };
 
-type ChangeEmailState = GeneralUserResponse | { type: 'initial' };
+type ChangeEmailState = ActionState<void, { message: string }>;
 
 export async function changeEmailFormAction(
   callbackURL: string,
@@ -44,7 +45,7 @@ export async function changeEmailFormAction(
 export async function changeEmailAction(
   { newEmail }: ChangeEmailParams,
   callbackURL: string
-): Promise<GeneralUserResponse> {
+): Promise<UserMutationResult> {
   const [req, service] = await Promise.all([
     request(),
     getUserService(callbackURL),

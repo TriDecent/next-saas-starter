@@ -1,21 +1,21 @@
 'use server';
 
-import type { GeneralOrgResponse } from '@/features/organizations/server';
 import { getOrgService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { OrgSchema } from '../schema';
 
-export type Response = GeneralOrgResponse | { type: 'initial' };
+export type UpdateOrganizationState = ActionState<void, { message: string }>;
 
 export async function updateOrgAction(
-  state: Response,
+  state: UpdateOrganizationState,
   input: unknown
-): Promise<Response> {
+): Promise<UpdateOrganizationState> {
   const service = await getOrgService(ROUTES.organizations.href);
 
   const parsedResult = OrgSchema.safeParse(input);

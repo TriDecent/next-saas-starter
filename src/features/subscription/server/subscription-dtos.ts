@@ -2,7 +2,7 @@ import type { auth, SubscriptionPlan } from '@/lib/auth';
 import type {
   ExtractEndpointBody,
   ExtractEndpointQuery,
-  ServiceResponse,
+  ServiceResult,
 } from '@/shared/types';
 import type Stripe from 'stripe';
 
@@ -16,7 +16,7 @@ export type CreateBillingPortalInput = ExtractEndpointBody<
   typeof auth.api.createBillingPortal
 >;
 
-export type GetSubscriptionOverviewResponse = ServiceResponse<
+export type GetSubscriptionOverviewResult = ServiceResult<
   SubscriptionOverview,
   { message: string }
 >;
@@ -30,18 +30,18 @@ export type SubscriptionOverview = {
       }
     | undefined;
 };
-export type UpgradeSubscriptionResponse = ServiceResponse<
+export type UpgradeSubscriptionResult = ServiceResult<
   Awaited<ReturnType<typeof auth.api.upgradeSubscription>>,
   { message: string }
 >;
-export type ListActiveSubscriptionResponse = ServiceResponse<
+export type ListActiveSubscriptionsResult = ServiceResult<
   ActiveSubscription,
   { message: string }
 >;
 type ActiveSubscription = Awaited<
   ReturnType<typeof auth.api.listActiveSubscriptions>
 >;
-export type CreateBillingPortalResponse = ServiceResponse<
+export type CreateBillingPortalResult = ServiceResult<
   Awaited<ReturnType<typeof auth.api.createBillingPortal>>,
   { message: string }
 >;
@@ -58,7 +58,7 @@ type PriceDetails = {
   interval: Stripe.Price.Recurring.Interval;
   currency: string;
 };
-export type GeneralSubscriptionResponse = ServiceResponse<
+export type SubscriptionMutationResult = ServiceResult<
   void,
   { message: string }
 >;

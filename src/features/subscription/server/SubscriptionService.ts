@@ -4,12 +4,12 @@ import { auth, SUBSCRIPTION_PLAN, type SubscriptionPlan } from '@/lib/auth';
 import { stripeClient } from '@/lib/stripe';
 import type {
   CreateBillingPortalInput,
-  GetSubscriptionOverviewResponse,
-  ListActiveSubscriptionResponse,
+  GetSubscriptionOverviewResult,
+  ListActiveSubscriptionsResult,
   ListActiveSubscriptionsInput,
   SubscriptionPlanDetails,
   UpgradeSubscriptionInput,
-  UpgradeSubscriptionResponse,
+  UpgradeSubscriptionResult,
 } from './subscription-dtos';
 
 interface ISubscriptionOwnerContext {
@@ -103,7 +103,7 @@ export class SubscriptionService {
 
   upgradeSubscription(
     params: UpgradeSubscriptionInput
-  ): Promise<UpgradeSubscriptionResponse> {
+  ): Promise<UpgradeSubscriptionResult> {
     return this._serviceExecutor.runSafely(
       async () =>
         auth.api.upgradeSubscription({
@@ -114,9 +114,9 @@ export class SubscriptionService {
     );
   }
 
-  listActiveSubscription(
+  listActiveSubscriptions(
     params?: ListActiveSubscriptionsInput
-  ): Promise<ListActiveSubscriptionResponse> {
+  ): Promise<ListActiveSubscriptionsResult> {
     return this._serviceExecutor.runSafely(
       () =>
         auth.api.listActiveSubscriptions({
@@ -137,14 +137,14 @@ export class SubscriptionService {
 
   getSubscriptionOverview(
     activeSubscriptionQuery?: Parameters<
-      SubscriptionService['listActiveSubscription']
+      SubscriptionService['listActiveSubscriptions']
     >[number]
-  ): Promise<GetSubscriptionOverviewResponse> {
+  ): Promise<GetSubscriptionOverviewResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         const [plans, activeSubscriptionsResponse] = await Promise.all([
           this.getSubscriptionPlans(),
-          this.listActiveSubscription(activeSubscriptionQuery),
+          this.listActiveSubscriptions(activeSubscriptionQuery),
         ]);
 
         if (activeSubscriptionsResponse.type === 'error')

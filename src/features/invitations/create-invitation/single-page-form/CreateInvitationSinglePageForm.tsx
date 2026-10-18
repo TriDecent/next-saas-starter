@@ -95,7 +95,7 @@ async function SelectOrgWrapper() {
 
 async function SelectRecipientWrapper() {
   const service = await getUserService(ROUTES.invitations.href);
-  const response = await service.getUsers({
+  const response = await service.listUsers({
     page: PAGINATION_DEFAULTS.page,
     limit: PAGINATION_DEFAULTS.limit,
     orderBy: [{ email: 'asc' }],

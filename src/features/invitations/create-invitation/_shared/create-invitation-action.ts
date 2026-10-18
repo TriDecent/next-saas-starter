@@ -1,18 +1,19 @@
 'use server';
 
-import type { GeneralOrgResponse } from '@/features/organizations/server';
 import { getOrgService } from '@/infrastructure/composition/factory';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/use-action-form';
 import { ROUTES } from '@/shared/constants';
 import { request } from '@arcjet/next';
 import { refresh } from 'next/cache';
 import { CreateInvitationSchema } from '../schema';
 
-export type CreateInvitationResponse = GeneralOrgResponse | { type: 'initial' };
+export type CreateInvitationState = ActionState<void, { message: string }>;
+
 export async function createInvitationAction(
-  state: CreateInvitationResponse,
+  state: CreateInvitationState,
   input: unknown
-): Promise<CreateInvitationResponse> {
+): Promise<CreateInvitationState> {
   const service = await getOrgService(ROUTES.invitations.href);
 
   const parsedResult = CreateInvitationSchema.safeParse(input);

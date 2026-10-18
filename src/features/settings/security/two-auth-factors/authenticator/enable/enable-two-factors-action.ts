@@ -1,6 +1,6 @@
 'use server';
 
-import type { Enable2FAResponse } from '@/features/user/server';
+import type { Enable2FAResult } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
@@ -12,7 +12,7 @@ import { cookies } from 'next/headers';
 
 export async function enableTwoFactorsAction(
   password: string
-): Promise<Enable2FAResponse> {
+): Promise<Enable2FAResult> {
   const [req, cookiesList] = await Promise.all([request(), cookies()]);
   const service = await getUserService(ROUTES.settings.nested.security.href);
 

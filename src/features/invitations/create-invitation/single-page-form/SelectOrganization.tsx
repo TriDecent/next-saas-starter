@@ -1,7 +1,7 @@
 'use client';
 
 import type { Organization } from '@/generated/prisma/client';
-import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
+import type { OrgMembershipSummary } from '@/infrastructure/repositories/organization';
 import { FormField } from '@/shared/components/form/client';
 import { RadioGroupItem } from '@/shared/components/ui';
 import {
@@ -23,7 +23,7 @@ export function SelectOrganization({
   organizations,
   activeOrgId,
 }: {
-  organizations: OrganizationWithRole[];
+  organizations: OrgMembershipSummary[];
   activeOrgId: string | null;
 }) {
   return (

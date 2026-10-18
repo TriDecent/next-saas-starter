@@ -1,21 +1,21 @@
 'use server';
 
 import { TotpAuthSchema } from '@/features/auth/schema';
-import type { GeneralUserResponse } from '@/features/user/server';
 import { getAuthService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAnonymous,
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { request } from '@arcjet/next';
 
-type Response = GeneralUserResponse | { type: 'initial' };
+type VerifyTotpState = ActionState<void, { message: string }>;
 
 export async function verifyTotpAction(
-  state: Response,
+  state: VerifyTotpState,
   input: unknown
-): Promise<Response> {
+): Promise<VerifyTotpState> {
   const parsedInput = TotpAuthSchema.safeParse(input);
   if (!parsedInput.success)
     return { type: 'error', payload: { message: 'Invalid input' } };

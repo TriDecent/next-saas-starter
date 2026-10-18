@@ -2,7 +2,7 @@ import { verifySudoToken } from '@/features/auth';
 import type { User } from '@/generated/prisma/client';
 import { type IUserRepository } from '@/infrastructure/repositories';
 import { hasPermission } from '@/lib/auth';
-import type { ServiceResponse } from '@/shared/types';
+import type { ServiceResult } from '@/shared/types';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { BaseExecutor, type IBaseExecutor } from './BaseExecutor';
 
@@ -12,7 +12,7 @@ export interface IAuthenticatedExecutor extends IBaseExecutor {
     invalidTokenMessage: string,
     operation: () => Promise<TSuccess>,
     toErrorPayload: (error: string) => TError
-  ): Promise<ServiceResponse<TSuccess, TError>>;
+  ): Promise<ServiceResult<TSuccess, TError>>;
   executeProtectedAction<TContext, TError>(params: {
     rbac: {
       required: Parameters<typeof hasPermission>[1];
@@ -26,7 +26,7 @@ export interface IAuthenticatedExecutor extends IBaseExecutor {
       // and transforms it into the specified error payload
       toErrorPayload: (error: string) => TError;
     };
-  }): Promise<ServiceResponse<void, TError>>;
+  }): Promise<ServiceResult<void, TError>>;
   executeProtectedQuery<TData, TError, TContext>(params: {
     rbac: {
       required: Parameters<typeof hasPermission>[1];
@@ -40,7 +40,7 @@ export interface IAuthenticatedExecutor extends IBaseExecutor {
       toErrorPayload: (error: string) => TError;
     };
     abac?: AbacQuery<TContext, TData, TError>;
-  }): Promise<ServiceResponse<TData, TError>>;
+  }): Promise<ServiceResult<TData, TError>>;
 
   get actor(): User;
 }
@@ -102,7 +102,7 @@ export class AuthenticatedExecutor
     invalidTokenMessage: string,
     operation: () => Promise<TSuccess>,
     toErrorPayload: (error: string) => TError
-  ): Promise<ServiceResponse<TSuccess, TError>> {
+  ): Promise<ServiceResult<TSuccess, TError>> {
     const isValid = token
       ? await verifySudoToken(token, this._actor.id)
       : false;
@@ -122,7 +122,7 @@ export class AuthenticatedExecutor
       run: () => Promise<void>;
       toErrorPayload: (error: string) => TError;
     };
-  }): Promise<ServiceResponse<void, TError>> {
+  }): Promise<ServiceResult<void, TError>> {
     const { rbac, abac, action } = params;
     const hasRbac = await hasPermission(this._actor.id, rbac.required);
     if (!hasRbac) return { type: 'error', payload: rbac.error };
@@ -156,7 +156,7 @@ export class AuthenticatedExecutor
       toErrorPayload: (error: string) => TError;
     };
     abac?: AbacQuery<TContext, TData, TError>;
-  }): Promise<ServiceResponse<TData, TError>> {
+  }): Promise<ServiceResult<TData, TError>> {
     const { rbac, query, abac } = params;
 
     const hasRbac = await hasPermission(this._actor.id, rbac.required);

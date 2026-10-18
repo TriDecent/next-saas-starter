@@ -23,7 +23,7 @@ export async function generateMetadata({
   const slug = (await params).slug;
   const {
     data: { org },
-  } = await getFullOrg(slug);
+  } = await getOrgDetails(slug);
 
   return {
     ...ROUTES.organizations.nested.slug.metadata,
@@ -54,7 +54,7 @@ export default function OrgDetailsPage({ params }: SlugParams) {
 
 async function Wrapper({ params }: SlugParams) {
   const slug = (await params).slug;
-  const { data, isActive } = await getFullOrg(slug);
+  const { data, isActive } = await getOrgDetails(slug);
   const { org, invitation, member } = data;
   const callbackUrl = `${ROUTES.organizations.href}/${org.slug}`;
 
@@ -104,10 +104,10 @@ async function Wrapper({ params }: SlugParams) {
   );
 }
 
-const getFullOrg = cache(async (slug: string) => {
+const getOrgDetails = cache(async (slug: string) => {
   const service = await getOrgService(`${ROUTES.organizations.href}/${slug}`);
 
-  const result = await service.getFullOrg({
+  const result = await service.getOrgDetails({
     slug,
     memberQuery: { page: 1, limit: 100 },
     invitationQuery: { page: 1, limit: 100 },

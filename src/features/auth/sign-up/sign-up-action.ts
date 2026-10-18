@@ -1,12 +1,16 @@
 'use server';
 
 import { SignUpSchema } from '@/features/auth/schema';
-import type { SignUpResponse } from '@/features/auth/server';
 import { getAuthService } from '@/infrastructure/composition/factory';
 import { ajSignup, handleDeniedInServerAction } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { request } from '@arcjet/next';
+import type { SignUpResult } from '../server';
 
-type SignUpState = SignUpResponse | { type: 'initial' };
+type SignUpState = ActionState<
+  Extract<SignUpResult, { type: 'success' }>['payload'],
+  Extract<SignUpResult, { type: 'error' }>['payload']
+>;
 
 export async function signUpAction(
   state: SignUpState,

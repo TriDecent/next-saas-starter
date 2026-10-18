@@ -7,15 +7,14 @@ import { auth, hasPermission } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { buildPagination } from '@/shared/pagination';
 import type {
-  AuthenticatePriorResponse,
-  Enable2FAResponse,
-  GeneralUserResponse,
-  GenerateBackUpCodesResponse,
-  GetUserByIdResponse,
-  GetUsersError,
-  GetUsersParams,
-  GetUsersResponse,
-  GetUsersSuccess,
+  AuthenticatePriorResult,
+  Enable2FAResult,
+  GenerateBackUpCodesResult,
+  GetUserByIdResult,
+  ListUsersData,
+  ListUsersQuery,
+  ListUsersResult,
+  UserMutationResult,
 } from './user-dtos';
 
 export class UserService {
@@ -51,7 +50,7 @@ export class UserService {
     return auth.api.listSessions({ headers: this.headers });
   }
 
-  async getUserById(id: User['id']): Promise<GetUserByIdResponse> {
+  async getUserById(id: User['id']): Promise<GetUserByIdResult> {
     const canGetUser = await hasPermission(this.actor.id, { user: ['get'] });
     if (!canGetUser)
       return {
@@ -84,15 +83,15 @@ export class UserService {
     yield* this.repo.iterateUsers({ batchSize });
   }
 
-  getUsers({
+  listUsers({
     page,
     limit,
     orderBy,
     keyword,
-  }: GetUsersParams): Promise<GetUsersResponse> {
+  }: ListUsersQuery): Promise<ListUsersResult> {
     return this._serviceExecutor.executeProtectedQuery<
-      GetUsersSuccess,
-      GetUsersError,
+      ListUsersData,
+      { message: string },
       void
     >({
       rbac: {
@@ -126,7 +125,7 @@ export class UserService {
   toggleBanStatus(
     userId: User['id'],
     shouldBan: boolean
-  ): Promise<GeneralUserResponse> {
+  ): Promise<UserMutationResult> {
     return this._serviceExecutor.executeProtectedAction<
       User,
       { message: string }
@@ -158,7 +157,7 @@ export class UserService {
     });
   }
 
-  revokeUser(userId: User['id']): Promise<GeneralUserResponse> {
+  revokeUser(userId: User['id']): Promise<UserMutationResult> {
     return this._serviceExecutor.executeProtectedAction<
       User,
       { message: string }
@@ -190,7 +189,7 @@ export class UserService {
     });
   }
 
-  deleteUser(userId: User['id']): Promise<GeneralUserResponse> {
+  deleteUser(userId: User['id']): Promise<UserMutationResult> {
     return this._serviceExecutor.executeProtectedAction({
       rbac: {
         required: { user: ['delete'] },
@@ -218,7 +217,7 @@ export class UserService {
     });
   }
 
-  impersonateUser(userId: User['id']): Promise<GeneralUserResponse> {
+  impersonateUser(userId: User['id']): Promise<UserMutationResult> {
     return this._serviceExecutor.executeProtectedAction<
       User,
       { message: string }
@@ -249,7 +248,7 @@ export class UserService {
     });
   }
 
-  stopImpersonate(): Promise<GeneralUserResponse> {
+  stopImpersonate(): Promise<UserMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.stopImpersonating({ headers: this.headers });
@@ -289,7 +288,7 @@ export class UserService {
   authenticatePrior(
     password: string,
     totp?: string
-  ): Promise<AuthenticatePriorResponse> {
+  ): Promise<AuthenticatePriorResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.verifyPassword({
@@ -317,7 +316,7 @@ export class UserService {
   }: {
     name: string;
     favoriteNumber: number;
-  }): Promise<GeneralUserResponse> {
+  }): Promise<UserMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.updateUser({
@@ -332,7 +331,7 @@ export class UserService {
   changeEmail(
     { newEmail, callbackURL }: { newEmail: string; callbackURL: string },
     sudoToken?: string
-  ): Promise<GeneralUserResponse> {
+  ): Promise<UserMutationResult> {
     return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to change your email address.',
@@ -354,7 +353,7 @@ export class UserService {
   deletePasskey(
     passkeyId: string,
     sudoToken?: string
-  ): Promise<GeneralUserResponse> {
+  ): Promise<UserMutationResult> {
     return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to perform this action',
@@ -375,7 +374,7 @@ export class UserService {
       revokeOtherSessions?: boolean;
     },
     sudoToken?: string
-  ): Promise<GeneralUserResponse> {
+  ): Promise<UserMutationResult> {
     return this._serviceExecutor.runWithSudo(
       sudoToken,
       'Please re-authenticate to change your password.',
@@ -395,7 +394,7 @@ export class UserService {
   disable2FA(
     password: string,
     sudoToken?: string
-  ): Promise<GeneralUserResponse> {
+  ): Promise<UserMutationResult> {
     return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to disable 2FA authentication.',
@@ -409,7 +408,7 @@ export class UserService {
     );
   }
 
-  enable2FA(password: string, sudoToken?: string): Promise<Enable2FAResponse> {
+  enable2FA(password: string, sudoToken?: string): Promise<Enable2FAResult> {
     return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to enable 2FA authentication.',
@@ -430,7 +429,7 @@ export class UserService {
     totpCode: string;
     password: string;
     trustDevice?: boolean;
-  }): Promise<GenerateBackUpCodesResponse> {
+  }): Promise<GenerateBackUpCodesResult> {
     return this._serviceExecutor.runSafely(
       async () => {
         await auth.api.verifyTOTP({
@@ -455,7 +454,7 @@ export class UserService {
   }: {
     userId: string;
     roles: AppRole[];
-  }): Promise<GeneralUserResponse> {
+  }): Promise<UserMutationResult> {
     for (const role of roles) {
       if (!this._rolePolicy.canAssign({ name: role }))
         return {

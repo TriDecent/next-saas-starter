@@ -2,11 +2,10 @@ import type { GlobalOmitConfig } from '@/generated/prisma/internal/prismaNamespa
 import type { InvitationDelegate } from '@/generated/prisma/models';
 import { prisma } from '@/lib';
 import type { DefaultArgs } from '@prisma/client/runtime/client';
-import type { IRepository } from '../IRepository';
 
-export class InvitationRepository implements IRepository<
-  typeof prisma.invitation
-> {
+export type IInvitationRepository = object;
+
+export class InvitationRepository implements IInvitationRepository {
   private readonly _delegate = prisma.invitation;
   constructor() {}
 

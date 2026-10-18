@@ -1,6 +1,6 @@
 'use server';
 
-import type { GeneralUserResponse } from '@/features/user/server';
+import type { UserMutationResult } from '@/features/user/server';
 import { getUserService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
@@ -12,7 +12,7 @@ import { cookies } from 'next/headers';
 
 export async function disableTwoFactorsAction(
   password: string
-): Promise<GeneralUserResponse> {
+): Promise<UserMutationResult> {
   const [req, cookiesList] = await Promise.all([request(), cookies()]);
 
   const service = await getUserService(ROUTES.settings.nested.security.href);

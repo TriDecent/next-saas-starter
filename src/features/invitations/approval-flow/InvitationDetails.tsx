@@ -1,4 +1,4 @@
-import type { GetInvitationResponse } from '@/features/organizations/server';
+import type { GetInvitationResult } from '@/features/organizations/server';
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import { Building2, CalendarClock, Mail, User2 } from 'lucide-react';
 import type React from 'react';
 
 type InvitationData = Extract<
-  GetInvitationResponse,
+  GetInvitationResult,
   { type: 'success' }
 >['payload'];
 

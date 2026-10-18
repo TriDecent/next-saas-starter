@@ -5,16 +5,16 @@ import type {
   User,
 } from '@/generated/prisma/client';
 
-export type OrganizationWithRole = Organization & {
+export type OrgMembershipSummary = Organization & {
   memberCounts: number;
   currentUserRole: string;
 };
 
-export type GetFullOrgInput = Partial<Pick<Organization, 'id' | 'slug'>> & {
+export type OrgDetailsQuery = Partial<Pick<Organization, 'id' | 'slug'>> & {
   memberQuery: { skip: number; take: number; keyword?: string };
   invitationQuery: { skip: number; take: number; keyword?: string };
 };
-export type FullOrg = { org: Organization } & {
+export type OrgDetails = { org: Organization } & {
   member: {
     data: (Member & {
       user: Pick<

@@ -1,20 +1,20 @@
 'use server';
 
 import { UpdatePasswordSchema } from '@/features/auth/schema';
-import type { GeneralAuthResponse } from '@/features/auth/server';
 import { getAuthService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
+import type { ActionState } from '@/shared/components/form/client';
 import { request } from '@arcjet/next';
 
-type UpdatePasswordResponse = GeneralAuthResponse | { type: 'initial' };
+type UpdatePasswordState = ActionState<void, { message: string }>;
 
 export async function updatePasswordAction(
-  state: UpdatePasswordResponse,
+  state: UpdatePasswordState,
   input: unknown
-): Promise<UpdatePasswordResponse> {
+): Promise<UpdatePasswordState> {
   const parsedResult = UpdatePasswordSchema.safeParse(input);
 
   if (!parsedResult.success)

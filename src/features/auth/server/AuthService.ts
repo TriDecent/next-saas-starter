@@ -6,9 +6,9 @@ import { ROUTES } from '@/shared/constants';
 import { APIError } from 'better-auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import type {
-  GeneralAuthResponse,
-  SignInResponse,
-  SignUpResponse,
+  AuthMutationResult,
+  SignInResult,
+  SignUpResult,
 } from './auth-dtos';
 
 export class AuthService {
@@ -34,7 +34,7 @@ export class AuthService {
     email: string;
     password: string;
     rememberMe?: boolean;
-  }): Promise<SignInResponse> {
+  }): Promise<SignInResult> {
     try {
       const response = await auth.api.signInEmail({
         headers: this.headers,
@@ -43,7 +43,6 @@ export class AuthService {
 
       if (!('twoFactorRedirect' in response))
         return { type: 'success', payload: {} };
-
       return {
         type: 'success',
         payload: { redirect: this.get2FARedirectUrl() },
@@ -78,7 +77,7 @@ export class AuthService {
     email: string;
     password: string;
     favoriteNumber: number;
-  }): Promise<SignUpResponse> {
+  }): Promise<SignUpResult> {
     return this._executor.runSafely(
       async () => {
         const { user } = await auth.api.signUpEmail({
@@ -98,7 +97,7 @@ export class AuthService {
   }: {
     email: string;
     redirectTo: string;
-  }): Promise<GeneralAuthResponse> {
+  }): Promise<AuthMutationResult> {
     return this._executor.runSafely(
       async () => {
         await auth.api.requestPasswordReset({ body: { email, redirectTo } });
@@ -110,7 +109,7 @@ export class AuthService {
   resetPassword(
     token: string,
     newPassword: string
-  ): Promise<GeneralAuthResponse> {
+  ): Promise<AuthMutationResult> {
     return this._executor.runSafely(
       async () => {
         await auth.api.resetPassword({
@@ -125,7 +124,7 @@ export class AuthService {
   verifyBackupCode(
     code: string,
     trustDevice?: boolean
-  ): Promise<GeneralAuthResponse> {
+  ): Promise<AuthMutationResult> {
     return this._executor.runSafely(
       async () => {
         // Format code: XXXXX-XXXXX
@@ -146,7 +145,7 @@ export class AuthService {
   }: {
     email: string;
     callbackURL: string;
-  }): Promise<GeneralAuthResponse> {
+  }): Promise<AuthMutationResult> {
     if (this._actor && this._actor.email !== email) {
       return {
         type: 'error',
@@ -172,7 +171,7 @@ export class AuthService {
   }: {
     code: string;
     trustDevice?: boolean;
-  }): Promise<GeneralAuthResponse> {
+  }): Promise<AuthMutationResult> {
     return this._executor.runSafely(
       async () => {
         // actor shouldn't be undefined here,

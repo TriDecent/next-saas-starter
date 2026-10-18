@@ -1,4 +1,4 @@
-import type { OrganizationWithRole } from '@/infrastructure/repositories/organization';
+import type { OrgMembershipSummary } from '@/infrastructure/repositories/organization';
 import {
   Badge,
   Item,
@@ -16,7 +16,7 @@ import { FaUserFriends } from 'react-icons/fa';
 import { formatDate } from '../utils';
 
 export type OrganizationRow = Omit<
-  OrganizationWithRole,
+  OrgMembershipSummary,
   'memberCounts' | 'currentUserRole' | 'stripeCustomerId'
 > & {
   memberCounts?: number;

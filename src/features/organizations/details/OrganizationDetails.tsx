@@ -24,12 +24,12 @@ import { DeleteOrgItem } from '../delete-org';
 import { InvitationsCard } from './invitations';
 import { MembersCard } from './members';
 import { MetadataCard } from './metadata';
-import type { GetFullOrg } from './types';
+import type { OrgDetailsData } from './types';
 
 export type OrganizationDetailsProps = {
-  org: GetFullOrg['org'];
-  members: GetFullOrg['member']['data'];
-  invitations: GetFullOrg['invitation']['data'];
+  org: OrgDetailsData['org'];
+  members: OrgDetailsData['member']['data'];
+  invitations: OrgDetailsData['invitation']['data'];
   callbackUrl: string;
 };
 

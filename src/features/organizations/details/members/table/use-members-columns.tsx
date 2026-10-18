@@ -6,7 +6,7 @@ import { DataTableColumnHeader } from '@/shared/components/DataTable';
 import { Badge, Checkbox } from '@/shared/components/ui';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
-import type { GetFullOrg } from '../../types';
+import type { OrgDetailsData } from '../../types';
 import { MemberActionsCell } from './MemberActionsCell';
 
 const selectColumn = {
@@ -96,7 +96,7 @@ const columns: ColumnDef<MemberCell>[] = [
   actionsColumn,
 ];
 
-export type MemberCell = GetFullOrg['member']['data'][number];
+export type MemberCell = OrgDetailsData['member']['data'][number];
 
 export function useMembersColumns() {
   return useMemo(() => columns, []);

@@ -1,6 +1,6 @@
 'use server';
 
-import type { GeneralOrgResponse } from '@/features/organizations/server';
+import type { OrgMutationResult } from '@/features/organizations/server';
 import { getOrgService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
@@ -22,7 +22,7 @@ export async function handleInvitationApprovalAction(
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  let response: GeneralOrgResponse | null = null;
+  let response: OrgMutationResult | null = null;
   if (mode === 'accept') {
     response = await service.acceptInvitation(id);
   } else if (mode === 'reject') {
@@ -30,5 +30,5 @@ export async function handleInvitationApprovalAction(
   }
 
   refresh();
-  return response as GeneralOrgResponse;
+  return response as OrgMutationResult;
 }

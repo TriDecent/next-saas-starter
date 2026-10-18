@@ -12,7 +12,10 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { startTransition } from 'react';
 import { toast } from 'sonner';
-import { createNewOrg, Response } from './create-new-org-action';
+import {
+  createNewOrg,
+  type CreateOrganizationState,
+} from './create-new-org-action';
 import { CreateOrgFields } from './CreateOrgFields';
 import { CreateNewOrgSchema } from './schema';
 
@@ -33,7 +36,7 @@ export function CreateNewOrganization() {
 
 function CreateNewOrgForm() {
   const { isPending, animationScope, dispatch, methods, state } = useActionForm<
-    Response,
+    CreateOrganizationState,
     CreateOrgInput
   >({
     action: createNewOrg,

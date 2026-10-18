@@ -1,7 +1,7 @@
 import type { StrictEndpoint, z } from 'better-auth';
 
-export type ServiceResponse<TSuccess, TError> =
-  | { type: 'success'; payload: TSuccess }
+export type ServiceResult<TData, TError> =
+  | { type: 'success'; payload: TData }
   | { type: 'error'; payload: TError };
 
 export type ExtractEndpointBody<T> =
