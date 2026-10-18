@@ -21,9 +21,6 @@ export function ConnectedAccounts({ accounts }: { accounts: Account[] }) {
 
   return accounts && accounts.length > 0 ? (
     <div className='space-y-2.5'>
-      <h3 className='mb-2 text-sm font-medium text-gray-500'>
-        Connected Accounts
-      </h3>
       <ItemGroup className='space-y-4'>
         {OAUTH_PROVIDERS.map(supportedProvider => {
           const isConnected = accounts.some(

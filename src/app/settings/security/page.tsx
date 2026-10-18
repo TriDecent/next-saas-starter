@@ -7,7 +7,7 @@ import {
 } from '@/features/settings';
 import { ChangePasswordCard } from '@/features/settings/security/password/client';
 import { getUserService } from '@/infrastructure/composition/factory';
-import { Loading } from '@/shared/components';
+import { SkeletonCard } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SecurityPage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<SecurityPageSkeleton />}>
       <SecurityContent />
     </Suspense>
   );
@@ -53,6 +53,16 @@ async function SecurityContent() {
         </div>
         <PasskeysList passkeys={passkeys} />
       </AuthenticatePriorServerBoundary>
+    </div>
+  );
+}
+
+function SecurityPageSkeleton() {
+  return (
+    <div className='space-y-8'>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))}
     </div>
   );
 }

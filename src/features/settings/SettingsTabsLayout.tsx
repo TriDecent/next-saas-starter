@@ -36,7 +36,7 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
       value={
         SETTINGS_ROUTES.some(route => route.path === pathname)
           ? pathname
-          : '/profile'
+          : ROUTES.settings.nested.profile.href
       }
       orientation={
         breakpoint !== 'sm' && breakpoint !== 'md' ? 'vertical' : 'horizontal'
@@ -60,7 +60,7 @@ export function SettingsTabsLayout({ children }: { children: ReactNode }) {
           value={
             SETTINGS_ROUTES.some(route => route.path === pathname)
               ? pathname
-              : '/profile'
+              : ROUTES.settings.nested.profile.href
           }
           className='mx-auto w-full max-w-3xl lg:order-1'
         >

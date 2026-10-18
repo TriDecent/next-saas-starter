@@ -1,12 +1,12 @@
 import { SessionsList } from '@/features/settings/client';
 import { getUserService } from '@/infrastructure/composition/factory';
-import { Loading } from '@/shared/components';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  Skeleton,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
@@ -24,17 +24,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SessionsPage() {
   return (
-    <Suspense fallback={<Loading />}>
-      <SessionsContent />
-    </Suspense>
-  );
-}
-
-async function SessionsContent() {
-  const service = await getUserService(ROUTES.settings.nested.sessions.href);
-  const sessions = await service.listMySessions();
-
-  return (
     <Card>
       <CardHeader>
         <CardTitle>Active Sessions</CardTitle>
@@ -43,13 +32,24 @@ async function SessionsContent() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <SessionsList
-          currentSession={service.currentSession}
-          otherSessions={sessions.filter(
-            session => session.id !== service.currentSession.id
-          )}
-        />
+        <Suspense fallback={<Skeleton className='h-16 w-full' />}>
+          <SessionsContent />
+        </Suspense>
       </CardContent>
     </Card>
+  );
+}
+
+async function SessionsContent() {
+  const service = await getUserService(ROUTES.settings.nested.sessions.href);
+  const sessions = await service.listMySessions();
+
+  return (
+    <SessionsList
+      currentSession={service.currentSession}
+      otherSessions={sessions.filter(
+        session => session.id !== service.currentSession.id
+      )}
+    />
   );
 }

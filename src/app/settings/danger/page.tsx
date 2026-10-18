@@ -1,6 +1,6 @@
 import { DeleteAccountFlow } from '@/features/settings';
 import { ensureSession } from '@/lib/auth';
-import { Loading } from '@/shared/components';
+import { SkeletonCard } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -32,7 +32,7 @@ export default async function DangerPage({
   searchParams: Promise<unknown>;
 }) {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<SkeletonCard />}>
       <DangerContent searchParams={searchParams} />
     </Suspense>
   );

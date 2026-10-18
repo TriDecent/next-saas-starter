@@ -52,9 +52,7 @@ function Passkeys({ passkeys }: { passkeys: Passkey[] }) {
         </ItemGroup>
       </CardContent>
 
-      <Separator />
-
-      <CardFooter className='text-muted-foreground mx-auto text-xs'>
+      <CardFooter className='text-muted-foreground justify-center text-center text-xs'>
         Click any badge to learn more.
       </CardFooter>
     </Card>

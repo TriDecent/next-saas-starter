@@ -56,7 +56,6 @@ export function ProfileCard({ user }: ProfileCardProps) {
         ) : null}
       </CardContent>
 
-      <Separator />
       <CardFooter className='text-muted-foreground justify-end text-xs'>
         User ID: {user.id}
       </CardFooter>

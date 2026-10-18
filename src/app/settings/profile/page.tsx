@@ -1,6 +1,6 @@
 import { ProfileCard } from '@/features/settings';
 import { getUserService } from '@/infrastructure/composition/factory';
-import { Loading } from '@/shared/components';
+import { SkeletonCard } from '@/shared/components';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function ProfilePage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<SkeletonCard />}>
       <ProfileContent />
     </Suspense>
   );

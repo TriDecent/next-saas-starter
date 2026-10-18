@@ -110,6 +110,7 @@ function DeviceBadge({ deviceType }: { deviceType: Passkey['deviceType'] }) {
           ? 'This passkey is bound to a single device and cannot be moved'
           : 'This passkey can be used across multiple devices'
       }
+      nativeButton={false}
     >
       <Badge variant='outline'>
         {deviceType === 'singleDevice' ? <ShieldCheck /> : <KeyRound />}

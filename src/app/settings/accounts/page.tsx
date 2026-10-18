@@ -1,6 +1,6 @@
+import { OAUTH_PROVIDERS } from '@/features/auth/oauth';
 import { ConnectedAccounts } from '@/features/settings/client';
 import { getUserService } from '@/infrastructure/composition/factory';
-import { Loading } from '@/shared/components';
 import {
   Card,
   CardContent,
@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
   Separator,
+  Skeleton,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { Metadata } from 'next';
@@ -26,17 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AccountsPage() {
   return (
-    <Suspense fallback={<Loading />}>
-      <AccountsContent />
-    </Suspense>
-  );
-}
-
-async function AccountsContent() {
-  const service = await getUserService(ROUTES.settings.nested.accounts.href);
-  const accounts = await service.listMyAccounts();
-
-  return (
     <Card>
       <CardHeader>
         <CardTitle>Linked Accounts</CardTitle>
@@ -47,13 +37,36 @@ async function AccountsContent() {
       </CardHeader>
       <Separator />
       <CardContent>
-        <ConnectedAccounts accounts={accounts} />
+        <h3 className='mb-2 text-sm font-medium text-gray-500'>
+          Connected Accounts
+        </h3>
+
+        <Suspense fallback={<AccountsContentSkeleton />}>
+          <AccountsContent />
+        </Suspense>
       </CardContent>
-      <Separator />
+
       <CardFooter className='text-muted-foreground justify-center text-xs'>
         Click on a provider above to connect your account to social platforms,
         or click again to disconnect.
       </CardFooter>
     </Card>
+  );
+}
+
+async function AccountsContent() {
+  const service = await getUserService(ROUTES.settings.nested.accounts.href);
+  const accounts = await service.listMyAccounts();
+
+  return <ConnectedAccounts accounts={accounts} />;
+}
+
+function AccountsContentSkeleton() {
+  return (
+    <div className='space-y-4'>
+      {OAUTH_PROVIDERS.map(provider => (
+        <Skeleton key={provider.name} className='h-8 w-full' />
+      ))}
+    </div>
   );
 }
