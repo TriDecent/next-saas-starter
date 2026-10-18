@@ -1,4 +1,4 @@
-import type { GetOrgResponse } from '@/features/organizations/server';
+import type { GetFullOrgResponse } from '@/features/organizations/server';
 import {
   Badge,
   Card,
@@ -13,18 +13,19 @@ import { FaCircleCheck, FaRegCircleXmark } from 'react-icons/fa6';
 import { GrOverview } from 'react-icons/gr';
 import { OrgIdentity } from './OrgIdentity';
 
-export type OrgOverviewProps = NonNullable<
-  Extract<GetOrgResponse, { type: 'success' }>['payload']
->;
+export type OrgOverviewProps = Extract<
+  GetFullOrgResponse,
+  { type: 'success' }
+>['payload'];
 
 export function OrganizationOverview({
-  org,
+  org: { org, member, invitation },
   isActive,
 }: {
   org: OrgOverviewProps;
   isActive: boolean;
 }) {
-  const pendingInvites = org.invitations.filter(
+  const pendingInvites = invitation.data.filter(
     invitation => invitation.status === 'pending'
   );
 
@@ -57,7 +58,7 @@ export function OrganizationOverview({
         <div className='lg:col-span-2'>
           <OrgIdentity
             org={org}
-            members={org.members}
+            memberCount={member.pagination.totalItems}
             pendingInvitesCount={pendingInvites.length}
           />
         </div>

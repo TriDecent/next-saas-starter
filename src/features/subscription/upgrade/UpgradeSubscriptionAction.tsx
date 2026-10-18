@@ -53,8 +53,8 @@ export function UpgradeSubscriptionAction({
     });
 
   return (
-    <Button {...props} onClick={handleUpgradeSubscription} disabled={isPending}>
+    <button onClick={handleUpgradeSubscription} disabled={isPending}>
       {props.children}
-    </Button>
+    </button>
   );
 }

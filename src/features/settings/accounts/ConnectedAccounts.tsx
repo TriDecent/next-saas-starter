@@ -35,7 +35,7 @@ export function ConnectedAccounts({ accounts }: { accounts: Account[] }) {
               key={supportedProvider.name}
               variant='outline'
               size='sm'
-              className='transition-transform hover:scale-105 hover:cursor-pointer active:scale-105'
+              className='transition-transform hover:scale-102 hover:cursor-pointer active:scale-102'
               render={
                 <SocialActionButton
                   provider={supportedProvider.name}

@@ -18,14 +18,12 @@ import type { CellContext } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { TbArrowsExchange2 } from 'react-icons/tb';
 import { useOrgContext } from '../../../context/client';
-import type { GetFullOrg } from '../../types';
 import { CopyMemberAction } from '../copy-member';
 import { RemoveMemberAction } from '../remove-user/client';
 import { UpdateRolesActions } from '../set-role';
+import type { MemberCell } from './use-members-columns';
 
-export function MemberActionsCell({
-  row,
-}: CellContext<GetFullOrg['members'][number], unknown>) {
+export function MemberActionsCell({ row }: CellContext<MemberCell, unknown>) {
   const member = row.original;
   const user = member.user;
   const orgCtx = useOrgContext();

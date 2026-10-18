@@ -4,7 +4,11 @@ import { DataTable } from '@/shared/components/DataTable/client';
 import type { GetFullOrg } from '../../types';
 import { useMembersColumns } from './use-members-columns';
 
-export function MembersTable({ members }: { members: GetFullOrg['members'] }) {
+export function MembersTable({
+  members,
+}: {
+  members: GetFullOrg['member']['data'];
+}) {
   const columns = useMembersColumns();
 
   return (

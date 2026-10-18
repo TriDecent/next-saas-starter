@@ -27,7 +27,7 @@ const selectColumn = {
       />
     </div>
   ),
-} satisfies ColumnDef<Member>;
+} satisfies ColumnDef<MemberCell>;
 
 const memberColumn = {
   id: 'member',
@@ -47,7 +47,7 @@ const memberColumn = {
       />
     );
   },
-} satisfies ColumnDef<Member>;
+} satisfies ColumnDef<MemberCell>;
 
 const roleColumn = {
   accessorKey: 'role',
@@ -68,7 +68,7 @@ const roleColumn = {
       {row.original.role}
     </Badge>
   ),
-} satisfies ColumnDef<Member>;
+} satisfies ColumnDef<MemberCell>;
 
 const createdAtColumn = {
   id: 'createdAt',
@@ -81,14 +81,14 @@ const createdAtColumn = {
       {formatDate(row.original.createdAt)}
     </div>
   ),
-} satisfies ColumnDef<Member>;
+} satisfies ColumnDef<MemberCell>;
 
-const actionsColumn: ColumnDef<Member> = {
+const actionsColumn: ColumnDef<MemberCell> = {
   id: 'actions',
   cell: ctx => <MemberActionsCell {...ctx} />,
 };
 
-const columns: ColumnDef<Member>[] = [
+const columns: ColumnDef<MemberCell>[] = [
   selectColumn,
   memberColumn,
   roleColumn,
@@ -96,7 +96,7 @@ const columns: ColumnDef<Member>[] = [
   actionsColumn,
 ];
 
-type Member = GetFullOrg['members'][number];
+export type MemberCell = GetFullOrg['member']['data'][number];
 
 export function useMembersColumns() {
   return useMemo(() => columns, []);

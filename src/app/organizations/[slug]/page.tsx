@@ -21,12 +21,14 @@ export async function generateMetadata({
   params,
 }: SlugParams): Promise<Metadata> {
   const slug = (await params).slug;
-  const { organization } = await getFullOrg(slug);
+  const {
+    data: { org },
+  } = await getFullOrg(slug);
 
   return {
     ...ROUTES.organizations.nested.slug.metadata,
-    title: `${organization.name} Organization`,
-    description: `Details and settings of ${organization.name} organization.`,
+    title: `${org.name} Organization`,
+    description: `Details and settings of ${org.name} organization.`,
   };
 }
 
@@ -52,14 +54,15 @@ export default function OrgDetailsPage({ params }: SlugParams) {
 
 async function Wrapper({ params }: SlugParams) {
   const slug = (await params).slug;
-  const { organization, isActive } = await getFullOrg(slug);
-  const callbackUrl = `${ROUTES.organizations.href}/${organization.slug}`;
+  const { data, isActive } = await getFullOrg(slug);
+  const { org, invitation, member } = data;
+  const callbackUrl = `${ROUTES.organizations.href}/${org.slug}`;
 
   return (
-    <OrgContextProvider value={{ ...organization, isActive }}>
+    <OrgContextProvider value={{ ...org, isActive }}>
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
         <div className='lg:col-span-2'>
-          <OrganizationOverview org={organization} isActive={isActive} />
+          <OrganizationOverview org={data} isActive={isActive} />
         </div>
         <div className='lg:sticky lg:top-32 lg:col-start-3'>
           <OrgQuickActions
@@ -74,7 +77,7 @@ async function Wrapper({ params }: SlugParams) {
                 nativeButton={true}
                 render={
                   <ToggleActiveOrg
-                    orgId={!isActive ? organization.id : null}
+                    orgId={!isActive ? org.id : null}
                     isActive={isActive}
                   />
                 }
@@ -88,7 +91,12 @@ async function Wrapper({ params }: SlugParams) {
               callbackUrl,
             }}
           >
-            <OrganizationDetails org={organization} callbackUrl={callbackUrl} />
+            <OrganizationDetails
+              org={org}
+              invitations={invitation.data}
+              members={member.data}
+              callbackUrl={callbackUrl}
+            />
           </RouteContextProvider>
         </div>
       </div>
@@ -99,15 +107,16 @@ async function Wrapper({ params }: SlugParams) {
 const getFullOrg = cache(async (slug: string) => {
   const service = await getOrgService(`${ROUTES.organizations.href}/${slug}`);
 
-  const result = await service.getFullOrganization({
-    organizationSlug: slug,
-    membersLimit: 100,
+  const result = await service.getFullOrg({
+    slug,
+    memberQuery: { page: 1, limit: 100 },
+    invitationQuery: { page: 1, limit: 100 },
   });
   if (result.type === 'error') throw new Error(result.payload.message);
   if (!result.payload) notFound();
 
   return {
-    organization: result.payload,
-    isActive: service.getActiveOrgId() === result.payload.id,
+    data: result.payload,
+    isActive: service.getActiveOrgId() === result.payload.org.id,
   };
 });

@@ -7,8 +7,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/shared/components/ui';
-import type { User } from 'better-auth';
-import type { Member, Organization } from 'better-auth/plugins';
+import type { Organization } from 'better-auth/plugins';
 import { CiEdit } from 'react-icons/ci';
 import { FaBuilding, FaClock } from 'react-icons/fa6';
 import { FiMail, FiUsers } from 'react-icons/fi';
@@ -18,11 +17,11 @@ import { formatDate } from '../utils';
 
 export function OrgIdentity({
   org,
-  members,
+  memberCount,
   pendingInvitesCount,
 }: {
   org: Organization;
-  members: (Member & { user: Pick<User, 'id' | 'email' | 'name' | 'image'> })[];
+  memberCount: number;
   pendingInvitesCount: number;
 }) {
   return (
@@ -58,7 +57,7 @@ export function OrgIdentity({
         <Kpi
           icon={<FiUsers />}
           label='Members'
-          value={members.length.toString()}
+          value={memberCount.toString()}
         />
         <Kpi
           icon={<FiMail />}

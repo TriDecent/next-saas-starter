@@ -1,10 +1,9 @@
 import type { OrganizationRole } from '@/features/authorization';
+import type { Organization } from '@/generated/prisma/client';
+import type { FullOrg } from '@/infrastructure/repositories';
 import type { auth } from '@/lib/auth';
-import type {
-  ExtractEndpointBody,
-  ExtractEndpointQuery,
-  ServiceResponse,
-} from '@/shared/types';
+import type { Pagination, Query } from '@/shared/pagination';
+import type { ExtractEndpointBody, ServiceResponse } from '@/shared/types';
 
 export type CreateOrgInput = ExtractEndpointBody<
   typeof auth.api.createOrganization
@@ -13,9 +12,10 @@ export type CreateInvitationInput = Omit<
   ExtractEndpointBody<typeof auth.api.createInvitation>,
   'role'
 > & { role: OrganizationRole };
-export type GetOrgInput = ExtractEndpointQuery<
-  typeof auth.api.getFullOrganization
->;
+export type GetOrgInput = Partial<Pick<Organization, 'id' | 'slug'>> & {
+  memberQuery: Query;
+  invitationQuery: Query;
+};
 export type UpdateRoleInput = ExtractEndpointBody<
   typeof auth.api.updateMemberRole
 >;
@@ -32,11 +32,19 @@ export type GetInvitationResponse = ServiceResponse<
   { message: string }
 >;
 
-export type GetOrgResponse = ServiceResponse<GetOrgSuccess, GetOrgError>;
-export type GetOrgSuccess = Awaited<
-  ReturnType<typeof auth.api.getFullOrganization>
+export type GetFullOrgResponse = ServiceResponse<
+  GetFullOrgSuccess,
+  GetOrgError
 >;
-export type GetOrgError = { message: string };
+type GetFullOrgSuccess = Omit<FullOrg, 'member' | 'invitation'> & {
+  member: Omit<FullOrg['member'], 'totalMemberCount'> & {
+    pagination: Pagination;
+  };
+  invitation: Omit<FullOrg['invitation'], 'totalInvitationCount'> & {
+    pagination: Pagination;
+  };
+};
+type GetOrgError = { message: string };
 
 export type GeneralOrgResponse = ServiceResponse<
   GeneralOrgSuccess,

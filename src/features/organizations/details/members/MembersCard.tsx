@@ -24,7 +24,7 @@ import { MembersTable } from './table/client';
 export function MembersCard({
   members,
 }: {
-  members: OrganizationDetailsProps['org']['members'];
+  members: OrganizationDetailsProps['members'];
 }) {
   return (
     <Card>

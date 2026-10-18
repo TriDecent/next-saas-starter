@@ -162,7 +162,7 @@ function SubscribeButton({
 }: {
   isSubscribed: boolean;
   isHighlighted?: boolean;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }) {
   return isSubscribed ? (
     <Button type='button' className='w-full' variant='secondary' disabled>
@@ -173,9 +173,9 @@ function SubscribeButton({
       type='button'
       className='w-full'
       variant={isHighlighted ? 'default' : 'outline'}
-    >
-      {children}
-    </Button>
+      nativeButton={true}
+      render={children}
+    />
   );
 }
 

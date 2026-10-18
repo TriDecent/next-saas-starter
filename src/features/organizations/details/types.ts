@@ -1,5 +1,5 @@
-import type { GetOrgResponse } from '@/features/organizations/server';
+import type { GetFullOrgResponse } from '@/features/organizations/server';
 
 export type GetFullOrg = NonNullable<
-  Extract<GetOrgResponse, { type: 'success' }>['payload']
+  Extract<GetFullOrgResponse, { type: 'success' }>['payload']
 >;

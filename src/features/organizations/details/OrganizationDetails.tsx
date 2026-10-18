@@ -26,10 +26,17 @@ import { MembersCard } from './members';
 import { MetadataCard } from './metadata';
 import type { GetFullOrg } from './types';
 
-export type OrganizationDetailsProps = { org: GetFullOrg; callbackUrl: string };
+export type OrganizationDetailsProps = {
+  org: GetFullOrg['org'];
+  members: GetFullOrg['member']['data'];
+  invitations: GetFullOrg['invitation']['data'];
+  callbackUrl: string;
+};
 
 export async function OrganizationDetails({
   org,
+  members,
+  invitations,
   callbackUrl,
 }: OrganizationDetailsProps) {
   return (
@@ -49,11 +56,11 @@ export async function OrganizationDetails({
       </ScrollArea>
 
       <TabsContent value='members'>
-        <MembersCard members={org.members} />
+        <MembersCard members={members} />
       </TabsContent>
 
       <TabsContent value='invitations'>
-        <InvitationsCard invitations={org.invitations} />
+        <InvitationsCard invitations={invitations} />
       </TabsContent>
 
       <TabsContent value='metadata'>
