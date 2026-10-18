@@ -20,7 +20,7 @@ import type { Organization } from 'better-auth/plugins';
 import Link from 'next/link';
 import { FaCog, FaLink, FaPlus } from 'react-icons/fa';
 import { CreateNewOrganization } from '../create-org/client';
-import { ToggleActiveOrg } from '../toggle-active-org/client';
+import { ToggleOrgStatus } from '../toggle-active-org/client';
 import { EmptyOrganization } from './EmptyOrganization';
 import { OrganizationItem, type OrganizationRow } from './OrganizationItem';
 
@@ -119,6 +119,7 @@ function SetActiveOrgAction({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        nativeButton={true}
         render={
           <Button variant='outline' size='sm'>
             <FaCog className='size-4' />
@@ -129,7 +130,8 @@ function SetActiveOrgAction({
 
       <DropdownMenuContent align='start'>
         <DropdownMenuItem
-          render={<ToggleActiveOrg orgId={orgId} isActive={isActive} />}
+          nativeButton={true}
+          render={<ToggleOrgStatus orgId={orgId} isActive={isActive} />}
         />
       </DropdownMenuContent>
     </DropdownMenu>

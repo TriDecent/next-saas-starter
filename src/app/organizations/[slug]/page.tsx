@@ -5,7 +5,7 @@ import {
 } from '@/features/organizations';
 import {
   OrgContextProvider,
-  ToggleActiveOrg,
+  ToggleOrgStatus,
 } from '@/features/organizations/client';
 import { getOrgService } from '@/infrastructure/composition/factory';
 import { SectionHeader, SkeletonCard } from '@/shared/components';
@@ -76,7 +76,7 @@ async function Wrapper({ params }: SlugParams) {
                 variant='outline'
                 nativeButton={true}
                 render={
-                  <ToggleActiveOrg
+                  <ToggleOrgStatus
                     orgId={!isActive ? org.id : null}
                     isActive={isActive}
                   />

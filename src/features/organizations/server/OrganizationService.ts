@@ -90,11 +90,16 @@ export class OrganizationService {
     );
   }
 
-  setActiveOrg(params: SetActiveOrgInput): Promise<GeneralOrgResponse> {
+  toggleOrgStatus(params: SetActiveOrgInput): Promise<GeneralOrgResponse> {
     return this._serviceExecutor.runSafely(
       async () => {
+        const currentActiveOrgId = this.getActiveOrgId();
+        const isSameOrg = currentActiveOrgId === params.organizationId;
+
         await auth.api.setActiveOrganization({
-          body: params,
+          body: isSameOrg
+            ? { organizationId: null, organizationSlug: undefined }
+            : params,
           headers: this.headers,
         });
       },

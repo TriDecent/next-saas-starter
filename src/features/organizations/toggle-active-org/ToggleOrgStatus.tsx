@@ -9,9 +9,9 @@ import type React from 'react';
 import { useTransition } from 'react';
 import { PiCheckCircleFill, PiXCircleFill } from 'react-icons/pi';
 import { toast } from 'sonner';
-import { toggleActiveAction } from './toggle-active-org-action';
+import { toggleOrgStatus } from './toggle-org-status-action';
 
-export function ToggleActiveOrg({
+export function ToggleOrgStatus({
   orgId,
   isActive,
   ...props
@@ -28,7 +28,7 @@ export function ToggleActiveOrg({
         id: 'set-active-org-action',
       });
 
-      const response = await toggleActiveAction(
+      const response = await toggleOrgStatus(
         { organizationId: orgId },
         ROUTES.organizations.href
       );

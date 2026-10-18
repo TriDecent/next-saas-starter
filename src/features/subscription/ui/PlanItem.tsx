@@ -37,6 +37,7 @@ export function PlanItem({
       <PlanStatusIndicator
         isSubscribed={isSubscribed}
         isHighlighted={plan.highlighted}
+        className='absolute -top-2 right-4'
       />
 
       <CardHeader>
@@ -82,16 +83,18 @@ export function PlanItem({
 function PlanStatusIndicator({
   isSubscribed,
   isHighlighted,
+  className,
 }: {
   isSubscribed: boolean;
   isHighlighted?: boolean;
+  className?: string;
 }) {
   return isSubscribed ? (
-    <Badge variant={'success'} className='absolute -top-2 right-4'>
+    <Badge variant={'success'} className={className}>
       Current plan
     </Badge>
   ) : isHighlighted ? (
-    <Badge className='absolute -top-2 right-4'>Most popular</Badge>
+    <Badge className={className}>Most popular</Badge>
   ) : null;
 }
 
@@ -191,7 +194,7 @@ function CardStatusIndicator({
   return (
     <Card
       className={cn(
-        'relative border',
+        'relative overflow-visible border',
         isSubscribed
           ? 'border-emerald-200 shadow-lg shadow-emerald-200 dark:border-emerald-400 dark:shadow-emerald-400'
           : isHighlighted

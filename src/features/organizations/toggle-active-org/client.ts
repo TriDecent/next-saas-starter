@@ -1,1 +1,1 @@
-export { ToggleActiveOrg } from './ToggleActiveOrgAction';
+export { ToggleOrgStatus } from './ToggleOrgStatus';

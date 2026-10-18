@@ -8,7 +8,7 @@ import { getOrgService } from '@/infrastructure/composition/factory';
 import { ajLaxAuthenticated, handleDeniedInServerAction } from '@/lib/arcjet';
 import { request } from '@arcjet/next';
 
-export async function toggleActiveAction(
+export async function toggleOrgStatus(
   input: SetActiveOrgInput,
   callbackUrl: string
 ): Promise<GeneralOrgResponse> {
@@ -16,9 +16,9 @@ export async function toggleActiveAction(
 
   const decision = await ajLaxAuthenticated.protect(await request(), {
     userId: service.actor.id,
-    action: 'set-active-action',
+    action: 'toggle-org-status-action',
   });
   if (decision.isDenied()) handleDeniedInServerAction(decision);
 
-  return service.setActiveOrg(input);
+  return service.toggleOrgStatus(input);
 }

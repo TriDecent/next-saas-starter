@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/shared/components/ui';
 import { useRouteContext } from '@/shared/context';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
@@ -16,7 +15,7 @@ export function UpgradeSubscriptionAction({
   ...props
 }: {
   options: UpgradeSubscriptionActionInput;
-} & React.ComponentPropsWithoutRef<typeof Button>) {
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { callbackUrl } = useRouteContext();
@@ -53,7 +52,7 @@ export function UpgradeSubscriptionAction({
     });
 
   return (
-    <button onClick={handleUpgradeSubscription} disabled={isPending}>
+    <button {...props} onClick={handleUpgradeSubscription} disabled={isPending}>
       {props.children}
     </button>
   );
