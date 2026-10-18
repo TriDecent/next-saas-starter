@@ -1,16 +1,17 @@
-import type { Organization, User } from '@/generated/prisma/client';
+import type { Organization, Prisma, User } from '@/generated/prisma/client';
 import type { GlobalOmitConfig } from '@/generated/prisma/internal/prismaNamespace';
 import type { OrganizationDelegate } from '@/generated/prisma/models';
 import { prisma } from '@/lib';
 import type { DefaultArgs } from '@prisma/client/runtime/client';
 import { IRepository } from '../IRepository';
-import type { OrganizationWithRole } from './types';
+import type { FullOrg, GetFullOrgInput, OrganizationWithRole } from './types';
 
 export interface IOrganizationRepository extends IRepository<
   typeof prisma.organization
 > {
   listOrganizationsForUser(userId: User['id']): Promise<OrganizationWithRole[]>;
   getAuthorizedUserIdsForOrg(orgId: Organization['id']): Promise<string[]>;
+  getFullOrg(params: GetFullOrgInput): Promise<FullOrg | null>;
 }
 
 export class OrganizationRepository implements IOrganizationRepository {
@@ -52,5 +53,93 @@ export class OrganizationRepository implements IOrganizationRepository {
     });
 
     return org ? org.members.map(member => member.userId) : [];
+  }
+
+  async getFullOrg({
+    id,
+    slug,
+    memberQuery: { skip: memberSkip, take: memberTake, keyword: memberKeyword },
+    invitationQuery: {
+      skip: invitationSkip,
+      take: invitationTake,
+      keyword: invitationKeyword,
+    },
+  }: GetFullOrgInput): Promise<FullOrg | null> {
+    const memberWhere: Prisma.MemberWhereInput | undefined = memberKeyword
+      ? {
+          user: {
+            OR: [
+              { id: { mode: 'insensitive', contains: memberKeyword } },
+              { email: { mode: 'insensitive', contains: memberKeyword } },
+              { name: { mode: 'insensitive', contains: memberKeyword } },
+            ],
+          },
+        }
+      : undefined;
+
+    const invitationWhere: Prisma.InvitationWhereInput | undefined =
+      memberKeyword
+        ? {
+            OR: [
+              { id: { mode: 'insensitive', contains: invitationKeyword } },
+              { email: { mode: 'insensitive', contains: invitationKeyword } },
+
+              {
+                organization: {
+                  OR: [
+                    {
+                      id: { mode: 'insensitive', contains: invitationKeyword },
+                      name: {
+                        mode: 'insensitive',
+                        contains: invitationKeyword,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          }
+        : undefined;
+
+    const data = await this._delegate.findUnique({
+      where: { id, slug },
+      include: {
+        members: {
+          skip: memberSkip,
+          take: memberTake,
+          where: memberWhere,
+          include: {
+            user: {
+              select: {
+                id: true,
+                createdAt: true,
+                updatedAt: true,
+                email: true,
+                emailVerified: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+        invitations: {
+          skip: invitationSkip,
+          take: invitationTake,
+          where: invitationWhere,
+        },
+        _count: { select: { members: true, invitations: true } },
+      },
+    });
+
+    if (!data) return null;
+
+    return {
+      org: data,
+      member: { data: data.members, totalMemberCount: data._count.members },
+      invitation: {
+        data: data.invitations,
+        totalInvitationCount: data._count.invitations,
+      },
+    };
   }
 }

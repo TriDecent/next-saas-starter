@@ -37,7 +37,7 @@ export class UserRepository implements IUserRepository {
     const where: Prisma.UserWhereInput = keyword
       ? {
           OR: [
-            { id: keyword },
+            { id: { mode: 'insensitive', contains: keyword } },
             { email: { mode: 'insensitive', contains: keyword } },
             { name: { mode: 'insensitive', contains: keyword } },
           ],

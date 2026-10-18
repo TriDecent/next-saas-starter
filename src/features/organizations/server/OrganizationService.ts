@@ -6,6 +6,7 @@ import type {
   OrganizationWithRole,
 } from '@/infrastructure/repositories';
 import { auth } from '@/lib/auth';
+import { buildPagination } from '@/shared/pagination';
 import type { ServiceResponse } from '@/shared/types';
 import {
   type CreateInvitationInput,
@@ -13,9 +14,9 @@ import {
   type GeneralOrgError,
   type GeneralOrgResponse,
   type GeneralOrgSuccess,
+  type GetFullOrgResponse,
   type GetInvitationResponse,
   type GetOrgInput,
-  type GetOrgResponse,
   type RemoveUserInput,
   type SetActiveOrgInput,
   type UpdateOrgInput,
@@ -156,13 +157,62 @@ export class OrganizationService {
     );
   }
 
-  async getFullOrganization(params: GetOrgInput): Promise<GetOrgResponse> {
+  getFullOrg({
+    id,
+    slug,
+    memberQuery: {
+      page: memberPage,
+      limit: memberLimit,
+      keyword: memberKeyword,
+    },
+    invitationQuery: {
+      page: invitationPage,
+      limit: invitationLimit,
+      keyword: invitationKeyword,
+    },
+  }: GetOrgInput): Promise<GetFullOrgResponse> {
     return this._serviceExecutor.runSafely(
-      async () =>
-        auth.api.getFullOrganization({
-          query: params,
-          headers: this.headers,
-        }),
+      async () => {
+        const memberOffset = (memberPage - 1) * memberLimit;
+        const invitationOffset = (invitationPage - 1) * invitationLimit;
+
+        const data = await this._repo.getFullOrg({
+          id,
+          slug,
+          memberQuery: {
+            skip: memberOffset,
+            take: memberLimit,
+            keyword: memberKeyword,
+          },
+          invitationQuery: {
+            skip: invitationOffset,
+            take: invitationLimit,
+            keyword: invitationKeyword,
+          },
+        });
+
+        if (!data) throw new Error('Organization not found');
+
+        return {
+          org: data.org,
+          member: {
+            data: data.member.data,
+            pagination: buildPagination({
+              currentPage: memberPage,
+              limit: memberLimit,
+              totalItems: data.member.totalMemberCount,
+            }),
+          },
+          invitation: {
+            data: data.invitation.data,
+            pagination: buildPagination({
+              currentPage: invitationPage,
+              limit: invitationLimit,
+              totalItems: data.invitation.totalInvitationCount,
+            }),
+          },
+        };
+      },
       error => ({ message: error })
     );
   }
