@@ -1,6 +1,16 @@
 import z from 'zod';
 import { PAGINATION_DEFAULTS } from './utils';
 
+export const PaginationSchema = z.object({
+  totalPages: z.coerce.number(),
+  currentPage: z.coerce.number(),
+  hasPreviousPage: z.coerce.boolean(),
+  hasNextPage: z.coerce.boolean(),
+  limit: z.coerce.number(),
+  totalItems: z.coerce.number(),
+});
+export type Pagination = z.infer<typeof PaginationSchema>;
+
 export const QuerySchema = z.object({
   keyword: z.string().optional(),
   page: z.coerce

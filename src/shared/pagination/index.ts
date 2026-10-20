@@ -1,2 +1,2 @@
-export * from './pagination';
+export * from './schema';
 export * from './utils';

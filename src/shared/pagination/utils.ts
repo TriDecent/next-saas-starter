@@ -1,11 +1,4 @@
-export type Pagination = {
-  totalPages: number;
-  currentPage: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-  limit: number;
-  totalItems: number;
-};
+import type { Pagination } from './schema';
 
 export function buildPagination({
   totalItems,
@@ -23,6 +16,7 @@ export function buildPagination({
     totalItems,
   } as const;
 }
+
 export const PAGINATION_DEFAULTS = {
   page: 1,
   limit: 5,

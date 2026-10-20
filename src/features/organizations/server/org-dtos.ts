@@ -33,7 +33,7 @@ export type GetInvitationResult = ServiceResult<
 >;
 
 export type GetOrgDetailsResult = ServiceResult<OrgDetailsData, GetOrgError>;
-type OrgDetailsData = Omit<OrgDetails, 'member' | 'invitation'> & {
+export type OrgDetailsData = Omit<OrgDetails, 'member' | 'invitation'> & {
   member: Omit<OrgDetails['member'], 'totalMemberCount'> & {
     pagination: Pagination;
   };

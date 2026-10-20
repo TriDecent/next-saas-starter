@@ -1,16 +1,10 @@
 import { UserSchema } from '@/features/user/schema';
+import { PaginationSchema } from '@/shared/pagination';
 import { z } from 'zod';
 
 export const GetUsersSchema = z.object({
   users: z.array(UserSchema),
-  pagination: z.object({
-    totalPages: z.number(),
-    currentPage: z.number(),
-    hasPreviousPage: z.coerce.boolean(),
-    hasNextPage: z.coerce.boolean(),
-    limit: z.coerce.number(),
-    totalItems: z.coerce.number(),
-  }),
+  pagination: PaginationSchema,
 });
 
 export type GetUsersSchemaType = z.infer<typeof GetUsersSchema>;
