@@ -67,10 +67,15 @@ function EmptyMember() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button variant='outline' className='gap-2'>
-          <FiPlus className='size-4' />
-          Add member
-        </Button>
+        <CreateInvitationModal
+          mode='multi-step'
+          renderTrigger={
+            <Button variant='outline' className='gap-2'>
+              <FiPlus className='size-4' />
+              Add member
+            </Button>
+          }
+        />
       </EmptyContent>
     </Empty>
   );

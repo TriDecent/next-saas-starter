@@ -1,3 +1,4 @@
+import { CreateInvitationModal } from '@/features/invitations';
 import {
   Button,
   Card,
@@ -32,10 +33,7 @@ export function InvitationsCard({
         </CardDescription>
 
         <CardAction>
-          <Button className='gap-2'>
-            <FiMail />
-            Invite
-          </Button>
+          <CreateInvitationModal mode='multi-step' />
         </CardAction>
       </CardHeader>
 
@@ -65,10 +63,15 @@ function EmptyInvitation() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button variant='outline' className='gap-2'>
-          <FiMail className='size-4' />
-          Send invitation
-        </Button>
+        <CreateInvitationModal
+          mode='multi-step'
+          renderTrigger={
+            <Button variant='outline' className='gap-2'>
+              <FiMail className='size-4' />
+              Send invitation
+            </Button>
+          }
+        />
       </EmptyContent>
     </Empty>
   );
