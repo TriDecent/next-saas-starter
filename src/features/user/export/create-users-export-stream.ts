@@ -12,9 +12,6 @@ export function createUsersExportStream({
   source: AsyncGenerator<User>;
   type: ExportType['type'];
 }) {
-  const controller = new AbortController(); // avoid losing the "this" context
-  const { signal } = controller;
-
   async function* transformDataStream() {
     const transformFn =
       type === 'txt'
@@ -27,20 +24,17 @@ export function createUsersExportStream({
   }
 
   const zip = new ZipArchive({ zlib: { level: 9 } });
-  const entryStream = new PassThrough();
 
-  zip.on('error', () => controller.abort());
-  zip.on('close', () => controller.abort());
+  (async () => {
+    const entryStream = new PassThrough();
 
-  zip.append(entryStream, { name: `users-export.${type}` });
+    zip.append(entryStream, { name: `users-export.${type}` });
 
-  pipeline(transformDataStream, entryStream, { signal }).catch(error => {
-    zip.destroy(error); // keep the "this" context, passing "zip.destroy" directly would lose it.
-  });
+    await pipeline(transformDataStream, entryStream);
 
-  zip.finalize().catch(error => {
+    await zip.finalize();
+  })().catch(error => {
     zip.destroy(error);
-    controller.abort();
   });
 
   return { readable: Readable.toWeb(zip) };
