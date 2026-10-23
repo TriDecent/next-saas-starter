@@ -25,9 +25,11 @@ export default async function SettingsLayout({
         description='Manage your account settings and preferences'
       />
 
-      <SettingsTabsLayout>
-        <Suspense fallback={<Loading />}>{children}</Suspense>
-      </SettingsTabsLayout>
+      <Suspense fallback={<Loading />}>
+        <SettingsTabsLayout>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </SettingsTabsLayout>
+      </Suspense>
     </section>
   );
 }
