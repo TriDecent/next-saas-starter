@@ -1,8 +1,7 @@
 import type { User } from '@/generated/prisma/client';
-
 import { ZipArchive } from 'archiver';
-import { PassThrough, Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
+import { Readable } from 'node:stream';
+import { ReadableStream, TransformStream } from 'node:stream/web';
 import type { ExportType } from './schema';
 
 export function createUsersExportStream({
@@ -26,11 +25,11 @@ export function createUsersExportStream({
   const zip = new ZipArchive({ zlib: { level: 9 } });
 
   (async () => {
-    const entryStream = new PassThrough();
+    const { readable, writable } = new TransformStream();
 
-    zip.append(entryStream, { name: `users-export.${type}` });
+    zip.append(Readable.fromWeb(readable), { name: `users-export.${type}` });
 
-    await pipeline(transformDataStream, entryStream);
+    await ReadableStream.from(transformDataStream()).pipeTo(writable);
 
     await zip.finalize();
   })().catch(error => {
