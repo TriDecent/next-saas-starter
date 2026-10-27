@@ -199,3 +199,19 @@ model Subscription {
 
   @@map("subscriptions")
 }
+
+enum FeedbackStatus {
+  Bug            @map("bug")
+  UiUx           @map("ui_ux")
+  General        @map("general")
+  FeatureRequest @map("feature_request")
+}
+
+model Feedback {
+  id      String         @id @default(uuid())
+  type    FeedbackStatus
+  message String         @db.VarChar(1000)
+  pageUrl String
+
+  @@map("feedbacks")
+}
