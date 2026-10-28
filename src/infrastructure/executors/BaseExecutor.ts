@@ -1,31 +1,17 @@
-import { type IUserRepository } from '@/infrastructure/repositories';
 import type { ServiceResult } from '@/shared/types';
 import { APIError } from 'better-auth';
-import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 
 export interface IBaseExecutor {
   runSafely<TSuccess, TError>(
     operation: () => Promise<TSuccess>,
     toErrorPayload: (error: string) => TError
   ): Promise<ServiceResult<TSuccess, TError>>;
-  get headers(): ReadonlyHeaders;
-  get repo(): IUserRepository;
 
   getErrorMessage(error: unknown): string;
 }
 
 export class BaseExecutor implements IBaseExecutor {
-  constructor(
-    private readonly _repo: IUserRepository,
-    private readonly _headers: ReadonlyHeaders
-  ) {}
-
-  get headers() {
-    return this._headers;
-  }
-  get repo() {
-    return this._repo;
-  }
+  constructor() {}
 
   async runSafely<TSuccess, TError>(
     operation: () => Promise<TSuccess>,

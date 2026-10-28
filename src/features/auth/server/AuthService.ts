@@ -14,6 +14,7 @@ import type {
 export class AuthService {
   constructor(
     private readonly _executor: IBaseExecutor,
+    private readonly _headers: Headers,
     private readonly _actor?: User,
     private readonly _currentSession?: Session
   ) {}
@@ -37,7 +38,7 @@ export class AuthService {
   }): Promise<SignInResult> {
     try {
       const response = await auth.api.signInEmail({
-        headers: this.headers,
+        headers: this._headers,
         body: { email, password, rememberMe },
       });
 
@@ -81,7 +82,7 @@ export class AuthService {
     return this._executor.runSafely(
       async () => {
         const { user } = await auth.api.signUpEmail({
-          headers: this.headers,
+          headers: this._headers,
           body: { ...params, welcomeSent: false },
         });
 
@@ -113,7 +114,7 @@ export class AuthService {
     return this._executor.runSafely(
       async () => {
         await auth.api.resetPassword({
-          headers: this.headers,
+          headers: this._headers,
           body: { token, newPassword },
         });
       },
@@ -131,7 +132,7 @@ export class AuthService {
         const formattedCode = code.slice(0, 5) + '-' + code.slice(5);
 
         await auth.api.verifyBackupCode({
-          headers: this.headers,
+          headers: this._headers,
           body: { code: formattedCode, trustDevice },
         });
       },
@@ -181,7 +182,7 @@ export class AuthService {
 
         await auth.api.verifyTOTP({
           body: { code, trustDevice },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -189,16 +190,12 @@ export class AuthService {
   }
 
   private get2FARedirectUrl(): string {
-    const requestReferer = this.headers.get('referer');
+    const requestReferer = this._headers.get('referer');
     const requestUrl = requestReferer ? new URL(requestReferer) : undefined;
     const hasCallbackUrl = requestUrl?.searchParams.has('callbackUrl');
 
     return hasCallbackUrl
       ? `${ROUTES.auth.nested['verify-2fa'].href}?${requestUrl!.searchParams.toString()}`
       : ROUTES.auth.nested['verify-2fa'].href;
-  }
-
-  private get headers() {
-    return this._executor.headers;
   }
 }

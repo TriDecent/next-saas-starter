@@ -3,6 +3,7 @@ import type { AppRole } from '@/features/authorization';
 import { AppPolicy } from '@/features/authorization/core';
 import type { Session, User } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
+import type { IUserRepository } from '@/infrastructure/repositories';
 import { auth, hasPermission } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { buildPagination } from '@/shared/pagination';
@@ -22,16 +23,14 @@ export class UserService {
   private readonly _rolePolicy = AppPolicy.getRolePolicyFor(this.actor);
 
   constructor(
+    private readonly _repo: IUserRepository,
     private readonly _serviceExecutor: IAuthenticatedExecutor,
-    private readonly _currentSession: Session
+    private readonly _currentSession: Session,
+    private readonly _headers: Headers
   ) {}
 
   get actor() {
     return this._serviceExecutor.actor;
-  }
-
-  get headers() {
-    return this._serviceExecutor.headers;
   }
 
   get currentSession() {
@@ -39,15 +38,15 @@ export class UserService {
   }
 
   listMyAccounts() {
-    return auth.api.listUserAccounts({ headers: this.headers });
+    return auth.api.listUserAccounts({ headers: this._headers });
   }
 
   listMyPasskey() {
-    return auth.api.listPasskeys({ headers: this.headers });
+    return auth.api.listPasskeys({ headers: this._headers });
   }
 
   listMySessions() {
-    return auth.api.listSessions({ headers: this.headers });
+    return auth.api.listSessions({ headers: this._headers });
   }
 
   async getUserById(id: User['id']): Promise<GetUserByIdResult> {
@@ -58,7 +57,7 @@ export class UserService {
         payload: { message: 'You do not have permission to get user details.' },
       };
 
-    const user = await this.repo.getUserById(id);
+    const user = await this._repo.getUserById(id);
 
     if (!user) return { type: 'success', payload: user };
 
@@ -80,7 +79,7 @@ export class UserService {
 
     const batchSize = 100;
 
-    yield* this.repo.iterateUsers({ batchSize });
+    yield* this._repo.iterateUsers({ batchSize });
   }
 
   listUsers({
@@ -101,7 +100,7 @@ export class UserService {
       query: {
         run: async () => {
           const offset = (page - 1) * limit;
-          const { data: users, total } = await this.repo.getUsers(
+          const { data: users, total } = await this._repo.getUsers(
             offset,
             limit,
             orderBy,
@@ -147,10 +146,16 @@ export class UserService {
       action: {
         run: async () => {
           if (shouldBan) {
-            await auth.api.banUser({ body: { userId }, headers: this.headers });
+            await auth.api.banUser({
+              body: { userId },
+              headers: this._headers,
+            });
             return;
           }
-          await auth.api.unbanUser({ body: { userId }, headers: this.headers });
+          await auth.api.unbanUser({
+            body: { userId },
+            headers: this._headers,
+          });
         },
         toErrorPayload: error => ({ message: error }),
       },
@@ -181,7 +186,7 @@ export class UserService {
         run: async () => {
           await auth.api.revokeUserSessions({
             body: { userId },
-            headers: this.headers,
+            headers: this._headers,
           });
         },
         toErrorPayload: error => ({ message: error }),
@@ -209,7 +214,7 @@ export class UserService {
         run: async () => {
           await auth.api.removeUser({
             body: { userId },
-            headers: this.headers,
+            headers: this._headers,
           });
         },
         toErrorPayload: error => ({ message: error }),
@@ -240,7 +245,7 @@ export class UserService {
         run: async () => {
           await auth.api.impersonateUser({
             body: { userId },
-            headers: this.headers,
+            headers: this._headers,
           });
         },
         toErrorPayload: error => ({ message: error }),
@@ -251,7 +256,7 @@ export class UserService {
   stopImpersonate(): Promise<UserMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
-        await auth.api.stopImpersonating({ headers: this.headers });
+        await auth.api.stopImpersonating({ headers: this._headers });
       },
       error => ({ message: error })
     );
@@ -267,11 +272,11 @@ export class UserService {
   async deleteAccount(token?: string): Promise<void> {
     try {
       await auth.api.deleteUser({
-        headers: this.headers,
+        headers: this._headers,
         body: { token, callbackURL: ROUTES.auth.href },
       });
 
-      if (token) await auth.api.signOut({ headers: this.headers }); // prevent client session cache
+      if (token) await auth.api.signOut({ headers: this._headers }); // prevent client session cache
     } catch (error) {
       throw new Error(this._serviceExecutor.getErrorMessage(error));
     }
@@ -279,7 +284,7 @@ export class UserService {
 
   async revokeSessionWithToken(token: string): Promise<void> {
     try {
-      await auth.api.revokeSession({ body: { token }, headers: this.headers });
+      await auth.api.revokeSession({ body: { token }, headers: this._headers });
     } catch (error) {
       throw new Error(this._serviceExecutor.getErrorMessage(error));
     }
@@ -293,13 +298,13 @@ export class UserService {
       async () => {
         await auth.api.verifyPassword({
           body: { password },
-          headers: this.headers,
+          headers: this._headers,
         });
 
         if (this.actor.twoFactorEnabled && totp) {
           await auth.api.verifyTOTP({
             body: { code: totp },
-            headers: this.headers,
+            headers: this._headers,
           });
         }
 
@@ -321,7 +326,7 @@ export class UserService {
       async () => {
         await auth.api.updateUser({
           body: { name, favoriteNumber },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -343,7 +348,7 @@ export class UserService {
 
         await auth.api.changeEmail({
           body: { newEmail, callbackURL },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -360,7 +365,7 @@ export class UserService {
       async () => {
         await auth.api.deletePasskey({
           body: { id: passkeyId },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -384,7 +389,7 @@ export class UserService {
 
         await auth.api.changePassword({
           body: params,
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -401,7 +406,7 @@ export class UserService {
       async () => {
         await auth.api.disableTwoFactor({
           body: { password },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -415,7 +420,7 @@ export class UserService {
       () =>
         auth.api.enableTwoFactor({
           body: { password },
-          headers: this.headers,
+          headers: this._headers,
         }),
       error => ({ message: error })
     );
@@ -434,12 +439,12 @@ export class UserService {
       async () => {
         await auth.api.verifyTOTP({
           body: { code: totpCode, trustDevice },
-          headers: this.headers,
+          headers: this._headers,
         });
 
         const data = await auth.api.generateBackupCodes({
           body: { password },
-          headers: this.headers,
+          headers: this._headers,
         });
 
         return { backupCodes: data.backupCodes };
@@ -487,7 +492,7 @@ export class UserService {
         run: async () => {
           await auth.api.setRole({
             body: { userId, role: roles },
-            headers: this.headers,
+            headers: this._headers,
           });
         },
         toErrorPayload: error => ({ message: error }),
@@ -502,9 +507,5 @@ export class UserService {
     if (!response.payload) throw new Error('User not found.');
 
     return response.payload;
-  }
-
-  private get repo() {
-    return this._serviceExecutor.repo;
   }
 }

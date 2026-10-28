@@ -1,9 +1,7 @@
 import { verifySudoToken } from '@/features/auth';
 import type { User } from '@/generated/prisma/client';
-import { type IUserRepository } from '@/infrastructure/repositories';
 import { hasPermission } from '@/lib/auth';
 import type { ServiceResult } from '@/shared/types';
-import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { BaseExecutor, type IBaseExecutor } from './BaseExecutor';
 
 export interface IAuthenticatedExecutor extends IBaseExecutor {
@@ -85,12 +83,8 @@ export class AuthenticatedExecutor
   extends BaseExecutor
   implements IAuthenticatedExecutor
 {
-  constructor(
-    private readonly _actor: User,
-    repo: IUserRepository,
-    headers: ReadonlyHeaders
-  ) {
-    super(repo, headers);
+  constructor(private readonly _actor: User) {
+    super();
   }
 
   get actor() {

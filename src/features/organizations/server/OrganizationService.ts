@@ -29,7 +29,8 @@ export class OrganizationService {
   constructor(
     private readonly _serviceExecutor: IAuthenticatedExecutor,
     private readonly _repo: IOrganizationRepository,
-    private readonly _currentSession: Session
+    private readonly _currentSession: Session,
+    private readonly _headers: Headers
   ) {}
 
   createOrg(params: CreateOrgInput): Promise<OrgMutationResult> {
@@ -45,7 +46,7 @@ export class OrganizationService {
         run: async () => {
           await auth.api.createOrganization({
             body: params,
-            headers: this.headers,
+            headers: this._headers,
           });
         },
         toErrorPayload: error => ({ message: error }),
@@ -58,7 +59,7 @@ export class OrganizationService {
       async () => {
         await auth.api.deleteOrganization({
           body: { organizationId },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -70,7 +71,7 @@ export class OrganizationService {
       async () => {
         await auth.api.updateOrganization({
           body: params,
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -100,7 +101,7 @@ export class OrganizationService {
           body: isSameOrg
             ? { organizationId: null, organizationSlug: undefined }
             : params,
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -119,7 +120,7 @@ export class OrganizationService {
         run: async () => {
           await auth.api.createInvitation({
             body: params,
-            headers: this.headers,
+            headers: this._headers,
           });
         },
         toErrorPayload: error => ({ message: error }),
@@ -132,7 +133,7 @@ export class OrganizationService {
       () =>
         auth.api.getInvitation({
           query: { id },
-          headers: this.headers,
+          headers: this._headers,
         }),
       error => ({ message: error })
     );
@@ -143,7 +144,7 @@ export class OrganizationService {
       async () => {
         await auth.api.acceptInvitation({
           body: { invitationId },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -155,7 +156,7 @@ export class OrganizationService {
       async () => {
         await auth.api.rejectInvitation({
           body: { invitationId },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -227,7 +228,7 @@ export class OrganizationService {
       async () => {
         await auth.api.updateMemberRole({
           body: params,
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -237,7 +238,7 @@ export class OrganizationService {
   removeMember(params: RemoveUserInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(
       async () => {
-        await auth.api.removeMember({ body: params, headers: this.headers });
+        await auth.api.removeMember({ body: params, headers: this._headers });
       },
       error => ({ message: error })
     );
@@ -248,7 +249,7 @@ export class OrganizationService {
       async () => {
         await auth.api.cancelInvitation({
           body: { invitationId },
-          headers: this.headers,
+          headers: this._headers,
         });
       },
       error => ({ message: error })
@@ -257,8 +258,5 @@ export class OrganizationService {
 
   get actor() {
     return this._serviceExecutor.actor;
-  }
-  private get headers() {
-    return this._serviceExecutor.headers;
   }
 }

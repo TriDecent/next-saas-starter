@@ -5,8 +5,8 @@ import { stripeClient } from '@/lib/stripe';
 import type {
   CreateBillingPortalInput,
   GetSubscriptionOverviewResult,
-  ListActiveSubscriptionsResult,
   ListActiveSubscriptionsInput,
+  ListActiveSubscriptionsResult,
   SubscriptionPlanDetails,
   UpgradeSubscriptionInput,
   UpgradeSubscriptionResult,
@@ -62,7 +62,7 @@ export class SubscriptionService {
 
   constructor(
     private readonly _serviceExecutor: IAuthenticatedExecutor,
-    private readonly _ownerContextFetcher: ISubscriptionOwnerContext
+    private readonly _headers: Headers
   ) {}
 
   async getSubscriptionPlans(): Promise<SubscriptionPlanDetails[]> {
@@ -108,7 +108,7 @@ export class SubscriptionService {
       async () =>
         auth.api.upgradeSubscription({
           body: params,
-          headers: this.headers,
+          headers: this._headers,
         }),
       error => ({ message: error })
     );
@@ -121,7 +121,7 @@ export class SubscriptionService {
       () =>
         auth.api.listActiveSubscriptions({
           query: params,
-          headers: this.headers,
+          headers: this._headers,
         }),
       error => ({ message: error })
     );
@@ -130,7 +130,7 @@ export class SubscriptionService {
   createBillingPortal(params: CreateBillingPortalInput) {
     return this._serviceExecutor.runSafely(
       () =>
-        auth.api.createBillingPortal({ body: params, headers: this.headers }),
+        auth.api.createBillingPortal({ body: params, headers: this._headers }),
       error => ({ message: error })
     );
   }
@@ -169,8 +169,5 @@ export class SubscriptionService {
 
   public get actor() {
     return this._serviceExecutor.actor;
-  }
-  private get headers() {
-    return this._serviceExecutor.headers;
   }
 }
