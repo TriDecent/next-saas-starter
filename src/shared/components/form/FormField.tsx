@@ -187,18 +187,22 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
             onValueChange={field.onChange}
             value={field.value}
           >
-            <SelectTrigger
-              id={props.id}
-              name={props.name}
-              disabled={props.disabled || formState.isSubmitting}
-              aria-invalid={fieldState.invalid}
-              className={cn('w-full', fieldState.invalid ? 'error' : '')}
-            >
-              <div className='flex items-center gap-2'>
-                {props.addons}
+            <InputGroup className='flex! gap-2'>
+              <SelectTrigger
+                id={props.id}
+                name={props.name}
+                disabled={props.disabled || formState.isSubmitting}
+                aria-invalid={fieldState.invalid}
+                className={cn(
+                  'w-full border-0 bg-transparent!',
+                  fieldState.invalid ? 'error' : ''
+                )}
+              >
                 <SelectValue placeholder={props.placeholder} />
-              </div>
-            </SelectTrigger>
+              </SelectTrigger>
+
+              {props.addons}
+            </InputGroup>
 
             {props.children}
           </Select>
