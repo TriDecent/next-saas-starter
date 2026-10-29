@@ -8,9 +8,9 @@ export class FeedbackService {
   ) {}
 
   submitFeedback(input: CreateFeedbackInput) {
-    this._executor.runSafely(
+    return this._executor.runSafely(
       () => this._repo.create(input),
-      error => error
+      error => ({ message: error })
     );
   }
 }

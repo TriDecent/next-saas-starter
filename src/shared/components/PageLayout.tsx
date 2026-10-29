@@ -1,3 +1,4 @@
+import { ToggleFeedback } from '@/features/feedback';
 import { cn } from '@/shared/utils';
 import Link from 'next/link';
 import { connection } from 'next/server';
@@ -56,21 +57,26 @@ function Footer({ children, className }: PageLayoutProps) {
             <ConnectionSection />
           </div>
 
-          <div className='mt-8 flex flex-col items-center gap-4 border-t pt-8 sm:flex-row sm:justify-between'>
-            <p className='text-muted-foreground flex items-center gap-2 text-sm'>
-              <span>
-                ©{' '}
-                <Suspense>
-                  <Year />
-                </Suspense>{' '}
-                Trí Decent.
-              </span>
-              <span className='hidden sm:inline'>All rights reserved.</span>
-            </p>
-            <p className='text-muted-foreground flex items-center gap-1.5 text-sm'>
-              <span>Made with</span>
-              <FaHeart className='h-3.5 w-3.5 animate-pulse text-red-500' />
-            </p>
+          <div className='flex flex-col gap-4'>
+            <div className='mt-8 flex flex-col items-center gap-4 border-t pt-8 sm:flex-row sm:justify-between'>
+              <p className='text-muted-foreground flex items-center gap-2 text-sm'>
+                <span>
+                  ©{' '}
+                  <Suspense>
+                    <Year />
+                  </Suspense>{' '}
+                  Trí Decent.
+                </span>
+                <span className='hidden sm:inline'>All rights reserved.</span>
+              </p>
+
+              <p className='text-muted-foreground flex items-center gap-1.5 text-sm'>
+                <span>Made with</span>
+                <FaHeart className='h-3.5 w-3.5 animate-pulse text-red-500' />
+              </p>
+            </div>
+
+            <ToggleFeedback className='w-fit self-center md:self-start' />
           </div>
         </div>
       )}
@@ -107,7 +113,7 @@ function QuickLinks() {
       <nav className='flex flex-col gap-2'>
         <Link
           target='_blank'
-          href='https://www.tridecent.dev'
+          href='https://www.tridecent.me'
           className='text-muted-foreground hover:text-foreground text-sm transition-colors'
         >
           Portfolio

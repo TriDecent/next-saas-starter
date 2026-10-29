@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/shared/components/ui';
+import { Button, Separator } from '@/shared/components/ui';
 import { Field, FieldError, FieldGroup } from '@/shared/components/ui/client';
 import type { ReactNode, RefObject } from 'react';
 import {
@@ -49,6 +49,8 @@ export function BaseFormLayout<T extends FieldValues>({
       >
         <FieldGroup>
           {children}
+
+          <Separator />
 
           {shouldRenderSubmitButton ? (
             <div className='mt-2 flex flex-col gap-2 sm:ml-auto sm:flex-row'>
