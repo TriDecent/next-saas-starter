@@ -187,7 +187,7 @@ function ControlledSelectField({ ...props }: SelectFieldProps) {
             onValueChange={field.onChange}
             value={field.value}
           >
-            <InputGroup className='flex! gap-2'>
+            <InputGroup>
               <SelectTrigger
                 id={props.id}
                 name={props.name}
