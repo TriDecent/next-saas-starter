@@ -176,6 +176,8 @@ enum InvitationStatus {
   accepted
   rejected
   canceled
+
+  @@map("invitation_status")
 }
 
 model Subscription {
@@ -200,17 +202,19 @@ model Subscription {
   @@map("subscriptions")
 }
 
-enum FeedbackStatus {
+enum FeedbackType {
   Bug            @map("bug")
   UiUx           @map("ui_ux")
   General        @map("general")
   FeatureRequest @map("feature_request")
+
+  @@map("feedback_type")
 }
 
 model Feedback {
-  id      String         @id @default(uuid())
-  type    FeedbackStatus
-  message String         @db.VarChar(1000)
+  id      String       @id @default(uuid())
+  type    FeedbackType
+  message String       @db.VarChar(1000)
   pageUrl String
 
   @@map("feedbacks")
