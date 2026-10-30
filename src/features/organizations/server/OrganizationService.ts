@@ -8,6 +8,7 @@ import type {
 import { auth } from '@/lib/auth';
 import { buildPagination } from '@/shared/pagination';
 import type { ServiceResult } from '@/shared/types';
+import { getErrorMessage } from '@/shared/utils';
 import {
   type CreateInvitationInput,
   type CreateOrgInput,
@@ -49,33 +50,27 @@ export class OrganizationService {
             headers: this._headers,
           });
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
 
   deleteOrg(organizationId: string): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.deleteOrganization({
-          body: { organizationId },
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.deleteOrganization({
+        body: { organizationId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   updateOrg(params: UpdateOrgInput): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.updateOrganization({
-          body: params,
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.updateOrganization({
+        body: params,
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   getActiveOrgId() {
@@ -87,25 +82,22 @@ export class OrganizationService {
   > {
     return this._serviceExecutor.runSafely(
       () => this._repo.listOrganizationsForUser(this.actor.id),
-      error => ({ message: error })
+      this.handleError
     );
   }
 
   toggleOrgStatus(params: SetActiveOrgInput): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        const currentActiveOrgId = this.getActiveOrgId();
-        const isSameOrg = currentActiveOrgId === params.organizationId;
+    return this._serviceExecutor.runSafely(async () => {
+      const currentActiveOrgId = this.getActiveOrgId();
+      const isSameOrg = currentActiveOrgId === params.organizationId;
 
-        await auth.api.setActiveOrganization({
-          body: isSameOrg
-            ? { organizationId: null, organizationSlug: undefined }
-            : params,
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+      await auth.api.setActiveOrganization({
+        body: isSameOrg
+          ? { organizationId: null, organizationSlug: undefined }
+          : params,
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   async createInvitation(
@@ -123,7 +115,7 @@ export class OrganizationService {
             headers: this._headers,
           });
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
@@ -135,32 +127,26 @@ export class OrganizationService {
           query: { id },
           headers: this._headers,
         }),
-      error => ({ message: error })
+      this.handleError
     );
   }
 
   acceptInvitation(invitationId: string): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.acceptInvitation({
-          body: { invitationId },
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.acceptInvitation({
+        body: { invitationId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   rejectInvitation(invitationId: string): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.rejectInvitation({
-          body: { invitationId },
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.rejectInvitation({
+        body: { invitationId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   getOrgDetails({
@@ -177,86 +163,78 @@ export class OrganizationService {
       keyword: invitationKeyword,
     },
   }: GetOrgInput): Promise<GetOrgDetailsResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        const memberOffset = (memberPage - 1) * memberLimit;
-        const invitationOffset = (invitationPage - 1) * invitationLimit;
+    return this._serviceExecutor.runSafely(async () => {
+      const memberOffset = (memberPage - 1) * memberLimit;
+      const invitationOffset = (invitationPage - 1) * invitationLimit;
 
-        const data = await this._repo.getOrgDetails({
-          id,
-          slug,
-          memberQuery: {
-            skip: memberOffset,
-            take: memberLimit,
-            keyword: memberKeyword,
-          },
-          invitationQuery: {
-            skip: invitationOffset,
-            take: invitationLimit,
-            keyword: invitationKeyword,
-          },
-        });
+      const data = await this._repo.getOrgDetails({
+        id,
+        slug,
+        memberQuery: {
+          skip: memberOffset,
+          take: memberLimit,
+          keyword: memberKeyword,
+        },
+        invitationQuery: {
+          skip: invitationOffset,
+          take: invitationLimit,
+          keyword: invitationKeyword,
+        },
+      });
 
-        if (!data) throw new Error('Organization not found');
+      if (!data) throw new Error('Organization not found');
 
-        return {
-          org: data.org,
-          member: {
-            data: data.member.data,
-            pagination: buildPagination({
-              currentPage: memberPage,
-              limit: memberLimit,
-              totalItems: data.member.totalMemberCount,
-            }),
-          },
-          invitation: {
-            data: data.invitation.data,
-            pagination: buildPagination({
-              currentPage: invitationPage,
-              limit: invitationLimit,
-              totalItems: data.invitation.totalInvitationCount,
-            }),
-          },
-        };
-      },
-      error => ({ message: error })
-    );
+      return {
+        org: data.org,
+        member: {
+          data: data.member.data,
+          pagination: buildPagination({
+            currentPage: memberPage,
+            limit: memberLimit,
+            totalItems: data.member.totalMemberCount,
+          }),
+        },
+        invitation: {
+          data: data.invitation.data,
+          pagination: buildPagination({
+            currentPage: invitationPage,
+            limit: invitationLimit,
+            totalItems: data.invitation.totalInvitationCount,
+          }),
+        },
+      };
+    }, this.handleError);
   }
 
   updateRole(params: UpdateRoleInput): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.updateMemberRole({
-          body: params,
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.updateMemberRole({
+        body: params,
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   removeMember(params: RemoveUserInput): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.removeMember({ body: params, headers: this._headers });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.removeMember({ body: params, headers: this._headers });
+    }, this.handleError);
   }
 
   cancelInvitation(invitationId: string): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.cancelInvitation({
-          body: { invitationId },
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.cancelInvitation({
+        body: { invitationId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   get actor() {
     return this._serviceExecutor.actor;
+  }
+
+  private handleError(error: unknown): { message: string } {
+    return { message: getErrorMessage(error) };
   }
 }

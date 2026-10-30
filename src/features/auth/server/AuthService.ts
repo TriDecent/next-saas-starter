@@ -3,6 +3,7 @@ import type { Session, User } from '@/generated/prisma/client';
 import type { IBaseExecutor } from '@/infrastructure/executors';
 import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
+import { getErrorMessage } from '@/shared/utils';
 import { APIError } from 'better-auth';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import type {
@@ -68,7 +69,7 @@ export class AuthService {
 
       return {
         type: 'error',
-        payload: { message: this._executor.getErrorMessage(error) },
+        payload: this.handleError(error),
       };
     }
   }
@@ -79,17 +80,14 @@ export class AuthService {
     password: string;
     favoriteNumber: number;
   }): Promise<SignUpResult> {
-    return this._executor.runSafely(
-      async () => {
-        const { user } = await auth.api.signUpEmail({
-          headers: this._headers,
-          body: { ...params, welcomeSent: false },
-        });
+    return this._executor.runSafely(async () => {
+      const { user } = await auth.api.signUpEmail({
+        headers: this._headers,
+        body: { ...params, welcomeSent: false },
+      });
 
-        return { name: user.name, email: user.email };
-      },
-      error => ({ message: error })
-    );
+      return { name: user.name, email: user.email };
+    }, this.handleError);
   }
 
   requestResetPassword({
@@ -99,45 +97,36 @@ export class AuthService {
     email: string;
     redirectTo: string;
   }): Promise<AuthMutationResult> {
-    return this._executor.runSafely(
-      async () => {
-        await auth.api.requestPasswordReset({ body: { email, redirectTo } });
-      },
-      error => ({ message: error })
-    );
+    return this._executor.runSafely(async () => {
+      await auth.api.requestPasswordReset({ body: { email, redirectTo } });
+    }, this.handleError);
   }
 
   resetPassword(
     token: string,
     newPassword: string
   ): Promise<AuthMutationResult> {
-    return this._executor.runSafely(
-      async () => {
-        await auth.api.resetPassword({
-          headers: this._headers,
-          body: { token, newPassword },
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._executor.runSafely(async () => {
+      await auth.api.resetPassword({
+        headers: this._headers,
+        body: { token, newPassword },
+      });
+    }, this.handleError);
   }
 
   verifyBackupCode(
     code: string,
     trustDevice?: boolean
   ): Promise<AuthMutationResult> {
-    return this._executor.runSafely(
-      async () => {
-        // Format code: XXXXX-XXXXX
-        const formattedCode = code.slice(0, 5) + '-' + code.slice(5);
+    return this._executor.runSafely(async () => {
+      // Format code: XXXXX-XXXXX
+      const formattedCode = code.slice(0, 5) + '-' + code.slice(5);
 
-        await auth.api.verifyBackupCode({
-          headers: this._headers,
-          body: { code: formattedCode, trustDevice },
-        });
-      },
-      error => ({ message: error })
-    );
+      await auth.api.verifyBackupCode({
+        headers: this._headers,
+        body: { code: formattedCode, trustDevice },
+      });
+    }, this.handleError);
   }
 
   async sendVerificationEmail({
@@ -156,14 +145,11 @@ export class AuthService {
       };
     }
 
-    return this._executor.runSafely(
-      async () => {
-        await auth.api.sendVerificationEmail({
-          body: { email, callbackURL },
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._executor.runSafely(async () => {
+      await auth.api.sendVerificationEmail({
+        body: { email, callbackURL },
+      });
+    }, this.handleError);
   }
 
   verifyTOTP({
@@ -173,20 +159,17 @@ export class AuthService {
     code: string;
     trustDevice?: boolean;
   }): Promise<AuthMutationResult> {
-    return this._executor.runSafely(
-      async () => {
-        // actor shouldn't be undefined here,
-        // because this method is only called after the user has signed in and is authenticated
-        if (!AppPolicy.getUserPolicyFor(this._actor!).canEnable2FA())
-          throw new Error('You do not have permission to enable 2FA.');
+    return this._executor.runSafely(async () => {
+      // actor shouldn't be undefined here,
+      // because this method is only called after the user has signed in and is authenticated
+      if (!AppPolicy.getUserPolicyFor(this._actor!).canEnable2FA())
+        throw new Error('You do not have permission to enable 2FA.');
 
-        await auth.api.verifyTOTP({
-          body: { code, trustDevice },
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+      await auth.api.verifyTOTP({
+        body: { code, trustDevice },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   private get2FARedirectUrl(): string {
@@ -197,5 +180,9 @@ export class AuthService {
     return hasCallbackUrl
       ? `${ROUTES.auth.nested['verify-2fa'].href}?${requestUrl!.searchParams.toString()}`
       : ROUTES.auth.nested['verify-2fa'].href;
+  }
+
+  private handleError(error: unknown): { message: string } {
+    return { message: getErrorMessage(error) };
   }
 }

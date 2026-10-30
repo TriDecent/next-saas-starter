@@ -2,6 +2,7 @@ import { AppPolicy } from '@/features/authorization/core';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import { auth, SUBSCRIPTION_PLAN, type SubscriptionPlan } from '@/lib/auth';
 import { stripeClient } from '@/lib/stripe';
+import { getErrorMessage } from '@/shared/utils';
 import type {
   CreateBillingPortalInput,
   GetSubscriptionOverviewResult,
@@ -11,10 +12,6 @@ import type {
   UpgradeSubscriptionInput,
   UpgradeSubscriptionResult,
 } from './subscription-dtos';
-
-interface ISubscriptionOwnerContext {
-  getAuthorizedUserIds(referenceId: string): Promise<string[]>;
-}
 
 export class SubscriptionService {
   private readonly _subscriptionPolicy = AppPolicy.getSubscriptionPolicyFor(
@@ -110,7 +107,7 @@ export class SubscriptionService {
           body: params,
           headers: this._headers,
         }),
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -123,7 +120,7 @@ export class SubscriptionService {
           query: params,
           headers: this._headers,
         }),
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -131,7 +128,7 @@ export class SubscriptionService {
     return this._serviceExecutor.runSafely(
       () =>
         auth.api.createBillingPortal({ body: params, headers: this._headers }),
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -140,34 +137,35 @@ export class SubscriptionService {
       SubscriptionService['listActiveSubscriptions']
     >[number]
   ): Promise<GetSubscriptionOverviewResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        const [plans, activeSubscriptionsResponse] = await Promise.all([
-          this.getSubscriptionPlans(),
-          this.listActiveSubscriptions(activeSubscriptionQuery),
-        ]);
+    return this._serviceExecutor.runSafely(async () => {
+      const [plans, activeSubscriptionsResponse] = await Promise.all([
+        this.getSubscriptionPlans(),
+        this.listActiveSubscriptions(activeSubscriptionQuery),
+      ]);
 
-        if (activeSubscriptionsResponse.type === 'error')
-          throw new Error(activeSubscriptionsResponse.payload.message);
+      if (activeSubscriptionsResponse.type === 'error')
+        throw new Error(activeSubscriptionsResponse.payload.message);
 
-        const activeSubscriptions = activeSubscriptionsResponse.payload;
-        const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
-        const billingInterval = activeSubscriptions.at(0)?.billingInterval;
+      const activeSubscriptions = activeSubscriptionsResponse.payload;
+      const planName = activeSubscriptions.at(0)?.plan as SubscriptionPlan;
+      const billingInterval = activeSubscriptions.at(0)?.billingInterval;
 
-        return {
-          activeSubscriptions,
-          plans,
-          currentPlan:
-            planName && billingInterval
-              ? { name: planName, billingInterval }
-              : undefined,
-        };
-      },
-      error => ({ message: error })
-    );
+      return {
+        activeSubscriptions,
+        plans,
+        currentPlan:
+          planName && billingInterval
+            ? { name: planName, billingInterval }
+            : undefined,
+      };
+    }, this.handleError);
   }
 
   public get actor() {
     return this._serviceExecutor.actor;
+  }
+
+  private handleError(error: unknown): { message: string } {
+    return { message: getErrorMessage(error) };
   }
 }

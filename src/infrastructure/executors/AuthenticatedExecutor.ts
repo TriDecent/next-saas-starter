@@ -9,7 +9,7 @@ export interface IAuthenticatedExecutor extends IBaseExecutor {
     token: string | undefined,
     invalidTokenMessage: string,
     operation: () => Promise<TSuccess>,
-    toErrorPayload: (error: string) => TError
+    toErrorPayload: (error: unknown) => TError
   ): Promise<ServiceResult<TSuccess, TError>>;
   executeProtectedAction<TContext, TError>(params: {
     rbac: {
@@ -22,7 +22,7 @@ export interface IAuthenticatedExecutor extends IBaseExecutor {
 
       // this field catches error thrown in the `run` function
       // and transforms it into the specified error payload
-      toErrorPayload: (error: string) => TError;
+      toErrorPayload: (error: unknown) => TError;
     };
   }): Promise<ServiceResult<void, TError>>;
   executeProtectedQuery<TData, TError, TContext>(params: {
@@ -47,7 +47,7 @@ type AbacAction<TContext, TError> =
   | {
       context: {
         loadContext: () => Promise<TContext>;
-        toContextErrorPayload: (error: string) => TError;
+        toContextErrorPayload: (error: unknown) => TError;
         check: (context: TContext) => boolean;
         abacError: TError;
       };
@@ -65,7 +65,7 @@ type AbacQuery<TContext, TData, TError> =
   | {
       context: {
         loadContext: () => Promise<TContext>;
-        toContextErrorPayload: (error: string) => TError;
+        toContextErrorPayload: (error: unknown) => TError;
         check: (data: TData, context: TContext) => boolean;
         abacError: TError;
       };
@@ -95,7 +95,7 @@ export class AuthenticatedExecutor
     token: string | undefined,
     invalidTokenMessage: string,
     operation: () => Promise<TSuccess>,
-    toErrorPayload: (error: string) => TError
+    toErrorPayload: (error: unknown) => TError
   ): Promise<ServiceResult<TSuccess, TError>> {
     const isValid = token
       ? await verifySudoToken(token, this._actor.id)
@@ -114,7 +114,7 @@ export class AuthenticatedExecutor
     abac?: AbacAction<TContext, TError>;
     action: {
       run: () => Promise<void>;
-      toErrorPayload: (error: string) => TError;
+      toErrorPayload: (error: unknown) => TError;
     };
   }): Promise<ServiceResult<void, TError>> {
     const { rbac, abac, action } = params;
@@ -147,7 +147,7 @@ export class AuthenticatedExecutor
     };
     query: {
       run: () => Promise<TData>;
-      toErrorPayload: (error: string) => TError;
+      toErrorPayload: (error: unknown) => TError;
     };
     abac?: AbacQuery<TContext, TData, TError>;
   }): Promise<ServiceResult<TData, TError>> {

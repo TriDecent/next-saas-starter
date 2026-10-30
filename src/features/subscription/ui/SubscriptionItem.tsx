@@ -40,8 +40,6 @@ export function SubscriptionItem({
         />
       </CardContent>
 
-      <Separator />
-
       <CardFooter className='flex flex-col gap-4'>
         <span className='text-muted-foreground text-xs'>
           Click the IDs to view the full value.

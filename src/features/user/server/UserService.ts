@@ -7,6 +7,7 @@ import type { IUserRepository } from '@/infrastructure/repositories';
 import { auth, hasPermission } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { buildPagination } from '@/shared/pagination';
+import { getErrorMessage } from '@/shared/utils';
 import type {
   AuthenticatePriorResult,
   Enable2FAResult,
@@ -116,7 +117,7 @@ export class UserService {
             }),
           };
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
@@ -136,7 +137,7 @@ export class UserService {
       abac: {
         context: {
           loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: error => ({ message: error }),
+          toContextErrorPayload: this.handleError,
           check: target => this._userPolicy.canBan(target),
           abacError: {
             message: 'You do not have permission to ban/unban this user.',
@@ -157,7 +158,7 @@ export class UserService {
             headers: this._headers,
           });
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
@@ -174,7 +175,7 @@ export class UserService {
       abac: {
         context: {
           loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: error => ({ message: error }),
+          toContextErrorPayload: this.handleError,
           check: target => this._userPolicy.canBan(target),
           abacError: {
             message:
@@ -189,7 +190,7 @@ export class UserService {
             headers: this._headers,
           });
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
@@ -203,7 +204,7 @@ export class UserService {
       abac: {
         context: {
           loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: error => ({ message: error }),
+          toContextErrorPayload: this.handleError,
           check: context => this._userPolicy.canDelete(context),
           abacError: {
             message: 'You do not have permission to delete this user.',
@@ -217,7 +218,7 @@ export class UserService {
             headers: this._headers,
           });
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
@@ -234,7 +235,7 @@ export class UserService {
       abac: {
         context: {
           loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: error => ({ message: error }),
+          toContextErrorPayload: this.handleError,
           check: target => this._userPolicy.canImpersonate(target),
           abacError: {
             message: 'You do not have permission to impersonate this user.',
@@ -248,18 +249,15 @@ export class UserService {
             headers: this._headers,
           });
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
 
   stopImpersonate(): Promise<UserMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.stopImpersonating({ headers: this._headers });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.stopImpersonating({ headers: this._headers });
+    }, this.handleError);
   }
 
   // deleteAccount handles two cases:
@@ -278,7 +276,7 @@ export class UserService {
 
       if (token) await auth.api.signOut({ headers: this._headers }); // prevent client session cache
     } catch (error) {
-      throw new Error(this._serviceExecutor.getErrorMessage(error));
+      throw new Error(getErrorMessage(error));
     }
   }
 
@@ -286,7 +284,7 @@ export class UserService {
     try {
       await auth.api.revokeSession({ body: { token }, headers: this._headers });
     } catch (error) {
-      throw new Error(this._serviceExecutor.getErrorMessage(error));
+      throw new Error(getErrorMessage(error));
     }
   }
 
@@ -294,25 +292,22 @@ export class UserService {
     password: string,
     totp?: string
   ): Promise<AuthenticatePriorResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.verifyPassword({
-          body: { password },
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.verifyPassword({
+        body: { password },
+        headers: this._headers,
+      });
+
+      if (this.actor.twoFactorEnabled && totp) {
+        await auth.api.verifyTOTP({
+          body: { code: totp },
           headers: this._headers,
         });
+      }
 
-        if (this.actor.twoFactorEnabled && totp) {
-          await auth.api.verifyTOTP({
-            body: { code: totp },
-            headers: this._headers,
-          });
-        }
-
-        const sudoToken = await createSudoToken(this.actor.id);
-        return { sudoToken };
-      },
-      error => ({ message: error })
-    );
+      const sudoToken = await createSudoToken(this.actor.id);
+      return { sudoToken };
+    }, this.handleError);
   }
 
   updateProfile({
@@ -322,15 +317,12 @@ export class UserService {
     name: string;
     favoriteNumber: number;
   }): Promise<UserMutationResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.updateUser({
-          body: { name, favoriteNumber },
-          headers: this._headers,
-        });
-      },
-      error => ({ message: error })
-    );
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.updateUser({
+        body: { name, favoriteNumber },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   changeEmail(
@@ -351,7 +343,7 @@ export class UserService {
           headers: this._headers,
         });
       },
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -368,7 +360,7 @@ export class UserService {
           headers: this._headers,
         });
       },
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -392,7 +384,7 @@ export class UserService {
           headers: this._headers,
         });
       },
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -409,7 +401,7 @@ export class UserService {
           headers: this._headers,
         });
       },
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -422,7 +414,7 @@ export class UserService {
           body: { password },
           headers: this._headers,
         }),
-      error => ({ message: error })
+      this.handleError
     );
   }
 
@@ -435,22 +427,19 @@ export class UserService {
     password: string;
     trustDevice?: boolean;
   }): Promise<GenerateBackUpCodesResult> {
-    return this._serviceExecutor.runSafely(
-      async () => {
-        await auth.api.verifyTOTP({
-          body: { code: totpCode, trustDevice },
-          headers: this._headers,
-        });
+    return this._serviceExecutor.runSafely(async () => {
+      await auth.api.verifyTOTP({
+        body: { code: totpCode, trustDevice },
+        headers: this._headers,
+      });
 
-        const data = await auth.api.generateBackupCodes({
-          body: { password },
-          headers: this._headers,
-        });
+      const data = await auth.api.generateBackupCodes({
+        body: { password },
+        headers: this._headers,
+      });
 
-        return { backupCodes: data.backupCodes };
-      },
-      error => ({ message: error })
-    );
+      return { backupCodes: data.backupCodes };
+    }, this.handleError);
   }
 
   async setRole({
@@ -481,7 +470,7 @@ export class UserService {
       abac: {
         context: {
           loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: error => ({ message: error }),
+          toContextErrorPayload: this.handleError,
           check: target => this._userPolicy.canSetRole(target),
           abacError: {
             message: `You do not have permission to assign ${roles.join(', ')} roles.`,
@@ -495,7 +484,7 @@ export class UserService {
             headers: this._headers,
           });
         },
-        toErrorPayload: error => ({ message: error }),
+        toErrorPayload: this.handleError,
       },
     });
   }
@@ -507,5 +496,9 @@ export class UserService {
     if (!response.payload) throw new Error('User not found.');
 
     return response.payload;
+  }
+
+  private handleError(error: unknown): { message: string } {
+    return { message: getErrorMessage(error) };
   }
 }

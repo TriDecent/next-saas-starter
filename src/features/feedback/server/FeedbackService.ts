@@ -1,5 +1,7 @@
 import type { IBaseExecutor } from '@/infrastructure/executors';
+import { getErrorMessage } from '@/shared/utils';
 import type { CreateFeedbackInput, IFeedbackRepository } from '../repo';
+import type { MessageError, SubmitFeedbackResult } from './feedback-dtos';
 
 export class FeedbackService {
   constructor(
@@ -7,10 +9,14 @@ export class FeedbackService {
     private readonly _executor: IBaseExecutor
   ) {}
 
-  submitFeedback(input: CreateFeedbackInput) {
+  submitFeedback(input: CreateFeedbackInput): Promise<SubmitFeedbackResult> {
     return this._executor.runSafely(
       () => this._repo.create(input),
-      error => ({ message: error })
+      this.handleError
     );
+  }
+
+  private handleError(error: unknown): MessageError {
+    return { message: getErrorMessage(error) };
   }
 }
