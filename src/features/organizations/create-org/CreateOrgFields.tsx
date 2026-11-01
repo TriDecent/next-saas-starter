@@ -1,7 +1,7 @@
 'use client';
 
 import type { CreateOrgInput } from '@/features/organizations/server';
-import { FormField } from '@/shared/components/form/client';
+import { InputField } from '@/shared/components/form/client';
 import { InputGroupAddon } from '@/shared/components/ui';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -21,8 +21,7 @@ export function CreateOrgFields() {
 
   return (
     <>
-      <FormField
-        kind='input'
+      <InputField
         id='name'
         labelText='Name'
         name='name'
@@ -34,8 +33,7 @@ export function CreateOrgFields() {
         }
       />
 
-      <FormField
-        kind='input'
+      <InputField
         id='slug'
         labelText='Slug'
         name='slug'

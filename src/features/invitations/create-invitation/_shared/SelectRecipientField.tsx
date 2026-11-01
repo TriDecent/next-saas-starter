@@ -3,7 +3,7 @@
 import { getUsersInfiniteQueryOptions } from '@/features/user/api/user-query-options';
 import type { User } from '@/generated/prisma/client';
 import { MiniLoader } from '@/shared/components';
-import { FormField } from '@/shared/components/form/client';
+import { ComboboxField } from '@/shared/components/form/client';
 import {
   Button,
   ComboboxCollection,
@@ -40,8 +40,7 @@ export function SelectRecipientField() {
   const users = data?.pages.flatMap(page => page.users);
 
   return (
-    <FormField<User>
-      kind='combobox'
+    <ComboboxField<CreateInvitationSchemaType, 'email', User>
       id='email'
       name='email'
       labelText='Email'
@@ -81,7 +80,7 @@ export function SelectRecipientField() {
           className='mx-auto mb-3 block animate-pulse disabled:animate-none'
         />
       </ComboboxContent>
-    </FormField>
+    </ComboboxField>
   );
 }
 

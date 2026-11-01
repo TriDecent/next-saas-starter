@@ -2,7 +2,7 @@
 
 import { SignInSchema } from '@/features/auth/schema';
 import { MiniLoader, TrustDeviceField } from '@/shared/components';
-import { FormField, useActionForm } from '@/shared/components/form/client';
+import { InputField, useActionForm } from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
 import {
   Field,
@@ -85,8 +85,7 @@ export function SignInForm({
         <FieldSet>
           <FieldLegend>Enter your details</FieldLegend>
           <FieldGroup>
-            <FormField
-              kind='input'
+            <InputField
               id='email'
               name='email'
               labelText='Email'
@@ -101,9 +100,8 @@ export function SignInForm({
               disabled={isPending}
             />
 
-            <FormField
+            <InputField
               type='password'
-              kind='input'
               id='password'
               name='password'
               labelText='Password'

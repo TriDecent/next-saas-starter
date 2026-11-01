@@ -5,7 +5,7 @@ import {
   type UpdatePasswordSchemaType,
 } from '@/features/auth/schema';
 import { MiniLoader } from '@/shared/components';
-import { FormField, useActionForm } from '@/shared/components/form/client';
+import { InputField, useActionForm } from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
 import {
   Field,
@@ -83,8 +83,7 @@ export function UpdatePasswordForm({ token }: { token: string }) {
           <FieldGroup>
             <input type='hidden' name='token' value={token} />
 
-            <FormField
-              kind='input'
+            <InputField
               type='password'
               id='password'
               name='password'
@@ -100,8 +99,7 @@ export function UpdatePasswordForm({ token }: { token: string }) {
               placeholder='Enter your new password'
             />
 
-            <FormField
-              kind='input'
+            <InputField
               type='password'
               id='confirmPassword'
               name='confirmPassword'

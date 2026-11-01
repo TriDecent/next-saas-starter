@@ -2,7 +2,7 @@
 
 import { ResetPasswordSchema } from '@/features/auth/schema';
 import { MiniLoader } from '@/shared/components';
-import { FormField, useActionForm } from '@/shared/components/form/client';
+import { InputField, useActionForm } from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
 import {
   Field,
@@ -66,8 +66,7 @@ export function ResetPasswordForm() {
         <FieldSet>
           <FieldLegend>Enter your email</FieldLegend>
           <FieldGroup>
-            <FormField
-              kind='input'
+            <InputField
               id='email'
               name='email'
               labelText='Email Address'

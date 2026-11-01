@@ -1,15 +1,12 @@
-import { FormField } from '@/shared/components/form/client';
-import { VscWorkspaceTrusted } from 'react-icons/vsc';
+import { CheckboxField } from '@/shared/components/form/client';
 
 export function TrustDeviceField({ isPending }: { isPending: boolean }) {
   return (
-    <FormField
-      kind='checkbox'
+    <CheckboxField
       id='trust-device'
       name='trustDevice'
       labelText='Trust this device'
       description='Remember this device and skip 2FA for 30 days.'
-      addons={<VscWorkspaceTrusted />}
       disabled={isPending}
       variant='card'
     />

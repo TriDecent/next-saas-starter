@@ -1,9 +1,8 @@
-import { FormField } from '@/shared/components/form/client';
+import { InputField } from '@/shared/components/form/client';
 
 export function PasswordField({ isPending }: { isPending: boolean }) {
   return (
-    <FormField
-      kind='input'
+    <InputField
       id='password'
       name='password'
       labelText='Password'

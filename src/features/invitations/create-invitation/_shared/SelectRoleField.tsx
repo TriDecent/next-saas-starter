@@ -1,7 +1,7 @@
 'use client';
 
 import { ORG_ROLES } from '@/features/authorization';
-import { FormField } from '@/shared/components/form/client';
+import { RadioGroupField } from '@/shared/components/form/client';
 import {
   Item,
   ItemActions,
@@ -19,8 +19,10 @@ import { HiCog, HiEye, HiStar, HiUserGroup } from 'react-icons/hi';
 export function SelectRoleField() {
   return (
     <ItemGroup className='gap-3'>
-      <FormField kind='radio-group' name='role' id='role'>
-        {({ isDisabled, isError }) =>
+      <RadioGroupField
+        name='role'
+        id='role'
+        renderItems={({ isDisabled, isError }) =>
           roles.map(role => (
             <Field
               key={role.value}
@@ -34,7 +36,6 @@ export function SelectRoleField() {
                     renderActions={
                       <RadioGroupItem
                         value={role.value}
-                        disabled={isDisabled}
                         aria-invalid={isError}
                       />
                     }
@@ -44,7 +45,7 @@ export function SelectRoleField() {
             </Field>
           ))
         }
-      </FormField>
+      />
     </ItemGroup>
   );
 }
@@ -66,9 +67,8 @@ function RoleDisplay({
 
           <ItemContent className='min-w-0'>
             <ItemTitle>{role.label}</ItemTitle>
-            {role.description ? (
-              <ItemDescription>{role.description}</ItemDescription>
-            ) : null}
+
+            <ItemDescription>{role.description}</ItemDescription>
           </ItemContent>
         </div>
 

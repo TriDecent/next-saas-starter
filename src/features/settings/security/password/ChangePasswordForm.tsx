@@ -2,7 +2,11 @@
 
 import { ChangePasswordSchema } from '@/features/auth/schema';
 import { MiniLoader } from '@/shared/components';
-import { FormField, useActionForm } from '@/shared/components/form/client';
+import {
+  CheckboxField,
+  InputField,
+  useActionForm,
+} from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
 import {
   Field,
@@ -74,8 +78,7 @@ export function ChangePasswordForm({
         <FieldSet>
           <FieldLegend>Enter your new password</FieldLegend>
           <FieldGroup>
-            <FormField
-              kind='input'
+            <InputField
               type='password'
               id='currentPassword'
               name='currentPassword'
@@ -91,8 +94,7 @@ export function ChangePasswordForm({
               placeholder='Enter your current password'
             />
 
-            <FormField
-              kind='input'
+            <InputField
               type='password'
               id='newPassword'
               name='newPassword'
@@ -108,8 +110,7 @@ export function ChangePasswordForm({
               placeholder='Enter your new password'
             />
 
-            <FormField
-              kind='input'
+            <InputField
               type='password'
               id='confirmPassword'
               name='confirmPassword'
@@ -125,8 +126,7 @@ export function ChangePasswordForm({
               placeholder='Confirm your new password'
             />
 
-            <FormField
-              kind='checkbox'
+            <CheckboxField
               variant='card'
               id='revokeOtherSessions'
               name='revokeOtherSessions'

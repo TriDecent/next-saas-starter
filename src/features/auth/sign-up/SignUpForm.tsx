@@ -2,7 +2,7 @@
 
 import { SignUpSchema } from '@/features/auth/schema';
 import { MiniLoader } from '@/shared/components';
-import { FormField, useActionForm } from '@/shared/components/form/client';
+import { InputField, useActionForm } from '@/shared/components/form/client';
 import { Button, InputGroupAddon } from '@/shared/components/ui';
 import {
   Field,
@@ -80,8 +80,7 @@ export function SignUpForm() {
         <FieldSet>
           <FieldLegend>Enter your details</FieldLegend>
           <FieldGroup>
-            <FormField
-              kind='input'
+            <InputField
               id='name'
               name='name'
               labelText='Name'
@@ -98,8 +97,7 @@ export function SignUpForm() {
               placeholder='Trí Decent...'
             />
 
-            <FormField
-              kind='input'
+            <InputField
               id='email'
               name='email'
               labelText='Email'
@@ -116,9 +114,8 @@ export function SignUpForm() {
               placeholder='you@example.com'
             />
 
-            <FormField
+            <InputField
               type='password'
-              kind='input'
               id='password'
               name='password'
               labelText='Password'
@@ -135,9 +132,8 @@ export function SignUpForm() {
               placeholder='********'
             />
 
-            <FormField
+            <InputField
               type='password'
-              kind='input'
               id='confirmedPassword'
               name='confirmedPassword'
               labelText='Confirm your password'
@@ -154,8 +150,7 @@ export function SignUpForm() {
               placeholder='********'
             />
 
-            <FormField
-              kind='input'
+            <InputField
               id='favoriteNumber'
               name='favoriteNumber'
               labelText='Your favorite number'

@@ -1,8 +1,5 @@
 import type { Organization, Prisma, User } from '@/generated/prisma/client';
-import type { GlobalOmitConfig } from '@/generated/prisma/internal/prismaNamespace';
-import type { OrganizationDelegate } from '@/generated/prisma/models';
 import { prisma } from '@/lib';
-import type { DefaultArgs } from '@prisma/client/runtime/client';
 import type {
   OrgDetails,
   OrgDetailsQuery,
@@ -19,13 +16,6 @@ export class OrganizationRepository implements IOrganizationRepository {
   private readonly _delegate = prisma.organization;
 
   constructor() {}
-
-  get model(): OrganizationDelegate<
-    DefaultArgs,
-    { omit: GlobalOmitConfig | undefined }
-  > {
-    return prisma.organization;
-  }
 
   async listOrganizationsForUser(
     userId: User['id']

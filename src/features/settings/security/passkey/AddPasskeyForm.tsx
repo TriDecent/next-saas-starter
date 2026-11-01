@@ -1,7 +1,7 @@
 'use client';
 
 import { authClient } from '@/lib/auth/auth-client';
-import { FormField, useShakeError } from '@/shared/components/form/client';
+import { InputField, useShakeError } from '@/shared/components/form/client';
 import { Button } from '@/shared/components/ui';
 import { Field, FieldGroup } from '@/shared/components/ui/client';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -59,8 +59,7 @@ export function AddPasskeyForm() {
     >
       <FormProvider {...methods}>
         <FieldGroup>
-          <FormField
-            kind='input'
+          <InputField
             id='passkeyName'
             name='passkeyName'
             labelText='Passkey name'

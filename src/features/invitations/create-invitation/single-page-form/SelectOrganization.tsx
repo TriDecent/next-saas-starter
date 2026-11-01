@@ -2,7 +2,7 @@
 
 import type { Organization } from '@/generated/prisma/client';
 import type { OrgMembershipSummary } from '@/infrastructure/repositories/organization';
-import { FormField } from '@/shared/components/form/client';
+import { RadioGroupField } from '@/shared/components/form/client';
 import { RadioGroupItem } from '@/shared/components/ui';
 import {
   Field,
@@ -39,8 +39,10 @@ export function SelectOrganization({
       {organizations.length === 0 ? (
         <EmptyOrganization />
       ) : (
-        <FormField kind='radio-group' id='organizationId' name='organizationId'>
-          {({ isError, isDisabled }) =>
+        <RadioGroupField
+          id='organizationId'
+          name='organizationId'
+          renderItems={({ isError, isDisabled }) =>
             organizations.map(org => (
               <OrgField
                 key={org.id}
@@ -53,7 +55,7 @@ export function SelectOrganization({
               />
             ))
           }
-        </FormField>
+        />
       )}
     </FieldSet>
   );

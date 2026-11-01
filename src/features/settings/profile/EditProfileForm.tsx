@@ -4,7 +4,7 @@ import { UpdateProfileSchema } from '@/features/user/schema';
 import type { AuthSession } from '@/lib/auth';
 import {
   BaseFormLayout,
-  FormField,
+  InputField,
   useActionForm,
 } from '@/shared/components/form/client';
 import { InputGroupAddon } from '@/shared/components/ui';
@@ -83,8 +83,7 @@ export function EditProfileForm({ user }: { user: AuthSession['user'] }) {
       <FieldSet>
         <FieldLegend>Enter your details</FieldLegend>
         <FieldGroup>
-          <FormField
-            kind='input'
+          <InputField
             id='name'
             name='name'
             labelText='Name'
@@ -100,8 +99,7 @@ export function EditProfileForm({ user }: { user: AuthSession['user'] }) {
             autoComplete='name webauthn'
           />
 
-          <FormField
-            kind='input'
+          <InputField
             id='favoriteNumber'
             name='favoriteNumber'
             labelText='Favorite number'

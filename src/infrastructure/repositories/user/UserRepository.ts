@@ -1,6 +1,5 @@
 import type { Prisma, User } from '@/generated/prisma/client';
 import { prisma } from '@/lib';
-import type { DefaultArgs } from '@prisma/client/runtime/client';
 
 export interface IUserRepository {
   getUsers(
@@ -19,13 +18,6 @@ export class UserRepository implements IUserRepository {
   private readonly _delegate = prisma.user;
 
   constructor() {}
-
-  get model(): Prisma.UserDelegate<
-    DefaultArgs,
-    { omit: Prisma.GlobalOmitConfig | undefined }
-  > {
-    return this._delegate;
-  }
 
   async getUsers(
     skip: number,

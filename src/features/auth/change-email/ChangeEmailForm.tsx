@@ -2,7 +2,7 @@
 
 import {
   BaseFormLayout,
-  FormField,
+  InputField,
   useActionForm,
 } from '@/shared/components/form/client';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -57,8 +57,7 @@ export function ChangeEmailForm() {
       isPending={isPending}
       animationRef={animationScope}
     >
-      <FormField
-        kind='input'
+      <InputField
         id='new-email'
         name='newEmail'
         labelText='New Email'

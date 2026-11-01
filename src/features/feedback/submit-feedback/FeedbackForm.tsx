@@ -4,7 +4,9 @@ import { FeedbackType } from '@/generated/prisma/enums';
 import { CopyText } from '@/shared/components/client';
 import {
   BaseFormLayout,
-  FormField,
+  InputField,
+  SelectField,
+  TextareaField,
   useActionForm,
 } from '@/shared/components/form/client';
 import {
@@ -22,7 +24,6 @@ import {
   CopyIcon,
   Globe,
   MessageSquare,
-  MessageSquarePlus,
   Palette,
   Sparkles,
 } from 'lucide-react';
@@ -90,8 +91,7 @@ export function FeedbackForm() {
 
 function MessageTextarea() {
   return (
-    <FormField
-      kind='textarea'
+    <TextareaField
       id='message'
       name='message'
       labelText='Message'
@@ -139,8 +139,7 @@ function MessageCharCounter() {
 
 function PageUrlInput() {
   return (
-    <FormField
-      kind='input'
+    <InputField
       id='pageUrl'
       name='pageUrl'
       labelText='Page URL'
@@ -155,54 +154,62 @@ function PageUrlInput() {
 
 function FeedbackTypeSelect() {
   return (
-    <FormField
-      kind='select'
+    <SelectField
       id='type'
       name='type'
       labelText='Type'
-      addons={
-        <InputGroupAddon align={'inline-start'}>
-          <MessageSquarePlus />
-        </InputGroupAddon>
-      }
       description='What is the type of feedback you want to submit?'
+      items={Object.values(FEEDBACK_TYPE_CONFIG)}
     >
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Type</SelectLabel>
           {Object.entries(FEEDBACK_TYPE_CONFIG).map(([key, config]) => (
             <SelectItem key={key} value={key}>
-              <span className='flex items-center gap-2'>
-                <config.icon className={`${config.color}`} />
-                {config.label}
-              </span>
+              <span className='flex items-center gap-2'>{config.label}</span>
             </SelectItem>
           ))}
         </SelectGroup>
       </SelectContent>
-    </FormField>
+    </SelectField>
   );
 }
 
 const FEEDBACK_TYPE_CONFIG = {
   [FeedbackType.FeatureRequest]: {
-    label: 'Feature Request',
-    icon: Sparkles,
-    color: 'text-amber-500',
+    label: (
+      <>
+        <Sparkles className='text-amber-500' />
+        Feature Request
+      </>
+    ),
+    value: FeedbackType.FeatureRequest,
   },
   [FeedbackType.Bug]: {
-    label: 'Bug Report',
-    icon: Bug,
-    color: 'text-rose-500',
+    label: (
+      <>
+        <Bug className='text-rose-500' />
+        Bug
+      </>
+    ),
+    value: FeedbackType.Bug,
   },
   [FeedbackType.General]: {
-    label: 'General',
-    icon: MessageSquare,
-    color: 'text-blue-500',
+    label: (
+      <>
+        <MessageSquare className='text-blue-500' />
+        General
+      </>
+    ),
+    value: FeedbackType.General,
   },
   [FeedbackType.UiUx]: {
-    label: 'UI/UX',
-    icon: Palette,
-    color: 'text-purple-500',
+    label: (
+      <>
+        <Palette className='text-purple-500' />
+        UI/UX
+      </>
+    ),
+    value: FeedbackType.UiUx,
   },
 } as const;
