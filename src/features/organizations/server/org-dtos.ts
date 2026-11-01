@@ -1,9 +1,9 @@
 import type { OrganizationRole } from '@/features/authorization';
 import type { Organization } from '@/generated/prisma/client';
-import type { OrgDetails } from '@/infrastructure/repositories';
 import type { auth } from '@/lib/auth';
 import type { Pagination, Query } from '@/shared/pagination';
 import type { ExtractEndpointBody, ServiceResult } from '@/shared/types';
+import type { OrgDetails } from '../repo';
 
 export type CreateOrgInput = ExtractEndpointBody<
   typeof auth.api.createOrganization

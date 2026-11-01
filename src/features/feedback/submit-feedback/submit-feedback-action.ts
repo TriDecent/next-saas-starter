@@ -1,5 +1,6 @@
 'use server';
 
+import { getFeedbackService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAnonymous,
   handleDeniedInServerAction,
@@ -7,7 +8,6 @@ import {
 import type { ActionState } from '@/shared/components/form/client';
 import { request } from '@arcjet/next';
 import type { CreateFeedbackInput } from '../repo';
-import { getFeedbackService } from '../server/factory';
 import { SubmitFeedbackSchema } from './schema';
 
 type SubmitFeedbackState = ActionState<void, { message: string }>;

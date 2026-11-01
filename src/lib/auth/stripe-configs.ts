@@ -5,7 +5,7 @@ import {
   sendTrialExpireEmail,
   sendTrialStartEmail,
 } from '@/features/email';
-import { getUserRepo } from '@/infrastructure/repositories';
+import { getUserRepo } from '@/features/user/repo';
 import { ENV } from '@/lib/env';
 import { type StripeOptions, type StripePlan } from '@better-auth/stripe';
 import { stripeClient } from '../stripe';

@@ -1,7 +1,7 @@
 'use client';
 
+import type { OrgMembershipSummary } from '@/features/organizations/repo';
 import type { Organization } from '@/generated/prisma/client';
-import type { OrgMembershipSummary } from '@/infrastructure/repositories/organization';
 import { RadioGroupField } from '@/shared/components/form/client';
 import { RadioGroupItem } from '@/shared/components/ui';
 import {

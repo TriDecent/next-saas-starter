@@ -1,20 +1,8 @@
 import type { Prisma, User } from '@/generated/prisma/client';
 import { prisma } from '@/lib';
+import type { IUserRepository } from './IUserRepository';
 
-export interface IUserRepository {
-  getUsers(
-    skip: number,
-    take: number,
-    orderBy?: Prisma.UserOrderByWithRelationInput[],
-    keyword?: string
-  ): Promise<{ data: User[]; total: number }>;
-
-  getUserById(id: User['id']): Promise<User | null>;
-
-  iterateUsers({ batchSize }: { batchSize: number }): AsyncGenerator<User>;
-}
-
-export class UserRepository implements IUserRepository {
+export class PrismaUserRepository implements IUserRepository {
   private readonly _delegate = prisma.user;
 
   constructor() {}

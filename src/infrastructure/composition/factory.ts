@@ -1,16 +1,19 @@
 'use server';
 
 import { AuthService } from '@/features/auth/server';
+import { PrismaFeedbackRepository } from '@/features/feedback/repo';
+import { FeedbackService } from '@/features/feedback/server';
+import { getOrgRepo } from '@/features/organizations/repo';
 import { OrganizationService } from '@/features/organizations/server';
 import { SubscriptionService } from '@/features/subscription/server';
+import { PrismaUserRepository } from '@/features/user/repo';
 import { UserService } from '@/features/user/server';
 import type { Session, User } from '@/generated/prisma/client';
 import {
   AuthenticatedExecutor,
   BaseExecutor,
 } from '@/infrastructure/executors';
-import { getOrgRepo } from '@/infrastructure/repositories';
-import { UserRepository } from '@/infrastructure/repositories/user';
+
 import { auth, ensureSession } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { cache } from 'react';
@@ -19,7 +22,7 @@ export const getUserService = cache(async (callbackUrl: string) => {
   const { actor, session, headers } = await loadUserSession(callbackUrl);
 
   return new UserService(
-    new UserRepository(),
+    new PrismaUserRepository(),
     new AuthenticatedExecutor(actor),
     session,
     headers
@@ -71,3 +74,8 @@ const loadUserSession = cache(async (callbackUrl: string) => {
     headers: headersList,
   };
 });
+
+export const getFeedbackService = cache(
+  async () =>
+    new FeedbackService(new PrismaFeedbackRepository(), new BaseExecutor())
+);

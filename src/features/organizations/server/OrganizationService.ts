@@ -1,14 +1,11 @@
 import { AppPolicy } from '@/features/authorization/core';
 import type { Session } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
-import type {
-  IOrganizationRepository,
-  OrgMembershipSummary,
-} from '@/infrastructure/repositories';
 import { auth } from '@/lib/auth';
 import { buildPagination } from '@/shared/pagination';
 import type { ServiceResult } from '@/shared/types';
 import { getErrorMessage } from '@/shared/utils';
+import type { IOrgRepository, OrgMembershipSummary } from '../repo';
 import {
   type CreateInvitationInput,
   type CreateOrgInput,
@@ -29,7 +26,7 @@ export class OrganizationService {
 
   constructor(
     private readonly _serviceExecutor: IAuthenticatedExecutor,
-    private readonly _repo: IOrganizationRepository,
+    private readonly _repo: IOrgRepository,
     private readonly _currentSession: Session,
     private readonly _headers: Headers
   ) {}

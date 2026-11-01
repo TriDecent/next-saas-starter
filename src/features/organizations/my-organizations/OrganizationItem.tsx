@@ -1,4 +1,4 @@
-import type { OrgMembershipSummary } from '@/infrastructure/repositories/organization';
+import type { OrgMembershipSummary } from '@/features/organizations/repo';
 import {
   Badge,
   Item,

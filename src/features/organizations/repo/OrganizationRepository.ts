@@ -1,18 +1,13 @@
 import type { Organization, Prisma, User } from '@/generated/prisma/client';
 import { prisma } from '@/lib';
+import type { IOrgRepository } from './IOrgRepository';
 import type {
   OrgDetails,
   OrgDetailsQuery,
   OrgMembershipSummary,
 } from './types';
 
-export interface IOrganizationRepository {
-  listOrganizationsForUser(userId: User['id']): Promise<OrgMembershipSummary[]>;
-  getAuthorizedUserIdsForOrg(orgId: Organization['id']): Promise<string[]>;
-  getOrgDetails(params: OrgDetailsQuery): Promise<OrgDetails | null>;
-}
-
-export class OrganizationRepository implements IOrganizationRepository {
+export class PrismaOrgRepository implements IOrgRepository {
   private readonly _delegate = prisma.organization;
 
   constructor() {}
