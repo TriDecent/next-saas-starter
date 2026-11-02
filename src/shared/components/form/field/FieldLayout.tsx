@@ -33,7 +33,7 @@ export function FieldLayout({
       data-disabled={disabled}
       orientation={'responsive'}
     >
-      <FieldLabel htmlFor={id} className='max-w-28 md:max-w-full'>
+      <FieldLabel htmlFor={id} className='max-w-full @md:max-w-28'>
         {labelText}
       </FieldLabel>
 

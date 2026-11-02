@@ -2,7 +2,7 @@
 
 import { useOrgContext } from '@/features/organizations/client';
 import { MiniLoader } from '@/shared/components';
-import { Button, Card, CardContent } from '@/shared/components/ui';
+import { Button, Card, CardContent, Separator } from '@/shared/components/ui';
 import {
   FieldDescription,
   FieldSet,
@@ -38,7 +38,7 @@ function MultiStepFormLayout() {
       renderActions={
         isLast
           ? isPending => (
-              <div className='flex px-6 sm:justify-end'>
+              <div className='mb-4 flex px-6 sm:justify-end'>
                 <SubmitButton isPending={isPending} />
               </div>
             )
@@ -62,6 +62,9 @@ function StepContentRenderer() {
         total={INVITATION_STEPS.length}
         isLast={isLast}
       />
+
+      <Separator />
+
       <CardContent>
         <FieldSet>
           <FieldTitle>{meta.title}</FieldTitle>

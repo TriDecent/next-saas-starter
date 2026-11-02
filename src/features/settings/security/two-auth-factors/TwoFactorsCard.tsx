@@ -60,8 +60,6 @@ export function TwoFactorsCard({ isEnabled }: { isEnabled: boolean }) {
         </ItemGroup>
       </CardContent>
 
-      <Separator />
-
       <CardFooter className='text-muted-foreground text-xs'>
         Enabling 2FA helps protect your account. We recommend using an
         authenticator app instead of SMS.

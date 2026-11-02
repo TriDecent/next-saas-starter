@@ -16,7 +16,7 @@ export function ToggleFeedback({ className }: { className?: string }) {
       description='We value your feedback and would love to hear from you. Please share your thoughts, suggestions, or any issues you have encountered. Your input helps us improve our product and provide a better experience for all users.'
       content={
         <ScrollArea className='h-96 mask-b-from-70% mask-b-to-100%'>
-          <div className='mb-8'>
+          <div className='mb-32 md:mb-16'>
             <FeedbackForm />
           </div>
         </ScrollArea>

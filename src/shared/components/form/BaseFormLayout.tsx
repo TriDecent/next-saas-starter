@@ -50,36 +50,38 @@ export function BaseFormLayout<T extends FieldValues>({
         <FieldGroup>
           {children}
 
-          <Separator />
-
           {shouldRenderSubmitButton ? (
-            <div className='mt-2 flex flex-col gap-2 sm:ml-auto sm:flex-row'>
-              <Button
-                disabled={isPending}
-                type='submit'
-                className='order-1 w-full min-w-32 sm:order-2 sm:w-fit'
-              >
-                {isPending ? (
-                  <MiniLoader />
-                ) : (
-                  (submit ?? (
-                    <>
-                      <GiConfirmed className='mr-2' /> Confirm
-                    </>
-                  ))
-                )}
-              </Button>
+            <>
+              <Separator />
 
-              <Button
-                type='reset'
-                variant={'ghost'}
-                disabled={isPending}
-                onClick={() => methods.reset()}
-                className='order-2 w-full sm:order-1 sm:w-fit'
-              >
-                Cancel
-              </Button>
-            </div>
+              <div className='mt-2 flex flex-col gap-2 sm:ml-auto sm:flex-row'>
+                <Button
+                  disabled={isPending}
+                  type='submit'
+                  className='order-1 w-full min-w-32 sm:order-2 sm:w-fit'
+                >
+                  {isPending ? (
+                    <MiniLoader />
+                  ) : (
+                    (submit ?? (
+                      <>
+                        <GiConfirmed className='mr-2' /> Confirm
+                      </>
+                    ))
+                  )}
+                </Button>
+
+                <Button
+                  type='reset'
+                  variant={'ghost'}
+                  disabled={isPending}
+                  onClick={() => methods.reset()}
+                  className='order-2 w-full sm:order-1 sm:w-fit'
+                >
+                  Cancel
+                </Button>
+              </div>
+            </>
           ) : null}
 
           {combinedErrors.length > 0 ? (
