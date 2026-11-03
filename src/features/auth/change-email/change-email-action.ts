@@ -8,7 +8,9 @@ import {
   handleDeniedInServerAction,
 } from '@/lib/arcjet';
 import type { ActionState } from '@/shared/components/form/client';
+import { COOKIES } from '@/shared/constants';
 import { request } from '@arcjet/next';
+import { cookies } from 'next/headers';
 import z from 'zod';
 
 type ChangeEmailParams = {
@@ -46,10 +48,13 @@ export async function changeEmailAction(
   { newEmail }: ChangeEmailParams,
   callbackURL: string
 ): Promise<UserMutationResult> {
-  const [req, service] = await Promise.all([
+  const [req, service, cookiesList] = await Promise.all([
     request(),
     getUserService(callbackURL),
+    cookies(),
   ]);
+
+  const sudoToken = cookiesList.get(COOKIES['sudo-token'].name)?.value;
 
   const emailSendDecision = await ajEmailSend.protect(req, {
     action: `sa-change-email-${newEmail}`,
@@ -59,5 +64,5 @@ export async function changeEmailAction(
   if (emailSendDecision.isDenied())
     handleDeniedInServerAction(emailSendDecision);
 
-  return service.changeEmail({ newEmail, callbackURL });
+  return service.changeEmail({ newEmail, callbackURL }, sudoToken);
 }

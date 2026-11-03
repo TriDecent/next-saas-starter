@@ -399,11 +399,14 @@ export class UserService {
     return this._serviceExecutor.runWithSudo(
       sudoToken,
       'You must re-authenticate to enable 2FA authentication.',
-      () =>
-        auth.api.enableTwoFactor({
+      () => {
+        this._userPolicy.assertCanEnable2FA();
+
+        return auth.api.enableTwoFactor({
           body: { password },
           headers: this._headers,
-        }),
+        });
+      },
       this.handleError
     );
   }

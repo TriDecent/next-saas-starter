@@ -1,4 +1,3 @@
-import { AppPolicy } from '@/features/authorization/core';
 import type { Session, User } from '@/generated/prisma/client';
 import type { IBaseExecutor } from '@/infrastructure/executors';
 import { auth } from '@/lib/auth';
@@ -37,41 +36,35 @@ export class AuthService {
     password: string;
     rememberMe?: boolean;
   }): Promise<SignInResult> {
-    try {
-      const response = await auth.api.signInEmail({
-        headers: this._headers,
-        body: { email, password, rememberMe },
-      });
+    return this._executor.runSafely(
+      async () => {
+        const response = await auth.api.signInEmail({
+          headers: this._headers,
+          body: { email, password, rememberMe },
+        });
 
-      if (!('twoFactorRedirect' in response))
-        return { type: 'success', payload: {} };
-      return {
-        type: 'success',
-        payload: { redirect: this.get2FARedirectUrl() },
-      };
-    } catch (error) {
-      if (isRedirectError(error)) throw error;
+        if (!('twoFactorRedirect' in response)) return {};
 
-      if (
-        error instanceof APIError &&
-        error.status === 'FORBIDDEN' &&
-        error.statusCode === 403
-      ) {
-        return {
-          type: 'error',
-          payload: {
+        return { redirect: this.get2FARedirectUrl() };
+      },
+      error => {
+        if (isRedirectError(error)) throw error;
+
+        if (
+          error instanceof APIError &&
+          error.status === 'FORBIDDEN' &&
+          error.statusCode === 403
+        ) {
+          return {
             status: 'EMAIL_NOT_VERIFIED',
             email: email,
             message: error.message,
-          },
-        };
-      }
+          };
+        }
 
-      return {
-        type: 'error',
-        payload: this.handleError(error),
-      };
-    }
+        return this.handleError(error);
+      }
+    );
   }
 
   signUp(params: {
@@ -136,16 +129,12 @@ export class AuthService {
     email: string;
     callbackURL: string;
   }): Promise<AuthMutationResult> {
-    if (this._actor && this._actor.email !== email) {
-      return {
-        type: 'error',
-        payload: {
-          message: 'You can only send verification emails to your own email.',
-        },
-      };
-    }
-
     return this._executor.runSafely(async () => {
+      if (this._actor && this._actor.email !== email)
+        throw new Error(
+          'You can only send verification emails to your own email.'
+        );
+
       await auth.api.sendVerificationEmail({
         body: { email, callbackURL },
       });
@@ -160,11 +149,6 @@ export class AuthService {
     trustDevice?: boolean;
   }): Promise<AuthMutationResult> {
     return this._executor.runSafely(async () => {
-      // actor shouldn't be undefined here,
-      // because this method is only called after the user has signed in and is authenticated
-      if (!AppPolicy.getUserPolicyFor(this._actor!).canEnable2FA())
-        throw new Error('You do not have permission to enable 2FA.');
-
       await auth.api.verifyTOTP({
         body: { code, trustDevice },
         headers: this._headers,
