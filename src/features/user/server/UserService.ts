@@ -51,32 +51,26 @@ export class UserService {
   }
 
   async getUserById(id: User['id']): Promise<GetUserByIdResult> {
-    const canGetUser = await hasPermission(this.actor.id, { user: ['get'] });
-    if (!canGetUser)
-      return {
-        type: 'error',
-        payload: { message: 'You do not have permission to get user details.' },
-      };
+    return this._serviceExecutor.runSafely(async () => {
+      const canGetUser = await hasPermission(this.actor.id, {
+        user: ['get'],
+      });
+      if (!canGetUser)
+        throw new Error('You do not have permission to get user details.');
 
-    const user = await this._repo.getUserById(id);
+      const user = await this._repo.getUserById(id);
 
-    if (!user) return { type: 'success', payload: user };
+      if (!user) return user;
 
-    if (!this._userPolicy.canRead(user))
-      return {
-        type: 'error',
-        payload: {
-          message: 'You do not have permission to get this user details.',
-        },
-      };
+      this._userPolicy.assertCanRead(user);
 
-    return { type: 'success', payload: user };
+      return user;
+    }, this.handleError);
   }
 
   async *getUsersForExport(): AsyncGenerator<User> {
-    if (!this._userPolicy.canExportUsers())
-      // ! This is intentional; we'll let the outer pipeline catch the error
-      throw new Error('You do not have permission to export users.');
+    // ! This is intentional; we'll let the outer pipeline catch the error
+    this._userPolicy.assertCanExportUsers();
 
     const batchSize = 100;
 
@@ -333,10 +327,7 @@ export class UserService {
       sudoToken,
       'You must re-authenticate to change your email address.',
       async () => {
-        if (!this._userPolicy.canChangeEmail())
-          throw new Error(
-            'You do not have permission to change this email address.'
-          );
+        this._userPolicy.assertCanChangeEmail();
 
         await auth.api.changeEmail({
           body: { newEmail, callbackURL },
@@ -376,8 +367,7 @@ export class UserService {
       sudoToken,
       'Please re-authenticate to change your password.',
       async () => {
-        if (!this._userPolicy.canChangePassword())
-          throw new Error('You do not have permission to change the password.');
+        this._userPolicy.assertCanChangePassword();
 
         await auth.api.changePassword({
           body: params,
@@ -450,7 +440,7 @@ export class UserService {
     roles: AppRole[];
   }): Promise<UserMutationResult> {
     for (const role of roles) {
-      if (!this._rolePolicy.canAssign({ name: role }))
+      if (!this._rolePolicy.canAssignRole({ name: role }))
         return {
           type: 'error',
           payload: {

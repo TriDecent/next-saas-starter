@@ -63,7 +63,6 @@ export default async function Verify2FAPage() {
                 <Suspense fallback={<MiniLoader />}>{option.content}</Suspense>
               </CardContent>
 
-              <Separator />
               <CardFooter>{option.cardFooter}</CardFooter>
             </Card>
           </TabsContent>

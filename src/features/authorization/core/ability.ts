@@ -62,31 +62,39 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     can('manage', 'all');
     cannot('ban-user', 'User', {
       role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
-    });
+    }).because('Admins cannot ban other admins or super-admins');
 
-    cannot('revoke-user', 'User', { id: actor.id });
+    cannot('revoke-user', 'User', { id: actor.id }).because(
+      'Admins cannot revoke their own account'
+    );
     cannot('revoke-user', 'User', {
       role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
-    });
+    }).because('Admins cannot revoke other admins or super-admins');
 
-    cannot('delete', 'User', { id: actor.id });
+    cannot('delete', 'User', { id: actor.id }).because(
+      'Admins cannot delete their own account'
+    );
     cannot('delete', 'User', {
       role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
-    });
+    }).because('Admins cannot delete other admins or super-admins');
 
-    cannot('impersonate-user', 'User', { id: actor.id });
+    cannot('impersonate-user', 'User', { id: actor.id }).because(
+      'Admins cannot impersonate themselves'
+    );
     cannot('impersonate-user', 'User', {
       role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
-    });
+    }).because('Admins cannot impersonate other admins or super-admins');
 
-    cannot('set-role', 'User', { id: actor.id });
+    cannot('set-role', 'User', { id: actor.id }).because(
+      'Admins cannot change their own role'
+    );
     cannot('set-role', 'User', {
       role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
-    });
+    }).because('Admins cannot change the role of other admins or super-admins');
 
     cannot('assign', 'Role', {
       name: { $in: [APP_ROLES['super-admin'], APP_ROLES['admin']] },
-    });
+    }).because('Admins cannot assign super-admin or admin roles');
 
     if (!PROTECTED_EMAILS.includes(actor.email)) return;
     defineExclusiveAbilityForProtectedEmails();
@@ -98,7 +106,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
       role: {
         $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin}|${APP_ROLES.moderator})$`,
       },
-    });
+    }).because(
+      'Moderators cannot ban other moderators, admins, or super-admins'
+    );
 
     can('read', 'User', { id: actor.id });
 
@@ -122,11 +132,21 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   }
 
   function defineExclusiveAbilityForProtectedEmails() {
-    cannot('change-email', 'User');
-    cannot('change-password', 'User');
-    cannot('enable-2fa', 'User');
-    cannot('set-role', 'User', { email: { $in: PROTECTED_EMAILS } });
-    cannot('ban-user', 'User', { email: { $in: PROTECTED_EMAILS } });
+    cannot('change-email', 'User').because(
+      'Users with protected emails cannot change their email'
+    );
+    cannot('change-password', 'User').because(
+      'Users with protected emails cannot change their password'
+    );
+    cannot('enable-2fa', 'User').because(
+      'Users with protected emails cannot enable 2FA'
+    );
+    cannot('set-role', 'User', { email: { $in: PROTECTED_EMAILS } }).because(
+      'Users with protected emails cannot set role for other protected users'
+    );
+    cannot('ban-user', 'User', { email: { $in: PROTECTED_EMAILS } }).because(
+      'Users with protected emails cannot ban other protected users'
+    );
   }
 }
 
