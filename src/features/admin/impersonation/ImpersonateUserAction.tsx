@@ -3,7 +3,6 @@
 import { DropdownMenuItem } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
 import type { User } from 'better-auth';
-import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { FaKeycdn } from 'react-icons/fa';
 import { toast } from 'sonner';
@@ -11,7 +10,6 @@ import { impersonateUserAction } from './impersonate-user-action';
 
 export function ImpersonateUserAction({ userId }: { userId: User['id'] }) {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   const handleImpersonateUser = () =>
     startTransition(async () => {
@@ -36,7 +34,7 @@ export function ImpersonateUserAction({ userId }: { userId: User['id'] }) {
         description: '',
       });
 
-      router.push(ROUTES.settings.nested.profile.href);
+      window.location.assign(ROUTES.settings.nested.profile.href);
     });
 
   return (

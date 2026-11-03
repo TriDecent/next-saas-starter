@@ -55,7 +55,7 @@ function ImpersonationDisplay() {
     >
       <ItemMedia
         variant={'icon'}
-        className='flex items-center justify-center rounded-full bg-amber-500/20 text-amber-600'
+        className='flex items-center justify-center rounded-full text-amber-600'
       >
         <UserSearch />
       </ItemMedia>

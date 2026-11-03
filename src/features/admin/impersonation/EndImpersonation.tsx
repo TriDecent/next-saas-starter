@@ -2,13 +2,11 @@
 
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
-import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { stopImpersonateAction } from './stop-impersonate-action';
 
 export function EndImpersonation() {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const handleStopImpersonating = () =>
     startTransition(async () => {
@@ -32,8 +30,7 @@ export function EndImpersonation() {
         description: 'You will be returned to your admin account soon.',
       });
 
-      router.push(ROUTES.admin.href);
-      router.refresh();
+      window.location.assign(ROUTES.admin.href);
     });
   return (
     <Button
