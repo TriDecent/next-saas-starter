@@ -13,7 +13,6 @@ import type {
   Enable2FAResult,
   GenerateBackUpCodesResult,
   GetUserByIdResult,
-  ListUsersData,
   ListUsersQuery,
   ListUsersResult,
   UserMutationResult,
@@ -83,169 +82,108 @@ export class UserService {
     orderBy,
     keyword,
   }: ListUsersQuery): Promise<ListUsersResult> {
-    return this._serviceExecutor.executeProtectedQuery<
-      ListUsersData,
-      { message: string },
-      void
-    >({
-      rbac: {
-        required: { user: ['list'] },
-        error: { message: 'You do not have permission to list users.' },
-      },
-      query: {
-        run: async () => {
-          const offset = (page - 1) * limit;
-          const { data: users, total } = await this._repo.getUsers(
-            offset,
-            limit,
-            orderBy,
-            keyword
-          );
+    return this._serviceExecutor.runSafely(async () => {
+      const canList = await hasPermission(this.actor.id, { user: ['list'] });
+      if (!canList)
+        throw new Error('You do not have permission to list users.');
 
-          return {
-            users,
-            pagination: buildPagination({
-              currentPage: page,
-              limit,
-              totalItems: total,
-            }),
-          };
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+      const offset = (page - 1) * limit;
+      const { data: users, total } = await this._repo.getUsers(
+        offset,
+        limit,
+        orderBy,
+        keyword
+      );
+
+      return {
+        users,
+        pagination: buildPagination({
+          currentPage: page,
+          limit,
+          totalItems: total,
+        }),
+      };
+    }, this.handleError);
   }
 
   toggleBanStatus(
     userId: User['id'],
     shouldBan: boolean
   ): Promise<UserMutationResult> {
-    return this._serviceExecutor.executeProtectedAction<
-      User,
-      { message: string }
-    >({
-      rbac: {
-        required: { user: ['ban'] },
-        error: { message: 'You do not have permission to ban/unban users.' },
-      },
-      abac: {
-        context: {
-          loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: this.handleError,
-          check: target => this._userPolicy.canBan(target),
-          abacError: {
-            message: 'You do not have permission to ban/unban this user.',
-          },
-        },
-      },
-      action: {
-        run: async () => {
-          if (shouldBan) {
-            await auth.api.banUser({
-              body: { userId },
-              headers: this._headers,
-            });
-            return;
-          }
-          await auth.api.unbanUser({
-            body: { userId },
-            headers: this._headers,
-          });
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+    return this._serviceExecutor.runSafely(async () => {
+      const canBan = await hasPermission(this.actor.id, { user: ['ban'] });
+      if (!canBan)
+        throw new Error('You do not have permission to ban/unban users.');
+
+      const target = await this.retrieveUserOrFail(userId);
+      this._userPolicy.assertCanBan(target);
+
+      if (shouldBan) {
+        await auth.api.banUser({
+          body: { userId },
+          headers: this._headers,
+        });
+        return;
+      }
+      await auth.api.unbanUser({
+        body: { userId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   revokeUser(userId: User['id']): Promise<UserMutationResult> {
-    return this._serviceExecutor.executeProtectedAction<
-      User,
-      { message: string }
-    >({
-      rbac: {
-        required: { session: ['revoke'] },
-        error: { message: 'You do not have permission to revoke sessions.' },
-      },
-      abac: {
-        context: {
-          loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: this.handleError,
-          check: target => this._userPolicy.canBan(target),
-          abacError: {
-            message:
-              'You do not have permission to revoke sessions for this user.',
-          },
-        },
-      },
-      action: {
-        run: async () => {
-          await auth.api.revokeUserSessions({
-            body: { userId },
-            headers: this._headers,
-          });
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+    return this._serviceExecutor.runSafely(async () => {
+      const canRevoke = await hasPermission(this.actor.id, {
+        session: ['revoke'],
+      });
+      if (!canRevoke)
+        throw new Error('You do not have permission to revoke sessions.');
+
+      const target = await this.retrieveUserOrFail(userId);
+      this._userPolicy.assertCanRevoke(target);
+
+      await auth.api.revokeUserSessions({
+        body: { userId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   deleteUser(userId: User['id']): Promise<UserMutationResult> {
-    return this._serviceExecutor.executeProtectedAction({
-      rbac: {
-        required: { user: ['delete'] },
-        error: { message: 'You do not have permission to delete users.' },
-      },
-      abac: {
-        context: {
-          loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: this.handleError,
-          check: context => this._userPolicy.canDelete(context),
-          abacError: {
-            message: 'You do not have permission to delete this user.',
-          },
-        },
-      },
-      action: {
-        run: async () => {
-          await auth.api.removeUser({
-            body: { userId },
-            headers: this._headers,
-          });
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+    return this._serviceExecutor.runSafely(async () => {
+      const canDelete = await hasPermission(this.actor.id, {
+        user: ['delete'],
+      });
+      if (!canDelete)
+        throw new Error('You do not have permission to delete users.');
+
+      const target = await this.retrieveUserOrFail(userId);
+      this._userPolicy.assertCanDelete(target);
+
+      await auth.api.removeUser({
+        body: { userId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   impersonateUser(userId: User['id']): Promise<UserMutationResult> {
-    return this._serviceExecutor.executeProtectedAction<
-      User,
-      { message: string }
-    >({
-      rbac: {
-        required: { user: ['impersonate'] },
-        error: { message: 'You do not have permission to impersonate users.' },
-      },
-      abac: {
-        context: {
-          loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: this.handleError,
-          check: target => this._userPolicy.canImpersonate(target),
-          abacError: {
-            message: 'You do not have permission to impersonate this user.',
-          },
-        },
-      },
-      action: {
-        run: async () => {
-          await auth.api.impersonateUser({
-            body: { userId },
-            headers: this._headers,
-          });
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+    return this._serviceExecutor.runSafely(async () => {
+      const canImpersonate = await hasPermission(this.actor.id, {
+        user: ['impersonate'],
+      });
+      if (!canImpersonate)
+        throw new Error('You do not have permission to impersonate users.');
+
+      const target = await this.retrieveUserOrFail(userId);
+      this._userPolicy.assertCanImpersonate(target);
+
+      await auth.api.impersonateUser({
+        body: { userId },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   stopImpersonate(): Promise<UserMutationResult> {
@@ -442,44 +380,24 @@ export class UserService {
     userId: string;
     roles: AppRole[];
   }): Promise<UserMutationResult> {
-    for (const role of roles) {
-      if (!this._rolePolicy.canAssignRole({ name: role }))
-        return {
-          type: 'error',
-          payload: {
-            message: `You do not have permission to assign role ${role}`,
-          },
-        };
-    }
+    return this._serviceExecutor.runSafely(async () => {
+      for (const role of roles)
+        this._rolePolicy.assertCanAssignRole({ name: role });
 
-    return this._serviceExecutor.executeProtectedAction<
-      User,
-      { message: string }
-    >({
-      rbac: {
-        required: { user: ['set-role'] },
-        error: { message: 'You do not have permission to set user roles.' },
-      },
-      abac: {
-        context: {
-          loadContext: () => this.retrieveUserOrFail(userId),
-          toContextErrorPayload: this.handleError,
-          check: target => this._userPolicy.canSetRole(target),
-          abacError: {
-            message: `You do not have permission to assign ${roles.join(', ')} roles.`,
-          },
-        },
-      },
-      action: {
-        run: async () => {
-          await auth.api.setRole({
-            body: { userId, role: roles },
-            headers: this._headers,
-          });
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+      const canSetRole = await hasPermission(this.actor.id, {
+        user: ['set-role'],
+      });
+      if (!canSetRole)
+        throw new Error('You do not have permission to set user roles.');
+
+      const target = await this.retrieveUserOrFail(userId);
+      this._userPolicy.assertCanSetRole(target);
+
+      await auth.api.setRole({
+        body: { userId, role: roles },
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   private async retrieveUserOrFail(userId: User['id']): Promise<User> {

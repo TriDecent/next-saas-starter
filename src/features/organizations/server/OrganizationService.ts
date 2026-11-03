@@ -1,7 +1,7 @@
 import { AppPolicy } from '@/features/authorization/core';
 import type { Session } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
-import { auth } from '@/lib/auth';
+import { auth, hasPermission } from '@/lib/auth';
 import { buildPagination } from '@/shared/pagination';
 import type { ServiceResult } from '@/shared/types';
 import { getErrorMessage } from '@/shared/utils';
@@ -9,8 +9,6 @@ import type { IOrgRepository, OrgMembershipSummary } from '../repo';
 import {
   type CreateInvitationInput,
   type CreateOrgInput,
-  type GeneralOrgError,
-  type GeneralOrgSuccess,
   type GetInvitationResult,
   type GetOrgDetailsResult,
   type GetOrgInput,
@@ -32,24 +30,18 @@ export class OrganizationService {
   ) {}
 
   createOrg(params: CreateOrgInput): Promise<OrgMutationResult> {
-    return this._serviceExecutor.executeProtectedAction<
-      GeneralOrgSuccess,
-      GeneralOrgError
-    >({
-      rbac: {
-        required: { organization: ['create'] },
-        error: { message: 'You are not authorized to create an organization' },
-      },
-      action: {
-        run: async () => {
-          await auth.api.createOrganization({
-            body: params,
-            headers: this._headers,
-          });
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+    return this._serviceExecutor.runSafely(async () => {
+      const canCreateOrg = await hasPermission(this.actor.id, {
+        organization: ['create'],
+      });
+      if (!canCreateOrg)
+        throw new Error('You are not authorized to create an organization.');
+
+      await auth.api.createOrganization({
+        body: params,
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   deleteOrg(organizationId: string): Promise<OrgMutationResult> {
@@ -100,21 +92,18 @@ export class OrganizationService {
   async createInvitation(
     params: CreateInvitationInput
   ): Promise<OrgMutationResult> {
-    return this._serviceExecutor.executeProtectedAction({
-      rbac: {
-        required: { invitation: ['create'] },
-        error: { message: 'You are not authorized to send an invitation' },
-      },
-      action: {
-        run: async () => {
-          await auth.api.createInvitation({
-            body: params,
-            headers: this._headers,
-          });
-        },
-        toErrorPayload: this.handleError,
-      },
-    });
+    return this._serviceExecutor.runSafely(async () => {
+      const canCreateInv = await hasPermission(this.actor.id, {
+        invitation: ['create'],
+      });
+      if (!canCreateInv)
+        throw new Error('You are not authorized to send an invitation.');
+
+      await auth.api.createInvitation({
+        body: params,
+        headers: this._headers,
+      });
+    }, this.handleError);
   }
 
   getInvitation(id: string): Promise<GetInvitationResult> {

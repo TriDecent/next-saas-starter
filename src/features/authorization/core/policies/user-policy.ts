@@ -27,10 +27,6 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
         ? forbiddenError.throwUnlessCan('read', { ...user, kind: 'User' })
         : forbiddenError.throwUnlessCan('read', 'User'),
 
-    canBan: (user?: BaseUser) =>
-      user
-        ? ability.can('ban-user', { ...user, kind: 'User' })
-        : ability.can('ban-user', 'User'),
     assertCanBan: (user?: BaseUser) =>
       user
         ? forbiddenError.throwUnlessCan('ban-user', { ...user, kind: 'User' })
@@ -44,10 +40,6 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
           })
         : forbiddenError.throwUnlessCan('revoke-user', 'User'),
 
-    canImpersonate: (user?: BaseUser) =>
-      user
-        ? ability.can('impersonate-user', { ...user, kind: 'User' })
-        : ability.can('impersonate-user', 'User'),
     assertCanImpersonate: (user?: BaseUser) =>
       user
         ? forbiddenError.throwUnlessCan('impersonate-user', {
@@ -64,19 +56,11 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
           })
         : forbiddenError.throwUnlessCan('delete-account', 'User'),
 
-    canSetRole: (user?: BaseUser) =>
-      user
-        ? ability.can('set-role', { ...user, kind: 'User' })
-        : ability.can('set-role', 'User'),
     assertCanSetRole: (user?: BaseUser) =>
       user
         ? forbiddenError.throwUnlessCan('set-role', { ...user, kind: 'User' })
         : forbiddenError.throwUnlessCan('set-role', 'User'),
 
-    canDelete: (user?: BaseUser) =>
-      user
-        ? ability.can('delete', { ...user, kind: 'User' })
-        : ability.can('delete', 'User'),
     assertCanDelete: (user?: BaseUser) =>
       user
         ? forbiddenError.throwUnlessCan('delete', { ...user, kind: 'User' })
