@@ -61,35 +61,35 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   function defineAbilityForAdmin() {
     can('manage', 'all');
     cannot('ban-user', 'User', {
-      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
+      role: { $regex: protectedAdminRoles },
     }).because('Admins cannot ban other admins or super-admins');
 
     cannot('revoke-user', 'User', { id: actor.id }).because(
       'Admins cannot revoke their own account'
     );
     cannot('revoke-user', 'User', {
-      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
+      role: { $regex: protectedAdminRoles },
     }).because('Admins cannot revoke other admins or super-admins');
 
     cannot('delete', 'User', { id: actor.id }).because(
       'Admins cannot delete their own account'
     );
     cannot('delete', 'User', {
-      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
+      role: { $regex: protectedAdminRoles },
     }).because('Admins cannot delete other admins or super-admins');
 
     cannot('impersonate-user', 'User', { id: actor.id }).because(
       'Admins cannot impersonate themselves'
     );
     cannot('impersonate-user', 'User', {
-      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
+      role: { $regex: protectedAdminRoles },
     }).because('Admins cannot impersonate other admins or super-admins');
 
     cannot('set-role', 'User', { id: actor.id }).because(
       'Admins cannot change their own role'
     );
     cannot('set-role', 'User', {
-      role: { $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin})$` },
+      role: { $regex: protectedAdminRoles },
     }).because('Admins cannot change the role of other admins or super-admins');
 
     cannot('assign', 'Role', {
@@ -103,9 +103,7 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   function defineAbilityForModerator() {
     can('ban-user', 'User');
     cannot('ban-user', 'User', {
-      role: {
-        $regex: `^(${APP_ROLES['super-admin']}|${APP_ROLES.admin}|${APP_ROLES.moderator})$`,
-      },
+      role: { $regex: protectedAdminRoles },
     }).because(
       'Moderators cannot ban other moderators, admins, or super-admins'
     );
@@ -150,4 +148,7 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   }
 }
 
+const protectedAdminRoles = new RegExp(
+  `(^|,)\\s*(${APP_ROLES['super-admin']}|${APP_ROLES.admin})\\s*(,|$)`
+);
 const PROTECTED_EMAILS = ['sandbox-admin@gmail.com', 'sandbox-user@gmail.com'];
