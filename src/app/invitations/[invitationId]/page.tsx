@@ -3,7 +3,7 @@ import {
   InvitationDetails,
   OrgEntityCard,
 } from '@/features/invitations';
-import { getOrgService } from '@/infrastructure/composition/factory';
+import { getInvService } from '@/infrastructure/composition/factory';
 import { SectionHeader, SkeletonCard, SkeletonText } from '@/shared/components';
 import { Card, CardContent } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';
@@ -38,7 +38,7 @@ export default async function ApprovalProcessPage({
 
 async function Wrapper({ params }: { params: Promise<Params> }) {
   const invitationId = (await params).invitationId;
-  const service = await getOrgService(
+  const service = await getInvService(
     `${ROUTES.invitations.href}/${invitationId}`
   );
 

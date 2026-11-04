@@ -1,4 +1,3 @@
-import type { OrganizationRole } from '@/features/authorization';
 import type { Organization } from '@/generated/prisma/client';
 import type { auth } from '@/lib/auth';
 import type { Pagination, Query } from '@/shared/pagination';
@@ -8,10 +7,6 @@ import type { OrgDetails } from '../repo';
 export type CreateOrgInput = ExtractEndpointBody<
   typeof auth.api.createOrganization
 >;
-export type CreateInvitationInput = Omit<
-  ExtractEndpointBody<typeof auth.api.createInvitation>,
-  'role'
-> & { role: OrganizationRole };
 export type GetOrgInput = Partial<Pick<Organization, 'id' | 'slug'>> & {
   memberQuery: Query;
   invitationQuery: Query;
@@ -25,11 +20,6 @@ export type UpdateOrgInput = ExtractEndpointBody<
 >;
 export type SetActiveOrgInput = ExtractEndpointBody<
   typeof auth.api.setActiveOrganization
->;
-
-export type GetInvitationResult = ServiceResult<
-  Awaited<ReturnType<typeof auth.api.getInvitation>>,
-  { message: string }
 >;
 
 export type GetOrgDetailsResult = ServiceResult<OrgDetailsData, GetOrgError>;

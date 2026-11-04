@@ -1,7 +1,7 @@
 'use server';
 
 import type { OrgMutationResult } from '@/features/organizations/server';
-import { getOrgService } from '@/infrastructure/composition/factory';
+import { getInvService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
@@ -14,7 +14,7 @@ export async function handleInvitationApprovalAction(
   mode: 'accept' | 'reject',
   callbackUrl: string
 ) {
-  const service = await getOrgService(callbackUrl);
+  const service = await getInvService(callbackUrl);
 
   const decision = await ajRestrictiveAuthenticated.protect(await request(), {
     userId: service.actor.id,

@@ -3,6 +3,7 @@
 import { AuthService } from '@/features/auth/server';
 import { PrismaFeedbackRepository } from '@/features/feedback/repo';
 import { FeedbackService } from '@/features/feedback/server';
+import { InvService } from '@/features/invitations/server';
 import { getOrgRepo } from '@/features/organizations/repo';
 import { OrganizationService } from '@/features/organizations/server';
 import { SubscriptionService } from '@/features/subscription/server';
@@ -59,6 +60,12 @@ export const getSubscriptionService = cache(async (callbackUrl: string) => {
   const { actor, headers } = await loadUserSession(callbackUrl);
 
   return new SubscriptionService(new AuthenticatedExecutor(actor), headers);
+});
+
+export const getInvService = cache(async (callbackUrl: string) => {
+  const { actor, headers } = await loadUserSession(callbackUrl);
+
+  return new InvService(new AuthenticatedExecutor(actor), headers);
 });
 
 const loadUserSession = cache(async (callbackUrl: string) => {

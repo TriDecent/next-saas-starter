@@ -1,6 +1,6 @@
 'use server';
 
-import { getOrgService } from '@/infrastructure/composition/factory';
+import { getInvService } from '@/infrastructure/composition/factory';
 import { ajEmailSend, handleDeniedInServerAction } from '@/lib/arcjet';
 import type { ActionState } from '@/shared/components/form/use-action-form';
 import { ROUTES } from '@/shared/constants';
@@ -14,7 +14,7 @@ export async function createInvitationAction(
   state: CreateInvitationState,
   input: unknown
 ): Promise<CreateInvitationState> {
-  const service = await getOrgService(ROUTES.invitations.href);
+  const service = await getInvService(ROUTES.invitations.href);
 
   const parsedResult = CreateInvitationSchema.safeParse(input);
   if (!parsedResult.success)

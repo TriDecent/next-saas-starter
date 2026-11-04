@@ -1,6 +1,6 @@
 'use server';
 
-import { getOrgService } from '@/infrastructure/composition/factory';
+import { getInvService } from '@/infrastructure/composition/factory';
 import {
   ajRestrictiveAuthenticated,
   handleDeniedInServerAction,
@@ -13,7 +13,7 @@ export async function cancelInvitationAction(
   invitationId: Invitation['id'],
   callbackUrl: string
 ) {
-  const service = await getOrgService(callbackUrl);
+  const service = await getInvService(callbackUrl);
 
   const decision = await ajRestrictiveAuthenticated.protect(await request(), {
     action: 'cancel-invitation-action',

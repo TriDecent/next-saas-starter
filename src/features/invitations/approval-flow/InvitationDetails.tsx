@@ -1,4 +1,3 @@
-import type { GetInvitationResult } from '@/features/organizations/server';
 import {
   Card,
   CardContent,
@@ -14,6 +13,7 @@ import {
 import { format } from 'date-fns';
 import { Building2, CalendarClock, Mail, User2 } from 'lucide-react';
 import type React from 'react';
+import type { GetInvitationResult } from '../server/inv-dtos';
 
 type InvitationData = Extract<
   GetInvitationResult,

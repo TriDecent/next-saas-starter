@@ -7,9 +7,7 @@ import type { ServiceResult } from '@/shared/types';
 import { getErrorMessage } from '@/shared/utils';
 import type { IOrgRepository, OrgMembershipSummary } from '../repo';
 import {
-  type CreateInvitationInput,
   type CreateOrgInput,
-  type GetInvitationResult,
   type GetOrgDetailsResult,
   type GetOrgInput,
   type OrgMutationResult,
@@ -21,9 +19,6 @@ import {
 
 export class OrganizationService {
   private readonly _orgPolicy = AppPolicy.getOrgPolicyFor(this.actor);
-  private readonly _invitationPolicy = AppPolicy.getInvitationPolicyFor(
-    this.actor
-  );
 
   constructor(
     private readonly _serviceExecutor: IAuthenticatedExecutor,
@@ -83,48 +78,6 @@ export class OrganizationService {
         body: isSameOrg
           ? { organizationId: null, organizationSlug: undefined }
           : params,
-        headers: this._headers,
-      });
-    }, this.handleError);
-  }
-
-  async createInvitation(
-    params: CreateInvitationInput
-  ): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(async () => {
-      this._invitationPolicy.assertCanCreateInvitation();
-
-      await auth.api.createInvitation({
-        body: params,
-        headers: this._headers,
-      });
-    }, this.handleError);
-  }
-
-  getInvitation(id: string): Promise<GetInvitationResult> {
-    return this._serviceExecutor.runSafely(
-      () =>
-        auth.api.getInvitation({
-          query: { id },
-          headers: this._headers,
-        }),
-      this.handleError
-    );
-  }
-
-  acceptInvitation(invitationId: string): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.acceptInvitation({
-        body: { invitationId },
-        headers: this._headers,
-      });
-    }, this.handleError);
-  }
-
-  rejectInvitation(invitationId: string): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.rejectInvitation({
-        body: { invitationId },
         headers: this._headers,
       });
     }, this.handleError);
@@ -199,15 +152,6 @@ export class OrganizationService {
   removeMember(params: RemoveUserInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(async () => {
       await auth.api.removeMember({ body: params, headers: this._headers });
-    }, this.handleError);
-  }
-
-  cancelInvitation(invitationId: string): Promise<OrgMutationResult> {
-    return this._serviceExecutor.runSafely(async () => {
-      await auth.api.cancelInvitation({
-        body: { invitationId },
-        headers: this._headers,
-      });
     }, this.handleError);
   }
 

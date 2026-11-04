@@ -1,6 +1,5 @@
 import type { Organization } from '@/generated/prisma/client';
 import { ROUTES } from '@/shared/constants';
-import type { User } from 'better-auth';
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
@@ -30,23 +29,6 @@ export const ensureSessionFromRequest = cache(
     redirectTo.searchParams.set('callbackUrl', callbackUrl.toString());
 
     return NextResponse.redirect(redirectTo);
-  }
-);
-
-export const hasPermission = cache(
-  async (
-    userId: User['id'],
-    permissions: NonNullable<
-      NonNullable<
-        Parameters<typeof auth.api.userHasPermission>[0]
-      >['body']['permissions']
-    >
-  ) => {
-    const hasPermission = await auth.api.userHasPermission({
-      body: { userId, permissions },
-    });
-
-    return hasPermission.success;
   }
 );
 
