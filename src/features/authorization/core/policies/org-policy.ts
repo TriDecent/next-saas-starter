@@ -1,6 +1,7 @@
 import type { Organization } from '@/generated/prisma/client';
-import type { InferSubjects } from '@casl/ability';
+import { ForbiddenError, type InferSubjects } from '@casl/ability';
 import type { AuthSession } from '../../../../lib/auth';
+import { defineAbilityFor } from '../ability';
 
 type BaseOrg = Organization & { members?: string[] };
 type OrganizationWithType = BaseOrg & {
@@ -10,5 +11,13 @@ export type OrganizationSubject = InferSubjects<OrganizationWithType>;
 export type OrganizationAction = '';
 
 export function getOrgPolicyFor(actor: AuthSession['user']) {
-  return {} as const;
+  const ability = defineAbilityFor(actor);
+  const forbiddenError = ForbiddenError.from(ability);
+
+  return {
+    assertCanCreateOrg: () =>
+      forbiddenError
+        .setMessage('You are not authorized to create an organization.')
+        .throwUnlessCan('create', 'Organization'),
+  } as const;
 }

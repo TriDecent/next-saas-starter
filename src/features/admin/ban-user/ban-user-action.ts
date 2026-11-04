@@ -7,12 +7,11 @@ import { refresh } from 'next/cache';
 
 export async function banUserAction(
   userId: User['id'],
-  shouldBan: boolean,
   callbackUrl: string
 ): Promise<UserMutationResult> {
   const userService = await getUserService(callbackUrl);
 
-  const result = await userService.toggleBanStatus(userId, shouldBan);
+  const result = await userService.toggleBanStatus(userId);
 
   refresh();
 

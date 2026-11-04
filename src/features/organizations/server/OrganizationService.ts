@@ -1,7 +1,7 @@
 import { AppPolicy } from '@/features/authorization/core';
 import type { Session } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
-import { auth, hasPermission } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { buildPagination } from '@/shared/pagination';
 import type { ServiceResult } from '@/shared/types';
 import { getErrorMessage } from '@/shared/utils';
@@ -21,6 +21,9 @@ import {
 
 export class OrganizationService {
   private readonly _orgPolicy = AppPolicy.getOrgPolicyFor(this.actor);
+  private readonly _invitationPolicy = AppPolicy.getInvitationPolicyFor(
+    this.actor
+  );
 
   constructor(
     private readonly _serviceExecutor: IAuthenticatedExecutor,
@@ -31,11 +34,7 @@ export class OrganizationService {
 
   createOrg(params: CreateOrgInput): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canCreateOrg = await hasPermission(this.actor.id, {
-        organization: ['create'],
-      });
-      if (!canCreateOrg)
-        throw new Error('You are not authorized to create an organization.');
+      this._orgPolicy.assertCanCreateOrg();
 
       await auth.api.createOrganization({
         body: params,
@@ -93,11 +92,7 @@ export class OrganizationService {
     params: CreateInvitationInput
   ): Promise<OrgMutationResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canCreateInv = await hasPermission(this.actor.id, {
-        invitation: ['create'],
-      });
-      if (!canCreateInv)
-        throw new Error('You are not authorized to send an invitation.');
+      this._invitationPolicy.assertCanCreateInvitation();
 
       await auth.api.createInvitation({
         body: params,

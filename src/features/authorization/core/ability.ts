@@ -101,9 +101,14 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   }
 
   function defineAbilityForModerator() {
+    can('get-user', 'User');
+    can('list-user', 'User');
+    can('create', 'Organization');
+    can('create', 'Invitation');
+
     can('ban-user', 'User');
     cannot('ban-user', 'User', {
-      role: { $regex: protectedAdminRoles },
+      role: { $regex: protectedModeratorRoles },
     }).because(
       'Moderators cannot ban other moderators, admins, or super-admins'
     );
@@ -119,6 +124,8 @@ export function defineAbilityFor(actor: AuthSession['user']) {
   }
 
   function defineAbilityForUser() {
+    can('get-user', 'User');
+
     can('read', 'User', { id: actor.id });
 
     can('change-email', 'User');
@@ -150,5 +157,8 @@ export function defineAbilityFor(actor: AuthSession['user']) {
 
 const protectedAdminRoles = new RegExp(
   `(^|,)\\s*(${APP_ROLES['super-admin']}|${APP_ROLES.admin})\\s*(,|$)`
+);
+const protectedModeratorRoles = new RegExp(
+  `(^|,)\\s*(${APP_ROLES['super-admin']}|${APP_ROLES.admin}|${APP_ROLES.moderator})\\s*(,|$)`
 );
 const PROTECTED_EMAILS = ['sandbox-admin@gmail.com', 'sandbox-user@gmail.com'];

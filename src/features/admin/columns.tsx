@@ -292,7 +292,7 @@ const actionsColumn: ColumnDef<User> = {
 
               <DropdownMenuSubContent>
                 <DropdownMenuGroup>
-                  <BanUserAction userId={user.id} shouldBan={!user.banned} />
+                  <BanUserAction userId={user.id} isBanned={!!user.banned} />
                 </DropdownMenuGroup>
               </DropdownMenuSubContent>
             </DropdownMenuSub>

@@ -14,7 +14,10 @@ export type UserAction =
   | 'change-email'
   | 'change-password'
   | 'export-users'
-  | 'enable-2fa';
+  | 'enable-2fa'
+  | 'get-user'
+  | 'list-user'
+  | 'delete-user';
 
 export function getUserPolicyFor(actor: AuthSession['user']) {
   const ability = defineAbilityFor(actor);
@@ -74,5 +77,14 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
       forbiddenError.throwUnlessCan('export-users', 'User'),
     assertCanEnable2FA: () =>
       forbiddenError.throwUnlessCan('enable-2fa', 'User'),
+
+    assertCanGetUser: () =>
+      forbiddenError
+        .setMessage('You are not allowed to get user information.')
+        .throwUnlessCan('get-user', 'User'),
+    assertCanList: () =>
+      forbiddenError
+        .setMessage('You are not allowed to list users.')
+        .throwUnlessCan('list-user', 'User'),
   } as const;
 }

@@ -11,17 +11,17 @@ import { banUserAction } from '../ban-user/ban-user-action';
 
 export function BanUserAction({
   userId,
-  shouldBan,
+  isBanned,
 }: {
   userId: User['id'];
-  shouldBan: boolean;
+  isBanned: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
 
   const handleBanUser = () =>
     startTransition(async () => {
-      const action = shouldBan ? 'Banning' : 'Unbanning';
-      const successMessage = shouldBan
+      const action = !isBanned ? 'Banning' : 'Unbanning';
+      const successMessage = !isBanned
         ? 'User has been banned successfully'
         : 'User has been unbanned successfully';
 
@@ -29,11 +29,7 @@ export function BanUserAction({
         id: 'ban-user-action',
         description: '',
       });
-      const response = await banUserAction(
-        userId,
-        shouldBan,
-        ROUTES.admin.href
-      );
+      const response = await banUserAction(userId, ROUTES.admin.href);
 
       if (response.type === 'success')
         toast.success(successMessage, {
@@ -50,7 +46,7 @@ export function BanUserAction({
 
   return (
     <DropdownMenuItem onClick={handleBanUser} disabled={isPending}>
-      {!shouldBan ? (
+      {isBanned ? (
         <>
           <FaRegCircle /> Unban
         </>

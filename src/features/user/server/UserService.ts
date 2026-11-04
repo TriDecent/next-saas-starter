@@ -3,7 +3,7 @@ import type { AppRole } from '@/features/authorization';
 import { AppPolicy } from '@/features/authorization/core';
 import type { Session, User } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
-import { auth, hasPermission } from '@/lib/auth';
+import { auth } from '@/lib/auth';
 import { ROUTES } from '@/shared/constants';
 import { buildPagination } from '@/shared/pagination';
 import { getErrorMessage } from '@/shared/utils';
@@ -51,11 +51,7 @@ export class UserService {
 
   async getUserById(id: User['id']): Promise<GetUserByIdResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canGetUser = await hasPermission(this.actor.id, {
-        user: ['get'],
-      });
-      if (!canGetUser)
-        throw new Error('You do not have permission to get user details.');
+      this._userPolicy.assertCanGetUser();
 
       const user = await this._repo.getUserById(id);
 
@@ -83,9 +79,7 @@ export class UserService {
     keyword,
   }: ListUsersQuery): Promise<ListUsersResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canList = await hasPermission(this.actor.id, { user: ['list'] });
-      if (!canList)
-        throw new Error('You do not have permission to list users.');
+      this._userPolicy.assertCanList();
 
       const offset = (page - 1) * limit;
       const { data: users, total } = await this._repo.getUsers(
@@ -106,26 +100,23 @@ export class UserService {
     }, this.handleError);
   }
 
-  toggleBanStatus(
-    userId: User['id'],
-    shouldBan: boolean
-  ): Promise<UserMutationResult> {
+  toggleBanStatus(userId: User['id']): Promise<UserMutationResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canBan = await hasPermission(this.actor.id, { user: ['ban'] });
-      if (!canBan)
-        throw new Error('You do not have permission to ban/unban users.');
+      this._userPolicy.assertCanBan();
 
       const target = await this.retrieveUserOrFail(userId);
+      console.log('target', target);
       this._userPolicy.assertCanBan(target);
 
-      if (shouldBan) {
-        await auth.api.banUser({
+      if (target.banned) {
+        await auth.api.unbanUser({
           body: { userId },
           headers: this._headers,
         });
         return;
       }
-      await auth.api.unbanUser({
+
+      await auth.api.banUser({
         body: { userId },
         headers: this._headers,
       });
@@ -134,11 +125,7 @@ export class UserService {
 
   revokeUser(userId: User['id']): Promise<UserMutationResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canRevoke = await hasPermission(this.actor.id, {
-        session: ['revoke'],
-      });
-      if (!canRevoke)
-        throw new Error('You do not have permission to revoke sessions.');
+      this._userPolicy.assertCanRevoke();
 
       const target = await this.retrieveUserOrFail(userId);
       this._userPolicy.assertCanRevoke(target);
@@ -152,11 +139,7 @@ export class UserService {
 
   deleteUser(userId: User['id']): Promise<UserMutationResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canDelete = await hasPermission(this.actor.id, {
-        user: ['delete'],
-      });
-      if (!canDelete)
-        throw new Error('You do not have permission to delete users.');
+      this._userPolicy.assertCanDelete();
 
       const target = await this.retrieveUserOrFail(userId);
       this._userPolicy.assertCanDelete(target);
@@ -170,11 +153,7 @@ export class UserService {
 
   impersonateUser(userId: User['id']): Promise<UserMutationResult> {
     return this._serviceExecutor.runSafely(async () => {
-      const canImpersonate = await hasPermission(this.actor.id, {
-        user: ['impersonate'],
-      });
-      if (!canImpersonate)
-        throw new Error('You do not have permission to impersonate users.');
+      this._userPolicy.assertCanImpersonate();
 
       const target = await this.retrieveUserOrFail(userId);
       this._userPolicy.assertCanImpersonate(target);
@@ -384,11 +363,7 @@ export class UserService {
       for (const role of roles)
         this._rolePolicy.assertCanAssignRole({ name: role });
 
-      const canSetRole = await hasPermission(this.actor.id, {
-        user: ['set-role'],
-      });
-      if (!canSetRole)
-        throw new Error('You do not have permission to set user roles.');
+      this._userPolicy.assertCanSetRole();
 
       const target = await this.retrieveUserOrFail(userId);
       this._userPolicy.assertCanSetRole(target);
