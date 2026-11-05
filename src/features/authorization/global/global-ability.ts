@@ -1,4 +1,4 @@
-import { type AuthSession } from '@/lib/auth';
+import type { User } from '@/generated/prisma/client';
 import {
   AbilityBuilder,
   createMongoAbility,
@@ -8,25 +8,20 @@ import { APP_ROLES } from '../constants';
 import type {
   InvitationAction,
   InvitationSubject,
-} from './policies/invitation-policy';
+} from './policies/global-invitation-policy';
 import type {
   OrganizationAction,
   OrganizationSubject,
-} from './policies/org-policy';
-import type { RoleAction, RoleSubject } from './policies/role-policy';
-import type {
-  SubscriptionAction,
-  SubscriptionSubject,
-} from './policies/subscription-policy';
-import type { UserAction, UserSubject } from './policies/user-policy';
+} from './policies/global-org-policy';
+import type { RoleAction, RoleSubject } from './policies/global-role-policy';
+import type { UserAction, UserSubject } from './policies/global-user-policy';
 
 type Subject =
   | 'all'
   | UserSubject
   | RoleSubject
   | OrganizationSubject
-  | InvitationSubject
-  | SubscriptionSubject;
+  | InvitationSubject;
 export type CRUD = 'create' | 'read' | 'update' | 'delete';
 type Action = 'manage' | CRUD;
 export type AppAbility = MongoAbility<
@@ -35,15 +30,18 @@ export type AppAbility = MongoAbility<
   | [RoleAction, RoleSubject]
   | [InvitationAction, InvitationSubject]
   | [OrganizationAction, OrganizationSubject]
-  | [SubscriptionAction, SubscriptionSubject]
 >;
 
-export function defineAbilityFor(actor: AuthSession['user']) {
+export function defineGlobalAbilityFor(actor: User) {
   const { can, cannot, build } = new AbilityBuilder<AppAbility>(
     createMongoAbility
   );
 
-  const actorRoles = actor.role?.split(',') ?? [];
+  const actorRoles =
+    actor.role
+      ?.split(',')
+      .map(role => role.trim())
+      .filter(Boolean) ?? [];
 
   if (actorRoles.includes(APP_ROLES['super-admin']))
     defineAbilityForSuperAdmin();
@@ -60,37 +58,15 @@ export function defineAbilityFor(actor: AuthSession['user']) {
 
   function defineAbilityForAdmin() {
     can('manage', 'all');
-    cannot('ban-user', 'User', {
-      role: { $regex: protectedAdminRoles },
-    }).because('Admins cannot ban other admins or super-admins');
-
-    cannot('revoke-user', 'User', { id: actor.id }).because(
-      'Admins cannot revoke their own account'
+    cannotManageUsers(
+      ['ban-user', 'revoke-user', 'delete', 'impersonate-user', 'set-role'],
+      protectedAdminRoles,
+      'Admins cannot manage other admins or super-admins'
     );
-    cannot('revoke-user', 'User', {
-      role: { $regex: protectedAdminRoles },
-    }).because('Admins cannot revoke other admins or super-admins');
-
-    cannot('delete', 'User', { id: actor.id }).because(
-      'Admins cannot delete their own account'
+    cannotManageActor(
+      ['revoke-user', 'delete', 'impersonate-user', 'set-role'],
+      'Admins cannot manage their own account'
     );
-    cannot('delete', 'User', {
-      role: { $regex: protectedAdminRoles },
-    }).because('Admins cannot delete other admins or super-admins');
-
-    cannot('impersonate-user', 'User', { id: actor.id }).because(
-      'Admins cannot impersonate themselves'
-    );
-    cannot('impersonate-user', 'User', {
-      role: { $regex: protectedAdminRoles },
-    }).because('Admins cannot impersonate other admins or super-admins');
-
-    cannot('set-role', 'User', { id: actor.id }).because(
-      'Admins cannot change their own role'
-    );
-    cannot('set-role', 'User', {
-      role: { $regex: protectedAdminRoles },
-    }).because('Admins cannot change the role of other admins or super-admins');
 
     cannot('assign', 'Role', {
       name: { $in: [APP_ROLES['super-admin'], APP_ROLES['admin']] },
@@ -107,9 +83,9 @@ export function defineAbilityFor(actor: AuthSession['user']) {
     can('create', 'Invitation');
 
     can('ban-user', 'User');
-    cannot('ban-user', 'User', {
-      role: { $regex: protectedModeratorRoles },
-    }).because(
+    cannotManageUsers(
+      ['ban-user'],
+      protectedModeratorRoles,
       'Moderators cannot ban other moderators, admins, or super-admins'
     );
 
@@ -153,12 +129,30 @@ export function defineAbilityFor(actor: AuthSession['user']) {
       'Users with protected emails cannot ban other protected users'
     );
   }
+
+  type UserManagementAction = UserAction | 'delete';
+
+  function cannotManageUsers(
+    actions: UserManagementAction[],
+    roles: string[],
+    message: string
+  ) {
+    for (const action of actions) {
+      cannot(action, 'User', {
+        role: { $regex: roleRegex(roles) },
+      }).because(message);
+    }
+  }
+
+  function cannotManageActor(actions: UserManagementAction[], message: string) {
+    for (const action of actions)
+      cannot(action, 'User', { id: actor.id }).because(message);
+  }
 }
 
-const protectedAdminRoles = new RegExp(
-  `(^|,)\\s*(${APP_ROLES['super-admin']}|${APP_ROLES.admin})\\s*(,|$)`
-);
-const protectedModeratorRoles = new RegExp(
-  `(^|,)\\s*(${APP_ROLES['super-admin']}|${APP_ROLES.admin}|${APP_ROLES.moderator})\\s*(,|$)`
-);
+const protectedAdminRoles = [APP_ROLES['super-admin'], APP_ROLES.admin];
+const protectedModeratorRoles = [...protectedAdminRoles, APP_ROLES.moderator];
 const PROTECTED_EMAILS = ['sandbox-admin@gmail.com', 'sandbox-user@gmail.com'];
+
+const roleRegex = (roles: string[]) =>
+  new RegExp(`(^|,)\\s*(${roles.join('|')})\\s*(,|$)`);

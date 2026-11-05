@@ -1,6 +1,7 @@
+import type { User } from '@/generated/prisma/client';
 import { ForbiddenError, type InferSubjects } from '@casl/ability';
 import type { AuthSession } from '../../../../lib/auth';
-import { defineAbilityFor } from '../ability';
+import { defineGlobalAbilityFor } from '../global-ability';
 
 type BaseUser = AuthSession['user'];
 type UserWithType = BaseUser & { kind: 'User' };
@@ -9,7 +10,6 @@ export type UserAction =
   | 'ban-user'
   | 'revoke-user'
   | 'impersonate-user'
-  | 'delete-account'
   | 'set-role'
   | 'change-email'
   | 'change-password'
@@ -19,8 +19,8 @@ export type UserAction =
   | 'list-user'
   | 'delete-user';
 
-export function getUserPolicyFor(actor: AuthSession['user']) {
-  const ability = defineAbilityFor(actor);
+export function getGlobalUserPolicyFor(actor: User) {
+  const ability = defineGlobalAbilityFor(actor);
 
   const forbiddenError = ForbiddenError.from(ability);
 
@@ -50,14 +50,6 @@ export function getUserPolicyFor(actor: AuthSession['user']) {
             kind: 'User',
           })
         : forbiddenError.throwUnlessCan('impersonate-user', 'User'),
-
-    assertCanDeleteAccount: (user?: BaseUser) =>
-      user
-        ? forbiddenError.throwUnlessCan('delete-account', {
-            ...user,
-            kind: 'User',
-          })
-        : forbiddenError.throwUnlessCan('delete-account', 'User'),
 
     assertCanSetRole: (user?: BaseUser) =>
       user

@@ -2,7 +2,7 @@ import type { User } from '@/generated/prisma/client';
 import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { createContext } from 'react';
 import { createStore } from 'zustand';
-import { defineAbilityFor, type AppAbility } from '../core/ability';
+import { defineGlobalAbilityFor, type AppAbility } from '../global';
 
 type AbilityUpdater = (
   can: AbilityBuilder<AppAbility>['can'],
@@ -18,7 +18,7 @@ export type AbilityState = Readonly<{
 }>;
 
 export function createAbilityStore(initialUser: User) {
-  const initialAbility = defineAbilityFor(initialUser);
+  const initialAbility = defineGlobalAbilityFor(initialUser);
 
   return createStore<AbilityState>()((set, get) => ({
     ability: initialAbility,
@@ -39,7 +39,7 @@ export function createAbilityStore(initialUser: User) {
         set({ ability: createMongoAbility<AppAbility>(combinedRules) });
       },
       resetRules: () => {
-        set({ ability: defineAbilityFor(initialUser) });
+        set({ ability: defineGlobalAbilityFor(initialUser) });
       },
     },
   }));

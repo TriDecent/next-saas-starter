@@ -1,4 +1,3 @@
-import { AppPolicy } from '@/features/authorization/core';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import { auth, SUBSCRIPTION_PLAN, type SubscriptionPlan } from '@/lib/auth';
 import { stripeClient } from '@/lib/stripe';
@@ -14,9 +13,6 @@ import type {
 } from './subscription-dtos';
 
 export class SubscriptionService {
-  private readonly _subscriptionPolicy = AppPolicy.getSubscriptionPolicyFor(
-    this.actor
-  );
   private readonly _plans = [
     {
       name: SUBSCRIPTION_PLAN.standard.name,

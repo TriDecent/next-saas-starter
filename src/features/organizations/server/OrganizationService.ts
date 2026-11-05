@@ -1,4 +1,4 @@
-import { AppPolicy } from '@/features/authorization/core';
+import { AppPolicy } from '@/features/authorization/global';
 import type { Session } from '@/generated/prisma/client';
 import type { IAuthenticatedExecutor } from '@/infrastructure/executors';
 import { auth } from '@/lib/auth';
