@@ -1,4 +1,5 @@
-import type { Prisma, User } from '@/generated/prisma/client';
+import type { Organization, Prisma, User } from '@/generated/prisma/client';
+import type { UserMembership } from './types';
 
 export interface IUserRepository {
   getUsers(
@@ -11,4 +12,9 @@ export interface IUserRepository {
   getUserById(id: User['id']): Promise<User | null>;
 
   iterateUsers({ batchSize }: { batchSize: number }): AsyncGenerator<User>;
+
+  getUserMembership(query: {
+    userId: User['id'];
+    orgId: Organization['id'];
+  }): Promise<UserMembership | null>;
 }

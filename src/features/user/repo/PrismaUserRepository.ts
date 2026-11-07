@@ -1,11 +1,42 @@
-import type { Prisma, User } from '@/generated/prisma/client';
+import type { Organization, Prisma, User } from '@/generated/prisma/client';
 import { prisma } from '@/lib';
 import type { IUserRepository } from './IUserRepository';
+import type { UserMembership } from './types';
 
 export class PrismaUserRepository implements IUserRepository {
   private readonly _delegate = prisma.user;
 
   constructor() {}
+
+  async getUserMembership({
+    userId,
+    orgId,
+  }: {
+    userId: User['id'];
+    orgId: Organization['id'];
+  }): Promise<UserMembership | null> {
+    const result = await this._delegate.findUnique({
+      where: { id: userId, members: { some: { organizationId: orgId } } },
+      include: {
+        members: {
+          where: { organizationId: orgId },
+          take: 1,
+          include: { organization: true },
+        },
+      },
+    });
+
+    //  there should be at most one member in the result.
+    const member = result?.members.at(0);
+
+    return result && member
+      ? {
+          user: result,
+          member,
+          org: member.organization,
+        }
+      : null;
+  }
 
   async getUsers(
     skip: number,
