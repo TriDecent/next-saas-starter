@@ -1,3 +1,4 @@
+import { getOrgSubscriptionPolicyFor } from '@/features/authorization/org';
 import {
   sendSubscriptionCanceledEmail,
   sendSubscriptionCompleteEmail,
@@ -9,7 +10,6 @@ import { getUserRepo } from '@/features/user/repo';
 import { ENV } from '@/lib/env';
 import { type StripeOptions, type StripePlan } from '@better-auth/stripe';
 import { stripeClient } from '../stripe';
-import { hasOrganizationPermission } from './utils';
 
 const sharedFreeTrialConfig: StripePlan['freeTrial'] = {
   days: 14,
@@ -140,18 +140,16 @@ export const stripeConfigs = {
       });
     },
 
-    authorizeReference: async (data, ctx): Promise<boolean> => {
-      const organizationPermission = await hasOrganizationPermission(
-        {
-          organizationId: data.referenceId,
-          permissions: {
-            'org-subscription': [data.action],
-          },
-        },
-        new Headers(ctx.headers)
-      );
+    authorizeReference: async (data): Promise<boolean> => {
+      const repo = getUserRepo();
 
-      return organizationPermission;
+      const membership = await repo.getUserMembership({
+        orgId: data.referenceId,
+        userId: data.user.id,
+      });
+      if (!membership) return false;
+
+      return getOrgSubscriptionPolicyFor(membership).can([data.action]);
     },
   },
 } satisfies StripeOptions;

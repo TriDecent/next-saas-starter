@@ -13,5 +13,10 @@ export type SubscriptionAbilityTuple = [
 export function getOrgSubscriptionPolicyFor(ctx: OrgUserContext) {
   const ability = defineOrgAbilityFor(ctx);
 
-  return {} as const;
+  return {
+    can: (actions: Iterable<SubscriptionAction>) =>
+      Iterator.from(actions).every(action =>
+        ability.can(action, 'Subscription')
+      ),
+  } as const;
 }

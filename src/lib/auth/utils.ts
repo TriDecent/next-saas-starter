@@ -1,6 +1,4 @@
-import type { Organization } from '@/generated/prisma/client';
 import { ROUTES } from '@/shared/constants';
-import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { cache } from 'react';
@@ -29,29 +27,5 @@ export const ensureSessionFromRequest = cache(
     redirectTo.searchParams.set('callbackUrl', callbackUrl.toString());
 
     return NextResponse.redirect(redirectTo);
-  }
-);
-
-export const hasOrganizationPermission = cache(
-  async (
-    {
-      organizationId,
-      permissions,
-    }: {
-      organizationId: Organization['id'];
-      permissions: NonNullable<
-        NonNullable<
-          Parameters<typeof auth.api.hasPermission>[0]
-        >['body']['permissions']
-      >;
-    },
-    headers: ReadonlyHeaders
-  ) => {
-    const hasPermission = await auth.api.hasPermission({
-      body: { organizationId, permissions },
-      headers,
-    });
-
-    return hasPermission.success;
   }
 );
