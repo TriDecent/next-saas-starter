@@ -1,6 +1,6 @@
 'use client';
 
-import { ToolTipPopover } from '@/shared/components';
+import { ToolTipPopover } from '@/shared/components/client';
 import {
   Badge,
   Button,
@@ -88,16 +88,16 @@ export function PasskeyItem({ passkey }: { passkey: Passkey }) {
 function BackedUpBadge({ isBackedUp }: { isBackedUp: boolean }) {
   return (
     <ToolTipPopover
-      message={
-        isBackedUp
-          ? 'This passkey is synced across your devices'
-          : 'This passkey is stored only on this device'
-      }
       nativeButton={false}
+      trigger={
+        <Badge variant='secondary' className='ml-auto'>
+          <CheckCircle2 /> {isBackedUp ? 'Synced' : 'Unsynced'}
+        </Badge>
+      }
     >
-      <Badge variant='secondary' className='ml-auto'>
-        <CheckCircle2 /> {isBackedUp ? 'Synced' : 'Unsynced'}
-      </Badge>
+      {isBackedUp
+        ? 'This passkey is synced across your devices'
+        : 'This passkey is stored only on this device'}
     </ToolTipPopover>
   );
 }
@@ -105,17 +105,17 @@ function BackedUpBadge({ isBackedUp }: { isBackedUp: boolean }) {
 function DeviceBadge({ deviceType }: { deviceType: Passkey['deviceType'] }) {
   return (
     <ToolTipPopover
-      message={
-        deviceType === 'singleDevice'
-          ? 'This passkey is bound to a single device and cannot be moved'
-          : 'This passkey can be used across multiple devices'
-      }
       nativeButton={false}
+      trigger={
+        <Badge variant='outline'>
+          {deviceType === 'singleDevice' ? <ShieldCheck /> : <KeyRound />}
+          {deviceType === 'singleDevice' ? 'Device Bound' : 'Cross-platform'}
+        </Badge>
+      }
     >
-      <Badge variant='outline'>
-        {deviceType === 'singleDevice' ? <ShieldCheck /> : <KeyRound />}
-        {deviceType === 'singleDevice' ? 'Device Bound' : 'Cross-platform'}
-      </Badge>
+      {deviceType === 'singleDevice'
+        ? 'This passkey is bound to a single device and cannot be moved'
+        : 'This passkey can be used across multiple devices'}
     </ToolTipPopover>
   );
 }

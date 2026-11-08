@@ -9,6 +9,5 @@ export { SkeletonCard } from './SkeletonCard';
 export { SkeletonForm } from './SkeletonForm';
 export { SkeletonTable } from './SkeletonTable';
 export { SkeletonText } from './SkeletonText';
-export { ToolTipPopover } from './ToolTipPopover';
 export { TrustDeviceField } from './TrustDeviceField';
 export { UserSummary } from './UserSummary';

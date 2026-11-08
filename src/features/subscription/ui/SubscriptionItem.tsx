@@ -1,4 +1,4 @@
-import { ToolTipPopover } from '@/shared/components';
+import { ToolTipPopover } from '@/shared/components/client';
 import {
   Badge,
   Button,
@@ -70,10 +70,15 @@ function SubscriptionHeader({
         </div>
       </CardTitle>
 
-      <ToolTipPopover nativeButton={false} message={subscription.id}>
-        <CardDescription className='truncate'>
-          Subscription {subscription.id}
-        </CardDescription>
+      <ToolTipPopover
+        nativeButton={false}
+        trigger={
+          <CardDescription className='truncate'>
+            Subscription {subscription.id}
+          </CardDescription>
+        }
+      >
+        {subscription.id}
       </ToolTipPopover>
 
       <CardAction>
@@ -153,8 +158,8 @@ function InfoRow({ label, value }: { label: string; value: string }) {
     <div className='space-y-1'>
       <dt className='text-muted-foreground text-xs uppercase'>{label}</dt>
       <dd className='truncate font-medium'>
-        <ToolTipPopover nativeButton={false} message={value}>
-          <span>{value}</span>
+        <ToolTipPopover nativeButton={false} trigger={<span>{value}</span>}>
+          {value}
         </ToolTipPopover>
       </dd>
     </div>

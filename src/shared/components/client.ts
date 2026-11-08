@@ -10,4 +10,5 @@ export { RenderModal } from './RenderModal';
 export { SendEmailButton } from './SendEmailButton';
 export { ThemeProvider } from './ThemeProvider';
 export { ThemeToggle } from './ThemeToggle';
+export { ToolTipPopover } from './ToolTipPopover';
 export { TotpField } from './TotpField';
