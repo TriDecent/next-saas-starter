@@ -2,7 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from 'react';
 
-export function useRemainingTime({ expiresAt }: { expiresAt: number }) {
+export function useRemainingTime({ expiresAtMs }: { expiresAtMs: number }) {
   const handleTick = useCallback((onStoreChange: () => void) => {
     const intervalId = setInterval(onStoreChange, 1000);
 
@@ -10,8 +10,8 @@ export function useRemainingTime({ expiresAt }: { expiresAt: number }) {
   }, []);
 
   const getSnapshot = useCallback(
-    () => Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)),
-    [expiresAt]
+    () => Math.max(0, Math.ceil((expiresAtMs - Date.now()) / 1000)),
+    [expiresAtMs]
   );
 
   const getServerSnapshot = useCallback(() => 0, []);

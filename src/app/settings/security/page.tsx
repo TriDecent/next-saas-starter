@@ -1,4 +1,5 @@
 import { AuthenticatePriorServerBoundary } from '@/features/auth';
+import { SudoTokenTimeLeft } from '@/features/auth/authenticate-prior/client';
 import { ChangeEmailCard } from '@/features/auth/change-email';
 import {
   PasskeysList,
@@ -46,6 +47,9 @@ async function SecurityContent() {
   ) : (
     <div className='space-y-8'>
       <AuthenticatePriorServerBoundary user={service.actor}>
+        <Overlay>
+          <SudoTokenTimeLeft />
+        </Overlay>
         <TwoFactorsCard isEnabled={!!service.actor.twoFactorEnabled} />
         <div className='flex flex-col gap-x-4 gap-y-8 sm:flex-row'>
           <ChangePasswordCard className='flex-1' />
@@ -53,6 +57,14 @@ async function SecurityContent() {
         </div>
         <PasskeysList passkeys={passkeys} />
       </AuthenticatePriorServerBoundary>
+    </div>
+  );
+}
+
+function Overlay({ children }: { children: React.ReactNode }) {
+  return (
+    <div className='fixed inset-x-0 bottom-16 z-50 flex justify-center'>
+      {children}
     </div>
   );
 }

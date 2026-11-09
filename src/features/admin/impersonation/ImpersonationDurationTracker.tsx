@@ -8,7 +8,7 @@ export function ImpersonationDurationTracker({
 }: {
   expiresAt: number;
 }) {
-  const { formattedTime } = useRemainingTime({ expiresAt });
+  const { formattedTime } = useRemainingTime({ expiresAtMs: expiresAt });
 
   return (
     <div className='mx-auto flex w-fit items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/30 px-2 py-1 text-xs font-medium shadow-xs shadow-black backdrop-blur-sm'>

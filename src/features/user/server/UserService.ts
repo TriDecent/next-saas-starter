@@ -51,8 +51,6 @@ export class UserService {
 
   async getUserById(id: User['id']): Promise<GetUserByIdResult> {
     return this._serviceExecutor.runSafely(async () => {
-      this._userPolicy.assertCanGetUser();
-
       const user = await this._repo.getUserById(id);
 
       if (!user) return user;
@@ -105,7 +103,6 @@ export class UserService {
       this._userPolicy.assertCanBan();
 
       const target = await this.retrieveUserOrFail(userId);
-      console.log('target', target);
       this._userPolicy.assertCanBan(target);
 
       if (target.banned) {
