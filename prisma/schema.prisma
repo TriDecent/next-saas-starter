@@ -181,25 +181,36 @@ enum InvitationStatus {
 }
 
 model Subscription {
-  id                   String    @id
+  id                   String             @id
   plan                 String
-  referenceId          String    @map("reference_id")
-  stripeCustomerId     String?   @map("stripe_customer_id")
-  stripeSubscriptionId String?   @map("stripe_subscription_id")
-  status               String?   @default("incomplete")
-  periodStart          DateTime? @map("period_start")
-  periodEnd            DateTime? @map("period_end")
-  trialStart           DateTime? @map("trial_start")
-  trialEnd             DateTime? @map("trial_end")
-  cancelAtPeriodEnd    Boolean?  @default(false)
-  cancelAt             DateTime? @map("cancel_at")
-  canceledAt           DateTime? @map("canceled_at")
-  endedAt              DateTime? @map("ended_at")
+  referenceId          String             @map("reference_id")
+  stripeCustomerId     String?            @map("stripe_customer_id")
+  stripeSubscriptionId String?            @map("stripe_subscription_id")
+  status               SubscriptionStatus @default(incomplete)
+  periodStart          DateTime?          @map("period_start")
+  periodEnd            DateTime?          @map("period_end")
+  trialStart           DateTime?          @map("trial_start")
+  trialEnd             DateTime?          @map("trial_end")
+  cancelAtPeriodEnd    Boolean?           @default(false)
+  cancelAt             DateTime?          @map("cancel_at")
+  canceledAt           DateTime?          @map("canceled_at")
+  endedAt              DateTime?          @map("ended_at")
   seats                Int?
-  billingInterval      String?   @map("billing_interval")
-  stripeScheduleId     String?   @map("stripe_schedule_id")
+  billingInterval      String?            @map("billing_interval")
+  stripeScheduleId     String?            @map("stripe_schedule_id")
 
   @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  canceled
+  unpaid
+  active
+  incomplete
+  incomplete_expired
+  past_due
+  paused
+  trialing
 }
 
 enum FeedbackType {
