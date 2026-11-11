@@ -10,14 +10,15 @@ import { lazySingleton } from '../utils';
 import {
   arcjetMode,
   botSettings,
-  emailSettings,
   extremeRestrictiveRateLimitSettings,
   laxRateLimitSettings,
   restrictiveRateLimitSettings,
+  signupOptions,
+  tokenBucketOptions,
 } from './configs';
 
 const ARCJET_KEY = ENV.ARCJET_KEY;
-// Authenticated users - track by userId only
+// Authenticated users - track by userId and action
 const getAjAuthenticated = () =>
   arcjet({
     key: ARCJET_KEY,
@@ -25,7 +26,7 @@ const getAjAuthenticated = () =>
     rules: [shield({ mode: arcjetMode })],
   });
 
-// Anonymous users - track by IP only
+// Anonymous users - track by IP and action
 const getAjAnonymous = () =>
   arcjet({
     key: ARCJET_KEY,
@@ -64,32 +65,11 @@ export const ajRestrictiveAnonymous = lazySingleton(() =>
 );
 
 export const ajSignup = lazySingleton(() =>
-  getAjAnonymous().withRule(
-    protectSignup({
-      email: emailSettings,
-      bots: botSettings,
-      rateLimit: restrictiveRateLimitSettings,
-    })
-  )
+  getAjAnonymous().withRule(protectSignup(signupOptions))
 );
 
 export const ajEmailSend = lazySingleton(() =>
   getAjAnonymous()
     .withRule(detectBot(botSettings))
-    .withRule(
-      tokenBucket({
-        mode: arcjetMode,
-        capacity: 3,
-        refillRate: 1,
-        interval: '1h',
-        // Why emailId?
-        // It keeps yelling
-        /*
-       ✦Aj ERROR Failure running rule: RATE_LIMIT due to unable 
-       to generate fingerprint: error generating identifier - 
-       requested a user-defined `email` characteristic but the 
-       `email` value was empty */
-        characteristics: ['emailId'],
-      })
-    )
+    .withRule(tokenBucket(tokenBucketOptions))
 );

@@ -18,7 +18,7 @@ export async function toggleOrgStatus(
     userId: service.actor.id,
     action: 'toggle-org-status-action',
   });
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   return service.toggleOrgStatus(input);
 }

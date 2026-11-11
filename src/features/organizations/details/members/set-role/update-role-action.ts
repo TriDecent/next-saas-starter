@@ -25,7 +25,7 @@ export async function updateRoleAction(
     userId: service.actor.id,
   });
 
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   const response = await service.updateRole(params);
 

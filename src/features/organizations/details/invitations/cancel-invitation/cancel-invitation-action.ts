@@ -19,7 +19,7 @@ export async function cancelInvitationAction(
     action: 'cancel-invitation-action',
     userId: service.actor.id,
   });
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   const response = await service.cancelInvitation(invitationId);
 

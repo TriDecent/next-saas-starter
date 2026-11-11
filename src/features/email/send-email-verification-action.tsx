@@ -14,7 +14,7 @@ export async function sendEmailVerificationAction(
     requested: 1,
   });
 
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackURL);
 
   const service = await getAuthService();
 

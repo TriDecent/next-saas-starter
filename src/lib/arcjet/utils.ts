@@ -2,24 +2,33 @@ import { type ArcjetDecision, type ArcjetEmailType } from '@arcjet/next';
 import { redirect, RedirectType } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
-import { ROUTES } from '@/shared/constants';
+import {
+  getErrorDefinition,
+  ROUTES,
+  type AppErrorCode,
+} from '@/shared/constants';
 
 export function handleDeniedInServerAction(
   decision: ArcjetDecision,
   callbackUrl?: string
 ): never {
-  const searchParams = new URLSearchParams();
+  const code = (
+    decision.reason.isRateLimit()
+      ? 'RATE_LIMITED'
+      : decision.reason.isBot()
+        ? 'BOT_DETECTED'
+        : decision.reason.isEmail()
+          ? getEmailErrorMessage(decision.reason.emailTypes)
+          : 'FORBIDDEN'
+  ) satisfies AppErrorCode;
 
-  const message = decision.reason.isRateLimit()
-    ? getRateLimitErrorMessage(decision)
-    : decision.reason.isBot()
-      ? 'Bot detected.'
-      : decision.reason.isEmail()
-        ? getEmailErrorMessage(decision.reason.emailTypes)
-        : 'Forbidden';
-
-  searchParams.set('message', message);
-  searchParams.set('callbackUrl', callbackUrl ?? '/auth');
+  const searchParams = new URLSearchParams({
+    code,
+    ...(decision.reason.isRateLimit() && {
+      details: getRateLimitErrorMessage(decision.ttl),
+    }),
+    ...(callbackUrl && { callbackUrl }),
+  });
 
   redirect(
     `${ROUTES.error.href}?${searchParams.toString()}`,
@@ -32,7 +41,7 @@ export function respondToDenial(decision: ArcjetDecision): NextResponse {
     const ttl = decision.ttl;
     return NextResponse.json(
       {
-        error: getRateLimitErrorMessage(decision),
+        error: getRateLimitErrorMessage(ttl),
         retryAfter: ttl,
       },
       {
@@ -53,28 +62,29 @@ export function respondToDenial(decision: ArcjetDecision): NextResponse {
   return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 }
 
-function getEmailErrorMessage(emailTypes: ArcjetEmailType[]): string {
-  if (emailTypes.includes('INVALID')) return 'Email address format is invalid';
+function getEmailErrorMessage(emailTypes: ArcjetEmailType[]): AppErrorCode {
   if (emailTypes.includes('DISPOSABLE'))
-    return 'Disposable email addresses are not allowed';
+    return getErrorDefinition('DISPOSABLE_EMAIL').code;
 
-  if (emailTypes.includes('NO_MX_RECORDS')) return 'Email domain is not valid';
-  return 'Invalid email';
+  if (emailTypes.includes('FREE')) return getErrorDefinition('FREE_EMAIL').code;
+
+  if (emailTypes.includes('NO_GRAVATAR'))
+    return getErrorDefinition('NO_GRAVATAR').code;
+
+  if (emailTypes.includes('NO_MX_RECORDS'))
+    return getErrorDefinition('NO_MX_RECORDS').code;
+
+  return getErrorDefinition('INVALID_EMAIL').code;
 }
 
 function formatRemainingTime(seconds: number): string {
-  if (seconds <= 0) return 'a moment';
-  if (seconds < 60) {
-    return `${seconds} second${seconds === 1 ? '' : 's'}`;
-  }
+  if (seconds <= 5) return 'a moment';
+  if (seconds < 60) return `${seconds} second${seconds === 1 ? '' : 's'}`;
+
   const minutes = Math.ceil(seconds / 60);
   return `${minutes} minute${minutes === 1 ? '' : 's'}`;
 }
 
-function getRateLimitErrorMessage(decision: ArcjetDecision): string {
-  const ttl = decision.ttl;
-  if (typeof ttl === 'number' && ttl > 0) {
-    return `Too many requests. Please try again in ${formatRemainingTime(ttl)}.`;
-  }
-  return 'Too many requests. Please try again later.';
+function getRateLimitErrorMessage(ttl: number): string {
+  return `Too many requests. Please try again in ${formatRemainingTime(ttl)}.`;
 }

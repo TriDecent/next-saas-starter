@@ -20,7 +20,7 @@ export async function handleInvitationApprovalAction(
     userId: service.actor.id,
     action: `process-invitation-${id}-approval`,
   });
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   let response: OrgMutationResult | null = null;
   if (mode === 'accept') {

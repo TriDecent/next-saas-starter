@@ -22,7 +22,7 @@ export async function deleteOrgAction(
     }
   );
 
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   const response = await service.deleteOrg(organizationId);
 

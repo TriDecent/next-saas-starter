@@ -18,7 +18,7 @@ export async function removeMemberAction(
     action: 'remove-member-action',
     userId: service.actor.id,
   });
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   return service.removeMember(params);
 }

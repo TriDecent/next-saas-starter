@@ -16,7 +16,7 @@ export async function createBillingPortalAction(
     userId: service.actor.id,
     action: 'create-billing-portal',
   });
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   const parsed = schema.safeParse(options);
   if (!parsed.success)

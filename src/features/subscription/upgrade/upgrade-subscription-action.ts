@@ -17,7 +17,7 @@ export async function upgradeSubscriptionAction(
     userId: service.actor.id,
     action: 'upgrade-subscription',
   });
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackUrl);
 
   const parsed = schema.safeParse(input);
   if (!parsed.success)

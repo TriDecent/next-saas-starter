@@ -44,7 +44,7 @@ export async function updateProfileAction(
   });
 
   if (updateProfileDecision.isDenied())
-    handleDeniedInServerAction(updateProfileDecision);
+    handleDeniedInServerAction(updateProfileDecision, callbackURL);
 
   return service.updateProfile(profileData);
 }

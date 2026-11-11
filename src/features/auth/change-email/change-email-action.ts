@@ -33,7 +33,7 @@ export async function changeEmailFormAction(
     action: 'sa-change-email',
     userId: service.actor.id,
   });
-  if (decision.isDenied()) handleDeniedInServerAction(decision);
+  if (decision.isDenied()) handleDeniedInServerAction(decision, callbackURL);
 
   const parsed = z.object({ newEmail: z.email() }).safeParse(input);
   if (!parsed.success)
@@ -62,7 +62,7 @@ export async function changeEmailAction(
     requested: 1,
   });
   if (emailSendDecision.isDenied())
-    handleDeniedInServerAction(emailSendDecision);
+    handleDeniedInServerAction(emailSendDecision, callbackURL);
 
   return service.changeEmail({ newEmail, callbackURL }, sudoToken);
 }
