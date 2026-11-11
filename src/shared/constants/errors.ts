@@ -55,7 +55,7 @@ export const ERROR_DEFINITION = defineErrors({
   },
 } as const);
 
-type ErrorItem<TCode> = { code: TCode; [key: string]: unknown };
+type ErrorItem<TCode> = { code: TCode };
 
 function defineErrors<T extends Record<string, ErrorItem<keyof T>>>(
   definitions: T & { [K in keyof T]: { code: K } }

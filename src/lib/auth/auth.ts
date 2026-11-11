@@ -33,9 +33,8 @@ export const auth = betterAuth({
     stripe(stripeConfigs),
     nextCookies(),
   ],
-  database: prismaAdapter(prisma, {
-    provider: 'postgresql',
-  }),
+  onAPIError: { errorURL: ROUTES.error.href },
+  database: prismaAdapter(prisma, { provider: 'postgresql' }),
   socialProviders: {
     github: {
       clientId: ENV.GITHUB_CLIENT_ID,

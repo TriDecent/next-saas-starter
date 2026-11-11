@@ -1,7 +1,6 @@
 'use client';
 
 import { authClient } from '@/lib/auth/auth-client';
-
 import { ActionButton } from '@/shared/components/client';
 import { ButtonGroup, ButtonGroupSeparator } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/constants';

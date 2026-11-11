@@ -1,12 +1,6 @@
 import type { ExportType } from '@/features/user/export';
 import { Metadata } from 'next';
 
-type Route = {
-  href: string;
-  metadata: Metadata;
-  nested?: Record<string, Route>;
-};
-
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
 const APP_NAME = 'Identity Hub';
 const APP_DESCRIPTION =
@@ -44,7 +38,7 @@ export const ROUTES = {
         },
       },
     },
-  }),
+  } as const),
   home: defineRoute({
     href: '/',
     metadata: {
@@ -57,7 +51,7 @@ export const ROUTES = {
         url: BASE_URL,
       },
     },
-  }),
+  } as const),
   admin: defineRoute({
     href: '/admin',
     metadata: {
@@ -71,7 +65,7 @@ export const ROUTES = {
         url: `${BASE_URL}/admin`,
       },
     },
-  }),
+  } as const),
   organizations: defineRoute({
     href: '/organizations',
     metadata: {
@@ -115,7 +109,7 @@ export const ROUTES = {
         },
       }),
     },
-  }),
+  } as const),
   invitations: defineRoute({
     href: '/invitations',
     metadata: {
@@ -139,7 +133,7 @@ export const ROUTES = {
         },
       }),
     },
-  }),
+  } as const),
   auth: defineRoute({
     href: '/auth',
     metadata: {
@@ -191,7 +185,7 @@ export const ROUTES = {
         },
       }),
     },
-  }),
+  } as const),
   settings: defineRoute({
     href: '/settings',
     metadata: {
@@ -250,7 +244,7 @@ export const ROUTES = {
         },
       }),
     },
-  }),
+  } as const),
   error: defineRoute({
     href: '/error',
     metadata: {
@@ -267,7 +261,7 @@ export const ROUTES = {
         follow: false,
       },
     },
-  }),
+  } as const),
   ['not-found']: defineRoute({
     href: '/not-found',
     metadata: {
@@ -283,7 +277,7 @@ export const ROUTES = {
         follow: false,
       },
     },
-  }),
+  } as const),
   api: {
     users: { href: '/api/users' },
     export: {
@@ -293,6 +287,12 @@ export const ROUTES = {
     },
   },
 } as const;
+
+type Route = {
+  href: string;
+  metadata: Metadata;
+  nested?: Record<string, Route>;
+};
 
 function defineRoute<T extends Route>(route: T): T {
   return route;
