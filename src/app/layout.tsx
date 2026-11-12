@@ -3,6 +3,7 @@ import { RenderUserDropdownNav } from '@/features/home';
 import { QueryProvider } from '@/lib/tanstack-query/client';
 import { AvatarSkeleton, PageLayout } from '@/shared/components';
 import {
+  BackToTopButton,
   NavTrail,
   ThemeProvider,
   ThemeToggle,
@@ -68,6 +69,7 @@ export default function RootLayout({
                     </Suspense>
                   </div>
                   {children}
+                  <BackToTopButton className='fixed right-6 bottom-6 z-5' />
                 </PageLayout.Main>
                 <Suspense>
                   <PageLayout.Footer />

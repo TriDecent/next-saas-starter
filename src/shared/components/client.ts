@@ -1,5 +1,6 @@
 export { ActionButton } from './ActionButton';
 export { AuthFormLayout } from './AuthFormLayout';
+export { BackToTopButton } from './BackToTopButton';
 export { BackupCodeField } from './BackupCodeField';
 export { CopyText } from './CopyText';
 export { DrawerDialog } from './DrawerDialog';
